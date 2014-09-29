@@ -1,0 +1,66 @@
+#turbo 40
+
+#Event	NoHold					"Your spell did not take hold."
+#Event	Tell					"#1# tells you, '#2#'"
+#Event	Dead    				"#*#Returning to #*#"
+#Event	Camp					"It will take #*# seconds to prepare your camp."
+#Event	Hail					"You say, 'Hail, #1#'"
+#Event	Task					"Your task #1# has been updated."
+#Event	Assign					"You have been assigned the task #1#."
+#Event	Group					"#1# invites you to join a group."
+#Event 	DraekonVoice 			"You hear the voice of #1# calling to you, 'Come to me young one, we must combine our might to destroy him!'"
+#Event 	DraekonVoiceEnd	 		"You join your powers with #1#, preventing Draekon from attacking!"
+#Event 	DraekonNoGrass 			"The world begins to spin as Draekon starts to chant an evil spell pulling you towards him."
+#Event 	DraekonGrass 			"You escape the power of Draekon's spell"
+#Event 	DraekonBelly 			"The world begins to spin as Draekon starts to chant a powerful spell pushing you away from him."
+#Event	EQBC 					"<#1#> #2#"
+#Event	EQBC 					"[#1#(msg)] #2#"
+#Event	Follow					"#1# tells Team:#2#, 'Follow #3#'"
+#Event	Channels				"Channels: #*#"
+#Event	Zone					"You have entered #*#"
+
+#Include include\ninjadvloot.inc
+#Include include\wait4Rez.inc
+#Include include\sub.inc
+#Include include\events.inc
+
+Sub Main
+	/declare Delai int outer 6
+	/declare myMain string outer "conradd"
+	/declare channel int outer 0
+	| Fichiers
+	/declare iniGlobal 	string outer "ini\global.ini"
+	/declare iniSetup 	string outer "ini\setup_${Me.CleanName}.ini"
+	/declare iniSpell 	string outer "ini\spells_${Me.CleanName}.ini"
+	/declare iniHail 	string outer "ini\hail.ini"
+
+	/call joinChannel
+	/call checkPlugIn
+	/call SetupAdvLootVars
+	/call loadCustomVars
+	/chat ${channel} Starting Old Macro for ${Me.Class}
+	
+	:MainLoop
+		|/if (${Defined[looptest]}) /varset looptest ${Math.Calc[${looptest}+1]}
+		|/call LPS
+		/doevents
+		/call instantBuff
+		| Commands will be executed when in combat, no casting going on and the cursor is free.
+		/call isHolyShit
+		/if (${Macro.Return}) {
+			/doevents
+			/call checkHolyShitBuff
+			/doevents
+			/call checkDiscipline
+		}
+		| Commands will be executed when not in combat, not casting and the cursor is free. 
+		/call isDownShit
+		/if (${Macro.Return}) {
+			/doevents
+			/call checkDownShitBuff
+			/doevents
+			/call checkSpellBuff
+		}
+	/goto :MainLoop
+	/call EndMacro
+/return
