@@ -161,7 +161,7 @@ SUB Get_AssistStickDistance
 		/if (${AssistStickDistance} > 25) /varset AssistStickDistance 25
 	}
 	| Ecrire
-	/ini "${iniStick}" "${Zone.Name}" "${Target.CleanName}" "${AssistStickDistance}"
+	/call WriteToIni "${iniStick},${Zone.Name},${Target.CleanName}" "${AssistStickDistance}"
 
 	/if (${Debug}) {
 		/echo AssistStickDistance = [${AssistStickDistance}]
@@ -236,7 +236,7 @@ SUB StickToAssistTarget
 		/if (${miscTimer}) /goto :waitToStop
 	}
 
-/if (${Debug} || ${Debug_Assists}) /echo <== StickToAssistTarget -|	
+	/if (${Debug} || ${Debug_Assists}) /echo <== StickToAssistTarget -|	
 /RETURN
 
 |----------------------------------------------------|
@@ -515,7 +515,8 @@ SUB CombatAbilities
 							/call Attempt_Bash
 						| Use Taunt.
 						} else /if (${abilityName.Equal[Taunt]}) {
-							/if (${AutoAggro}) /call Attempt_Taunt
+							|/if (${AutoAggro}) /call Attempt_Taunt
+							/doability Taunt
 						| Reset Tail Rake to Dragon Punch.  Tail Rake causes an error because it returns as "Dragon Punch" when /echoed in Me.Ability[#]
 						} else /if (${abilityName.Equal[Tail Rake]}) {
 							/varset ${MyAbilities[${i}]} Dragon Punch
@@ -616,20 +617,16 @@ Sub Attempt_Backstab
 |- Casts direct damage spells on a specified target.	-|
 |--------------------------------------------------------|
 SUB check_Nukes
-/if (${Debug} || ${Debug_Assists}) /echo |- check_Nukes ==>
+	/if (${Debug} || ${Debug_Assists}) /echo |- check_Nukes ==>
 
 	/if (${MyNukes.Size} && ${Assisting} && ${use_Nukes}) {
-		
 		/if (${delayTimer_MyNukes}) {
 			/if (${Debug} || ${Debug_Assists}) /echo Waiting [${delayTimer_MyNukes}] to cast next nuke.
 		} else {
-		
 			/if (${Target.ID} != ${AssistTarget}) {
 				/if (${Debug} || ${Debug_Assists}) /echo I am not targeting the assistTarget, holding nukes.
 			} else {
-			
 				/declare castName string local
-			
 				/if (!${Defined[nukeCounter]}) {
 					/declare nukeCounter int outer 1
 				} else {
@@ -1308,43 +1305,6 @@ SUB useBurns(int burnTarget, arrayName)
 
 /if (${Debug} || ${Debug_Assists}) /echo <== useBurns -|
 /RETURN
-
-
-
-#EVENT toggle_PvP "[#1#] Toggle PvP #2#"
-#EVENT toggle_PvP "<#1#> Toggle PvP #2#"
-#EVENT toggle_PvP "#1# tells you, 'Toggle PvP #2#'"
-#EVENT toggle_PvP "#1# tells the group, 'Toggle PvP #2#'"
-#EVENT toggle_PvP "#1# you tell your party, 'Toggle PvP #2#'"
-SUB EVENT_toggle_PvP(line, ChatSender, eventParams)
-/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_toggle_PvP ==>
-
-	/declare pvpSet string local ${eventParams.Arg[1, ]}
-
-	| -Verify the event
-	/call verifyEvent "${ChatSender}" "${line}"
-	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-		
-		| Turn PvP On.
-		/if (${pvpSet.Find[on]} || ${pvpSet.Find[true]} || ${Int[${pvpSet}]}) {
-			/varset Toggle-PvP TRUE
-			/varset AcceptableTargetTypes ${AcceptableTargetTypes},PC
-			
-		| Turn PvP Off.
-		} else {
-			/varset Toggle-PvP FALSE
-			/call IniToVar ${genSettings_Ini},Assists,Allowed_TargetTypes AcceptableTargetTypes string outer
-		}
-
-		/echo PvP mode [${If[${Toggle-PvP},ON,OFF]}]
-	}
-	
-/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_toggle_PvP -|
-/RETURN
-
-
 
 #EVENT toggle_Taunt "[#1#] Toggle Taunt #2#"
 #EVENT toggle_Taunt "<#1#> Toggle Taunt #2#"
