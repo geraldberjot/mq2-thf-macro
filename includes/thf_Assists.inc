@@ -11,7 +11,7 @@
 |- Use, 'Assist on ${Target.ID}' in /bc.										-|
 |--------------------------------------------------------------------------------|
 #EVENT Assist "<#1#> #2# assist on #3#"
-SUB event_Assist(String line, String from, String who, Int MobID)
+SUB event_Assist(String line, String from, String who, Int mobID)
 	/if (${Debug} || ${Debug_Assists}) /echo |- event_Assist ==>
 	
 	/call amIConcerned ${from} ${who}
@@ -19,12 +19,12 @@ SUB event_Assist(String line, String from, String who, Int MobID)
 		/if (${Defined[PauseTarget]}) /deletevar PauseTarget
 	
 		| Check that you're not assisting on a corpse, pet or pc
-		/if (${Spawn[id ${MobID}].Type.Equal[Corpse]} || !${Select[${Spawn[id ${MobID}].Type},${AcceptableTargetTypes}]}) {
+		/if (${Spawn[id ${mobID}].Type.Equal[Corpse]} || !${Select[${Spawn[id ${mobID}].Type},${AcceptableTargetTypes}]}) {
 			/if (${Debug} || ${Debug_Assists}) /echo [${Spawn[id ${MobID}].CleanName}] is not an acceptable TargetType.
 		} else {
 			| Check target distance.
-			/if (${Spawn[${MobID}].Distance} > ${MaxAssistDistance}) {
-				/docommand ${ChatToggle} ${Spawn[${MobID}].CleanName} is too far away.
+			/if (${Spawn[${mobID}].Distance} > ${MaxAssistDistance}) {
+				/docommand ${ChatToggle} ${Spawn[${mobID}].CleanName} is too far away.
 			} else {
 				| Wait to catch up to group, before engage.
 				/if (${Following} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength} && ${Me.Moving}) {
@@ -40,7 +40,7 @@ SUB event_Assist(String line, String from, String who, Int MobID)
 				
 				| Set Assist Variables.
 				/varset Assisting TRUE
-				/varset AssistTarget ${MobID}
+				/varset AssistTarget ${mobID}
 				/varset hasTanked FALSE
 				
 				| If I am the assist caller, or I am feigning, don't allow macro control.
