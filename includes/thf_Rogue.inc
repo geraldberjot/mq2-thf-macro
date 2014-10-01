@@ -1,17 +1,15 @@
 |----------------------------------------------------------------------------|
-|- e3_Classes_Rogue.inc v3.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ												-|
+|- thf_Rogue.inc v1.0                                                       -|
+|- Written by Conradd of THF   											                       -|
 |----------------------------------------------------------------------------|
 
-
-
 |--------------------------------------------------------------------------------|
-|- rogueStrike																	-|
+|- rogueStrike	                                																-|
 |--------------------------------------------------------------------------------|
 |- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.	-|
 |--------------------------------------------------------------------------------|
 Sub check_rogStrike(discName)
-/if (${Debug}) /echo |- rogueStrike ==>
+  /if (${Debug}) /echo |- rogueStrike ==>
 	
 	/if (!${Defined[strikeDisc]}) {
 		/declare strikeDisc string outer ${discName}
@@ -167,7 +165,8 @@ SUB ROG_MacroSettings
 /if (${Debug}) /echo |- ROG_MacroSettings ==>
 
 	| MacroData_Ini settings
-	/call WriteToIni "${MacroData_Ini},Class Specific Info,Rogue Sneak Attack Disciplines" "Sneak Attack,Thief's Vengeance,Assassin's Strike,Kyv Strike,Ancient: Chaos Strike,Daggerfall,Razorarc,Swiftblade,Swiftblade Rk. II,Swiftblade Rk. III,Daggerlunge,Daggerlunge Rk. II,Daggerlunge Rk. III,Daggerswipe,Daggerswipe Rk. II,Daggerswipe Rk. III,Daggerstrike,Daggerstrike Rk. II,Daggerstrike Rk. III,Daggerthrust,Daggerthrust Rk. II,Daggerthrust Rk. III" 0
+	|/call WriteToIni "${MacroData_Ini},Class Specific Info,Rogue Sneak Attack Disciplines" "Sneak Attack,Thief's Vengeance,Assassin's Strike,Kyv Strike,Ancient: Chaos Strike,Daggerfall,Razorarc,Swiftblade,Swiftblade Rk. II,Swiftblade Rk. III,Daggerlunge,Daggerlunge Rk. II,Daggerlunge Rk. III,Daggerswipe,Daggerswipe Rk. II,Daggerswipe Rk. III,Daggerstrike,Daggerstrike Rk. II,Daggerstrike Rk. III,Daggerthrust,Daggerthrust Rk. II,Daggerthrust Rk. III" 0
+   /call WriteToIni "${MacroData_Ini},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
 
 	| Adv Settings
 	/call WriteToIni "${advSettings_Ini},ROG Functions,ROG Function#1" "check_Burns" 1
