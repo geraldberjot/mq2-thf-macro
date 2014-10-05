@@ -110,6 +110,51 @@ SUB IniToArray(Ini_Key, ArrayName, ArrayScope)
 	}
 /RETURN ${ArrayName}
 
+|------------------------------------------------------------------------------------|
+|- Split a string with the specified separator and return the specified array		-|
+|------------------------------------------------------------------------------------|
+|- @param myString : The string to split											-|
+|- @param ArrayName : The name of the array you want to declare						-|
+|- @param ArrayScope : The scope of the array to be declared						-|
+|- @param separator : The char to split with										-|
+|------------------------------------------------------------------------------------|
+|- Syntax: /call IniToArray IniKey ArrayName VariableScope							-|
+|-	Ex: /call IniToArray "Settings.ini,General Settings,Debug Mode" Debug outer		-|
+|-		/call IniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local			-|
+|------------------------------------------------------------------------------------|
+SUB split(String myString, String ArrayName, String ArrayScope, String separator)
+	/if (${Debug}) /echo |- split [${myString} with ${separator}] ==>
+
+	| Check if the spearator is in the string.
+	/if (!${myString.Find[${separator}]}) {
+		/if (${Debug}) /echo [${separator}] not found.
+	} else {
+		| Count separator
+		/declare i int local 1
+		/declare count int local
+		/varset count ${myString.Count[${separator}]}
+
+		| Declare the array and copy elements
+		/if (${Defined[${ArrayName}]}) /deletevar ${ArrayName}
+		/declare ${ArrayName}[${count}] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
+		
+		/for i 1 to ${${ArrayName}.Size}
+			/varset ${ArrayName}[${i}] ${myString.Token[${i},${separator}]}
+		/next i
+	}
+
+	/if (${Debug}) {
+		/if (${${ArrayName}.Size}) {
+			/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
+			/for i 1 to ${${ArrayName}.Size}
+				/echo ${ArrayName}[${i}] - ${${ArrayName}[${i}]}
+			/next i
+		}
+		/echo <== split -|
+	}
+/RETURN ${ArrayName}
+
+
 |----------------------------------------------------------------------------------------------------|
 |- Creates ini entries from supplied ini keys.														-|
 |- Allows the user to toggle whether or not to overwrite an existing entry							-|

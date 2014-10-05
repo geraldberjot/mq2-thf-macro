@@ -13,7 +13,7 @@
 Sub SHD_Setup
 /if (${Debug}) /echo |- SHD_Setup ==>
 
-	/if (${Ini[${Character_Ini},${Me.Class},LifeTap#1].Length}) /call IniToArray "${Character_Ini},${Me.Class},LifeTap#" lifeTaps
+	/if (${Ini[${iniCharacter},${Me.Class},LifeTap#1].Length}) /call IniToArray "${iniCharacter},${Me.Class},LifeTap#" lifeTaps
 
 /if (${Debug}) /echo <== SHD_Setup -|
 /return
@@ -37,7 +37,7 @@ SUB SHD_MacroSettings
 SUB SHD_CharacterSettings
 /if (${Debug}) /echo |- SHD_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},${Me.Class},LifeTap#1"
+	/call WriteToIni "${iniCharacter},${Me.Class},LifeTap#1"
 
 /if (${Debug}) /echo <== SHD_CharacterSettings -|
 /RETURN
