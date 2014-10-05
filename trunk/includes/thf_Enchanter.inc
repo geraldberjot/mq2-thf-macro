@@ -122,7 +122,7 @@ SUB check_Rune
 Sub ENC_Setup
 /if (${Debug}) /echo |- ENC_Setup ==>
 
-	/if (${Ini[${Character_Ini},Enchanter,Chain Rune].Length}) /call IniToVar "${Character_Ini},Enchanter,Chain Rune" chainRune string outer
+	/if (${Ini[${iniCharacter},Enchanter,Chain Rune].Length}) /call IniToVar "${iniCharacter},Enchanter,Chain Rune" chainRune string outer
 
 /if (${Debug}) /echo <== ENC_Setup -|
 /return
@@ -160,7 +160,7 @@ SUB ENC_MacroSettings
 SUB ENC_CharacterSettings
 /if (${Debug}) /echo |- ENC_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},Enchanter,Chain Rune"
+	/call WriteToIni "${iniCharacter},Enchanter,Chain Rune"
 
 /if (${Debug}) /echo <== ENC_CharacterSettings -|
 /RETURN
@@ -186,8 +186,8 @@ Sub ENC_Aliases
 #event AutoMez "<#*#> Mez All"
 sub event_AutoMez
 /if (${Debug}) /echo |- AutoMez -| ==>
-/if (!${Defined[AutoMez_Spell]} && ${Ini[${Character_Ini},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)].Length}) {
-	/call INItoVar "${Character_Ini},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)" UNDEFINED string local
+/if (!${Defined[AutoMez_Spell]} && ${Ini[${iniCharacter},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)].Length}) {
+	/call INItoVar "${iniCharacter},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)" UNDEFINED string local
 	/declare AutoMez_Spell string outer ${Macro.Return.Arg[1,/]}
 	/declare AutoMez_Gem int outer ${Macro.Return.Arg[2,/]}
 	/declare MaxMezLevel int outer ${Macro.Return.Arg[3,/]}

@@ -268,13 +268,13 @@ Sub Event_CorpseExpired(line, corpseExpired)
 Sub CLR_Setup
 /if (${Debug}) /echo |- CLR_Setup ==>
 
-	/call InitoVar "${Character_Ini},Cleric,Divine Arbitration (Pct)" DivineArb_Pct int outer
-	/call InitoVar "${Character_Ini},Cleric,Celestial Regeneration (Pct)" celestialRegen_Pct int outer
-	/call InitoVar "${Character_Ini},Cleric,Auto-Yaulp (On/Off)" AutoYaulp bool outer
-	/call InitoVar "${Character_Ini},Cleric,Yaulp Spell" yaulpSpell string outer
+	/call InitoVar "${iniCharacter},Cleric,Divine Arbitration (Pct)" DivineArb_Pct int outer
+	/call InitoVar "${iniCharacter},Cleric,Celestial Regeneration (Pct)" celestialRegen_Pct int outer
+	/call InitoVar "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" AutoYaulp bool outer
+	/call InitoVar "${iniCharacter},Cleric,Yaulp Spell" yaulpSpell string outer
 	/if (${AutoYaulp}) {
 		/if (!${Defined[yaulpSpell]} || !${yaulpSpell.Length} || !${Me.Book[${yaulpSpell.Arg[1,/]}]}) {
-			/echo ERROR! ${Character_Ini} > [Cleric] > Yaulp Spell is not correctly defined.  Please check this entry, and restart the macro.
+			/echo ERROR! ${iniCharacter} > [Cleric] > Yaulp Spell is not correctly defined.  Please check this entry, and restart the macro.
 			/varset AutoYaulp FALSE
 		}
 	}
@@ -311,11 +311,11 @@ SUB CLR_MacroSettings
 SUB CLR_CharacterSettings
 /if (${Debug}) /echo |- CLR_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},Cleric,Divine Arbitration (Pct)" 30 0
-	/call WriteToIni "${Character_Ini},Cleric,Celestial Regeneration (Pct)" 65 0
-	/call WriteToIni "${Character_Ini},Cleric,Auto-Yaulp (On/Off)" On 0
-	/call WriteToIni "${Character_Ini},Cleric,Yaulp Spell"
-	/if (${Ini[${Character_Ini},Cleric,Yaulp#1].Length}) /call WriteToIni "${Character_Ini},Cleric,Yaulp#1" "*DEPRECATED*  This entry can be deleted'" 1
+	/call WriteToIni "${iniCharacter},Cleric,Divine Arbitration (Pct)" 30 0
+	/call WriteToIni "${iniCharacter},Cleric,Celestial Regeneration (Pct)" 65 0
+	/call WriteToIni "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" On 0
+	/call WriteToIni "${iniCharacter},Cleric,Yaulp Spell"
+	/if (${Ini[${iniCharacter},Cleric,Yaulp#1].Length}) /call WriteToIni "${iniCharacter},Cleric,Yaulp#1" "*DEPRECATED*  This entry can be deleted'" 1
 
 /if (${Debug}) /echo <== CLR_CharacterSettings -|
 /RETURN

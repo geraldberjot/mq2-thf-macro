@@ -284,8 +284,8 @@ sub event_CoH_Group
 Sub MAG_Setup
 /if (${Debug} || ${Debug_MAG}) /echo |- MAG_Setup ==>
 	
-	/call IniToVar "${Character_Ini},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
-	/call IniToArray "${Character_Ini},Magician,Summoned Pet Item#" petItems
+	/call IniToVar "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
+	/call IniToArray "${iniCharacter},Magician,Summoned Pet Item#" petItems
 
 /if (${Debug} || ${Debug_MAG}) /echo <== MAG_Setup -|
 /return
@@ -320,8 +320,8 @@ SUB MAG_MacroSettings
 SUB MAG_CharacterSettings
 /if (${Debug} || ${Debug_MAG}) /echo |- MAG_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},Magician,Auto-Pet Weapons (On/Off)"
-	/call WriteToIni "${Character_Ini},Magician,Summoned Pet Item#1"
+	/call WriteToIni "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)"
+	/call WriteToIni "${iniCharacter},Magician,Summoned Pet Item#1"
 
 /if (${Debug} || ${Debug_MAG}) /echo <== MAG_CharacterSettings -|
 /RETURN

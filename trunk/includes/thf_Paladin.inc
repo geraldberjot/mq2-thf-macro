@@ -13,8 +13,8 @@
 Sub PAL_Setup
 /if (${Debug}) /echo |- PAL_Setup ==>
 	
-	/call InitoVar "${Character_Ini},Paladin,Auto-Yaulp (On/Off)" AutoYaulp bool outer
-	/call InitoVar "${Character_Ini},Paladin,Yaulp Spell" yaulpSpell string outer
+	/call InitoVar "${iniCharacter},Paladin,Auto-Yaulp (On/Off)" AutoYaulp bool outer
+	/call InitoVar "${iniCharacter},Paladin,Yaulp Spell" yaulpSpell string outer
 	
 /if (${Debug}) /echo <== PAL_Setup -|
 /return
@@ -46,8 +46,8 @@ SUB PAL_MacroSettings
 SUB PAL_CharacterSettings
 /if (${Debug}) /echo |- PAL_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},Paladin,Auto-Yaulp (On/Off)" On 0
-	/call WriteToIni "${Character_Ini},Paladin,Yaulp Spell"
+	/call WriteToIni "${iniCharacter},Paladin,Auto-Yaulp (On/Off)" On 0
+	/call WriteToIni "${iniCharacter},Paladin,Yaulp Spell"
 	
 /if (${Debug}) /echo <== PAL_CharacterSettings -|
 /RETURN

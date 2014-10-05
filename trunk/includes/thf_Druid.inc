@@ -13,7 +13,7 @@
 Sub DRU_Setup
 /if (${Debug}) /echo |- DRU_Setup ==>
 	
-	/call IniToVar "${Character_Ini},Druid,Evac Spell" Evac_Spell string outer
+	/call IniToVar "${iniCharacter},Druid,Evac Spell" Evac_Spell string outer
 	
 /if (${Debug}) /echo <== DRU_Setup -|
 /return
@@ -49,7 +49,7 @@ SUB DRU_CharacterSettings
 /if (${Debug}) /echo |- DRU_CharacterSettings ==>
 
 	| Bot Ini
-	/call WriteToIni "${Character_Ini},Druid,Evac Spell"
+	/call WriteToIni "${iniCharacter},Druid,Evac Spell"
 
 /if (${Debug}) /echo <== DRU_CharacterSettings -|
 /RETURN

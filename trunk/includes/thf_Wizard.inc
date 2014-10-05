@@ -39,9 +39,9 @@ Sub WIZ_Setup
 	
 	/declare i int local
 	
-	/call INItoVar "${Character_Ini},Wizard,Evac Spell" Evac_Spell string outer
-	/call INItoVar "${Character_Ini},Wizard,Auto-Harvest (On/Off)" autoHarvest bool outer
-	/call IniToArray "${Character_Ini},Wizard,Harvest#" harvestSpells
+	/call INItoVar "${iniCharacter},Wizard,Evac Spell" Evac_Spell string outer
+	/call INItoVar "${iniCharacter},Wizard,Auto-Harvest (On/Off)" autoHarvest bool outer
+	/call IniToArray "${iniCharacter},Wizard,Harvest#" harvestSpells
 	
 	| Look for a familiar to cast
 	/if (${Defined[SelfBuffs]}) {
@@ -82,9 +82,9 @@ SUB WIZ_MacroSettings
 SUB WIZ_CharacterSettings
 /if (${Debug}) /echo |- WIZ_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},Wizard,Evac Spell"
-	/call WriteToIni "${Character_Ini},Wizard,Auto-Harvest (On/Off)"
-	/call WriteToIni "${Character_Ini},Wizard,Harvest#1"
+	/call WriteToIni "${iniCharacter},Wizard,Evac Spell"
+	/call WriteToIni "${iniCharacter},Wizard,Auto-Harvest (On/Off)"
+	/call WriteToIni "${iniCharacter},Wizard,Harvest#1"
 
 /if (${Debug}) /echo <== WIZ_CharacterSettings -|
 /RETURN

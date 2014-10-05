@@ -57,8 +57,8 @@ SUB check_Canni
 Sub SHM_Setup
 /if (${Debug}) /echo |- SHM_Setup ==>
 	
-	/call IniToVar "${Character_Ini},Shaman,Auto-Canni (On/Off)" AutoCanni bool outer
-	/call IniToArray "${Character_Ini},Shaman,Canni#" canniSpells
+	/call IniToVar "${iniCharacter},Shaman,Auto-Canni (On/Off)" AutoCanni bool outer
+	/call IniToArray "${iniCharacter},Shaman,Canni#" canniSpells
 	
 /if (${Debug}) /echo <== SHM_Setup -|
 /return
@@ -94,8 +94,8 @@ SUB SHM_MacroSettings
 SUB SHM_CharacterSettings
 /if (${Debug}) /echo |- SHM_CharacterSettings ==>
 
-	/call WriteToIni "${Character_Ini},Shaman,Auto-Canni (On/Off)"
-	/call WriteToIni "${Character_Ini},Shaman,Canni#1"
+	/call WriteToIni "${iniCharacter},Shaman,Auto-Canni (On/Off)"
+	/call WriteToIni "${iniCharacter},Shaman,Canni#1"
 
 /if (${Debug}) /echo <== SHM_CharacterSettings -|
 /RETURN
