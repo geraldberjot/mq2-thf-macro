@@ -5,10 +5,10 @@
 |- Contains setup functions for thf.mac								-|
 |--------------------------------------------------------------------|
 
-#include includes\ninjadvloot.inc
-#include includes\wait4Rez.inc
-#include includes\sub.inc
-#include includes\events.inc
+#include thf includes\ninjadvloot.inc
+#include thf includes\wait4Rez.inc
+#include thf includes\sub.inc
+#include thf includes\events.inc
 
 #include thf includes\thf_Alerts.inc
 #include thf includes\thf_Assists.inc
