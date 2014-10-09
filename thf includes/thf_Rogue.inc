@@ -9,23 +9,19 @@
 |- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.﻿  -|
 |--------------------------------------------------------------------------------|
 Sub check_rogStrike()
-﻿  /if (${Debug}) /echo |- rogueStrike ==>
-﻿  
-﻿	| Pick up the lastest discipline
-	/if (!${Defined[strikeDiscipline]}) /declare strikeDiscipline string outer
-	/call pickLatestStrikeDiscipline
-
-﻿  /if (${Me.AbilityReady[Hide]}) {
+﻿	/if (${Debug}) /echo |- rogueStrike ==>
+﻿ 
+	/if (${Me.AbilityReady[Hide]}) {
 ﻿  ﻿  | Stop moving.
 ﻿  ﻿  /if (${Stick.Active}) {
-﻿  ﻿  ﻿  /squelch /stick pause
-﻿  ﻿  ﻿  /delay 2s !${Me.Moving}
+﻿  ﻿  ﻿	/squelch /stick pause
+﻿  ﻿  ﻿	/delay 2s !${Me.Moving}
 ﻿  ﻿  }
 ﻿  ﻿  
 ﻿  ﻿  | Turn off combat.
 ﻿  ﻿  /if (${Me.Combat}) {
-﻿  ﻿  ﻿  /attack off
-﻿  ﻿  ﻿  /delay 2s !${Me.Combat}
+﻿  ﻿  ﻿	/attack off
+﻿  ﻿  ﻿	/delay 2s !${Me.Combat}
 ﻿  ﻿  }
 ﻿  ﻿  
 ﻿  ﻿  | Sneak
@@ -37,70 +33,44 @@ Sub check_rogStrike()
 ﻿  ﻿  /delay 20 ${Me.Invis}
 ﻿  ﻿  
 ﻿  ﻿  | Use 'Assassin's Strike' type disc.
-﻿  ﻿  /if (${Me.Invis}) {
-﻿  ﻿  ﻿  /if (${Me.CombatAbilityReady[${strikeDiscipline}]) {
-﻿  ﻿  ﻿  ﻿  /disc  ${strikeDiscipline}
-﻿  ﻿  ﻿  } else {
-﻿  ﻿  ﻿  ﻿  /declare i int local
-﻿  ﻿  ﻿  ﻿  /for i 1 to ${strikeItemsArray.Size}
-			/if (!${Defined[myItem]}) /declare myItem item local
-			/varset myItem ${FindItem[=${strikeItemsArray[${i}]}
-			/if (!${Defined[timer-${myItem.ID}]}) {
-				/declare timer-${myItem.ID} timer outer ${myTimer.TimerReady}
+﻿	/if (${Me.Invis}) {
+﻿		/if (${Me.CombatAbilityReady[${strikeDiscipline}]) {
+﻿			/disc  ${strikeDiscipline}
+		} else {
+			/if (!${Defined[strikeItem]}) /declare strikeItem item local
+			/varset strikeItem ${FindItem[=Frozen Whispering Tunic]}
+			/if (${strikeItem.ID}) {
+				/if (${timer-${strikeItem.ID}.Value} <= 0) {
+					/casting ${strikeItem.ID}|item
+					/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
+				}
+			} else {
+				/varset strikeItem ${FindItem[=Cloak of the Deceiver]}
+				/if (${strikeItem.ID}) {
+					/if (${timer-${strikeItem.ID}.Value} <= 0) {
+						/casting ${strikeItem.ID}|item
+						/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
+					}
+				} else {
+					/varset strikeItem ${FindItem[=Cloak of the Deceiver]}
+					/if (${strikeItem.ID}) {
+						/if (${timer-${strikeItem.ID}.Value} <= 0) {
+							/casting ${strikeItem.ID}|item
+							/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
+						}
+					} else {
+					}
+				}
 			}
-			﻿/if (${timer-${myItem.ID}} <= 0) {
-				﻿/casting "${strikeItemsArray[${i}]}" item
-				/varset timer-${myItem.ID} ${myTimer.TimerReady}
-			﻿}
-﻿  ﻿  ﻿  ﻿  /next i
-﻿  ﻿  ﻿  }
-﻿  ﻿  ﻿  
-﻿  ﻿  ﻿  /attack on
-﻿  ﻿  ﻿  /squelch /stick unpause
-﻿  ﻿  ﻿  /delay 10
-﻿  ﻿  }
-﻿  }
+		}
 
-﻿  /if (${Debug}) /echo <== rogueStrike -|
+		/attack on
+		/squelch /stick unpause
+		/delay 10
+	}
+
+	/﻿if (${Debug}) /echo <== rogueStrike -|
 /return
-
-SUB pickLatestStrikeDiscipline()
-	/if (${Me.CombatAbility[Death Bringer Rk. III]}) {
-		/varset strikeDiscipline "Death Bringer Rk. III"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Death Bringer Rk. II]}) {
-		/varset strikeDiscipline "Death Bringer Rk. II"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Death Bringer Rk. I]}) {
-		/varset strikeDiscipline "Death Bringer Rk. I"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Daggerfall]}) {
-		/varset strikeDiscipline "Daggerfall"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Ancient: Chaos Strike]}) {
-		/varset strikeDiscipline "Ancient: Chaos Strike"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Kyv Strike]}) {
-		/varset strikeDiscipline "Kyv Strike"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Assassin's Strike]}) {
-		/varset strikeDiscipline "Assassin's Strike"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Thief's Vengeance]}) {
-		/varset strikeDiscipline "Thief's Vengeance"
-		/RETURN
-	}
-	/if (${strikeDisc.Equal[Sneak Attack]}) {
-		/varset strikeDiscipline "Sneak Attack"
-	}
-/RETURN
 
 |------------------------------------------------------------|
 |- AutoHide﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  -|
@@ -159,19 +129,76 @@ sub AutoEvade
 |- ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  ﻿  -|
 |------------------------------------------------|
 Sub ROG_Setup
-﻿  /if (${Debug}) /echo |- ROG_Setup ==>
-﻿  
-  | Auto-Hide
-﻿  /call IniToVar "${iniCharacter},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
-﻿  
-﻿  | Auto-Evade
-﻿  /call IniToVar "${iniCharacter},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
-﻿  /if (${AutoEvade}) /call BuildArray MyAbilities Evade
-﻿  
+﻿	/if (${Debug}) /echo |- ROG_Setup ==>
+
+	| Auto-Hide
+	/call IniToVar "${iniCharacter},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
+	
+	| Auto-Evade
+	/call IniToVar "${iniCharacter},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
+	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
+﻿﻿	
+	| Pick up the lastest discipline
+	/call getLatestStrikeDiscipline
+	
+	/call createStrikeItemsTimer
+
 ﻿  /if (${Debug}) /echo <== ROG_Setup -|
 /return
 
+|--------------------------------------------------------|
+|- Check every strike discipline to get the highest one -|
+|--------------------------------------------------------|
+SUB getLatestStrikeDiscipline()
+	/if (${Debug}) /echo |- getLatestStrikeDiscipline ==>
+	
+	/if (!${Defined[strikeDiscipline]}) /declare strikeDiscipline string outer
 
+	/if (${Me.CombatAbility[Death Bringer Rk. III]}) {
+		/varset strikeDiscipline "Death Bringer Rk. III"
+	} else /if (${strikeDisc.Equal[Death Bringer Rk. II]}) {
+		/varset strikeDiscipline "Death Bringer Rk. II"
+	} else /if (${strikeDisc.Equal[Death Bringer Rk. I]}) {
+		/varset strikeDiscipline "Death Bringer Rk. I"
+	} else /if (${strikeDisc.Equal[Daggerfall]}) {
+		/varset strikeDiscipline "Daggerfall"
+	} else /if (${strikeDisc.Equal[Ancient: Chaos Strike]}) {
+		/varset strikeDiscipline "Ancient: Chaos Strike"
+	} else /if (${strikeDisc.Equal[Kyv Strike]}) {
+		/varset strikeDiscipline "Kyv Strike"
+	} else /if (${strikeDisc.Equal[Assassin's Strike]}) {
+		/varset strikeDiscipline "Assassin's Strike"
+	} else /if (${strikeDisc.Equal[Thief's Vengeance]}) {
+		/varset strikeDiscipline "Thief's Vengeance"
+	} else /if (${strikeDisc.Equal[Sneak Attack]}) {
+		/varset strikeDiscipline "Sneak Attack"
+	}
+	
+	/if (${Debug}) /echo <== getLatestStrikeDiscipline -|
+/RETURN
+
+|--------------------------------------------------------|
+|- Create the timers of the strike items available      -|
+|--------------------------------------------------------|
+SUB createStrikeItemsTimer()
+	/if (${Debug}) /echo |- createStrikeItemsTimer ==>
+	
+	/if (!${Defined[strikeItem]}) /declare strikeItem item local
+	
+	/varset strikeItem ${FindItem[=Frozen Whispering Tunic]}
+	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 5m
+	
+	/varset strikeItem ${FindItem[=Cloak of the Deceiver]}
+	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 40s
+	
+	/varset strikeItem ${FindItem[=Shroud of the Deceiver]}
+	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 40s
+
+	/varset strikeItem ${FindItem[=Fizzlethorp's Cloak of Shadows]}
+	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 40s
+
+	/if (${Debug}) /echo <== createStrikeItemsTimer -|
+/RETURN
 
 Sub ROG_Background_Events
 
@@ -193,7 +220,7 @@ SUB ROG_MacroSettings
 ﻿  /call WriteToIni "${advSettings_Ini},ROG Functions,ROG Function#2" "check_CombatBuffs" 1
 ﻿  /call WriteToIni "${advSettings_Ini},ROG Functions,ROG Function#3" "check_Buffs" 1
 
-/if (${Debug}) /echo <== ROG_MacroSettings -|
+	/if (${Debug}) /echo <== ROG_MacroSettings -|
 /RETURN
 
 

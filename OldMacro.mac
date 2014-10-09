@@ -19,10 +19,10 @@
 #Event	Channels				"Channels: #*#"
 #Event	Zone					"You have entered #*#"
 
-#Include include\ninjadvloot.inc
-#Include include\wait4Rez.inc
-#Include include\sub.inc
-#Include include\events.inc
+#Include includes\ninjadvloot.inc
+#Include includes\wait4Rez.inc
+#Include includes\sub.inc
+#Include includes\events.inc
 
 Sub Main
 	/declare Delai int outer 6
