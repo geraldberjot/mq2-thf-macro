@@ -223,17 +223,17 @@ Sub checkDownShitBuff
 	}
 /return
 
-Sub Event_Dead
+Sub EVENT_Dead
 	|/call Wait4Rez
 	/ssm max
 /return
 
-Sub Event_Camp
+Sub EVENT_Camp
 	/echo Camping...
 	/end
 /return
 
-Sub Event_Hail(String Line, String Cible)
+Sub EVENT_Hail(String Line, String Cible)
 	/declare toTheZone string local
 	/varset toTheZone ${Ini[${iniHail},General,${Cible.Lower}]}
 	/if (${toTheZone.Length} && ${toTheZone.NotEqual[NULL]}) {
@@ -243,11 +243,11 @@ Sub Event_Hail(String Line, String Cible)
 	}
 	/return
 
-Sub Event_Task(String Line, String Tache)
+Sub EVENT_Task(String Line, String Tache)
 	/tell ${myMain} ${Line}
 /return
 
-Sub Event_Assign(String Line, String Tache)
+Sub EVENT_Assign(String Line, String Tache)
 	/tell ${myMain} ${Line}
 /return
 
@@ -259,7 +259,7 @@ Sub checkPlugIn
 	}
 /return
 
-Sub Event_Tell(Line, string From, string Msg)
+Sub EVENT_Tell(Line, string From, string Msg)
 	/if (${From.Find[${myMain}]}) {
 		/if (${Msg.Equal[loot]}) {
 			/call LootMobs
@@ -274,7 +274,7 @@ Sub Event_Tell(Line, string From, string Msg)
 	}
 /return
 
-Sub Event_Group(Line, string From)
+Sub EVENT_Group(Line, string From)
 	/if (${From.Find[${myMain}]}) {
 		/if (!${Me.Grouped}) {
 			/invite
@@ -282,17 +282,17 @@ Sub Event_Group(Line, string From)
 	}
 /return
 
-Sub Event_DraekonVoice(string Line, string targetName)
+Sub EVENT_DraekonVoice(string Line, string targetName)
 	/moveto id ${Spawn[npc ${targetName}].ID}
 /return
 
 
-Sub Event_DraekonVoiceEnd(string Line, string targetName)
+Sub EVENT_DraekonVoiceEnd(string Line, string targetName)
 	/moveto id ${Spawn[npc Draekon].ID}
 /return
 
 
-Sub Event_DraekonNoGrass
+Sub EVENT_DraekonNoGrass
 	/if (${Me.Class.Name.Equal[Warrior]} || ${Me.Class.Name.Equal[Paladin]} || ${Me.Class.Name.Equal[Shadowknight]}) /return
 
 	/declare EndX float local			-1609.88
@@ -302,12 +302,12 @@ Sub Event_DraekonNoGrass
 /return
 
 
-Sub Event_DraekonGrass
+Sub EVENT_DraekonGrass
 	/moveto id ${Spawn[npc Draekon].ID}
 /return
 
 
-Sub Event_DraekonBelly
+Sub EVENT_DraekonBelly
 	/moveto id ${Spawn[npc Draekon].ID}
 /return
 

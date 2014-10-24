@@ -8,10 +8,10 @@
 |-		Over-all functionality / flow									-|
 |------------------------------------------------------------------------|
 
-#event saveMelody "<#1#> SaveMelody #2# #3#"
-#event saveMelody "<#1#> Save Melody #2# #3#"
-#event saveMelody "[MQ2] SaveMelody #2# #3#"
-#event saveMelody "[MQ2] Save Melody #2# #3#"
+#EVENT saveMelody "<#1#> SaveMelody #2# #3#"
+#EVENT saveMelody "<#1#> Save Melody #2# #3#"
+#EVENT saveMelody "[MQ2] SaveMelody #2# #3#"
+#EVENT saveMelody "[MQ2] Save Melody #2# #3#"
 SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 /if (${Debug}) /echo |- EVENT_saveMelody ==>
 

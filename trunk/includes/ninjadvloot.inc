@@ -34,15 +34,15 @@
 | 	/sellstuff - Target a vendor and this command will sell any item in your inventory marked sell. 
 | 	/depositstuff - Target your guildbanker and this command will deposit any item in your inventory marked keep into the guild bank.
 
-#Event CantLoot         "#*#may not loot this corpse#*#"
-#Event Sell             "#*#You receive#*# for the #1#(s)#*#"
-#Event EditIniItem      "[MQ2] LootIniItem #1# #2#"
-#Event SellStuff        "[MQ2] NinjadvLoot selling items to vendor"
-#Event Broke            "#*#you cannot afford#*#" 
-#Event Broke            "#*#you can't afford#*#" 
-#Event Forage           "Your forage mastery has enabled you to find something else!"
-#Event Forage           "You have scrounged up #*#"
-#Event InventoryFull    "#*#Your inventory appears full!#*#"
+#EVENT CantLoot         "#*#may not loot this corpse#*#"
+#EVENT Sell             "#*#You receive#*# for the #1#(s)#*#"
+#EVENT EditIniItem      "[MQ2] LootIniItem #1# #2#"
+#EVENT SellStuff        "[MQ2] NinjadvLoot selling items to vendor"
+#EVENT Broke            "#*#you cannot afford#*#" 
+#EVENT Broke            "#*#you can't afford#*#" 
+#EVENT Forage           "Your forage mastery has enabled you to find something else!"
+#EVENT Forage           "You have scrounged up #*#"
+#EVENT InventoryFull    "#*#Your inventory appears full!#*#"
 
 Sub SetupAdvLootVars(string ChangeIniFile)
 
@@ -102,7 +102,7 @@ Sub ALLoadVar(IniSection,IniVar,IniValue,VarType)
 
 | ****************  Loot Mobs Section ******************** |
 
-Sub Event_CantLoot
+Sub EVENT_CantLoot
    /varset CantLootID ${Target.ID}
 /return
 
@@ -247,7 +247,7 @@ Sub CheckCursor
 /return
 
 | **************** Foraged Items Section ******************** |
-Sub Event_Forage
+Sub EVENT_Forage
     /if (!${LootForage}) /return
     /declare ForagedItem string local
     :MoreToAutoInventory
@@ -355,7 +355,7 @@ Sub NPC(NPCName)
 /return
 
 | **************** Sell Loot Section ******************** |
-Sub Event_Sell(string soldstr, string ItemName)
+Sub EVENT_Sell(string soldstr, string ItemName)
     /if ( ${AddNewSales} ) {
         /echo Setting ${ItemName} to sell
         /ini "${NinjaIniFile}" "${ItemName.Left[1]}" "${ItemName}" Sell
@@ -393,7 +393,7 @@ Sub DepositToGuildBank(ItemToDeposit)
 /return
 
 | **************** Item set ini file event ******************** 
-    Sub Event_EditIniItem(ItemString,ItemAction,ItemName)
+    Sub EVENT_EditIniItem(ItemString,ItemAction,ItemName)
         /if (${Cursor.ID}) {
             /echo -- Setting ${ItemName} to ${ItemAction}
             /ini "${NinjaIniFile}" ${ItemName.Left[1]} "${ItemName}" ${ItemAction}
@@ -403,17 +403,17 @@ Sub DepositToGuildBank(ItemToDeposit)
     /return
 
 | **************** Sell Stuff Event ******************** 
-    Sub Event_SellStuff
+    Sub EVENT_SellStuff
         /call DoLootStuff sell
     /return
     
 | **************** Deposit Stuff Event *******************
-    Sub Event_DepositStuff
+    Sub EVENT_DepositStuff
         /call DoLootStuff deposit
     /return
     
 | **************** Broke Event ******************** 
-Sub Event_Broke 
+Sub EVENT_Broke 
     /echo You are out of money! 
     /endmacro 
 /return
@@ -492,7 +492,7 @@ Sub ZCheck(float Zcur, float Zdiff)
     }
 /return
 
-Sub Event_InventoryFull
+Sub EVENT_InventoryFull
     /echo Your Inventory is full. Turning off looting functions.
     /varset LootMobs FALSE
     /varset InventoryFull 1

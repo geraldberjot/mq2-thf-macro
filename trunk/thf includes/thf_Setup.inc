@@ -34,11 +34,11 @@
 |- Checks for and enables required macro plugins.	-|
 |----------------------------------------------------|
 SUB check_Plugins
-/echo Checking plugins...
+	/echo Checking plugins...
 
 	| REQUIRED PLUGINS ==>
 	
-| -----------------------------------------------------------------------------------------------------------------------------------Check MQ2EQBC.
+	|- Check MQ2EQBC.
 	/if (!${Plugin[MQ2EQBC].Name.Length}) {
 		/echo Plugin MQ2EQBC is not loaded, attempting to resolve...
 		/plugin MQ2EQBC
@@ -49,7 +49,7 @@ SUB check_Plugins
 		}
 	}
 
-| -------------------------------------------------------------------------------------------Auto-Connect to EQBCS.
+	|- Auto-Connect to EQBCS.
 	/if (${Bool[${EQBC}]}) {
 		/if (!${EQBC.Connected}) {
 			/bccmd connect
@@ -59,7 +59,7 @@ SUB check_Plugins
 		}
 
 
-	| --------------------------------------------------------------------------------------------------------------------------------Check MQ2NetBots.
+	|- Check MQ2NetBots.
 		/if (!${Plugin[MQ2NetBots].Name.Length}) {
 			/echo Plugin MQ2NetBots is not loaded, attempting to resolve...
 			/plugin MQ2NetBots
@@ -69,12 +69,12 @@ SUB check_Plugins
 			}
 		}
 		
-	| -------------------------------------------------------------------------------------------Auto-Connect to NetBots.
+	|- Auto-Connect to NetBots.
 		/if (${NetBots}) {
 			/squelch /netbots on grab=on send=on
 		}
 		
-	| -----------------------------------------------------------------------------------------------------------------------------Check MQ2NetAdvPath.
+	|- Check MQ2NetAdvPath.
 		/if (!${Plugin[MQ2NetAdvPath].Name.Length}) {
 			/echo Plugin MQ2NetAdvPath is not loaded, attempting to resolve...
 			/plugin MQ2NetAdvPath
@@ -85,7 +85,7 @@ SUB check_Plugins
 		}
 	}
 	
-| ------------------------------------------------------------------------------------------------------------------------------Check MQ2MoveUtils.
+	|- Check MQ2MoveUtils.
 	/if (!${Plugin[MQ2MoveUtils].Name.Length}) {
 		/echo Plugin MQ2MoveUtils is not loaded, attempting to resolve...
 		/plugin MQ2MoveUtils
@@ -101,7 +101,7 @@ SUB check_Plugins
 		}
 	}	
 
-| -------------------------------------------------------------------------------------------------------------------------------Check MQ2Exchange.
+	|- Check MQ2Exchange.
 	/if (!${Plugin[MQ2Exchange].Name.Length}) {
 		/echo Plugin MQ2Exchange is not loaded, attempting to resolve...
 		/plugin MQ2Exchange
@@ -112,7 +112,7 @@ SUB check_Plugins
 		}
 	}
 
-| ----------------------------------------------------------------------------------------------------------------------------------Check MQ2Twist.
+	|- Check MQ2Twist.
 	/if (${Select[${Me.Class.ShortName},BRD]}) {
 		/if (!${Plugin[MQ2Twist].Name.Length}) {
 			/echo Plugin Unable to detect MQ2Twist, attempting to resolve...
@@ -125,13 +125,13 @@ SUB check_Plugins
 		}	
 	}
 
-| ----------------------------------------------------------------------------------------------------------------------------Check MQ2ItemDisplay.
+	|- Check MQ2ItemDisplay.
 	/if (!${Plugin[mq2itemdisplay].Name.Length}) /plugin MQ2ItemDisplay
 
-| ------------------------------------------------------------------------------------------------------------------------------------Check MQ2HUD.
+	|- Check MQ2HUD.
 	/if (!${Plugin[mq2hud].Name.Length}) /plugin MQ2HUD	
 	
-| <== REQUIRED PLUGINS
+	| <== REQUIRED PLUGINS
 /RETURN
 
 |----------------------------------------------------|
