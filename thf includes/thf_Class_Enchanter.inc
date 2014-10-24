@@ -10,11 +10,11 @@
 
 
 
-#event add_RuneTarget "<#1#> Rune on"
-#event add_RuneTarget "<#*#> Rune on #1#"
-sub event_add_RuneTarget(string line, string RuneTarget)
+#EVENT add_RuneTarget "<#1#> Rune on"
+#EVENT add_RuneTarget "<#*#> Rune on #1#"
+sub EVENT_add_RuneTarget(string line, string RuneTarget)
 /if (${Me.Class.ShortName.Equal[ENC]}) {
-/if (${Debug}) /echo |- event_add_RuneTarget ==>
+/if (${Debug}) /echo |- EVENT_add_RuneTarget ==>
 	
 	/if (!${SpawnCount[pc ${RuneTarget}]}) {
 		/docommand ${ChatToggle} I don't see any PCs matching [${RuneTarget}]...
@@ -53,12 +53,12 @@ sub event_add_RuneTarget(string line, string RuneTarget)
 
 
 
-#event remove_RuneTarget "<#1#> Rune Off"
-#event remove_RuneTarget "<#*#> Rune Off #1#"
-#event remove_RuneTarget "<#*#> End Rune on #1#"
-#event remove_RuneTarget "<#*#> All runes off"
-#event remove_RuneTarget "<#*#> end runes"
-sub event_remove_RuneTarget(line, ChatSender)
+#EVENT remove_RuneTarget "<#1#> Rune Off"
+#EVENT remove_RuneTarget "<#*#> Rune Off #1#"
+#EVENT remove_RuneTarget "<#*#> End Rune on #1#"
+#EVENT remove_RuneTarget "<#*#> All runes off"
+#EVENT remove_RuneTarget "<#*#> end runes"
+sub EVENT_remove_RuneTarget(line, ChatSender)
 /if (${Me.Class.ShortName.Equal[ENC]}) {
 /if (${Debug}) /echo |- remove_RuneTarget ==>
 
@@ -183,8 +183,8 @@ Sub ENC_Aliases
 
 
 
-#event AutoMez "<#*#> Mez All"
-sub event_AutoMez
+#EVENT AutoMez "<#*#> Mez All"
+sub EVENT_AutoMez
 /if (${Debug}) /echo |- AutoMez -| ==>
 /if (!${Defined[AutoMez_Spell]} && ${Ini[${iniCharacter},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)].Length}) {
 	/call INItoVar "${iniCharacter},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)" UNDEFINED string local
@@ -242,17 +242,17 @@ sub MezTarget
 }
 /delay 5s !${Me.Casting.ID}
 /return
-#event AutoMez_Off "<#*#> End AutoMez"
-#event AutoMez_Off "<#*#> AutoMez off"
-sub event_AutoMez_Off
+#EVENT AutoMez_Off "<#*#> End AutoMez"
+#EVENT AutoMez_Off "<#*#> AutoMez off"
+sub EVENT_AutoMez_Off
 /if (${do_AutoMez}) {
 	/docommand ${ChatToggle} I will no longer mez targets.
 	/varset do_AutoMez FALSE
 }
 /return
-#event AutoMez_On "<#*#> Start AutoMez"
-#event AutoMez_On "<#*#> AutoMez On"
-sub event_AutoMez_On
+#EVENT AutoMez_On "<#*#> Start AutoMez"
+#EVENT AutoMez_On "<#*#> AutoMez On"
+sub EVENT_AutoMez_On
 /if (!${do_AutoMez}) {
 	/docommand ${ChatToggle} Attempting to mez adds.
 	/varset do_AutoMez TRUE

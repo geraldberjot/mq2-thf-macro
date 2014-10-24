@@ -8,9 +8,9 @@
 |-		Over-all functionality / flow										-|
 |----------------------------------------------------------------------------|
 
-#event petWeapons "<#1#> Pet Weapons"
-#event petWeapons "<#1#> Pet Toys"
-sub event_petWeapons(string line, string from)
+#EVENT petWeapons "<#1#> Pet Weapons"
+#EVENT petWeapons "<#1#> Pet Toys"
+sub EVENT_petWeapons(string line, string from)
 	/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_petWeapons ==>
 
 	/if (${petItems.Size}) {
@@ -145,12 +145,12 @@ sub event_petWeapons(string line, string from)
 
 
 
-#event distributePetWeapons "#1# tells you, 'Hand out Pet Weapons'"
-#event distributePetWeapons "<#1#> Hand out Pet Weapons"
-#event distributePetWeapons "#1# tells you, 'Distribute Pet Weapons'"
-#event distributePetWeapons "<#1#> Distribute Pet Weapons"
-sub event_distributePetWeapons(line, ChatSender)
-/if (${Debug} || ${Debug_MAG}) /echo |- event_distributePetWeapons ==>
+#EVENT distributePetWeapons "#1# tells you, 'Hand out Pet Weapons'"
+#EVENT distributePetWeapons "<#1#> Hand out Pet Weapons"
+#EVENT distributePetWeapons "#1# tells you, 'Distribute Pet Weapons'"
+#EVENT distributePetWeapons "<#1#> Distribute Pet Weapons"
+sub EVENT_distributePetWeapons(line, ChatSender)
+/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_distributePetWeapons ==>
 
 	/if (${petItems.Size}) {
 	
@@ -229,7 +229,7 @@ sub event_distributePetWeapons(line, ChatSender)
 		}
 	}
 
-/if (${Debug} || ${Debug_MAG}) /echo <== event_distributePetWeapons -|
+/if (${Debug} || ${Debug_MAG}) /echo <== EVENT_distributePetWeapons -|
 /return
 
 
@@ -267,9 +267,9 @@ SUB check_PetWeapons
 
 
 |**
-#event CoH_Group "#*# tells the group, 'CoH the group"
-#event CoH_Group "#*# tells the group, 'CoH group"
-sub event_CoH_Group
+#EVENT CoH_Group "#*# tells the group, 'CoH the group"
+#EVENT CoH_Group "#*# tells the group, 'CoH group"
+sub EVENT_CoH_Group
 /if (${Debug} || ${Debug_MAG}) /echo |- CoH_Group ==>
 
 	/if (${Defined[cohSpell]}) {

@@ -145,22 +145,22 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 
 			| *** Set mana dump variables *** |
 			
-				/declare event_Targets string local
-				/declare event_Pct int local NULL
+				/declare EVENT_Targets string local
+				/declare EVENT_Pct int local NULL
 				/declare i int local 1
 			
 				:next_Arg
 				/if (${eventParams.Arg[${i}, ].Length}) {
 				
-					| If the argument is an integer, set event_Pct
+					| If the argument is an integer, set EVENT_Pct
 					/if (${Int[${eventParams.Arg[${i}, ]}]}) {
-						/varset event_Pct ${eventParams.Arg[${i}, ]}
-						/if (${Debug}) /echo event_Pct=${event_Pct}
+						/varset EVENT_Pct ${eventParams.Arg[${i}, ]}
+						/if (${Debug}) /echo EVENT_Pct=${EVENT_Pct}
 						
-					| If the argument is NOT an integer, add it to the list of event_Targets
+					| If the argument is NOT an integer, add it to the list of EVENT_Targets
 					} else /if (!${eventParams.Arg[${i}, ].Equal[start]} && !${eventParams.Arg[${i}, ].Equal[On]})  {
-						/varset event_Targets ${event_Targets}${eventParams.Arg[${i}, ]},
-						/if (${Debug}) /echo event_Targets=${event_Targets}
+						/varset EVENT_Targets ${EVENT_Targets}${eventParams.Arg[${i}, ]},
+						/if (${Debug}) /echo EVENT_Targets=${EVENT_Targets}
 					}
 					
 					/varcalc i ${i} + 1
@@ -168,12 +168,12 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 				}
 				
 				| Set manaDump_Targets
-				/if (${Bool[${event_Targets}]}) /varset manaDump_Targets ${event_Targets}
+				/if (${Bool[${EVENT_Targets}]}) /varset manaDump_Targets ${EVENT_Targets}
 				/if (!${Bool[${manaDump_Targets}]}) /varset manaDump_Targets All
 				/if (${manaDump_Targets.Right[1].Equal[,]}) /varset manaDump_Targets ${manaDump_Targets.Left[${Math.Calc[${manaDump_Targets.Length} - 1]}]}
 				
 				| Set manaDump_Pct
-				/if (${Bool[${event_Pct}]}) /varset manaDump_Pct ${event_Pct}
+				/if (${Bool[${EVENT_Pct}]}) /varset manaDump_Pct ${EVENT_Pct}
 				/if (!${Bool[${manaDump_Pct}]}) /varset manaDump_Pct 95
 				
 				| Set manaDump

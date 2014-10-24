@@ -90,25 +90,25 @@ sub check_celestialRegen
 
 
 
-#event Rez "<#1#> Rez"
-#event Rez "<#1#> Rezz"
-#event Rez "<#1#> Rez me"
-#event Rez "<#1#> Rezz me"
-#event Rez "<#*#> RezOn #1#"
-#event Rez "<#*#> Rez On #1#"
-#event Rez "#1# tells you, 'Rez'"
-#event Rez "#1# tells you, 'Rezz'"
-#event Rez "#1# tells you, 'Rez me'"
-#event Rez "#1# tells you, 'Rezz me'"
-#event Rez "#*# tells you, 'RezOn #1#'"
-#event Rez "#*# tells you, 'Rez On #1#'"
-#event Rez "#1# tells the group, 'Rez'"
-#event Rez "#1# tells the group, 'Rezz'"
-#event Rez "#1# tells the group, 'Rez me'"
-#event Rez "#1# tells the group, 'Rezz me'"
-#event Rez "#*# tells the group, 'RezOn #1#'"
-#event Rez "#*# tells the group, 'Rez On #1#'"
-sub Event_Rez(string line, string ChatSender)
+#EVENT Rez "<#1#> Rez"
+#EVENT Rez "<#1#> Rezz"
+#EVENT Rez "<#1#> Rez me"
+#EVENT Rez "<#1#> Rezz me"
+#EVENT Rez "<#*#> RezOn #1#"
+#EVENT Rez "<#*#> Rez On #1#"
+#EVENT Rez "#1# tells you, 'Rez'"
+#EVENT Rez "#1# tells you, 'Rezz'"
+#EVENT Rez "#1# tells you, 'Rez me'"
+#EVENT Rez "#1# tells you, 'Rezz me'"
+#EVENT Rez "#*# tells you, 'RezOn #1#'"
+#EVENT Rez "#*# tells you, 'Rez On #1#'"
+#EVENT Rez "#1# tells the group, 'Rez'"
+#EVENT Rez "#1# tells the group, 'Rezz'"
+#EVENT Rez "#1# tells the group, 'Rez me'"
+#EVENT Rez "#1# tells the group, 'Rezz me'"
+#EVENT Rez "#*# tells the group, 'RezOn #1#'"
+#EVENT Rez "#*# tells the group, 'Rez On #1#'"
+sub EVENT_Rez(string line, string ChatSender)
 /if (${Me.Class.ShortName.Equal[CLR]}) {
 	
 	/if (${ChatSender.Left[1].Compare[ ]}<0) /varset ChatSender ${ChatSender.Right[-2].Left[-1]}
@@ -247,8 +247,8 @@ SUB EVENT_AE_Rez
 
 
 
-#event CorpseExpired "This corpse #1# be resurrected."
-Sub Event_CorpseExpired(line, corpseExpired)
+#EVENT CorpseExpired "This corpse #1# be resurrected."
+Sub EVENT_CorpseExpired(line, corpseExpired)
 /if (${Defined[lastChecked]}) {
 	/if (${Debug}) /echo |- EVENT_CorpseExpired ==>
 

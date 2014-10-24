@@ -1,6 +1,6 @@
 | v2.1
 
-Sub Event_Chat(string ChatType, string Sender, string ChatText)
+Sub EVENT_Chat(string ChatType, string Sender, string ChatText)
 	/echo ${ChatType}, ${Sender}, ${ChatText}
 	/return
 	/if (!${ChatType.Equal[TELL]} || ${Sender.Equal[${Me.CleanName}]} || !${Spawn[${Sender}].ID}) /return
@@ -8,20 +8,20 @@ Sub Event_Chat(string ChatType, string Sender, string ChatText)
 /return
 
 
-Sub Event_ChatSetup(Line, string ChatText)
+Sub EVENT_ChatSetup(Line, string ChatText)
 	/echo ${ChatText}
 	/varset chat ${ChatText}
 	/echo !!! >>> ChatSetup [ ${chat} ] done <<< !!!
 /return
 
 
-Sub Event_ChatDebuffSetup(Line, string ChatDebuffText)
+Sub EVENT_ChatDebuffSetup(Line, string ChatDebuffText)
 	/varset chatdebuff ${ChatDebuffText}
 	/echo !!! >>> ChatDebuffSetup [ ${chatdebuff} ] done <<< !!!
 /return
 
 
-Sub Event_Itemcheck(Line, string OutChannel, string Item)
+Sub EVENT_Itemcheck(Line, string OutChannel, string Item)
 	/if (${FindItemCount[=${Item}]}>0 || ${FindItemBankCount[=${Item}]}>0) {
 		/if (${FindItemCount[=${Item}]}>0) /${OutChannel} FOUND (${FindItemCount[=${Item}]}) ${Item} in inventory
 		/if (${FindItemBankCount[=${Item}]}>0) /${OutChannel} FOUND (${FindItemBankCount[=${Item}]}) ${Item} in bank
@@ -30,7 +30,7 @@ Sub Event_Itemcheck(Line, string OutChannel, string Item)
 /return
 
 
-Sub Event_ValikStart
+Sub EVENT_ValikStart
 	/if (${Me.Class.Name.Equal[Wizard]}) /varset EventValik GO
 /return
 
@@ -52,7 +52,7 @@ Sub ValikCheck
 /return
 
 
-Sub Event_ValikSave
+Sub EVENT_ValikSave
 
 	/if (${Me.Class.Name.Equal[Wizard]}) {
 
@@ -68,7 +68,7 @@ Sub Event_ValikSave
 /return
 
 
-Sub Event_KhasvaStart
+Sub EVENT_KhasvaStart
 
 	/if (!${Defined[DispelTimer]})	/declare DispelTimer timer outer 0
 	/if (!${Defined[AlertTimer]})	/declare AlertTimer timer outer 0
@@ -114,7 +114,7 @@ Sub KhasvaCheck
 /return
 
 
-Sub Event_KhasvaAdds
+Sub EVENT_KhasvaAdds
 
 	/target id ${Spawn[npc Khasva].ID}
 	/if (${broadcast}==1) /${broadcastTell} [${Time.Time24}] Khasva is at ${Spawn[npc Khasva].PctHPs}. Adds spawned! Found ${SpawnCount[=Deathwalker Vampire]} of them.
@@ -122,7 +122,7 @@ Sub Event_KhasvaAdds
 /return
 
 
-Sub Event_KhasvaStrength
+Sub EVENT_KhasvaStrength
 
 	/echo [1] Red
 	/noparse /bcaa //if (${Math.Distance[-53.6,71.9,${Me.Z}]} < 15) /multiline ; /doortarget OBJ_NERIAK_LAMP_RED;/timed 10 /nomodkey /keypress u;/timed 10 /say Clicking Red
@@ -136,7 +136,7 @@ Sub Event_KhasvaStrength
 	/noparse /bcaa //if (${Math.Distance[-50.1,0.3,${Me.Z}]} < 15) /multiline ; /doortarget OBJ_NERIAK_LAMP_PURPLE;/timed 50 /nomodkey /keypress u;/timed 50 /say Clicking Purple
 /return
 
-Sub Event_KhasvaAgony
+Sub EVENT_KhasvaAgony
 	/echo [1] Yellow
 	/noparse /bcaa //if (${Math.Distance[-78.8,-57,${Me.Z}]} < 15) /multiline ; /doortarget OBJ_NERIAK_LAMP_YELLOW;/timed 10 /nomodkey /keypress u;/timed 10 /say Clicking Yellow
 	/echo [2] Purple
@@ -150,7 +150,7 @@ Sub Event_KhasvaAgony
 /return
 
 
-Sub Event_KhasvaBlood
+Sub EVENT_KhasvaBlood
 	/echo [1] Green
 	/noparse /bcaa //if (${Math.Distance[-53,-70.75,${Me.Z}]} < 15) /multiline ; /doortarget OBJ_NERIAK_LAMP_GREEN;/timed 10 /nomodkey /keypress u;/timed 10 /say Clicking Green
 	/echo [2] Red
@@ -164,7 +164,7 @@ Sub Event_KhasvaBlood
 /return
 
 
-Sub Event_KhasvaDread
+Sub EVENT_KhasvaDread
 	/echo [1] Purple
 	/noparse /bcaa //if (${Math.Distance[-50.1,0.3,${Me.Z}]} < 15) /multiline ; /doortarget OBJ_NERIAK_LAMP_PURPLE;/timed 10 /nomodkey /keypress u;/timed 10 /say Clicking Purple
 	/echo [2] Yellow
@@ -178,7 +178,7 @@ Sub Event_KhasvaDread
 /return
 
 
-Sub Event_Zenurix(string Line, string targetName)
+Sub EVENT_Zenurix(string Line, string targetName)
 
 	/declare EndX float local			-1050.85
 	/declare EndY float local			1969.45
@@ -198,7 +198,7 @@ Sub Event_Zenurix(string Line, string targetName)
 /return
 
 
-Sub Event_ZenurixOFF
+Sub EVENT_ZenurixOFF
 
 	/if (${intZenurixCallout}==1) {
 		/bc [Event] - Returning to Raid
@@ -209,21 +209,21 @@ Sub Event_ZenurixOFF
 /return
 
 
-Sub Event_DraekonVoice(string Line, string targetName)
+Sub EVENT_DraekonVoice(string Line, string targetName)
 
 	/moveto id ${Spawn[npc ${targetName}].ID}
 
 /return
 
 
-Sub Event_DraekonVoiceEnd(string Line, string targetName)
+Sub EVENT_DraekonVoiceEnd(string Line, string targetName)
 
 	/moveto id ${Spawn[npc Draekon].ID}
 
 /return
 
 
-Sub Event_DraekonNoGrass
+Sub EVENT_DraekonNoGrass
 
 	/if (${Me.Class.Name.Equal[Warrior]} || ${Me.Class.Name.Equal[Paladin]} || ${Me.Class.Name.Equal[Shadow Knight]}) /return
 
@@ -235,14 +235,14 @@ Sub Event_DraekonNoGrass
 /return
 
 
-Sub Event_DraekonGrass
+Sub EVENT_DraekonGrass
 
 	/moveto id ${Spawn[npc Draekon].ID}
 
 /return
 
 
-Sub Event_DraekonBelly
+Sub EVENT_DraekonBelly
 
 	/moveto id ${Spawn[npc Draekon].ID}
 
@@ -304,21 +304,21 @@ Sub checkTwins
 /return
 
 
-Sub Event_DruidEpicOff
+Sub EVENT_DruidEpicOff
 
 	/if (${broadcast}==1) /${broadcastTell} OFF Druid Epic "Ancient Frozen Staff of Brambles"
 
 /return
 
 
-Sub Event_DruidDonorOff
+Sub EVENT_DruidDonorOff
 
 	/if (${broadcast}==1) /${broadcastTell} OFF Druid Donor "Cerythi, Nature's Spirit"
 
 /return
 
 
-Sub Event_RemoveCurse
+Sub EVENT_RemoveCurse
 
 	/if (${Cast.Ready[Galadriel's Gift]} && ${Me.State.Equal[STAND]}) {
 		/casting "Galadriel's Gift" item
@@ -370,7 +370,7 @@ Sub Event_RemoveCurse
 /return
 
 
-Sub Event_Mana
+Sub EVENT_Mana
 
 	/if (${ManaCheckTimer}==0) /bc [Manacheck]
 	
@@ -468,21 +468,21 @@ Sub Event_Mana
 /return
 
 
-Sub Event_BuffSune(Line,Sender)
+Sub EVENT_BuffSune(Line,Sender)
 
 	/varset SuneType GO
 
 /return
 
 
-Sub Event_BuffFinals(Line,Sender)
+Sub EVENT_BuffFinals(Line,Sender)
 
 	/varset FinalsType GO
 
 /return
 
 
-Sub Event_RaidInvite(Line,Sender)
+Sub EVENT_RaidInvite(Line,Sender)
 
 	/if (${Raid.Leader.Name.Equal[${Me.CleanName}]}) {
 			/delay 5
@@ -492,9 +492,9 @@ Sub Event_RaidInvite(Line,Sender)
 /return
 
 
-Sub Event_ResurrectionToon(Line, RezToon, CastingToon)
+Sub EVENT_ResurrectionToon(Line, RezToon, CastingToon)
 
-|#Event ResurrectionToon   		"#*#rezz #1# #2#"
+|#EVENT ResurrectionToon   		"#*#rezz #1# #2#"
 |
 |/gsay Testline1: ${Param0}, ${Param1}, ${Param2}, ${Param3}
 |/gsay Testline2: 0${Param0}0, 1${Param1}1, 2${Param2}2, 3${Param3}3
@@ -544,7 +544,7 @@ Sub Event_ResurrectionToon(Line, RezToon, CastingToon)
 /return
 
 
-Sub Event_NoSpawn
+Sub EVENT_NoSpawn
 
 	/keypress esc
 	/if (${Me.Class.Name.Equal[Shaman]}) 		/varset TargetDebuffID 					0
@@ -565,14 +565,14 @@ Sub Event_NoSpawn
 /return
 
 
-Sub Event_Distracted
+Sub EVENT_Distracted
 
 	/delay 10
 
 /return
 
 
-Sub Event_Stand
+Sub EVENT_Stand
 
 	/stand up
 
@@ -580,7 +580,7 @@ Sub Event_Stand
 
 
 
-Sub Event_Restart
+Sub EVENT_Restart
 
 	/delay 10
 	/macro main.mac
@@ -588,7 +588,7 @@ Sub Event_Restart
 /return
 
 
-Sub Event_Reset
+Sub EVENT_Reset
 
 	/varset CothRepeat 0
 	/varset CothMode 0
@@ -621,7 +621,7 @@ Sub Event_Reset
 /return
 
 
-Sub Event_Died
+Sub EVENT_Died
 	/delay 20 !${Zone.ID}
 	/delay 100 ${Zone.ID}
 	/delay 5
@@ -630,11 +630,11 @@ Sub Event_Died
 	/varset AcceptType GO
 /return
 
-Sub Event_Finish
+Sub EVENT_Finish
 	/endmacro
 /return
 
-Sub Event_Channels(String line)
+Sub EVENT_Channels(String line)
 	/declare i int local
 	/declare max int local ${line.Count[,]}
 	/varcalc max ${max} + 1
@@ -648,12 +648,12 @@ Sub Event_Channels(String line)
 	/next i
 /return
 
-Sub Event_Camp
+Sub EVENT_Camp
 	/echo Camping...
 	/call endMacro
 /return
 
-Sub Event_Hail(String line, String Cible)
+Sub EVENT_Hail(String line, String Cible)
 	/declare toTheZone string local
 	/varset toTheZone ${Ini[${iniHail},General,${Cible.Lower}]}
 	/if (${toTheZone.Length} && ${toTheZone.NotEqual[NULL]}) {
@@ -663,15 +663,15 @@ Sub Event_Hail(String line, String Cible)
 	}
 	/return
 
-Sub Event_Task(String line, String Tache)
+Sub EVENT_Task(String line, String Tache)
 	/chat ${channel} ${myMain} ${line}
 /return
 
-Sub Event_Assign(String line, String Tache)
+Sub EVENT_Assign(String line, String Tache)
 	/chat ${channel} ${myMain} ${line}
 /return
 
-Sub Event_Tell(line, string from, string Msg)
+Sub EVENT_Tell(line, string from, string Msg)
 	/declare toonName string local
 	/call cleanToonName ${from}
 	/varset toonName ${Macro.Return}
@@ -691,7 +691,7 @@ Sub Event_Tell(line, string from, string Msg)
 /return
 
 | "#1# tells Team:#2#, 'Follow #3#'"
-Sub Event_Follow(String line, String from, String channelNumber, String who)
+Sub EVENT_Follow(String line, String from, String channelNumber, String who)
 	/declare toonName string local
 	/call cleanToonName ${from}
 	/varset toonName ${Macro.Return}
@@ -707,7 +707,7 @@ Sub Event_Follow(String line, String from, String channelNumber, String who)
 	}
 /return
 
-Sub Event_Group(String line, String from)
+Sub EVENT_Group(String line, String from)
 	/declare toonName string local
 	/call cleanToonName ${from}
 	/varset toonName ${Macro.Return}
@@ -717,7 +717,7 @@ Sub Event_Group(String line, String from)
 	}
 /return
 
-Sub Event_Zone(String line)
+Sub EVENT_Zone(String line)
 	/call joinChannel
 	/echo ${Me.CleanName}'s corpse
 	/tar ${Me.CleanName}'s corpse
@@ -726,9 +726,9 @@ Sub Event_Zone(String line)
 	}
 /return
 
-Sub Event_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
+Sub EVENT_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
 	/if (${EQBCCommand.Lower.Find[follow]}) {
-		/call Event_Follow "" ${EQBCSender} "" ${EQBCCommand.Lower.Replace[follow ,]}
+		/call EVENT_Follow "" ${EQBCSender} "" ${EQBCCommand.Lower.Replace[follow ,]}
 		/return
 	}
 	/if (${EQBCCommand.Lower.Find[gate]}) {

@@ -11,8 +11,8 @@
 |- Use, 'Assist on ${Target.ID}' in /bc.										-|
 |--------------------------------------------------------------------------------|
 #EVENT Assist "<#1#> #2# assist on #3#"
-SUB event_Assist(String line, String from, String who, Int mobID)
-	/if (${Debug} || ${Debug_Assists}) /echo |- event_Assist ==>
+SUB EVENT_Assist(String line, String from, String who, Int mobID)
+	/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_Assist ==>
 	
 	/call amIConcerned ${from} ${who}
 	/if (${Macro.Return}) {
@@ -81,7 +81,7 @@ SUB event_Assist(String line, String from, String who, Int mobID)
 		}
 	}
 	
-	/if (${Debug} || ${Debug_Assists}) /echo <== event_Assist -|
+	/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_Assist -|
 /RETURN
 
 |--------------------------------------------------------------------|
@@ -90,9 +90,9 @@ SUB event_Assist(String line, String from, String who, Int mobID)
 |--------------------------------------------------------------------|
 |- Use, '/backoff', or, 'Back off' in /bc.							-|
 |--------------------------------------------------------------------|
-#event BackOff "<#1#> Back Off"
-SUB Event_BackOff(String line, String from)
-	/if (${Debug} || ${Debug_Assists}) /echo |- Event_BackOff ==>
+#EVENT BackOff "<#1#> Back Off"
+SUB EVENT_BackOff(String line, String from)
+	/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_BackOff ==>
 
 	| -Verify the event
 	/call amIConcerned ${from} ${Me.CleanName}
@@ -108,7 +108,7 @@ SUB Event_BackOff(String line, String from)
 		/call AssistOff
 	}
 
-	/if (${Debug} || ${Debug_Assists}) /echo <== Event_BackOff -|
+	/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_BackOff -|
 /RETURN
 
 |----------------------------------------------------------------|
@@ -382,9 +382,9 @@ SUB check_IsLookingAt
 	/if (${Debug} || ${Debug_Assists}) /echo <== CheckIsLookingAt -|
 /RETURN ${FacingMe}
 
-#event setEnrageAttack "[MQ2] Setting enrage attack on #1# to #2#"
-#event setEnrageAttack "[MQ2] Set enrage attack on #1# to #2#"
-SUB Event_setEnrageAttack(String line, String npcName, String enrageSetting)
+#EVENT setEnrageAttack "[MQ2] Setting enrage attack on #1# to #2#"
+#EVENT setEnrageAttack "[MQ2] Set enrage attack on #1# to #2#"
+SUB EVENT_setEnrageAttack(String line, String npcName, String enrageSetting)
 	/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_setEnrageAttack ==>
 
 	| Set enrage attack mode to enrageSetting (ON/OFF) in the Enrage Settings.ini file for npcName.
@@ -398,8 +398,8 @@ SUB Event_setEnrageAttack(String line, String npcName, String enrageSetting)
 |- Turns off attack when a mob you're attacking enrages		-|
 |- if that mob is specified in Enrage Settings.ini.         -|
 |------------------------------------------------------------|
-#event EnrageOn "#1# has become ENRAGED."
-SUB Event_EnrageOn(String line, String RageOn)
+#EVENT EnrageOn "#1# has become ENRAGED."
+SUB EVENT_EnrageOn(String line, String RageOn)
 	/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_EnrageOn ==>
 
 	| Verify that the enraged npc is what I am currently fighting.
@@ -438,8 +438,8 @@ SUB Event_EnrageOn(String line, String RageOn)
 |------------------------------------------------|
 |- Turns attack back on, after enrage is over.	-|
 |------------------------------------------------|
-#event EnrageOff "#1# is no longer enraged."
-SUB Event_EnrageOff(String line, String RageOn)
+#EVENT EnrageOff "#1# is no longer enraged."
+SUB EVENT_EnrageOff(String line, String RageOn)
 	/if (${Debug} || ${Debug_Assists}) /echo Enrage OFF, turning attack ON
 		
 	/if (${enraged}) {
@@ -756,8 +756,8 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 #EVENT DebuffsOn "<#1#> Debuffs on #2#"
 #EVENT DebuffsOn "#1# tells you, 'Debuffs on #2#'"
 #EVENT DebuffsOn "#1# tells the group, 'Debuffs on #2#'"
- SUB Event_DebuffsOn(line, ChatSender, MobID)
-/if (${Debug} || ${Debug_Assists}) /echo |- event_DebuffsOn ==>
+ SUB EVENT_DebuffsOn(line, ChatSender, MobID)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_DebuffsOn ==>
 
 	| -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
@@ -798,7 +798,7 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 
 	:Skip
 	
-/if (${Debug} || ${Debug_Assists}) /echo <== event_DebuffsOn -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_DebuffsOn -|
 /RETURN
 
 
@@ -821,8 +821,8 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 #EVENT DebuffsOff "<#1#> End debuffs on #2# |-|#*#"
 #EVENT DebuffsOff "#1# tells you, 'End Debuffs on #2# |-|#*#'"
 #EVENT DebuffsOff "#1# tells the group, 'End Debuffs on #2# |-|#*#'"
-SUB event_DebuffsOff(line, ChatSender, MobID)
-/if (${Debug} || ${Debug_Assists}) /echo |- event_DebuffsOff ==>
+SUB EVENT_DebuffsOff(line, ChatSender, MobID)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_DebuffsOff ==>
 
 	| If I'm casting debuffs
 	/if (${Debuff_Targets.Size}) {
@@ -843,7 +843,7 @@ SUB event_DebuffsOff(line, ChatSender, MobID)
 		}
 	}
 
-/if (${Debug} || ${Debug_Assists}) /echo <== event_DebuffsOff -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_DebuffsOff -|
 /RETURN
 
 
@@ -892,8 +892,8 @@ SUB Debuffs_OnCommand
 #EVENT DoTsOn "<#1#> DoTs on #2#"
 #EVENT DoTsOn "#1# tells you, 'DoTs on #2#'"
 #EVENT DoTsOn "#1# tells the group, 'DoTs on #2#'"
-SUB Event_DoTsOn(line, ChatSender, MobID)
-/if (${Debug} || ${Debug_Assists}) /echo |- event_DoTsOn ==>
+SUB EVENT_DoTsOn(line, ChatSender, MobID)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_DoTsOn ==>
 
 	| -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
@@ -934,7 +934,7 @@ SUB Event_DoTsOn(line, ChatSender, MobID)
 
 	:Skip
 	
-/if (${Debug} || ${Debug_Assists}) /echo <== event_DoTsOn -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_DoTsOn -|
 /RETURN
 
 
@@ -957,8 +957,8 @@ SUB Event_DoTsOn(line, ChatSender, MobID)
 #EVENT DoTsOff "<#1#> End DoTs on #2# |-|#*#"
 #EVENT DoTsOff "#1# tells you, 'End DoTs on #2# |-|#*#'"
 #EVENT DoTsOff "#1# tells the group, 'End DoTs on #2# |-|#*#'"
-SUB event_DoTsOff(line, ChatSender, MobID)
-/if (${Debug} || ${Debug_Assists}) /echo |- event_DoTsOff ==>
+SUB EVENT_DoTsOff(line, ChatSender, MobID)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_DoTsOff ==>
 
 	| If I'm casting debuffs
 	/if (${DoT_Targets.Size}) {
@@ -979,7 +979,7 @@ SUB event_DoTsOff(line, ChatSender, MobID)
 		}
 	}
 
-/if (${Debug} || ${Debug_Assists}) /echo <== event_DoTsOff -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_DoTsOff -|
 /RETURN
 
 
@@ -1023,11 +1023,11 @@ SUB DoTs_OnCommand
 |----------------------------|
 |- Turns rain functions on.	-|
 |----------------------------|
-#event RainOn "<#1#> Rain on"
-#event RainOn "#1# tells you#*#Rain on'"
-#event RainOn "#1# tells the group, 'Rain on"
-SUB Event_RainOn(line, ChatSender)
-/if (${Debug} || ${Debug_Assists}) /echo |- Event_RainOn ==>
+#EVENT RainOn "<#1#> Rain on"
+#EVENT RainOn "#1# tells you#*#Rain on'"
+#EVENT RainOn "#1# tells the group, 'Rain on"
+SUB EVENT_RainOn(line, ChatSender)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_RainOn ==>
 
 /if (${Rain_Spells.Size}) {
 	
@@ -1044,7 +1044,7 @@ SUB Event_RainOn(line, ChatSender)
 		}
 	}
 }	
-/if (${Debug} || ${Debug_Assists}) /echo <== Event_RainOn -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_RainOn -|
 /RETURN
 
 
@@ -1052,11 +1052,11 @@ SUB Event_RainOn(line, ChatSender)
 |--------------------------------|
 |- Turns rain functions off.	-|
 |--------------------------------|
-#event RainOff "<#1#> Rain off"
-#event RainOff "#1# tells you#*#RainOff'"
-#event RainOff "#1# tells the group, 'Rain off"
-SUB Event_RainOff(line, ChatSender)
-/if (${Debug} || ${Debug_Assists}) /echo |- Event_RainOff ==>
+#EVENT RainOff "<#1#> Rain off"
+#EVENT RainOff "#1# tells you#*#RainOff'"
+#EVENT RainOff "#1# tells the group, 'Rain off"
+SUB EVENT_RainOff(line, ChatSender)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_RainOff ==>
 
 /if (${Defined[do_Rain]}) {
 	
@@ -1074,7 +1074,7 @@ SUB Event_RainOff(line, ChatSender)
 	}
 }
 
-/if (${Debug} || ${Debug_Assists}) /echo <== Event_RainOff -|	
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_RainOff -|	
 /RETURN
 
 
@@ -1116,9 +1116,9 @@ SUB check_Rain
 |----------------------------------------------------------------|
 |- Casts swarm pets from Mages, Necros, Shaman, and Wizards.	-|
 |----------------------------------------------------------------|
-#event SwarmPets "<#1#> Swarm Pets on #2#"
-SUB event_SwarmPets(line, ChatSender, int swarmTarget)
-/if (${Debug} || ${Debug_Assists}) /echo |- event_SwarmPets ==>
+#EVENT SwarmPets "<#1#> Swarm Pets on #2#"
+SUB EVENT_SwarmPets(line, ChatSender, int swarmTarget)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_SwarmPets ==>
 
 	| -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
@@ -1168,7 +1168,7 @@ SUB event_SwarmPets(line, ChatSender, int swarmTarget)
 	
 	/varset combatTimer ${combatDelay}
 	
-/if (${Debug} || ${Debug_Assists}) /echo <== event_SwarmPets -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_SwarmPets -|
 /RETURN
 
 
@@ -1187,9 +1187,9 @@ SUB check_Burns
 |----------------------------------------------------|
 |- Engages QuickBurns listed in the iniCharacter.	-|
 |----------------------------------------------------|
-#event QuickBurn "<#1#> Quick Burn"
-SUB event_QuickBurn(line, ChatSender)
-/if (${Debug} || ${Debug_Assists}) /echo |- event_QuickBurn ==>
+#EVENT QuickBurn "<#1#> Quick Burn"
+SUB EVENT_QuickBurn(line, ChatSender)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_QuickBurn ==>
 
 	| Check Assisting
 	/if (!${Assisting}) {
@@ -1210,7 +1210,7 @@ SUB event_QuickBurn(line, ChatSender)
 		}
 	}
 
-/if (${Debug} || ${Debug_Assists}) /echo <== event_QuickBurn -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_QuickBurn -|
 /RETURN
 
 
@@ -1218,9 +1218,9 @@ SUB event_QuickBurn(line, ChatSender)
 |----------------------------------------------------|
 |- Engages FullBurns listed in the iniCharacter.	-|
 |----------------------------------------------------|
-#event FullBurn "<#1#> Full Burn"
-SUB event_FullBurn(line, ChatSender)
-/if (${Debug} || ${Debug_Assists}) /echo |- event_FullBurn ==>
+#EVENT FullBurn "<#1#> Full Burn"
+SUB EVENT_FullBurn(line, ChatSender)
+/if (${Debug} || ${Debug_Assists}) /echo |- EVENT_FullBurn ==>
 
 	| Check Assisting
 	/if (!${Assisting}) {
@@ -1242,7 +1242,7 @@ SUB event_FullBurn(line, ChatSender)
 		}
 	}
 
-/if (${Debug} || ${Debug_Assists}) /echo <== event_FullBurn -|
+/if (${Debug} || ${Debug_Assists}) /echo <== EVENT_FullBurn -|
 /RETURN
 
 
