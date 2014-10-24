@@ -81,9 +81,6 @@ Sub SetupAdvLootVars(string ChangeIniFile)
     /call ALLoadVar Settings MobsTooClose       100                 int
     /call ALLoadVar Settings CorpseRotTime      440s                string
     /call ALLoadVar Settings ReportLoot         FALSE               bool
-    /call ALLoadVar Settings LootChannel        ${channel}          string
-	/varset LootChannel ${channel}
-	/echo LootChannel is ${LootChannel}
     /call ALLoadVar Settings LootForageSpam     1                   int
     | Alert list 9 used to define an ignore list like campfires untargetable etc.
     /if (!${Defined[${AlertList}]}) /declare AlertList int outer 9
@@ -115,23 +112,23 @@ Sub LootMobs
 	}
 	/declare DeadCount int local ${SpawnCount[corpse radius ${CorpseRadius} zradius 50 noalert 25]}
     /if (!${LootMobs}) {
-		/chat ${LootChannel} Can't loot mobs !
+		/chat ${channel} Can't loot mobs !
 		/return
 	}
 	/if (${SpawnCount[npc radius ${MobsTooClose} zradius 50 noalert ${AlertList}]}) {
-		/chat ${LootChannel} Mobs near me, can't loot !
+		/chat ${channel} Mobs near me, can't loot !
 		/return
 	}
 	/if (!${DeadCount}) {
-		/chat ${LootChannel} No mobs' corpses to loot !
+		/chat ${channel} No mobs' corpses to loot !
 		/return
 	}
 	/if (${Me.Combat}) {
-		/chat ${LootChannel} In combat, can't loot !
+		/chat ${channel} In combat, can't loot !
 		/return
 	}
 	/if (!${Me.FreeInventory}) {
-		/chat ${LootChannel} Inventory FULL !
+		/chat ${channel} Inventory FULL !
 		/return
 	}
     /if (!${CorpseRotTimer}) /squelch /alert clear 25
@@ -139,7 +136,7 @@ Sub LootMobs
     /declare CorpseList string local 
     /declare CorpseToLoot int local
     /declare ZDist float local ${Math.Distance[${Target.Z}:${Me.Z}]}
-	/gsay "Number of corpse = ${DeadCount}"
+	/chat ${channel} "Number of corpse = ${DeadCount}"
     /for i 1 to ${DeadCount}
         /varset CorpseList ${CorpseList}${NearestSpawn[${i},corpse radius ${CorpseRadius} zradius 50 noalert 25].ID}|
     /next i
@@ -159,7 +156,7 @@ Sub LootMobs
             /if (${Target.Distance}<10) /call LootCorpse
         :SkipCorpse
     /next i
-	/gsay "Looting done !"
+	/chat ${channel} "Looting done !"
 /return
 
 Sub LootCorpse
