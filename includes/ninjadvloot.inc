@@ -80,7 +80,7 @@ Sub SetupAdvLootVars(string ChangeIniFile)
     /call ALLoadVar Settings CorpseRadius       100                 int
     /call ALLoadVar Settings MobsTooClose       100                 int
     /call ALLoadVar Settings CorpseRotTime      440s                string
-    /call ALLoadVar Settings ReportLoot         FALSE               bool
+    /call ALLoadVar Settings ReportLoot         TRUE                bool
     /call ALLoadVar Settings LootForageSpam     1                   int
     | Alert list 9 used to define an ignore list like campfires untargetable etc.
     /if (!${Defined[${AlertList}]}) /declare AlertList int outer 9
@@ -112,22 +112,27 @@ Sub LootMobs
 	}
 	/declare DeadCount int local ${SpawnCount[corpse radius ${CorpseRadius} zradius 50 noalert 25]}
     /if (!${LootMobs}) {
+		/echo Can't loot mobs !
 		/chat ${channel} Can't loot mobs !
 		/return
 	}
 	/if (${SpawnCount[npc radius ${MobsTooClose} zradius 50 noalert ${AlertList}]}) {
+		/echo Mobs near me, can't loot !
 		/chat ${channel} Mobs near me, can't loot !
 		/return
 	}
 	/if (!${DeadCount}) {
+		/echo No mobs' corpses to loot !
 		/chat ${channel} No mobs' corpses to loot !
 		/return
 	}
 	/if (${Me.Combat}) {
+		/echo In combat, can't loot !
 		/chat ${channel} In combat, can't loot !
 		/return
 	}
 	/if (!${Me.FreeInventory}) {
+		/echo Inventory FULL !
 		/chat ${channel} Inventory FULL !
 		/return
 	}
@@ -196,7 +201,7 @@ Sub LootCorpse
 				/nomodkey /keypress q chat
 				/nomodkey /keypress t chat
 				/nomodkey /keypress space chat
-                /shiftkey /keypress ${LootChannel} chat
+                /shiftkey /keypress ${channel} chat
                 /keypress Space chat
                 /notify LootWND LW_BroadcastButton leftmouseup 
                 /delay 1s

@@ -696,8 +696,6 @@ Sub EVENT_Follow(String line, String from, String channelNumber, String who)
 	/call cleanToonName ${from}
 	/varset toonName ${Macro.Return}
 	/call isOneOfMyToons ${toonName}
-	/echo ${toonName}
-	/echo ${NetBots[${toonName}].InZone} && ${Spawn[${toonName}].Distance} < 300 && ${Macro.Return}
 	/if (${NetBots[${toonName}].InZone} && ${Spawn[${toonName}].Distance} < 300 && ${Macro.Return}) {
 		/call amIconcerned ${toonName} ${who}
 		/if (${Macro.Return}) {
