@@ -59,7 +59,7 @@ SUB check_Plugins
 		}
 
 
-	|- Check MQ2NetBots.
+		|- Check MQ2NetBots.
 		/if (!${Plugin[MQ2NetBots].Name.Length}) {
 			/echo Plugin MQ2NetBots is not loaded, attempting to resolve...
 			/plugin MQ2NetBots
@@ -69,12 +69,12 @@ SUB check_Plugins
 			}
 		}
 		
-	|- Auto-Connect to NetBots.
+		|- Auto-Connect to NetBots.
 		/if (${NetBots}) {
 			/squelch /netbots on grab=on send=on
 		}
 		
-	|- Check MQ2NetAdvPath.
+		|- Check MQ2NetAdvPath.
 		/if (!${Plugin[MQ2NetAdvPath].Name.Length}) {
 			/echo Plugin MQ2NetAdvPath is not loaded, attempting to resolve...
 			/plugin MQ2NetAdvPath
