@@ -548,7 +548,14 @@ Sub goToGuildHall(String from, String who)
 /return
 
 Sub test()
-	| Fermer toutes les fenetres ouvertes d'abord !
+	|/call putLinkInChatWindow
+	/declare i int local
+	/varcalc i ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Pack}-22
+	/itemnotify ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Pack} rightmouseup	| Fermer toutes les fenetres ouvertes d'abord !
+	/itemnotify in ${i} ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Slot} leftmouseup	| Fermer toutes les fenetres ouvertes d'abord !
+/return
+
+SUB putLinkInChatWindow
 	/notify InventoryWindow InvSlot13 rightmouseheld
 	/delay 1
 	/keypress Enter
@@ -566,7 +573,7 @@ Sub test()
 	/keypress Enter chat
 	/delay 1
 	/notify ItemDisplayWindow 0 close 
-/return
+/RETURN
 
 Sub endMacro
 	/deletevar * global
@@ -576,35 +583,41 @@ Sub endMacro
 /return
 
 SUB halloween
-	/if (!${Defined[Halloween]})		/declare Halloween 			boolean outer true
-	/if (!${Defined[HalloweenZones]})	/declare HalloweenZones[7] 	int outer NULL
+	/if (!${Defined[Halloween]})		/declare Halloween 			bool outer false
+	/if (!${Defined[HalloweenZones]})	/declare HalloweenZones[7] 	int outer -1
 	
 	/declare NormalZoneNpcID 				int local 0
 	/declare HalloweenMerchantID 			int local 0
 	/declare HalloweenRaidTokenNpcID 		int local 0
-	/declare MistmooreTrickyAdvisorID 		int local 0
+	/declare MistmooreTrickyAdvisorID 		int local 59
 	/declare MistmooreTrickiestAdvisorID 	int local 0
 	/declare LesserFaydarkFirenzellaID 		int local 0
-	/declare LesserFaydarkShadyID	 		int local 0
-	/declare LesserFaydarkTrickyID 			int local 0
-	/declare LesserFaydarkGhoulieID 		int local 0
-	/declare LesserFaydarkFrighteningID 	int local 0
-	
+	/declare LesserFaydarkFarmerID	 		int local 0
 	
 	/declare i int local
 	
-	| On gate pour initialiser les actions
-	/if (${HalloweenZones[1].Equal[NULL]}) {
+	| Test dans LF
+	/varset Halloween true
+	/varset HalloweenZones[1] 368
+	/varset HalloweenZones[2] 1
+	/varset HalloweenZones[3] 0
+	
+	/if (!${Halloween}) {
+		/varset Halloween true
 		/varset HalloweenZones[1] 0
 		/call gate ${Me.CleanName} ${Me.CleanName}
-	}
-	| On commence le manège
-	/if (${HalloweenZones[1] == 0}) {
+		/delay 11s
+		/call halloween
+	} else /if (${HalloweenZones[1]} == 0) {
+		| On commence le manège
+		/echo Partie THF
 		| On est dans THF, il faut récupérer les costumes
-		/call MoveTo -Loc|Y,X | On se met au milieu de la cave
-		/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
-		/call MoveTo -Loc|Y,X | On se place dans la zone du buffer
-		/varset HalloweenMerchantID ${Spawn[].ID} | le nom du marchand de costume
+		/echo Milieu de cave
+		/call MoveTo -Loc|-40,-340 | On se met au milieu de la cave
+		/echo Milieu de THF
+		/call MoveTo -Loc|19,22 | On sort de la cave, milieu de THF
+		/echo Marchand de costume
+		/varset HalloweenMerchantID ${Spawn[Jacque Magnifico].ID} | le nom du marchand de costume
 		/call MoveTo -SpawnID|${HalloweenMerchantID}
 		| On achète les costumes au marchand
 			| On ouvre la fenêtre de trade
@@ -618,7 +631,8 @@ SUB halloween
 			/call Buy "Gargoyle Costume Kit" 1
 			/call Buy "Scarecrow Costume Kit" 2
 		| On va chercher la quête
-		/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
+		/echo Fitzina
+		/call MoveTo -Loc|19,22 | On sort de la cave, milieu de THF
 		/varset HalloweenRaidTokenNpcID ${Spawn[Fitzina].ID}
 		/call MoveTo -SpawnID|${HalloweenRaidTokenNpcID} | l'ID de Fitzina
 		/casting "Fairy Costume Kit" item -maxtries|3
@@ -626,19 +640,19 @@ SUB halloween
 		/target id ${HalloweenRaidTokenNpcID}
 		/delay 1s
 		/hail
-		/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
-		/varset NormalZoneNpcID ${Spawn[].ID} | le nom de la fée des "normal zones"
+		/call MoveTo -Loc|19,22 | On sort de la cave, milieu de THF
+		/varset NormalZoneNpcID ${Spawn[Elyse].ID} | le nom de la fée des "normal zones"
 		/call MoveTo -SpawnID|${NormalZoneNpcID}
 		/target ID ${NormalZoneNpcID}
 		/delay 1s
 		/varset HalloweenZones[1] ${Zone.ID}
 		/varset HalloweenZones[2] 0
 		/say mistmoore
-	}
-	| In mistmoore
-	/if (${HalloweenZones[2] == 0}) {
-		/varset MistmooreTrickyAdvisorID ${Spawn[a tricky advisor].ID}
+	} else /if (${HalloweenZones[2]} == 0) {
+		| In mistmoore
+		/echo a tricky advisor
 		/call MoveTo -SpawnID|${MistmooreTrickyAdvisorID}
+		/delay 1s
 		/casting "Gargoyle Costume Kit" item -maxtries|3
 		/delay 1s
 		/target ID ${MistmooreTrickyAdvisorID}
@@ -647,7 +661,7 @@ SUB halloween
 			/hail
 			/delay 1
 		/next i
-		/varset MistmooreTrickiestAdvisorID ${Spawn[a trickiest advisor].ID}
+		/varset MistmooreTrickiestAdvisorID ${Spawn[trickiest advisor].ID}
 		/call MoveTo -SpawnID|${MistmooreTrickiestAdvisorID}
 		/delay 1
 		/target ID ${MistmooreTrickiestAdvisorID}
@@ -655,27 +669,50 @@ SUB halloween
 		/hail
 		/delay 1
 		/call MoveTo -SpawnID|${MistmooreTrickyAdvisorID}
-		/call MoveTo -SpawnID|${Spawn[].ID} | la nana à l'entrée de mistmoore
+		/call MoveTo -SpawnID|${Spawn[Eirod Haerod].ID} | la nana à l'entrée de mistmoore
 		/varset HalloweenZones[2] ${Zone.ID}
 		/varset HalloweenZones[3] 0
-		/call MoveTo -Loc|Y,X | la zone de Lesser Faydark
-	}
-	| In Lesser Faydark
-	/if (${HalloweenZones[3] == 0}) {
-		/call MoveTo -Loc|Y,X | on sort de Mistmoore
-		/call MoveTo -Loc|Y,X | on s'approche du druid ring
+		/call MoveTo -Loc|-350,124 | la zone de Lesser Faydark
+		/keypress forward hold
+	} else /if (${HalloweenZones[3]} == 0) {
+		| In Lesser Faydark
+		/call MoveTo -Loc|-949,3183 | on s'approche du druid ring
 		/varset LesserFaydarkFirenzellaID ${Spawn[Firenzella].ID}
 		/call MoveTo -SpawnID|${LesserFaydarkFirenzellaID}
 		/target ID ${LesserFaydarkFirenzellaID}
 		/casting "Scarecrow Costume Kit" item -maxtries|3
 		/hail
-		/varset LesserFaydarkShadyID ${Spawn[shady farmer].ID}
+		/call MoveTo -Loc|-949,3183 | on s'approche du druid ring
 		
-		/call MoveTo -SpawnID|${LesserFaydarkShadyID}
-		/target ID ${LesserFaydarkShadyID}
+		/varset LesserFaydarkFarmerID ${Spawn[shady farmer].ID}
+		/call MoveTo -SpawnID|${LesserFaydarkFarmerID}
+		/target ID ${LesserFaydarkFarmerID}
 		/hail
 		/autoinventory
 		
+		/varset LesserFaydarkFarmerID ${Spawn[tricky farmer].ID}
+		/call MoveTo -SpawnID|${LesserFaydarkFarmerID}
+		/target ID ${LesserFaydarkFarmerID}
+		/hail
+		/autoinventory
+
+		/varset LesserFaydarkFarmerID ${Spawn[frightening farmer].ID}
+		/call MoveTo -SpawnID|${LesserFaydarkFarmerID}
+		/target ID ${LesserFaydarkFarmerID}
+		/hail
+		/autoinventory
+
+		/varset LesserFaydarkFarmerID ${Spawn[ghoulie farmer].ID}
+		/call MoveTo -SpawnID|${LesserFaydarkFarmerID}
+		/target ID ${LesserFaydarkFarmerID}
+		/hail
+		/autoinventory
+		
+		/call MoveTo -SpawnID|${LesserFaydarkFirenzellaID}
+		/target ID ${LesserFaydarkFirenzellaID}
+		/face fast
+		/varcalc i ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Pack}-22
+		/itemnotify in pack${i} ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Slot} leftmouseup
 	}
 /RETURN
 
@@ -722,15 +759,15 @@ SUB MoveTo(destinationInfo, int distCheck)
 
 	|-Check if target is too far.
 	/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${Y_Loc},${X_Loc}
-	/if (${Int[${Macro.Return}]} > ${MaxResponseDist}) {
+	/if (${Int[${Macro.Return}]} > 1500) {
 		/echo [${Spawn[id ${destination}].CleanName}] is too far away.
 	} else {
 		|-Check if target is already close enough
 		/if (${Int[${Macro.Return}]} < 10) {
 			/if (${Debug}) /echo I am already at the destination.
 		} else {
-			| Declare a timer based on how far you have to move (1s for every 50 units + 3).
-			/declare retryTimer timer local ${Math.Calc[${Macro.Return} / 50 + 3].Int}s
+			| Declare a timer based on how far you have to move (1s for every 50 units + 10).
+			/declare retryTimer timer local ${Math.Calc[${Macro.Return} / 50 + 10].Int}s
 			
 			| Engage MQ2MoveUtils.
 			:retry_MoveToLoc
