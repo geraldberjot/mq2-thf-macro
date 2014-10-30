@@ -459,7 +459,7 @@ Sub Buy(string ItemToBuy, int amount)
     :Loop
     /doevents
     /if (${InventoryFull}) /return
-    /if (${QTY}>1) {
+    /if (${QTY}>0) {
         /if (${QTY}>19) {
             /Shiftkey /notify merchantwnd MW_Buy_Button leftmouseup
             /delay 2s ${FindItemCount[${ItemToBuy}]}>=${QTY}
