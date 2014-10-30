@@ -576,39 +576,107 @@ Sub endMacro
 /return
 
 SUB halloween
-	/if (!${Defined[Halloween]}) /declare Halloween boolean outer true
-	/if (!${Defined[HalloweenZones]}) /declare HalloweenZones[7] zone outer 0
-	/if (!${Defined[HalloweenMerchantID]}) /declare HalloweenMerchantID int local 0
-	/if (!${Defined[HalloweenRaidTokenNpcID]}) /declare HalloweenRaidTokenNpcID int local 0
+	/if (!${Defined[Halloween]})		/declare Halloween 			boolean outer true
+	/if (!${Defined[HalloweenZones]})	/declare HalloweenZones[7] 	int outer NULL
 	
-	| Insérer l'ID de la zone THF à la place du 0
-	/if (${HalloweenZones[1]} != 0) /call gate ${Me.CleanName} ${Me.CleanName}
-	| On est dans THF, il faut récupérer les costumes
-	/call MoveTo -Loc|Y,X | On se met au milieu de la cave
-	/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
-	/call MoveTo -Loc|Y,X | On se place dans la zone du buffer
-	/varset HalloweenMerchantID ${Spawn[].ID}
-	/call MoveTo -SpawnID|${HalloweenMerchantID} | l'ID du marchand de costume
-	| On achète les costumes au marchand
-		| On ouvre la fenêtre de trade
-		/target id ${HalloweenMerchantID}
-		/stick 5
-		/delay 30
-		/nomodkey /click right target
-		/delay 10
-		| On achète
-		/call Buy "Fairy Costume Kit" 5
-		/call Buy "Gargoyle Costume Kit" 1
-		/call Buy "Scarecrow Costume Kit" 2
-	| On va chercher la quête
-	/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
-	/varset HalloweenRaidTokenNpcID ${Spawn[Fitzina].ID}
-	/call MoveTo -SpawnID|${HalloweenRaidTokenNpcID} | l'ID de Fitzina
-	/casting "Fairy Costume Kit" item -maxtries|3
-	/delay 1s
-	/target id ${HalloweenRaidTokenNpcID}
-	/delay 1s
-	/hail
+	/declare NormalZoneNpcID 				int local 0
+	/declare HalloweenMerchantID 			int local 0
+	/declare HalloweenRaidTokenNpcID 		int local 0
+	/declare MistmooreTrickyAdvisorID 		int local 0
+	/declare MistmooreTrickiestAdvisorID 	int local 0
+	/declare LesserFaydarkFirenzellaID 		int local 0
+	/declare LesserFaydarkShadyID	 		int local 0
+	/declare LesserFaydarkTrickyID 			int local 0
+	/declare LesserFaydarkGhoulieID 		int local 0
+	/declare LesserFaydarkFrighteningID 	int local 0
+	
+	
+	/declare i int local
+	
+	| On gate pour initialiser les actions
+	/if (${HalloweenZones[1].Equal[NULL]}) {
+		/varset HalloweenZones[1] 0
+		/call gate ${Me.CleanName} ${Me.CleanName}
+	}
+	| On commence le manège
+	/if (${HalloweenZones[1] == 0}) {
+		| On est dans THF, il faut récupérer les costumes
+		/call MoveTo -Loc|Y,X | On se met au milieu de la cave
+		/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
+		/call MoveTo -Loc|Y,X | On se place dans la zone du buffer
+		/varset HalloweenMerchantID ${Spawn[].ID} | le nom du marchand de costume
+		/call MoveTo -SpawnID|${HalloweenMerchantID}
+		| On achète les costumes au marchand
+			| On ouvre la fenêtre de trade
+			/target id ${HalloweenMerchantID}
+			/stick 5
+			/delay 30
+			/nomodkey /click right target
+			/delay 10
+			| On achète
+			/call Buy "Fairy Costume Kit" 5
+			/call Buy "Gargoyle Costume Kit" 1
+			/call Buy "Scarecrow Costume Kit" 2
+		| On va chercher la quête
+		/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
+		/varset HalloweenRaidTokenNpcID ${Spawn[Fitzina].ID}
+		/call MoveTo -SpawnID|${HalloweenRaidTokenNpcID} | l'ID de Fitzina
+		/casting "Fairy Costume Kit" item -maxtries|3
+		/delay 1s
+		/target id ${HalloweenRaidTokenNpcID}
+		/delay 1s
+		/hail
+		/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
+		/varset NormalZoneNpcID ${Spawn[].ID} | le nom de la fée des "normal zones"
+		/call MoveTo -SpawnID|${NormalZoneNpcID}
+		/target ID ${NormalZoneNpcID}
+		/delay 1s
+		/varset HalloweenZones[1] ${Zone.ID}
+		/varset HalloweenZones[2] 0
+		/say mistmoore
+	}
+	| In mistmoore
+	/if (${HalloweenZones[2] == 0}) {
+		/varset MistmooreTrickyAdvisorID ${Spawn[a tricky advisor].ID}
+		/call MoveTo -SpawnID|${MistmooreTrickyAdvisorID}
+		/casting "Gargoyle Costume Kit" item -maxtries|3
+		/delay 1s
+		/target ID ${MistmooreTrickyAdvisorID}
+		/delay 1s
+		/for i 1 to 12
+			/hail
+			/delay 1
+		/next i
+		/varset MistmooreTrickiestAdvisorID ${Spawn[a trickiest advisor].ID}
+		/call MoveTo -SpawnID|${MistmooreTrickiestAdvisorID}
+		/delay 1
+		/target ID ${MistmooreTrickiestAdvisorID}
+		/delay 1
+		/hail
+		/delay 1
+		/call MoveTo -SpawnID|${MistmooreTrickyAdvisorID}
+		/call MoveTo -SpawnID|${Spawn[].ID} | la nana à l'entrée de mistmoore
+		/varset HalloweenZones[2] ${Zone.ID}
+		/varset HalloweenZones[3] 0
+		/call MoveTo -Loc|Y,X | la zone de Lesser Faydark
+	}
+	| In Lesser Faydark
+	/if (${HalloweenZones[3] == 0}) {
+		/call MoveTo -Loc|Y,X | on sort de Mistmoore
+		/call MoveTo -Loc|Y,X | on s'approche du druid ring
+		/varset LesserFaydarkFirenzellaID ${Spawn[Firenzella].ID}
+		/call MoveTo -SpawnID|${LesserFaydarkFirenzellaID}
+		/target ID ${LesserFaydarkFirenzellaID}
+		/casting "Scarecrow Costume Kit" item -maxtries|3
+		/hail
+		/varset LesserFaydarkShadyID ${Spawn[shady farmer].ID}
+		
+		/call MoveTo -SpawnID|${LesserFaydarkShadyID}
+		/target ID ${LesserFaydarkShadyID}
+		/hail
+		/autoinventory
+		
+	}
 /RETURN
 
 |----------------------------------------------------------------------------|
@@ -678,7 +746,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 				/call createTimer spamTimer_MTLoop 50
 			}
 
-			/call Background_Events
+			|/call Background_Events
 			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${Y_Loc},${X_Loc}
 			
 			/if (${MoveTo.Moving}) {
