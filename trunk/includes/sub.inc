@@ -575,3 +575,174 @@ Sub endMacro
 	/end
 /return
 
+SUB halloween
+	/if (!${Defined[Halloween]}) /declare Halloween boolean outer true
+	/if (!${Defined[HalloweenZones]}) /declare HalloweenZones[7] zone outer 0
+	/if (!${Defined[HalloweenMerchantID]}) /declare HalloweenMerchantID int local 0
+	/if (!${Defined[HalloweenRaidTokenNpcID]}) /declare HalloweenRaidTokenNpcID int local 0
+	
+	| Insérer l'ID de la zone THF à la place du 0
+	/if (${HalloweenZones[1]} != 0) /call gate ${Me.CleanName} ${Me.CleanName}
+	| On est dans THF, il faut récupérer les costumes
+	/call MoveTo -Loc|Y,X | On se met au milieu de la cave
+	/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
+	/call MoveTo -Loc|Y,X | On se place dans la zone du buffer
+	/varset HalloweenMerchantID ${Spawn[].ID}
+	/call MoveTo -SpawnID|${HalloweenMerchantID} | l'ID du marchand de costume
+	| On achète les costumes au marchand
+		| On ouvre la fenêtre de trade
+		/target id ${HalloweenMerchantID}
+		/stick 5
+		/delay 30
+		/nomodkey /click right target
+		/delay 10
+		| On achète
+		/call Buy "Fairy Costume Kit" 5
+		/call Buy "Gargoyle Costume Kit" 1
+		/call Buy "Scarecrow Costume Kit" 2
+	| On va chercher la quête
+	/call MoveTo -Loc|Y,X | On sort de la cave, milieu de THF
+	/varset HalloweenRaidTokenNpcID ${Spawn[Fitzina].ID}
+	/call MoveTo -SpawnID|${HalloweenRaidTokenNpcID} | l'ID de Fitzina
+	/casting "Fairy Costume Kit" item -maxtries|3
+	/delay 1s
+	/target id ${HalloweenRaidTokenNpcID}
+	/delay 1s
+	/hail
+/RETURN
+
+|----------------------------------------------------------------------------|
+|- Triangulates distance between to points using the Pythagoras theorem.	-|
+|----------------------------------------------------------------------------|
+|- @param loc#1: Location 'A'												-|
+|- @param loc#2: Location 'B'												-|
+|----------------------------------------------------------------------------|
+SUB Triangulate_Distance(string loc#1, string loc#2)
+/RETURN ${Math.Sqrt[${Math.Calc[${loc#2.Arg[2,,]}-${loc#1.Arg[2,,]}]}*${Math.Calc[${loc#2.Arg[2,,]}-${loc#1.Arg[2,,]}]}+${Math.Calc[${loc#2.Arg[1,,]}-${loc#1.Arg[1,,]}]}*${Math.Calc[${loc#2.Arg[1,,]}-${loc#1.Arg[1,,]}]}]}
+
+|----------------------------------------------------------------------------------------------------|
+|- MoveTo																							-|
+|----------------------------------------------------------------------------------------------------|
+|- Attempts to utilize MQ2MoveUtils /moveto function, to move to a given destination.				-|
+|----------------------------------------------------------------------------------------------------|
+|- @param1 destination: Destinations can be provided as an ID, or loc, using the following syntax:	-|
+|-																									-|
+|- Move to a Spawn ID use, -SpawnID|#																-|
+|-		Ex.  /call MoveTo -SpawnID|${Target.ID}														-|
+|-																									-|
+|- Move to a Location use, -Loc|Y,X																	-|
+|-		Ex.  /call MoveTo -Loc|${Target.Y},${Target.X}												-|
+|----------------------------------------------------------------------------------------------------|
+SUB MoveTo(destinationInfo, int distCheck)
+	/if (${Debug}) /echo |- MoveTo ==>
+
+	/declare X_Loc float local
+	/declare Y_Loc float local
+	/if (!${Defined[distCheck]}) /declare distCheck int local 10
+
+	|-Set MoveTo variables per destinationType.
+	/if (${destinationInfo.Find[-SpawnID]}) {
+		/call TrueTarget ${destinationInfo.Arg[2,|]}
+		/varset Y_Loc ${Target.Y}
+		/varset X_Loc ${Target.X}
+	} else /if (${destinationInfo.Find[-Loc]}) {
+		/varset Y_Loc ${destinationInfo.Arg[2,|].Arg[1,,]}
+		/varset X_Loc ${destinationInfo.Arg[2,|].Arg[2,,]}
+	} else {
+		/echo [${destinationInfo}] does not specify a valid destinationType.  Use -SpawnID|#, or, -Loc|Y,X to note your intended destinationType.
+	}
+
+	|-Check if target is too far.
+	/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${Y_Loc},${X_Loc}
+	/if (${Int[${Macro.Return}]} > ${MaxResponseDist}) {
+		/echo [${Spawn[id ${destination}].CleanName}] is too far away.
+	} else {
+		|-Check if target is already close enough
+		/if (${Int[${Macro.Return}]} < 10) {
+			/if (${Debug}) /echo I am already at the destination.
+		} else {
+			| Declare a timer based on how far you have to move (1s for every 50 units + 3).
+			/declare retryTimer timer local ${Math.Calc[${Macro.Return} / 50 + 3].Int}s
+			
+			| Engage MQ2MoveUtils.
+			:retry_MoveToLoc
+			/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /interrupt
+			/squelch /moveto loc ${Y_Loc} ${X_Loc} dist ${If[${Defined[distCheck]},${distCheck},10]}
+			/delay 10 ${Me.Moving} || ${MoveTo.Moving}
+			
+			:movingTo_Loop
+			
+			| Debug Echo
+			/if (${Debug} && !${spamTimer_MTLoop}) {
+				/echo |- MoveToSpawn -| :MoveTo_Loop
+				/call createTimer spamTimer_MTLoop 50
+			}
+
+			/call Background_Events
+			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${Y_Loc},${X_Loc}
+			
+			/if (${MoveTo.Moving}) {
+				/if (${Macro.Return} > ${distCheck} && ${retryTimer}) {
+					/goto :movingTo_Loop
+				} else {
+					/squelch /stick off
+					/if (${Debug} && !${spamTimer_MTFAIL}) {
+						/echo I have failed to move to the intended target.
+						/call createTimer spamTimer_MTFAIL 30
+					}
+				}
+			} else {
+				/if (${Macro.Return} > ${Math.Calc[${distCheck} + ${Math.Calc[${distCheck} / 4].Int}].Int}) {
+					/if (${retryTimer}) {
+						/goto :retry_MoveToLoc
+					} else {
+						/if (${Debug} && !${spamTimer_MTFAIL}) {
+							/echo I have failed to move to the intended target.
+							/call createTimer spamTimer_MTFAIL 30
+						}
+					}
+				} else {
+					/squelch /stick off
+					/if (${Debug}) /echo I have arrived at my intended destination.
+					/delay 30 !${Me.Moving}
+				}
+			}
+		}
+	}
+
+	/if (${Debug}) /echo <== MoveTo -|
+/RETURN
+
+|------------------------------------------------------------|
+|- Reliably targets specified Target.IDs.					-|
+|------------------------------------------------------------|
+|- @param TargetID: The ID of the spawn you wish to target.	-|
+|------------------------------------------------------------|
+SUB TrueTarget(TargetID)
+	/if (${Debug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
+
+	| Check if the target is in zone.
+	/if (${SpawnCount[id ${TargetID}]}) {
+		| Check server for range restrictions.
+		/if (${MacroQuest.Server.Equal[PEQTGC]} && ${SpawnCount[id ${TargetID} radius 200]} || ${MacroQuest.Server.NotEqual[PEQTGC]}) {
+		
+			/declare retryTimer timer local 30
+			
+			:Target_Loop
+			/squelch /target id ${TargetID}
+			/delay 2 ${Target.ID} == ${TargetID}
+			
+			| Check that I have the correct target ID.
+			/if (${Target.ID} != ${TargetID} && ${SpawnCount[id ${TargetID}]}) {
+				/if (${retryTimer}) {
+					/goto :Target_Loop
+				} else {
+					/echo Failed to target [${Spawn[id ${TargetID}].CleanName} - ${TargetID}]
+				}
+			}
+		}
+	}
+
+	/if (${Debug}) /echo <== TrueTarget -|
+/RETURN
+

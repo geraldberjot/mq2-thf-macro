@@ -722,6 +722,9 @@ Sub EVENT_Zone(String line)
 	/if (${Target.ID} && ${Target.Distance} < 15) {
 		/loot
 	}
+	/if (${Defined[Halloween]}) {
+		/if (${Halloween}) /call halloween
+	}
 /return
 
 Sub EVENT_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
@@ -741,5 +744,8 @@ Sub EVENT_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
 	}
 	/if (${EQBCCommand.Lower.Find[test]}) {
 		/call test
+	}
+	/if (${EQBCCommand.Lower.Find[halloween]}) {
+		/call halloween
 	}
 /return
