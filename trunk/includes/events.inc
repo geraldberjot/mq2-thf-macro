@@ -717,12 +717,13 @@ Sub EVENT_Group(String line, String from)
 
 Sub EVENT_Zone(String line)
 	/call joinChannel
-	/echo ${Me.CleanName}'s corpse
 	/tar ${Me.CleanName}'s corpse
 	/if (${Target.ID} && ${Target.Distance} < 15) {
+		/echo ${Me.CleanName}'s corpse
 		/loot
 	}
 	/if (${Defined[Halloween]}) {
+		/echo Halloween=${Halloween}
 		/if (${Halloween}) /call halloween
 	}
 /return

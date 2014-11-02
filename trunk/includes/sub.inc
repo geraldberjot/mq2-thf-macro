@@ -549,10 +549,6 @@ Sub goToGuildHall(String from, String who)
 
 Sub test()
 	|/call putLinkInChatWindow
-	/declare i int local
-	/varcalc i ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Pack}-22
-	/itemnotify ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Pack} rightmouseup	| Fermer toutes les fenetres ouvertes d'abord !
-	/itemnotify in ${i} ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Slot} leftmouseup	| Fermer toutes les fenetres ouvertes d'abord !
 /return
 
 SUB putLinkInChatWindow
@@ -654,7 +650,7 @@ SUB halloween
 		/call MoveTo -SpawnID|${MistmooreTrickyAdvisorID}
 		/delay 1s
 		/casting "Gargoyle Costume Kit" item -maxtries|3
-		/delay 1s
+		/delay 6s
 		/target ID ${MistmooreTrickyAdvisorID}
 		/delay 1s
 		/for i 1 to 12
@@ -711,8 +707,23 @@ SUB halloween
 		/call MoveTo -SpawnID|${LesserFaydarkFirenzellaID}
 		/target ID ${LesserFaydarkFirenzellaID}
 		/face fast
-		/varcalc i ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Pack}-22
-		/itemnotify in pack${i} ${FindItem[=Gloves of the Chaos Slayer].InvSlot.Slot} leftmouseup
+		/call putItemOnCursor() | Le premier truc à lui donner
+		/delay 5
+		/nomodkey /click left Target
+		/delay 5
+		/call putItemOnCursor() | Le deuxième truc à lui donner
+		/delay 5
+		/nomodkey /click left Target
+		/delay 5
+		/call putItemOnCursor() | Le troisième truc à lui donner
+		/delay 5
+		/nomodkey /click left Target
+		/delay 5
+		/call putItemOnCursor() | Le quatrieme truc à lui donner
+		/delay 5
+		/nomodkey /click left Target
+		/delay 5
+		
 	}
 /RETURN
 
@@ -851,3 +862,11 @@ SUB TrueTarget(TargetID)
 	/if (${Debug}) /echo <== TrueTarget -|
 /RETURN
 
+SUB putItemOnCursor(String itemName)
+	/declare i int local
+	/declare itemToFind item local ${FindItem[=${itemName}]
+	/if (${itemToFind} == NULL) /RETURN
+	/itemnotify ${itemToFind.InvSlot.Pack} rightmouseup
+	/delay 5
+	/itemnotify ${InvSlot[${itemToFind.InvSlot}]} leftmouseup
+/RETURN
