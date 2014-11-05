@@ -589,6 +589,7 @@ SUB halloween
 	/declare MistmooreTrickiestAdvisorID 	int local 0
 	/declare LesserFaydarkFirenzellaID 		int local 0
 	/declare LesserFaydarkFarmerID	 		int local 0
+	/declare PapillonID	 					int local 0
 	
 	/declare i int local
 	
@@ -643,6 +644,7 @@ SUB halloween
 		/delay 1s
 		/varset HalloweenZones[1] ${Zone.ID}
 		/varset HalloweenZones[2] 0
+		/delay 5
 		/say mistmoore
 	} else /if (${HalloweenZones[2]} == 0) {
 		| In mistmoore
@@ -671,8 +673,13 @@ SUB halloween
 		/call MoveTo -Loc|-350,124 | la zone de Lesser Faydark
 		/keypress forward hold
 	} else /if (${HalloweenZones[3]} == 0) {
+		/
 		| In Lesser Faydark
 		/call MoveTo -Loc|-949,3183 | on s'approche du druid ring
+		/varset PapillonID ${Spawn[papillon].ID}
+		/if (${PapillonID}) {
+			/call waitFor -NPC|${PapillonID}
+		}
 		/varset LesserFaydarkFirenzellaID ${Spawn[Firenzella].ID}
 		/call MoveTo -SpawnID|${LesserFaydarkFirenzellaID}
 		/target ID ${LesserFaydarkFirenzellaID}
@@ -723,6 +730,11 @@ SUB halloween
 		/delay 5
 		/nomodkey /click left Target
 		/delay 5
+		/notify GiveWnd GVW_Give_Button leftmouseup
+		/delay 5
+		/varset HalloweenZones[3] ${Zone.ID}
+		/varset HalloweenZones[4] 0
+	} else /if (${HalloweenZones[4]} == 0) {
 		
 	}
 /RETURN
@@ -869,4 +881,18 @@ SUB putItemOnCursor(String itemName)
 	/itemnotify ${itemToFind.InvSlot.Pack} rightmouseup
 	/delay 5
 	/itemnotify ${InvSlot[${itemToFind.InvSlot}]} leftmouseup
+/RETURN
+
+SUB waitFor(String command)
+	/if (${command.Find[-NPC]}) {
+		/declare npcID int local ${command.Arg[2,|]}
+		:stillUP
+		/if (${Spawn[id ${npcID}].ID}) {
+			/delay 6s
+			/goto :stillUP
+		}
+	} else {
+		/echo [${command}] does not specify a valid waiting cause.  Use -NPC|#.
+		/chat ${channel} [${command}] does not specify a valid waiting cause.  Use -NPC|#.
+	}
 /RETURN
