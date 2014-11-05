@@ -35,6 +35,7 @@ Sub Main
 	/chat ${channel} Starting THF Macro for ${Me.Class}
 	
 	:MainLoop
+		/call checkToons
 		|/if (${Defined[looptest]}) /varset looptest ${Math.Calc[${looptest}+1]}
 		|/call LPS
 		/doevents
