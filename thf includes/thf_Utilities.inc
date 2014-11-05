@@ -1102,3 +1102,18 @@ SUB rewrite_ValidationKey(int newValue, int CurrentArg)
 /RETURN
 
 ---------------------------------------------------------------------------------------------------------------------------------------------->
+
+SUB checkToons()
+	/declare i int local 0
+	/declare count int local 0
+
+	/if (!${Defined[toonsInZone]}) /declare toonsInZone int outer 0
+
+	/for i 0 to ${NetBots.Counts}
+		/if (${NetBots[${NetBots.Client.Arg[${i}]}].InZone} {
+			/varcalc count ${count}+1
+		}
+	/next i
+	
+	/varset toonsInZone ${count}
+/RETURN
