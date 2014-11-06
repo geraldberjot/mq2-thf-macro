@@ -33,7 +33,7 @@
 |----------------------------------------------------|
 |- Checks for and enables required macro plugins.	-|
 |----------------------------------------------------|
-SUB check_Plugins
+SUB checkPlugins
 	/echo Checking plugins...
 
 	| REQUIRED PLUGINS ==>
@@ -132,14 +132,4 @@ SUB check_Plugins
 	/if (!${Plugin[mq2hud].Name.Length}) /plugin MQ2HUD	
 	
 	| <== REQUIRED PLUGINS
-/RETURN
-
-|----------------------------------------------------|
-|- Declare all the files.ini						-|
-|----------------------------------------------------|
-SUB declareInis
-	/declare iniGlobal 	string outer "ini\global.ini"
-	/declare iniSetup 	string outer "ini\setup_${Me.CleanName}.ini"
-	/declare iniSpell 	string outer "ini\spells_${Me.CleanName}.ini"
-	/declare iniHail 	string outer "ini\hail.ini"
 /RETURN

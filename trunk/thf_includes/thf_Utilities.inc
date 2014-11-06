@@ -401,7 +401,7 @@ SUB ClearCursor
 			/for i 1 to 5
 				/beep
 			/next i
-			/endmacro
+			/endMacro
 		}
 		
 	|-If the item is a container.
@@ -417,7 +417,7 @@ SUB ClearCursor
 				/for i 1 to 7
 					/beep
 				/next i
-				/endmacro
+				/endMacro
 			}
 		|-Else, if I have a free pack slot, drop the backpack.
 		} else /if (!${InvSlot[pack${i}].Item.Container}) {

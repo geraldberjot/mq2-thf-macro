@@ -1385,7 +1385,7 @@ Sub assist_Setup
 	| Enrage Settings
 	/if (!${Ini[${MacroData_Ini},File Paths,Enrage Settings].Length}) {
 		/echo ERROR: Could not find designated file path for [Enrage Settings].  Please review review settings in [${MacroData_Ini} > File Paths].
-		/endmacro
+		/endMacro
 	} else {
 		/declare iniEnrage string outer ${Ini[${MacroData_Ini},File Paths,Enrage Settings]}
 	}
@@ -1393,7 +1393,7 @@ Sub assist_Setup
 	| Stick Settings
 	/if (!${Ini[${MacroData_Ini},File Paths,Stick Settings].Length}) {
 		/echo ERROR: Could not find designated file path for [Stick Settings].  Please review review settings in [${MacroData_Ini} > File Paths].
-		/endmacro
+		/endMacro
 	} else {
 		/declare iniStick string outer ${Ini[${MacroData_Ini},File Paths,Stick Settings]}
 	}
