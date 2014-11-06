@@ -18,7 +18,7 @@
 #Event	Follow					"#1# tells Team:#2#, 'Follow #3#'"
 #Event	Zone					"You have entered #*#"
 
-#include thf includes\thf_Setup.inc
+#include thf_includes\thf_Setup.inc
 
 Sub Main
 	/call check_Plugins
