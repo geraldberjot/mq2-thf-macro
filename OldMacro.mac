@@ -62,5 +62,5 @@ Sub Main
 			/call checkSpellBuff
 		}
 	/goto :MainLoop
-	/call EndMacro
+	/call endMacro
 /return

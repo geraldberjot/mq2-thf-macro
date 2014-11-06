@@ -21,7 +21,7 @@
 #include thf_includes\thf_Setup.inc
 
 Sub Main
-	/call check_Plugins
+	/call checkPlugins
 	/call declareInis
 	
 	/declare Delai int outer 6
@@ -57,5 +57,70 @@ Sub Main
 			/call checkSpellBuff
 		}
 	/goto :MainLoop
-	/call EndMacro
+	
+	/if (${Debug}) /echo |- MainLoop ==>
+
+	| If my class is not set, I must not be in game, end the macro.
+	/if (!${Bool[${Me.Class}]}) {
+		/call endMacro
+	} else {
+		|***********************************************************************************|
+		|******************************* Background Functions ******************************|
+		|***********************************************************************************|
+	
+		/if (${ActionTaken}) /varset ActionTaken FALSE
+		
+		/if (${currentZone} != ${Zone.ID}) /call check_Zone
+		/if (${Following} && !${Assisting}) /call check_Follow
+		/call check_Active
+		/call check_Combat
+		/call check_Idle
+		
+		| If I'm not holding an item, check Life Support and Instant Buffs.
+		/if (!${Bool[${Cursor}]}) {
+			| Check if I'm casting
+			/if (!${Me.Casting.ID} || ${Me.Casting.ID} && ${Me.Class.ShortName.Equal[BRD]}) {
+				| Check LifeSupport
+				/if (${lifeSupport.Size} && ${Me.PctHPs} < 100) /call check_lifeSupport
+				| Check Instant buffs
+				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call buffInstants
+			}
+		} else {
+			/chat ${channel} I have something on cursor !
+		}
+		
+		/call Background_Events
+		/doevents
+	
+		| If I'm not active, call mainFunctions
+		/if (!${activeTimer}) {
+		
+			| check for a pending item exchange
+			/if (${swapItemBack} && !${itemExchange_Timer}) /call completePendingExchange
+
+|	******************************************************************************	|
+|   ******************************* Main Functions *******************************	|
+|	******************************************************************************	|
+			/for i 1 to ${mainLoop_Array.Size}
+				/if (${Bool[${mainLoop_Array[${i}]}]}) /call ${mainLoop_Array[${i}]}
+			/if (!${ActionTaken}) /next i
+	
+|	**********************************************************************************	|
+|   ******************************* Tertiary Functions *******************************	|
+|	**********************************************************************************	|
+			
+			| MedBreak
+			/if (${medBreak}) /call check_MedBreak
+			
+			| Maintain macro timers
+			/if (${timerArray.Size}) /call check_macroTimers
+		}
+	}
+
+	/if (${Debug}) {
+		/echo <== MainLoop -|
+		/delay 5
+	}
+	/goto :MainLoop	
+	/call endMacro
 /return

@@ -412,7 +412,7 @@ Sub DepositToGuildBank(ItemToDeposit)
 | **************** Broke Event ******************** 
 Sub EVENT_Broke 
     /echo You are out of money! 
-    /endmacro 
+    /endMacro 
 /return
 
 | **************** Type Stuff  ******************** 

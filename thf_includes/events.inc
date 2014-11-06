@@ -631,7 +631,7 @@ Sub EVENT_Died
 /return
 
 Sub EVENT_Finish
-	/endmacro
+	/endMacro
 /return
 
 Sub EVENT_Camp
