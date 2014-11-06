@@ -5,30 +5,30 @@
 |- Contains setup functions for thf.mac								-|
 |--------------------------------------------------------------------|
 
-#include thf includes\ninjadvloot.inc
-#include thf includes\wait4Rez.inc
-#include thf includes\sub.inc
-#include thf includes\events.inc
+#include thf_includes\ninjadvloot.inc
+#include thf_includes\wait4Rez.inc
+#include thf_includes\sub.inc
+#include thf_includes\events.inc
 
-#include thf includes\thf_Alerts.inc
-#include thf includes\thf_Assists.inc
+#include thf_includes\thf_Alerts.inc
+#include thf_includes\thf_Assists.inc
 
-#include thf includes\thf_Bard.inc
-#include thf includes\thf_Beastlord.inc
-#include thf includes\thf_Berserker.inc
-#include thf includes\thf_Cleric.inc
-#include thf includes\thf_Druid.inc
-#include thf includes\thf_Enchanter.inc
-#include thf includes\thf_Magician.inc
-#include thf includes\thf_Monk.inc
-#include thf includes\thf_Necromancer.inc
-#include thf includes\thf_Paladin.inc
-#include thf includes\thf_Ranger.inc
-#include thf includes\thf_Rogue.inc
-#include thf includes\thf_ShadowKnight.inc
-#include thf includes\thf_Shaman.inc
-#include thf includes\thf_Warrior.inc
-#include thf includes\thf_Wizard.inc
+#include thf_includes\thf_Bard.inc
+#include thf_includes\thf_Beastlord.inc
+#include thf_includes\thf_Berserker.inc
+#include thf_includes\thf_Cleric.inc
+#include thf_includes\thf_Druid.inc
+#include thf_includes\thf_Enchanter.inc
+#include thf_includes\thf_Magician.inc
+#include thf_includes\thf_Monk.inc
+#include thf_includes\thf_Necromancer.inc
+#include thf_includes\thf_Paladin.inc
+#include thf_includes\thf_Ranger.inc
+#include thf_includes\thf_Rogue.inc
+#include thf_includes\thf_ShadowKnight.inc
+#include thf_includes\thf_Shaman.inc
+#include thf_includes\thf_Warrior.inc
+#include thf_includes\thf_Wizard.inc
 
 |----------------------------------------------------|
 |- Checks for and enables required macro plugins.	-|
