@@ -34,13 +34,13 @@ SUB check_Harvest
 
 
 
-Sub WIZ_Setup
-/if (${Debug}) /echo |- WIZ_Setup ==>
+SUB WIZ_Setup
+/if (${outerDebug}) /echo |- WIZ_Setup ==>
 	
 	/declare i int local
 	
-	/call INItoVar "${iniCharacter},Wizard,Evac Spell" Evac_Spell string outer
-	/call INItoVar "${iniCharacter},Wizard,Auto-Harvest (On/Off)" autoHarvest bool outer
+	/call iniToVar "${iniCharacter},Wizard,Evac Spell" Evac_Spell string outer
+	/call iniToVar "${iniCharacter},Wizard,Auto-Harvest (On/Off)" autoHarvest bool outer
 	/call IniToArray "${iniCharacter},Wizard,Harvest#" harvestSpells
 	
 	| Look for a familiar to cast
@@ -51,48 +51,48 @@ Sub WIZ_Setup
 		/next i
 	}
 
-/if (${Debug}) /echo <== WIZ_Setup -|
-/return
+/if (${outerDebug}) /echo <== WIZ_Setup -|
+/RETURN
 
 
 
-Sub WIZ_Background_Events
+SUB WIZ_checkBackgroundEvents
 
 	/if (${Me.Pet.ID} && ${Me.Pet.CleanName.Find[${Me.CleanName}`s Familiar]} && ${MacroQuest.Server.Equal[PEQTGC]}) /pet get lost
 
-/return
+/RETURN
 
 
 
 SUB WIZ_MacroSettings
-/if (${Debug}) /echo |- WIZ_MacroSettings ==>
+/if (${outerDebug}) /echo |- WIZ_MacroSettings ==>
 
-	/call WriteToIni "${advSettings_Ini},WIZ Functions,WIZ Function#1" "check_Burns" 1
-	/call WriteToIni "${advSettings_Ini},WIZ Functions,WIZ Function#2" "check_CombatBuffs" 1
-	/call WriteToIni "${advSettings_Ini},WIZ Functions,WIZ Function#3" "check_Rain" 1
-	/call WriteToIni "${advSettings_Ini},WIZ Functions,WIZ Function#4" "check_Nukes" 1
-	/call WriteToIni "${advSettings_Ini},WIZ Functions,WIZ Function#5" "check_Harvest" 1
-	/call WriteToIni "${advSettings_Ini},WIZ Functions,WIZ Function#6" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},WIZ Functions,WIZ Function#1" "check_Burns" 1
+	/call writeToIni "${iniAdvanced},WIZ Functions,WIZ Function#2" "check_CombatBuffs" 1
+	/call writeToIni "${iniAdvanced},WIZ Functions,WIZ Function#3" "check_Rain" 1
+	/call writeToIni "${iniAdvanced},WIZ Functions,WIZ Function#4" "check_Nukes" 1
+	/call writeToIni "${iniAdvanced},WIZ Functions,WIZ Function#5" "check_Harvest" 1
+	/call writeToIni "${iniAdvanced},WIZ Functions,WIZ Function#6" "check_Buffs" 1
 
-/if (${Debug}) /echo <== WIZ_MacroSettings -|
+/if (${outerDebug}) /echo <== WIZ_MacroSettings -|
 /RETURN
 
 
 
 SUB WIZ_CharacterSettings
-/if (${Debug}) /echo |- WIZ_CharacterSettings ==>
+/if (${outerDebug}) /echo |- WIZ_CharacterSettings ==>
 
-	/call WriteToIni "${iniCharacter},Wizard,Evac Spell"
-	/call WriteToIni "${iniCharacter},Wizard,Auto-Harvest (On/Off)"
-	/call WriteToIni "${iniCharacter},Wizard,Harvest#1"
+	/call writeToIni "${iniCharacter},Wizard,Evac Spell"
+	/call writeToIni "${iniCharacter},Wizard,Auto-Harvest (On/Off)"
+	/call writeToIni "${iniCharacter},Wizard,Harvest#1"
 
-/if (${Debug}) /echo <== WIZ_CharacterSettings -|
+/if (${outerDebug}) /echo <== WIZ_CharacterSettings -|
 /RETURN
 
 
 
-Sub WIZ_Aliases
-/if (${Debug}) /echo |- WIZ_Aliases ==>
+SUB WIZ_Aliases
+/if (${outerDebug}) /echo |- WIZ_Aliases ==>
 
-/if (${Debug}) /echo <== WIZ_Aliases -|
-/return
+/if (${outerDebug}) /echo <== WIZ_Aliases -|
+/RETURN

@@ -8,8 +8,8 @@
 |--------------------------------------------------------------------------------|
 |- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.	 -|
 |--------------------------------------------------------------------------------|
-Sub check_rogStrike()
-	/if (${Debug}) /echo |- rogueStrike ==>
+SUB check_rogStrike()
+	/if (${outerDebug}) /echo |- rogueStrike ==>
 	
 	/if (${Me.AbilityReady[Hide]}) {
 	 	 | Stop moving.
@@ -69,16 +69,16 @@ Sub check_rogStrike()
 		/delay 10
 	}
 
-	/﻿if (${Debug}) /echo <== rogueStrike -|
-/return
+	/﻿if (${outerDebug}) /echo <== rogueStrike -|
+/RETURN
 
 |------------------------------------------------------------|
 |- AutoHide	 	 	 	 	 	 	 	 	 	 	 	 	 -|
 |------------------------------------------------------------|
 |- Automatically engages sneak and hide when not in combat.	 -|
 |------------------------------------------------------------|
-sub AutoHide
-	 /if (${Debug}) /echo |- AutoHide ==>
+SUB AutoHide
+	 /if (${outerDebug}) /echo |- AutoHide ==>
 
 	 | Engage sneak.
 	 /if (!${Me.Sneaking} && ${Me.AbilityReady[Sneak]}) {
@@ -92,16 +92,16 @@ sub AutoHide
 	 	 /delay 2s ${Me.Invis}
 	 }
 
-	 /if (${Debug}) /echo <== AutoHide -|
-/return
+	 /if (${outerDebug}) /echo <== AutoHide -|
+/RETURN
 
 |------------------------------------------------|
 |- AutoEvade	 	 	 	 	 	 	 	 	 -|
 |------------------------------------------------|
 |- Automatically engages hide while in combat.	 -|
 |------------------------------------------------|
-sub AutoEvade
-	 /if (${Debug}) /echo |- AutoEvade ==>
+SUB AutoEvade
+	 /if (${outerDebug}) /echo |- AutoEvade ==>
 
 	 /if (${Me.AbilityReady[Hide]}) {
 	 	 
@@ -122,20 +122,20 @@ sub AutoEvade
 	 	 }
 	 }
 
-	 /if (${Debug}) /echo <== AutoEvade -|
-/return
+	 /if (${outerDebug}) /echo <== AutoEvade -|
+/RETURN
 
 |------------------------------------------------|
 |- 	 	 	 	 	 	 	 	 	 	 	 	 -|
 |------------------------------------------------|
-Sub ROG_Setup
-	/if (${Debug}) /echo |- ROG_Setup ==>
+SUB ROG_Setup
+	/if (${outerDebug}) /echo |- ROG_Setup ==>
 
 	| Auto-Hide
-	/call IniToVar "${iniCharacter},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
+	/call iniToVar "${iniCharacter},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
 	
 	| Auto-Evade
-	/call IniToVar "${iniCharacter},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
+	/call iniToVar "${iniCharacter},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
 	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
 ﻿	
 	| Pick up the lastest discipline
@@ -143,14 +143,14 @@ Sub ROG_Setup
 	
 	/call createStrikeItemsTimer
 
-	 /if (${Debug}) /echo <== ROG_Setup -|
-/return
+	 /if (${outerDebug}) /echo <== ROG_Setup -|
+/RETURN
 
 |--------------------------------------------------------|
 |- Check every strike discipline to get the highest one -|
 |--------------------------------------------------------|
 SUB getLatestStrikeDiscipline()
-	/if (${Debug}) /echo |- getLatestStrikeDiscipline ==>
+	/if (${outerDebug}) /echo |- getLatestStrikeDiscipline ==>
 	
 	/if (!${Defined[strikeDiscipline]}) /declare strikeDiscipline string outer
 
@@ -174,14 +174,14 @@ SUB getLatestStrikeDiscipline()
 		/varset strikeDiscipline "Sneak Attack"
 	}
 	
-	/if (${Debug}) /echo <== getLatestStrikeDiscipline -|
+	/if (${outerDebug}) /echo <== getLatestStrikeDiscipline -|
 /RETURN
 
 |--------------------------------------------------------|
 |- Create the timers of the strike items available      -|
 |--------------------------------------------------------|
 SUB createStrikeItemsTimer()
-	/if (${Debug}) /echo |- createStrikeItemsTimer ==>
+	/if (${outerDebug}) /echo |- createStrikeItemsTimer ==>
 	
 	/if (!${Defined[strikeItem]}) /declare strikeItem item local
 	
@@ -197,47 +197,47 @@ SUB createStrikeItemsTimer()
 	/varset strikeItem ${FindItem[=Fizzlethorp's Cloak of Shadows]}
 	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 40s
 
-	/if (${Debug}) /echo <== createStrikeItemsTimer -|
+	/if (${outerDebug}) /echo <== createStrikeItemsTimer -|
 /RETURN
 
-Sub ROG_Background_Events
+SUB ROG_checkBackgroundEvents
 
 	 /if (${AutoHide} && !${Me.Invis} && !${Me.Moving} && !${Me.Combat}) /call AutoHide
 
-/return
+/RETURN
 
 
 
 SUB ROG_MacroSettings
-/if (${Debug}) /echo |- ROG_MacroSettings ==>
+/if (${outerDebug}) /echo |- ROG_MacroSettings ==>
 
-	 | MacroData_Ini settings
-	 |/call WriteToIni "${MacroData_Ini},Class Specific Info,Rogue Sneak Attack Disciplines" "Sneak Attack,Thief's Vengeance,Assassin's Strike,Kyv Strike,Ancient: Chaos Strike,Daggerfall,Razorarc,Swiftblade,Swiftblade Rk. II,Swiftblade Rk. III,Daggerlunge,Daggerlunge Rk. II,Daggerlunge Rk. III,Daggerswipe,Daggerswipe Rk. II,Daggerswipe Rk. III,Daggerstrike,Daggerstrike Rk. II,Daggerstrike Rk. III,Daggerthrust,Daggerthrust Rk. II,Daggerthrust Rk. III" 0
-   /call WriteToIni "${MacroData_Ini},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
+	 | iniTHF settings
+	 |/call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Sneak Attack,Thief's Vengeance,Assassin's Strike,Kyv Strike,Ancient: Chaos Strike,Daggerfall,Razorarc,Swiftblade,Swiftblade Rk. II,Swiftblade Rk. III,Daggerlunge,Daggerlunge Rk. II,Daggerlunge Rk. III,Daggerswipe,Daggerswipe Rk. II,Daggerswipe Rk. III,Daggerstrike,Daggerstrike Rk. II,Daggerstrike Rk. III,Daggerthrust,Daggerthrust Rk. II,Daggerthrust Rk. III" 0
+   /call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
 
 	 | Adv Settings
-	 /call WriteToIni "${advSettings_Ini},ROG Functions,ROG Function#1" "check_Burns" 1
-	 /call WriteToIni "${advSettings_Ini},ROG Functions,ROG Function#2" "check_CombatBuffs" 1
-	 /call WriteToIni "${advSettings_Ini},ROG Functions,ROG Function#3" "check_Buffs" 1
+	 /call writeToIni "${iniAdvanced},ROG Functions,ROG Function#1" "check_Burns" 1
+	 /call writeToIni "${iniAdvanced},ROG Functions,ROG Function#2" "check_CombatBuffs" 1
+	 /call writeToIni "${iniAdvanced},ROG Functions,ROG Function#3" "check_Buffs" 1
 
-	/if (${Debug}) /echo <== ROG_MacroSettings -|
+	/if (${outerDebug}) /echo <== ROG_MacroSettings -|
 /RETURN
 
 
 
 SUB ROG_CharacterSettings
-/if (${Debug}) /echo |- ROG_CharacterSettings ==>
+/if (${outerDebug}) /echo |- ROG_CharacterSettings ==>
 
-	 /call WriteToIni "${iniCharacter},${Me.Class},Auto-Hide (On/Off)"
-	 /call WriteToIni "${iniCharacter},${Me.Class},Auto-Evade (On/Off)"
+	 /call writeToIni "${iniCharacter},${Me.Class},Auto-Hide (On/Off)"
+	 /call writeToIni "${iniCharacter},${Me.Class},Auto-Evade (On/Off)"
 
-/if (${Debug}) /echo <== ROG_CharacterSettings -|
+/if (${outerDebug}) /echo <== ROG_CharacterSettings -|
 /RETURN
 
 
 
-Sub ROG_Aliases
-/if (${Debug}) /echo |- ROG_Aliases ==>
+SUB ROG_Aliases
+/if (${outerDebug}) /echo |- ROG_Aliases ==>
 
-/if (${Debug}) /echo <== ROG_Aliases -|
-/return
+/if (${outerDebug}) /echo <== ROG_Aliases -|
+/RETURN

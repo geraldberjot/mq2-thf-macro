@@ -24,7 +24,7 @@
 #Include includes\sub.inc
 #Include includes\events.inc
 
-Sub Main
+SUB Main
 	/declare Delai int outer 6
 	/declare myMain string outer "conradd"
 	/declare channel int outer 0
@@ -36,7 +36,7 @@ Sub Main
 
 	/call joinChannel
 	/call checkPlugIn
-	/call SetupAdvLootVars
+	/call setupAdvLootVars
 	/call loadCustomVars
 	/chat ${channel} Starting Old Macro for ${Me.Class}
 	
@@ -63,4 +63,4 @@ Sub Main
 		}
 	/goto :MainLoop
 	/call endMacro
-/return
+/RETURN

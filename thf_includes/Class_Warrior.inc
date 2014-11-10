@@ -14,7 +14,7 @@
 |- attemptProvoke	-|
 |--------------------|
 SUB check_warProvoke(provokeDisc)
-/if (${Debug}) /echo |- check_warProvoke ==>
+/if (${outerDebug}) /echo |- check_warProvoke ==>
 
 	/if (!${Defined[MinBellowEndurance]}) {
 		/if (${provokeDisc.Equal[Ancient: Chaos Cry]}) {
@@ -36,69 +36,69 @@ SUB check_warProvoke(provokeDisc)
 	
 		| check endurance
 		/if (${Me.Endurance} < ${MinBellowEndurance}) {
-			/if (${Debug}) /echo |- attemptProvoke -| I do not have enough endurance to use [${provokeDisc}].
+			/if (${outerDebug}) /echo |- attemptProvoke -| I do not have enough endurance to use [${provokeDisc}].
 		} else {
 	
 			/if (${provokeTimer_${Target.ID}} && ${Spawn[${Me.TargetOfTarget}].CleanName.Equal[${Me}]}) {
-				/if (${Debug}) /echo |- attemptProvoke -| I still have aggro, and have not met my recast timer for [${provokeDisc}] [${provokeTimer_${Target.ID}}].
+				/if (${outerDebug}) /echo |- attemptProvoke -| I still have aggro, and have not met my recast timer for [${provokeDisc}] [${provokeTimer_${Target.ID}}].
 			} else {
 	
 				/call useDisc 0 "${provokeDisc}"
-				/call CreateTimer provokeTimer_${Target.ID} 600
+				/call createTimer provokeTimer_${Target.ID} 600
 			}
 		}
 	}
 
-/if (${Debug}) /echo <== check_warProvoke -|
+/if (${outerDebug}) /echo <== check_warProvoke -|
 /RETURN
 
 
 
-Sub WAR_Setup
-/if (${Debug}) /echo |- WAR_Setup ==>
+SUB WAR_Setup
+/if (${outerDebug}) /echo |- WAR_Setup ==>
 
-	/call IniToVar "${MacroData_Ini},Class Specific Info,Warrior Provoke Disciplines" warriorBellows string outer
+	/call iniToVar "${iniTHF},Class Specific Info,Warrior Provoke Disciplines" warriorBellows string outer
 
-/if (${Debug}) /echo <== WAR_Setup -|
-/return
+/if (${outerDebug}) /echo <== WAR_Setup -|
+/RETURN
 
 
 
-Sub WAR_Background_Events
+SUB WAR_checkBackgroundEvents
 
-/return
+/RETURN
 
 
 
 SUB WAR_MacroSettings
-/if (${Debug}) /echo |- WAR_MacroSettings ==>
+/if (${outerDebug}) /echo |- WAR_MacroSettings ==>
 
 	| MacroData settings
-	/call WriteToIni "${MacroData_Ini},Class Specific Info,Warrior Provoke Disciplines" "Provoke,Bellow,Berate,Incite,Bellow of the Mastruq,Ancient: Chaos Cry" 0
+	/call writeToIni "${iniTHF},Class Specific Info,Warrior Provoke Disciplines" "Provoke,Bellow,Berate,Incite,Bellow of the Mastruq,Ancient: Chaos Cry" 0
 	
 	| AdvSettings
-	/call WriteToIni "${advSettings_Ini},WAR Functions,WAR Function#1" "check_Burns" 1
-	/call WriteToIni "${advSettings_Ini},WAR Functions,WAR Function#2" "check_CombatBuffs" 1
-	/call WriteToIni "${advSettings_Ini},WAR Functions,WAR Function#3" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},WAR Functions,WAR Function#1" "check_Burns" 1
+	/call writeToIni "${iniAdvanced},WAR Functions,WAR Function#2" "check_CombatBuffs" 1
+	/call writeToIni "${iniAdvanced},WAR Functions,WAR Function#3" "check_Buffs" 1
 	
-/if (${Debug}) /echo <== WAR_MacroSettings -|
+/if (${outerDebug}) /echo <== WAR_MacroSettings -|
 /RETURN
 
 
 
 SUB WAR_CharacterSettings
-/if (${Debug}) /echo |- WAR_CharacterSettings ==>
+/if (${outerDebug}) /echo |- WAR_CharacterSettings ==>
 
-/if (${Debug}) /echo <== WAR_CharacterSettings -|
+/if (${outerDebug}) /echo <== WAR_CharacterSettings -|
 /RETURN
 
 
 
-Sub WAR_Aliases
-/if (${Debug}) /echo |- WAR_Aliases ==>
+SUB WAR_Aliases
+/if (${outerDebug}) /echo |- WAR_Aliases ==>
 
-/if (${Debug}) /echo <== WAR_Aliases -|
-/return
+/if (${outerDebug}) /echo <== WAR_Aliases -|
+/RETURN
 
 
 |**

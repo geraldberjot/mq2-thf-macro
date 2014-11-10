@@ -18,12 +18,12 @@
 | Requirements: MQ2Moveutils
 | Usage: add the following to your macro for looting
 |   #include Ninjadvloot.inc
-|   /call SetupAdvLootVars
+|   /call setupAdvLootVars
 |   /call LootMobs
 |
 | Assign differnent ini files. Default is Loot.ini
-|   /call SetupAdvLootVars "MyToonLoot.ini"
-|   /call SetupAdvLootVars "LootMesa.ini"
+|   /call setupAdvLootVars "MyToonLoot.ini"
+|   /call setupAdvLootVars "LootMesa.ini"
 |
 | Commands
 | Usage. Grab the item and put it on your cursor then use one of the following commands
@@ -44,7 +44,7 @@
 #EVENT Forage           "You have scrounged up #*#"
 #EVENT InventoryFull    "#*#Your inventory appears full!#*#"
 
-Sub SetupAdvLootVars(string ChangeIniFile)
+SUB setupAdvLootVars(string ChangeIniFile)
 
     /declare CantLootID                         int                 outer 
     /declare CorpseRotTimer                     timer               outer
@@ -85,9 +85,9 @@ Sub SetupAdvLootVars(string ChangeIniFile)
     | Alert list 9 used to define an ignore list like campfires untargetable etc.
     /if (!${Defined[${AlertList}]}) /declare AlertList int outer 9
 
-/return
+/RETURN
 
-Sub ALLoadVar(IniSection,IniVar,IniValue,VarType)
+SUB ALLoadVar(IniSection,IniVar,IniValue,VarType)
     /if (!${Defined[${IniVar}]} && ${Defined[VarType]}) /declare ${IniVar} ${VarType} outer
     /declare IniString string local ${Ini[${NinjaIniFile},${IniSection},${IniVar},NOTFOUND]}
     /varset ${IniVar} ${IniString}
@@ -95,15 +95,15 @@ Sub ALLoadVar(IniSection,IniVar,IniValue,VarType)
         /if (${IniString.Equal["NOTFOUND"]}) /varset ${IniVar} ${IniValue}
         /ini "${NinjaIniFile}" "${IniSection}" "${IniVar}" "${${IniVar}}"
     } 
-/return
+/RETURN
 
 | ****************  Loot Mobs Section ******************** |
 
-Sub EVENT_CantLoot
+SUB EVENT_CantLoot
    /varset CantLootID ${Target.ID}
-/return
+/RETURN
 
-Sub LootMobs
+SUB LootMobs
 	/if (!${AletClearTimer}) {
 		/call AlertClear
 		/varset AletClearTimer 5m
@@ -113,23 +113,23 @@ Sub LootMobs
 	/declare DeadCount int local ${SpawnCount[corpse radius ${CorpseRadius} zradius 50 noalert 25]}
     /if (!${LootMobs}) {
 		/chat ${channel} Can't loot mobs !
-		/return
+		/RETURN
 	}
 	/if (${SpawnCount[npc radius ${MobsTooClose} zradius 50 noalert ${AlertList}]}) {
 		/chat ${channel} Mobs near me, can't loot !
-		/return
+		/RETURN
 	}
 	/if (!${DeadCount}) {
 		/chat ${channel} No mobs' corpses to loot !
-		/return
+		/RETURN
 	}
 	/if (${Me.Combat}) {
 		/chat ${channel} In combat, can't loot !
-		/return
+		/RETURN
 	}
 	/if (!${Me.FreeInventory}) {
 		/chat ${channel} Inventory FULL !
-		/return
+		/RETURN
 	}
     /if (!${CorpseRotTimer}) /squelch /alert clear 25
     /declare i int local
@@ -157,9 +157,9 @@ Sub LootMobs
         :SkipCorpse
     /next i
 	/chat ${channel} "Looting done !"
-/return
+/RETURN
 
-Sub LootCorpse
+SUB LootCorpse
     /declare i              int    local
     /declare j          	int    local
 	/declare Cible			string local
@@ -220,9 +220,9 @@ Sub LootCorpse
         /nomodkey /notify LootWnd LW_DoneButton leftmouseup
         /delay 1s !${Window[LootWnd].Open}
     /if (${Window[LootWnd].Open}) /goto :clickdoneffs
-/return
+/RETURN
 
-Sub LootItem(int i,DoWhat,WhichButton)
+SUB LootItem(int i,DoWhat,WhichButton)
     /declare CorpseItemID int local ${Corpse.Item[${i}].ID}
     /nomodkey /shift /itemnotify  ${Corpse.Item[${i}].InvSlot} ${WhichButton}mouseup
     /delay 5s ${Window[ConfirmationDialogBox].Open} || !${Corpse.Item[${i}].NoDrop}
@@ -231,21 +231,21 @@ Sub LootItem(int i,DoWhat,WhichButton)
     /if (${DoWhat.Equal[Destroy]} && ${Cursor.ID}==${CorpseItemID}) /destroy
     /delay 3s !${Corpse.Item[${i}].ID}
     /if (${Cursor.ID}) /call CheckCursor
-/return
+/RETURN
 
-Sub CheckCursor
+SUB CheckCursor
     :ALauto_inv
 	/if (${Cursor.ID}) {
-		/if (${Cursor.NoDrop} && !${Me.FreeInventory}) /return
+		/if (${Cursor.NoDrop} && !${Me.FreeInventory}) /RETURN
 		/timed 5 /autoinventory
 		/delay 2s !${Cursor.ID}
 		/goto :ALauto_inv
     }
-/return
+/RETURN
 
 | **************** Foraged Items Section ******************** |
-Sub EVENT_Forage
-    /if (!${LootForage}) /return
+SUB EVENT_Forage
+    /if (!${LootForage}) /RETURN
     /declare ForagedItem string local
     :MoreToAutoInventory
         /if (${Cursor.ID}) {
@@ -265,10 +265,10 @@ Sub EVENT_Forage
             }
         }
     /if (${Cursor.ID}) /goto :MoreToAutoInventory
-/return
+/RETURN
 
 | **************** Search Loot Section ******************** |
-Sub DoLootStuff(LootAction)
+SUB DoLootStuff(LootAction)
     /declare i int local
     /declare j int local
     /declare k int local
@@ -278,7 +278,7 @@ Sub DoLootStuff(LootAction)
         /keypress OPEN_INV_BAGS
     }
    /call NPC "${Target.CleanName}"
-   | Top level inv has its own loop since ${FindItem[=${ItemToSell}].InvSlot} looks at top lev inv slots first in Sub SellToVendor for the item to sell.
+   | Top level inv has its own loop since ${FindItem[=${ItemToSell}].InvSlot} looks at top lev inv slots first in SUB SellToVendor for the item to sell.
    | Loop through top level inventory slots for sellable items
    /for k 1 to 10
         | Check if top level inv slot is not a container/bag
@@ -317,7 +317,7 @@ Sub DoLootStuff(LootAction)
         /echo Closing all bags
         /keypress CLOSE_INV_BAGS
     }
-    | Prevent spam from Sell event after selling items in Sub SellStuff
+    | Prevent spam from Sell event after selling items in SUB SellStuff
     /doevents flush Sell
     /if (${Window[MerchantWnd].Open}) {
         /echo Closing merchant window
@@ -327,14 +327,14 @@ Sub DoLootStuff(LootAction)
         /echo Closing guildbank window
         /keypress esc
     }
-/return
+/RETURN
    
-Sub NPC(NPCName)
+SUB NPC(NPCName)
     /target npc ${NPCName}
     /delay 1s
     /if (!${Select[${Target.Type},npc,pet]} || !${Target.ID} || ${Target.Type.Equal[pet]} && !${Target.CleanName.Find[familiar]}) {
         /echo Please target a vendor or guildbanker
-        /return
+        /RETURN
     }
     /echo Doing business with ${NPCName}
     /target id ${Spawn[${NPCName}].ID}
@@ -349,17 +349,17 @@ Sub NPC(NPCName)
     /nomodkey /click right target
     /echo Waiting 5s for merchant/guildbank window to populate
     /delay 5s
-/return
+/RETURN
 
 | **************** Sell Loot Section ******************** |
-Sub EVENT_Sell(string soldstr, string ItemName)
+SUB EVENT_Sell(string soldstr, string ItemName)
     /if ( ${AddNewSales} ) {
         /echo Setting ${ItemName} to sell
         /ini "${NinjaIniFile}" "${ItemName.Left[1]}" "${ItemName}" Sell
     }
-/return
+/RETURN
 
-Sub SellToVendor(ItemToSell)
+SUB SellToVendor(ItemToSell)
     /if (${Window[MerchantWnd].Open}) {
     :sell
         /echo Selling ${ItemToSell}
@@ -369,17 +369,17 @@ Sub SellToVendor(ItemToSell)
         /delay 2s
     /if (${FindItem[${itemToSell}].InvSlot}) /goto :sell
     }
-/return
+/RETURN
 
 | **************** Deposit Loot Section ******************** 
-Sub DepositToGuildBank(ItemToDeposit)
+SUB DepositToGuildBank(ItemToDeposit)
     /if (${Window[GuildBankWnd].Open}) {
         :deposit
             /if (${Window[GuildBankWnd].Child[GBANK_DepositCountLabel].Text.Arg[2,:]}==0) {
                 /echo Guildbank Deposited Items is full.
-                /return
+                /RETURN
             }
-            /if (${FindItem[=${ItemToDeposit}].InvSlot}<=22) /return
+            /if (${FindItem[=${ItemToDeposit}].InvSlot}<=22) /RETURN
             /echo Depositing ${ItemToDeposit}
             /nomodkey /shiftkey /itemnotify ${FindItem[=${ItemToDeposit}].InvSlot} leftmouseup
             /delay 5
@@ -387,37 +387,37 @@ Sub DepositToGuildBank(ItemToDeposit)
             /delay 2s
         /if (${FindItem[${itemToSell}].InvSlot}) /goto :deposit
     }
-/return
+/RETURN
 
 | **************** Item set ini file event ******************** 
-    Sub EVENT_EditIniItem(ItemString,ItemAction,ItemName)
+    SUB EVENT_EditIniItem(ItemString,ItemAction,ItemName)
         /if (${Cursor.ID}) {
             /echo -- Setting ${ItemName} to ${ItemAction}
             /ini "${NinjaIniFile}" ${ItemName.Left[1]} "${ItemName}" ${ItemAction}
         } else {
             /echo No item on cursor.
         }
-    /return
+    /RETURN
 
 | **************** Sell Stuff Event ******************** 
-    Sub EVENT_SellStuff
+    SUB EVENT_SellStuff
         /call DoLootStuff sell
-    /return
+    /RETURN
     
 | **************** Deposit Stuff Event *******************
-    Sub EVENT_DepositStuff
+    SUB EVENT_DepositStuff
         /call DoLootStuff deposit
-    /return
+    /RETURN
     
 | **************** Broke Event ******************** 
-Sub EVENT_Broke 
+SUB EVENT_Broke 
     /echo You are out of money! 
     /endMacro 
-/return
+/RETURN
 
 | **************** Type Stuff  ******************** 
 | Lifted from commonsubs.inc by Armysoldier    
-Sub Type(String InStr)
+SUB Type(String InStr)
     /declare char string local 
     /declare loopctr int local 
     /for loopctr 1 to ${InStr.Length} 
@@ -428,10 +428,10 @@ Sub Type(String InStr)
             /nomodkey /keypress ${char} chat 
         } 
     /next loopctr 
-/return 
+/RETURN 
 
 | **************** Buy Stuff ********************  
-Sub Buy(string ItemToBuy, int amount)
+SUB Buy(string ItemToBuy, int amount)
     /declare i int local
     | /echo Buying ${ItemToBuy}!
     /declare QTY int local
@@ -440,12 +440,12 @@ Sub Buy(string ItemToBuy, int amount)
     /delay 1s
     /if (${FindItemCount[${ItemToBuy}]}>= ${amount}) {
         /echo I have enough ${ItemToBuy}.
-        /return
+        /RETURN
     }   
     /varset ListItem ${Window[MerchantWnd].Child[ItemList].List[=${ItemToBuy},2]}
     /if (!${ListItem}) {
         /echo couldn't find ${ItemToBuy}
-        /return
+        /RETURN
     } else {
         /notify MerchantWnd ItemList listselect ${ListItem}
         /delay 1s       
@@ -453,7 +453,7 @@ Sub Buy(string ItemToBuy, int amount)
     /echo Buying ${ItemToBuy} Till I get ${amount} 
     :Loop
     /doevents
-    /if (${InventoryFull}) /return
+    /if (${InventoryFull}) /RETURN
     /if (${QTY}>1) {
         /if (${QTY}>19) {
             /Shiftkey /notify merchantwnd MW_Buy_Button leftmouseup
@@ -461,7 +461,7 @@ Sub Buy(string ItemToBuy, int amount)
             /echo ${FindItemCount[${ItemToBuy}]} ${ItemToBuy} in inventory
             /varcalc QTY ${amount}-${FindItemCount[${ItemToBuy}]} 
             /delay 3
-            /if (${QTY}<=0) /return
+            /if (${QTY}<=0) /RETURN
             /goto :Loop
         }
         /if (${QTY}>0 && ${QTY}<20) {
@@ -471,41 +471,41 @@ Sub Buy(string ItemToBuy, int amount)
                 /echo Buying ${ItemToBuy} ${i} of ${QTY}
                 /if (${i}>=${QTY}) {
                     /echo ${FindItemCount[${ItemToBuy}]} ${ItemToBuy} in inventory
-                    /return
+                    /RETURN
                 }
             /next i
             /varcalc QTY ${amount}-${FindItemCount[${ItemToBuy}]}
             
         }
     }
-/return
+/RETURN
     
-Sub ZCheck(float Zcur, float Zdiff)
+SUB ZCheck(float Zcur, float Zdiff)
     | Move down if Z distance more than Zcheck due to levitation
     /if (${Zcur}>=${Zdiff}) {
         /keypress end hold
         /delay 10
         /keypress end
     }
-/return
+/RETURN
 
-Sub EVENT_InventoryFull
+SUB EVENT_InventoryFull
     /echo Your Inventory is full. Turning off looting functions.
     /varset LootMobs FALSE
     /varset InventoryFull 1
-/return
+/RETURN
 
-Sub CreateIni
-    /if (${Ini[${NinjaIniFile}].Length}) /return
+SUB CreateIni
+    /if (${Ini[${NinjaIniFile}].Length}) /RETURN
     /declare a local Settings|A|B|C|D|E|F|G|H|I|J|K|L|M|N|O|P|Q|R|S|T|U|V|W|X|Y|Z
     /echo Creating ini file ${NinjaIniFile}
     /declare i int local 1
     /for i 1 to 27
         /ini ${NinjaIniFile} "${a.Arg[${i},|]}" "|===================================" "==================================|"
     /next i
-/return
+/RETURN
 
-Sub AlertClear
+SUB AlertClear
 	/squelch /alert clear 25
 	/squelch /alert clear ${AlertList}
- /return
+ /RETURN

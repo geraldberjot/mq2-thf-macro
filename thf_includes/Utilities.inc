@@ -15,23 +15,23 @@
 |- @param VarType: The type of variable to be declared.													-|
 |- @param VarScope: The scope of the variable to be declared.											-|
 |--------------------------------------------------------------------------------------------------------|
-|- Syntax: /call IniToVar IniKey VariableToMake VariableType VariableScope								-|
+|- Syntax: /call iniToVar IniKey VariableToMake VariableType VariableScope								-|
 |-	Ex:																									-|
 |--------------------------------------------------------------------------------------------------------|
 |-		To create an outer variable,  																	-|
-|-			/call IniToVar Bot_Killians.ini,AssistStick,StickDistance int outer							-|
+|-			/call iniToVar Bot_Killians.ini,AssistStick,StickDistance int outer							-|
 |--------------------------------------------------------------------------------------------------------|
 |-		To pass a local variable, 																		-|
-|-			/call IniToVar Bot_Killians.Ini,Basics,Use_Potion/Pct UNDEFINED string local				-|
+|-			/call iniToVar Bot_Killians.Ini,Basics,Use_Potion/Pct UNDEFINED string local				-|
 |-			/declare PotionName ${Macro.Return.Arg[1,/]}												-|
 |-			/declare PotionPct ${Macro.Return.Arg[2,/]}													-|
 |--------------------------------------------------------------------------------------------------------|
-SUB IniToVar(Ini_Key, VarToMake, VarType, VarScope)
-	/if (${Debug}) /echo |- IniToVar [${Ini_Key}] ==>
+SUB iniToVar(Ini_Key, VarToMake, VarType, VarScope)
+	/if (${outerDebug}) /echo |- iniToVar [${Ini_Key}] ==>
 
 	| Check for the specified ini key.
 	/if (!${Ini[${Ini_Key}].Length}) {
-		/if (${Debug}) /echo [${Ini_Key}] not found.
+		/if (${outerDebug}) /echo [${Ini_Key}] not found.
 	} else {
 	
 		| Validate bool.
@@ -39,26 +39,26 @@ SUB IniToVar(Ini_Key, VarToMake, VarType, VarScope)
 			/if (${Defined[${VarToMake}]}) /deletevar ${VarToMake}
 			/if (!${Defined[new_VarName]}) /declare new_VarName string outer
 			/declare ${VarToMake} bool ${VarScope} ${If[${Select[${Ini[${Ini_Key}]},TRUE,ON,YES,1]},TRUE,FALSE]}
-			/if (${Debug}) /echo |- IniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
+			/if (${outerDebug}) /echo |- iniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
 		| Validate int.
 		} else /if (${VarType.Equal[Int]}) {
 			/if (${Defined[${VarToMake}]}) /deletevar ${VarToMake}
 			/declare ${VarToMake} int ${VarScope} ${Ini[${Ini_Key}]}
-			/if (${Debug}) /echo |- IniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
+			/if (${outerDebug}) /echo |- iniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
 		| Validate float.
 		} else /if (${VarType.Equal[Float]}) {
 			/if (${Defined[${VarToMake}]}) /deletevar ${VarToMake}
 			/declare ${VarToMake} float ${VarScope} ${Ini[${Ini_Key}]}
-			/if (${Debug}) /echo |- IniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
+			/if (${outerDebug}) /echo |- iniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
 		| Create string or timer.
 		} else {
 			/if (${Defined[${VarToMake}]}) /deletevar ${VarToMake}
 			/declare ${VarToMake} ${VarType} ${VarScope} ${Ini[${Ini_Key}]}
-			/if (${Debug}) /echo |- IniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
+			/if (${outerDebug}) /echo |- iniToVar -| Defined: ${VarToMake} [${${VarToMake}}]
 		}
 	}
 
-	/if (${Debug}) /echo <== IniToVar -|
+	/if (${outerDebug}) /echo <== iniToVar -|
 /RETURN ${${VarToMake}}
 
 |------------------------------------------------------------------------------------|
@@ -69,15 +69,15 @@ SUB IniToVar(Ini_Key, VarToMake, VarType, VarScope)
 |- @param ArrayScope: The scope of the array to be declared							-|
 |------------------------------------------------------------------------------------|
 |- Syntax: /call IniToArray IniKey ArrayName VariableScope							-|
-|-	Ex: /call IniToArray "Settings.ini,General Settings,Debug Mode" Debug outer		-|
-|-		/call IniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local			-|
+|-	Ex: /call IniToArray "Settings.ini,General,Debug Mode" Debug outer		-|
+|-		/call iniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local			-|
 |------------------------------------------------------------------------------------|
 SUB IniToArray(Ini_Key, ArrayName, ArrayScope)
-	/if (${Debug}) /echo |- IniToArray [${Ini_Key}] ==>
+	/if (${outerDebug}) /echo |- IniToArray [${Ini_Key}] ==>
 
 	| Check for the specified ini key.
 	/if (!${Ini[${Ini_Key}1].Length}) {
-		/if (${Debug}) /echo [${Ini_Key}] not found.
+		/if (${outerDebug}) /echo [${Ini_Key}] not found.
 	} else {
 		| Count ini entries
 		/declare i int local 1
@@ -99,7 +99,7 @@ SUB IniToArray(Ini_Key, ArrayName, ArrayScope)
 		/next i
 	}
 
-	/if (${Debug}) {
+	/if (${outerDebug}) {
 		/if (${${ArrayName}.Size}) {
 			/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
 			/for i 1 to ${${ArrayName}.Size}
@@ -119,15 +119,15 @@ SUB IniToArray(Ini_Key, ArrayName, ArrayScope)
 |- @param separator : The char to split with										-|
 |------------------------------------------------------------------------------------|
 |- Syntax: /call IniToArray IniKey ArrayName VariableScope							-|
-|-	Ex: /call IniToArray "Settings.ini,General Settings,Debug Mode" Debug outer		-|
-|-		/call IniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local			-|
+|-	Ex: /call IniToArray "Settings.ini,General,Debug Mode" Debug outer		-|
+|-		/call iniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local			-|
 |------------------------------------------------------------------------------------|
 SUB split(String myString, String ArrayName, String ArrayScope, String separator)
-	/if (${Debug}) /echo |- split [${myString} with ${separator}] ==>
+	/if (${outerDebug}) /echo |- split [${myString} with ${separator}] ==>
 
 	| Check if the spearator is in the string.
 	/if (!${myString.Find[${separator}]}) {
-		/if (${Debug}) /echo [${separator}] not found.
+		/if (${outerDebug}) /echo [${separator}] not found.
 	} else {
 		| Count separator
 		/declare i int local 1
@@ -143,7 +143,7 @@ SUB split(String myString, String ArrayName, String ArrayScope, String separator
 		/next i
 	}
 
-	/if (${Debug}) {
+	/if (${outerDebug}) {
 		/if (${${ArrayName}.Size}) {
 			/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
 			/for i 1 to ${${ArrayName}.Size}
@@ -163,15 +163,15 @@ SUB split(String myString, String ArrayName, String ArrayScope, String separator
 |- @param WhatToWrite: Data to write to the given Ini_Key											-|
 |- @param OverWrite(bool): Allow overwrite															-|
 |----------------------------------------------------------------------------------------------------|
-|- Syntax: /call WriteToIni "Ini_Key" "WhatToWrite" "OverWrite"										-|
+|- Syntax: /call writeToIni "Ini_Key" "WhatToWrite" "OverWrite"										-|
 |-	Ex:																								-|
-|-		Blank entry 				- 	/call WriteToIni "Loot.ini,B,Bone Chips"					-|
-|-		Entry with setting 			- 	/call WriteToIni "Loot.ini,B,Bone Chips" "Keep"				-|
-|-		Overwrite existing entry	- 	/call WriteToIni "Loot.ini,B,Bone Chips" "Destroy" TRUE		-|
+|-		Blank entry 				- 	/call writeToIni "Loot.ini,B,Bone Chips"					-|
+|-		Entry with setting 			- 	/call writeToIni "Loot.ini,B,Bone Chips" "Keep"				-|
+|-		Overwrite existing entry	- 	/call writeToIni "Loot.ini,B,Bone Chips" "Destroy" TRUE		-|
 |----------------------------------------------------------------------------------------------------|
-SUB WriteToIni(Ini_Key, WhatToWrite, bool OverWrite)
-	/if (${Debug}) {
-		/echo |- WriteToIni ==>
+SUB writeToIni(Ini_Key, WhatToWrite, bool OverWrite)
+	/if (${outerDebug}) {
+		/echo |- writeToIni ==>
 		/echo Ini_Key = [${Ini_Key}] - Data to write = [${WhatToWrite}] - OverWrite = [${Bool[${OverWrite}]}]	
 	}
 
@@ -192,7 +192,7 @@ SUB WriteToIni(Ini_Key, WhatToWrite, bool OverWrite)
 		}
 	}
 
-	/if (${Debug}) /echo <== WriteToIni -|
+	/if (${outerDebug}) /echo <== writeToIni -|
 /RETURN
 
 |--------------------------------------------------------|
@@ -205,7 +205,7 @@ SUB WriteToIni(Ini_Key, WhatToWrite, bool OverWrite)
 |- @param Data: Data you wish to add to the array.		-|
 |--------------------------------------------------------|
 SUB BuildArray(ArrayName, Data, varScope)
-	/if (${Debug}) /echo |- BuildArray Adding [${ArrayName}-${Data}-${varScope}] ==>
+	/if (${outerDebug}) /echo |- BuildArray Adding [${ArrayName}-${Data}-${varScope}] ==>
 
 	/if (!${Defined[varScope]}) /declare varScope string local outer
 	
@@ -237,7 +237,7 @@ SUB BuildArray(ArrayName, Data, varScope)
 		/varset ${ArrayName}[${${ArrayName}.Size}] ${Data}
 	}
 
-	/if (${Debug}) /echo <== BuildArray -|
+	/if (${outerDebug}) /echo <== BuildArray -|
 /RETURN ${ArrayName}
 
 |----------------------------------------------------|
@@ -247,7 +247,7 @@ SUB BuildArray(ArrayName, Data, varScope)
 |- @param Data: Data you wish to remove.			-|
 |----------------------------------------------------|
 SUB RemoveArrayElement(ArrayName, Data)
-	/if (${Debug}) {
+	/if (${outerDebug}) {
 		/echo |- RemoveArrayElement ==>
 		/echo |- RemoveArrayElement -| Removing [${Data}] from [${ArrayName}]
 	}
@@ -283,7 +283,7 @@ SUB RemoveArrayElement(ArrayName, Data)
 		/next i
 	}
 	
-	/if (${Debug}) /echo <== RemoveArrayElement -|
+	/if (${outerDebug}) /echo <== RemoveArrayElement -|
 /RETURN
 
 |------------------------------------------------------------|
@@ -292,7 +292,7 @@ SUB RemoveArrayElement(ArrayName, Data)
 |- @param TargetID: The ID of the spawn you wish to target.	-|
 |------------------------------------------------------------|
 SUB TrueTarget(TargetID)
-	/if (${Debug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
+	/if (${outerDebug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
 
 	| Check if the target is in zone.
 	/if (${SpawnCount[id ${TargetID}]}) {
@@ -316,7 +316,7 @@ SUB TrueTarget(TargetID)
 		}
 	}
 
-	/if (${Debug}) /echo <== TrueTarget -|
+	/if (${outerDebug}) /echo <== TrueTarget -|
 /RETURN
 
 |------------------------------------------------------------------------------------|
@@ -326,7 +326,7 @@ SUB TrueTarget(TargetID)
 |- @param timerSetting: Setting of the timer you're declaring.						-|
 |------------------------------------------------------------------------------------|
 SUB createTimer(String timerName, String timerSetting)
-	/if (${Debug}) /echo |- createTimer ==>
+	/if (${outerDebug}) /echo |- createTimer ==>
 
 	| Delete old timer.
 	/if (${Defined[${timerName}]}) /deletevar ${timerName}
@@ -337,7 +337,7 @@ SUB createTimer(String timerName, String timerSetting)
 	| Add the timer's name to the timerArray.
 	/call BuildArray timerArray ${timerName} global
 
-	/if (${Debug}) {
+	/if (${outerDebug}) {
 		/echo created ${timerName} [${${timerName}}]
 		/echo <== createTimer -|
 	}
@@ -347,18 +347,18 @@ SUB createTimer(String timerName, String timerSetting)
 |- Deletes spent timers made by 'SUB createTimer'.	-|
 |----------------------------------------------------|
 SUB check_macroTimers
-	/if (${Debug}) /echo |- check_macroTimers ==>
+	/if (${outerDebug}) /echo |- check_macroTimers ==>
 
 	/declare i int local
 	/declare SpentTimerCounter int local
 
 	| Check each entry of the timer array, count spent timers.	
 	/for i 1 to ${timerArray.Size}
-		/if (${Debug}) /echo Checking timer [${timerArray[${i}]} -- ${${timerArray[${i}]}}]
+		/if (${outerDebug}) /echo Checking timer [${timerArray[${i}]} -- ${${timerArray[${i}]}}]
 		/if (!${${timerArray[${i}]}}) {
 			/varcalc SpentTimerCounter ${SpentTimerCounter} + 1
 			/if (${Defined[${timerArray[${i}]}]}) {
-				/if (${Debug}) /echo Deleting timer: ${timerArray[${i}]}
+				/if (${outerDebug}) /echo Deleting timer: ${timerArray[${i}]}
 				/deletevar ${timerArray[${i}]}
 			}
 		}
@@ -366,11 +366,11 @@ SUB check_macroTimers
 	
 	| If all the timers listed on timerArray are spent, delete timerArray.
 	/if (${SpentTimerCounter}==${timerArray.Size}) {
-		/if (${Debug}) /echo All timers have been cleared.
+		/if (${outerDebug}) /echo All timers have been cleared.
 		/deletevar timerArray
 	}
 	
-	/if (${Debug}) /echo <== check_macroTimers -|
+	/if (${outerDebug}) /echo <== check_macroTimers -|
 /RETURN
 
 |----------------------------------------------------------------------------------------|
@@ -379,7 +379,7 @@ SUB check_macroTimers
 |- Alerts the user, and ends the macro, if there is no free inventory space available.	-|
 |----------------------------------------------------------------------------------------|
 SUB ClearCursor
-	/if (${Debug}) /echo |- ClearCursor ==>
+	/if (${outerDebug}) /echo |- ClearCursor ==>
 
 	/declare i int local 1
 	/declare dumpSlot string local
@@ -397,7 +397,7 @@ SUB ClearCursor
 			
 		|-Else, if I'm out of free inventory space, alert the user, and end the macro.
 		} else {
-			/docommand ${ChatToggle} I have run out of inventory space and I have an item on my cursor!!!
+			/chat ${channel} I have run out of inventory space and I have an item on my cursor!!!
 			/for i 1 to 5
 				/beep
 			/next i
@@ -413,7 +413,7 @@ SUB ClearCursor
 			
 			|-If I have no free pack slots, alert the user, and end the macro.
 			/if (${InvSlot[pack8].Item.Container}) {
-				/docommand ${ChatToggle} I have run out of inventory space and I have a bag on my cursor!!!
+				/chat ${channel} I have run out of inventory space and I have a bag on my cursor!!!
 				/for i 1 to 7
 					/beep
 				/next i
@@ -428,7 +428,7 @@ SUB ClearCursor
 	|-If I still have something on my cursor, try again to clear it.
 	/if (${Cursor.ID}) /goto :auto_inv
 
-	/if (${Debug}) /echo <== ClearCursor -|
+	/if (${outerDebug}) /echo <== ClearCursor -|
 /RETURN
 
 |----------------------------------------------------------------------------|
@@ -454,7 +454,7 @@ SUB Triangulate_Distance(string loc#1, string loc#2)
 |-		Ex.  /call MoveTo -Loc|${Target.Y},${Target.X}												-|
 |----------------------------------------------------------------------------------------------------|
 SUB MoveTo(destinationInfo, int distCheck)
-	/if (${Debug}) /echo |- MoveTo ==>
+	/if (${outerDebug}) /echo |- MoveTo ==>
 
 	/declare X_Loc float local
 	/declare Y_Loc float local
@@ -479,7 +479,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 	} else {
 		|-Check if target is already close enough
 		/if (${Int[${Macro.Return}]} < 10) {
-			/if (${Debug}) /echo I am already at the destination.
+			/if (${outerDebug}) /echo I am already at the destination.
 		} else {
 			| Declare a timer based on how far you have to move (1s for every 50 units + 3).
 			/declare retryTimer timer local ${Math.Calc[${Macro.Return} / 50 + 3].Int}s
@@ -493,12 +493,12 @@ SUB MoveTo(destinationInfo, int distCheck)
 			:movingTo_Loop
 			
 			| Debug Echo
-			/if (${Debug} && !${spamTimer_MTLoop}) {
+			/if (${outerDebug} && !${spamTimer_MTLoop}) {
 				/echo |- MoveToSpawn -| :MoveTo_Loop
 				/call createTimer spamTimer_MTLoop 50
 			}
 
-			/call Background_Events
+			/call checkBackgroundEvents
 			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${Y_Loc},${X_Loc}
 			
 			/if (${MoveTo.Moving}) {
@@ -506,7 +506,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 					/goto :movingTo_Loop
 				} else {
 					/squelch /stick off
-					/if (${Debug} && !${spamTimer_MTFAIL}) {
+					/if (${outerDebug} && !${spamTimer_MTFAIL}) {
 						/echo I have failed to move to the intended target.
 						/call createTimer spamTimer_MTFAIL 30
 					}
@@ -516,25 +516,25 @@ SUB MoveTo(destinationInfo, int distCheck)
 					/if (${retryTimer}) {
 						/goto :retry_MoveToLoc
 					} else {
-						/if (${Debug} && !${spamTimer_MTFAIL}) {
+						/if (${outerDebug} && !${spamTimer_MTFAIL}) {
 							/echo I have failed to move to the intended target.
 							/call createTimer spamTimer_MTFAIL 30
 						}
 					}
 				} else {
 					/squelch /stick off
-					/if (${Debug}) /echo I have arrived at my intended destination.
+					/if (${outerDebug}) /echo I have arrived at my intended destination.
 					/delay 30 !${Me.Moving}
 				}
 			}
 		}
 	}
 
-	/if (${Debug}) /echo <== MoveTo -|
+	/if (${outerDebug}) /echo <== MoveTo -|
 /RETURN
 
 SUB argueString(WhatToFind, givenData)
-	/if (${Debug}) /echo |- argueString ==>
+	/if (${outerDebug}) /echo |- argueString ==>
 
 	/declare i int local 1
 	/declare foundData string local NULL
@@ -543,7 +543,7 @@ SUB argueString(WhatToFind, givenData)
 	/if (${givenData.Find[/]}) {
 		/if (${givenData.Arg[${i},/].Find[${WhatToFind}]}) {
 			/varset foundData ${givenData.Arg[${i},/].Arg[2,|]}
-			/if (${Debug}) /echo |- argueString -| Found [${WhatToFind}] - [${foundData}]
+			/if (${outerDebug}) /echo |- argueString -| Found [${WhatToFind}] - [${foundData}]
 		} else {
 			/varcalc i ${i} + 1
 			/if (${givenData.Arg[${i},/].Length}) /goto :nextArg
@@ -551,14 +551,14 @@ SUB argueString(WhatToFind, givenData)
 	} else {
 		/if (${givenData.Arg[${i}, ].Find[${WhatToFind}]}) {
 			/varset foundData ${givenData.Arg[${i}, ].Arg[2,|]}
-			/if (${Debug}) /echo |- argueString -| Found [${WhatToFind}] - [${foundData}]
+			/if (${outerDebug}) /echo |- argueString -| Found [${WhatToFind}] - [${foundData}]
 		} else {
 			/varcalc i ${i} + 1
 			/if (${givenData.Arg[${i}, ].Length}) /goto :nextArg
 		}
 	}
 
-	/if (${Debug}) /echo <== argueString -|
+	/if (${outerDebug}) /echo <== argueString -|
 /RETURN ${foundData}
 
 SUB check_selectedBots(selectedBots, ChatSender)
@@ -567,179 +567,12 @@ SUB check_selectedBots(selectedBots, ChatSender)
 	/if (${Select[priests,${selectedBots}]} && ${Select[${Me.Class.ShortName},${PriestClasses}]} || ${Select[healers,${selectedBots}]} && ${Select[${Me.Class.ShortName},${PriestClasses}]} || ${Select[ranged,${selectedBots}]} && ${Select[${Me.Class.ShortName},${RangedClasses}]} || ${Select[casters,${selectedBots}]} && ${Select[${Me.Class.ShortName},${CasterClasses}]} || ${Select[melee,${selectedBots}]} && ${Select[${Me.Class.ShortName},${MeleeClasses}]} || ${Select[me,${selectedBots}]} && ${ChatSender.Equal[${Me.CleanName}]} || ${Select[${Me.Class},${selectedBots}]} || ${Select[${Me.Class.ShortName},${selectedBots}]} || ${Select[${Me.CleanName},${selectedBots}]} || ${Select[all,${selectedBots}]} || ${Select[group,${selectedBots}]} && ${Me.CleanName.Equal[${ChatSender}]} || ${Select[group,${selectedBots}]} && ${Group.Member[${ChatSender}]} || ${Select[zone,${selectedBots}]} && ${SpawnCount[pc ${ChatSender}]}) /varset botSelected TRUE
 /RETURN ${botSelected}
 
-SUB amIConcerned(String from, String who)
-	/if (${Debug}) /echo |- amIConcerned ==>
-
-	|-Reset From.
-	/call cleanName ${from}
-	
-	|-Validate From.
-	/if (!${NetBots[${Macro.Return}].ID}) {
-		/if (${Debug}) {
-			/echo |- amIConcerned -| From=${from} || not one of my toons -> FALSE
-			/echo <== amIConcerned -|
-		}
-		/RETURN FALSE
-	}
-	
-	/if 
-	
-	/if (${who.Equal[all]}) {
-		/if (${Debug}) {
-			/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-			/echo <== amIConcerned -|
-		}
-		/RETURN TRUE
-	}
-	/if (${who.Equal[group]}) {
-		/if (${Me.Grouped} && ${Group.Member[${from}]}) {
-			/if (${Debug}) {
-				/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-				/echo <== amIConcerned -|
-			}
-			/return TRUE
-		}
-	}
-	/if (${who.Equal[caster]}) {
-		| Can cast spells, including Bard 
-		/if (${Me.Class.CanCast}) {
-			/if (${Debug}) {
-				/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-				/echo <== amIConcerned -|
-			}
-			/return TRUE
-		}
-	}
-	/if (${who.Equal[melee]}) {
-		| Monk/Rogue/Bard/Ranger/Warrior/Paladin/ShadowKnight?
-		/call amIMelee
-		/if (${Debug}) {
-			/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-			/echo <== amIConcerned -|
-		}
-		/return ${Macro.Return}
-	}
-	/if (${who.Equal[priest]}) {
-		| Cleric/Druid/Shaman? 
-		/if (${Me.Class.HealerType}) {
-			/if (${Debug}) {
-				/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-				/echo <== amIConcerned -|
-			}
-			/return TRUE
-		}
-	}
-	/if (${who.Equal[nuker]}) {
-		| Wizard/Magician/Necromancer/Enchanter?
-		/call amINuker
-		/if (${Debug}) {
-			/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-			/echo <== amIConcerned -|
-		}
-		/return ${Macro.Return}
-	}
-	/if (${who.Equal[${Me.Class.Name}]} || ${who.Equal[${Me.Class.ShortName}]}) {
-		/if (${Debug}) {
-			/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-			/echo <== amIConcerned -|
-		}
-		/return TRUE
-	}
-	/if (${who.Equal[${Me.CleanName}]}) {
-		/if (${Debug}) {
-			/echo |- amIConcerned -| from=${from} || who=${who} -> TRUE
-			/echo <== amIConcerned -|
-		}
-		/return TRUE
-	}
-	
-	/if (${Debug}) {
-		/echo |- amIConcerned -| from=${from} || who=${who} -> FALSE
-		/echo <== amIConcerned -|
-	}
-/RETURN FALSE
-
-SUB cleanName(String from)
-	/if (${Debug}) /echo |- cleanName ==>
-	
-	/declare result string local
-
-	/if (${from.Left[1].Compare[ ]}<0) /varset result ${from.Right[-2].Left[-1]}
-	/if (${from.Equal[You]}) /varset result ${Me.CleanName}
-	/if (${from.Equal[MQ2]}) /varset result ${Me.CleanName}
-
-	/if (${Debug}) {
-		/echo |- cleanName -| from=${from} || result=${result}
-		/echo <== cleanName -|
-	}
-/RETURN
-
-Sub amIMelee
-	/if (${Me.Class.ShortName.Equal[WAR]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[ROG]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[BSK]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[MNK]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[BRD]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[PAL]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[SHD]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[RNG]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[BST]) {
-		/return TRUE
-	}
-/return FALSE
-
-Sub amINuker
-	/if (${Me.Class.ShortName.Equal[WIZ]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[MAG]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[ENC]) {
-		/return TRUE
-	}
-	/if (${Me.Class.ShortName.Equal[NEC]) {
-		/return TRUE
-	}
-/return FALSE
-
-#EVENT gate "<#1#> gate #2#"
-SUB EVENT_gate(String from, String who)
-	/if (${Debug}) /echo |- EVENT_gate ==>
-    /call amIconcerned ${from} ${who}
-    /if (${Macro.Return}) {
-        /call stopCurrentAction TRUE
-        /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
-        /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
-            /casting "${CharmOfQueenAdrianne}" charm
-            /chat ${channel} Gating to the Forest !
-        }
-    }
-	/if (${Debug}) /echo <== EVENT_gate -|
-/return
-
 #EVENT macroHelp "[MQ2] Help"
 #EVENT macroHelp "<#*#> Help"
 #EVENT macroHelp "[MQ2] Help #1#"
 #EVENT macroHelp "<#*#> Help #1#"
 SUB EVENT_macroHelp(line, chapter)
-/if (${Debug}) /echo |- EVENT_macroHelp ==>
+/if (${outerDebug}) /echo |- EVENT_macroHelp ==>
 
 	/declare help_Ini string local e3 Includes\e3 Help.ini
 	/declare i int local 1
@@ -788,7 +621,7 @@ SUB EVENT_macroHelp(line, chapter)
 		}
 	}
 	
-/if (${Debug}) /echo <== EVENT_macroHelp -|
+/if (${outerDebug}) /echo <== EVENT_macroHelp -|
 /RETURN
 
 
@@ -799,7 +632,7 @@ SUB EVENT_macroHelp(line, chapter)
 |- @param Ini_File: Name of the ini file you want to create.				-|
 |----------------------------------------------------------------------------|
 SUB Build_Alphabetized_Ini(Ini_File)
-/if (${Debug}) /echo |- Build_Alphabetized_Ini ==>
+/if (${outerDebug}) /echo |- Build_Alphabetized_Ini ==>
 
 	/ini "${Ini_File}" A "A is for"
 	/ini "${Ini_File}" B "B is for"
@@ -828,7 +661,7 @@ SUB Build_Alphabetized_Ini(Ini_File)
 	/ini "${Ini_File}" Y "Y is for"
 	/ini "${Ini_File}" Z "Z is for"
   
-/if (${Debug}) /echo |- Build_Alphabetized_Ini ==>
+/if (${outerDebug}) /echo |- Build_Alphabetized_Ini ==>
 /RETURN
 
 
@@ -839,7 +672,7 @@ SUB Build_Alphabetized_Ini(Ini_File)
 |- @param Ini_File: Name of the ini file you want to create.				-|
 |----------------------------------------------------------------------------|
 SUB Build_Class_Ini(Ini_File)
-/if (${Debug}) /echo |- Build_Class_Ini ==>
+/if (${outerDebug}) /echo |- Build_Class_Ini ==>
 
 	/ini "${Ini_File}" Bard "Bard is for"
 	/ini "${Ini_File}" Beastlord "Beastlord is for"
@@ -858,7 +691,7 @@ SUB Build_Class_Ini(Ini_File)
 	/ini "${Ini_File}" Warrior "Warrior is for"
 	/ini "${Ini_File}" Wizard "Wizard is for"
   
-/if (${Debug}) /echo |- Build_Class_Ini ==>
+/if (${outerDebug}) /echo |- Build_Class_Ini ==>
 /RETURN
 
 
@@ -870,9 +703,9 @@ e3 event template
 #EVENT Follow "[#1#] Follow #2#"
 #EVENT Follow "<#1#> Follow #2#"
 SUB EVENT_Follow(String line, String from, String who)
-	/if (${Debug}) /echo |- EVENT_Follow ==>
+	/if (${outerDebug}) /echo |- EVENT_Follow ==>
 
-	/call amIConcerned ${from} ${who}
+	/call amIConcerned ${from} ${who} TRUE
 		/if (${Macro.Return}) {
 		/if (${Spawn[${from}].ID} == ${Me.ID}) {
 			/RETURN
@@ -885,12 +718,12 @@ SUB EVENT_Follow(String line, String from, String who)
 		/chat ${channel} Sticking to ${from}
 	}
 	
-	/if (${Debug}) /echo <== EVENT_Follow -|
+	/if (${outerDebug}) /echo <== EVENT_Follow -|
 /RETURN
 
 | stick off, attack off, interrupt, twist off (if specify)
 SUB stopCurrentAction(bool evenBard)
-	/if (${Debug}) /echo stopCurrentAction ${evenBard} ==>
+	/if (${outerDebug}) /echo stopCurrentAction ${evenBard} ==>
     /if (${evenBard}) {
         /twist off
     }
@@ -899,7 +732,7 @@ SUB stopCurrentAction(bool evenBard)
     /attack off
     /interrupt
     /delay 1
-	/if (${Debug}) /echo <== stopCurrentAction -|
+	/if (${outerDebug}) /echo <== stopCurrentAction -|
 /RETURN
 
 
@@ -912,40 +745,40 @@ e3 .inc template
 |- Imports and validates ini settings from Character Ini,[].	-|
 |--------------------------------------------------------------------|
 SUB _Setup
-/if (${Debug}) /echo |- _Setup ==>
+/if (${outerDebug}) /echo |- _Setup ==>
 
-/if (${Debug}) /echo <== _Setup -|
+/if (${outerDebug}) /echo <== _Setup -|
 /RETURN
 
 
  
-Sub _Background_Events
+SUB _checkBackgroundEvents
 
-/return
+/RETURN
 
 
 
 SUB _MacroSettings
-/if (${Debug}) /echo |- _MacroSettings ==>
+/if (${outerDebug}) /echo |- _MacroSettings ==>
 
-/if (${Debug}) /echo <== _MacroSettings -|
+/if (${outerDebug}) /echo <== _MacroSettings -|
 /RETURN
 
 
 
 SUB _CharacterSettings
-/if (${Debug}) /echo |- _CharacterSettings ==>
+/if (${outerDebug}) /echo |- _CharacterSettings ==>
 
-/if (${Debug}) /echo <== _CharacterSettings -|
+/if (${outerDebug}) /echo <== _CharacterSettings -|
 /RETURN
 
 
 
-Sub _Aliases
-/if (${Debug}) /echo |- _Aliases ==>
+SUB _Aliases
+/if (${outerDebug}) /echo |- _Aliases ==>
 
-/if (${Debug}) /echo <== _Aliases -|
-/return
+/if (${outerDebug}) /echo <== _Aliases -|
+/RETURN
 
 
 
@@ -964,7 +797,7 @@ Sub _Aliases
 |- Bots must have line of sight on their MoveTo target.											-|
 |------------------------------------------------------------------------------------------------|
 SUB MoveToSpawn(MoveToID)
-/if (${Debug}) /echo |- MoveToSpawn ==>
+/if (${outerDebug}) /echo |- MoveToSpawn ==>
 
 |-----------------------------------------------------------------------------Check LoS on the MoveToID.
 	/if (!${Spawn[id ${MoveToID}].LineOfSight}) {
@@ -980,7 +813,7 @@ SUB MoveToSpawn(MoveToID)
 		/if (${Target.ID} == ${MoveToID}) {
 			
 			:MoveTo_Loop
-			/if (${Debug}) /echo |- MoveToSpawn -| :MoveTo_Loop
+			/if (${outerDebug}) /echo |- MoveToSpawn -| :MoveTo_Loop
 		
 		|--------------------------------------------------------------------------Engage MQ2MoveUtils.
 			/moveto ID ${Target.ID} dist 7
@@ -1007,7 +840,7 @@ SUB MoveToSpawn(MoveToID)
 		}
 	}
 
-/if (${Debug}) /echo <== MoveToSpawn -|
+/if (${outerDebug}) /echo <== MoveToSpawn -|
 /RETURN
 
 
@@ -1019,12 +852,12 @@ SUB MoveToSpawn(MoveToID)
 |- @param x_loc: X intercept of your next destination.	-|
 |--------------------------------------------------------|
 SUB MoveToLoc(float y_loc, float x_loc)
-/if (${Debug}) {
+/if (${outerDebug}) {
 	/echo |- MoveToLoc ==>
 	/echo Moving to location [${y_loc},${x_loc}]
 }
 	/if (!${LineOfSight[${Me.Y},${Me.X}:${y_loc},${x_loc}]}) {
-		/docommand ${ChatToggle} I do not have line of sight on my destination.
+		/chat ${channel} I do not have line of sight on my destination.
 	} else {
 		
 		/declare retryTimer timer local 150
@@ -1036,10 +869,10 @@ SUB MoveToLoc(float y_loc, float x_loc)
 		
 	|-----------------------------------------------------------------------------------------------Wait to stop moving.
 		:wait4Stop
-		/if (${Debug}) /echo |- MoveToLoc -| :wait4Stop
+		/if (${outerDebug}) /echo |- MoveToLoc -| :wait4Stop
 		
 	|------------------------------------------------------------------------------Check if movement events were called.
-		/call Background_Events
+		/call checkBackgroundEvents
 		
 	|---------------------------------------------------------------------------------------------------------------If I'm still moving, wait to stop.
 		/if (${Me.Moving}) {
@@ -1052,10 +885,10 @@ SUB MoveToLoc(float y_loc, float x_loc)
 
 	|------------------------------------------------------------------------------------------------------------------Calulate distance to desired location.
 		/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${y_loc},${x_loc}
-		/if (${Macro.Return} > 15) /docommand ${ChatToggle} I did not arrive at the desired location.
+		/if (${Macro.Return} > 15) /chat ${channel} I did not arrive at the desired location.
 	}
 	
-/if (${Debug}) /echo <== MoveToLoc -|
+/if (${outerDebug}) /echo <== MoveToLoc -|
 /RETURN
 
 
@@ -1065,15 +898,15 @@ SUB MoveToLoc(float y_loc, float x_loc)
 - This method of validation was abandoned due to excessive overhead on startup, and being a downright pain in my ass...
 
 SUB rewrite_ValidationKey(int newValue, int CurrentArg)
-/if (${Debug}) /echo |- rewrite_ValidationKey ==>
+/if (${outerDebug}) /echo |- rewrite_ValidationKey ==>
 
-	/if (!${Ini[${MacroData_Ini},ValidationKey-${MacroQuest.Server},${Me.CleanName}].Length}) {
-		/if (${Debug}) /echo |- rewrite_ValidationKey -| Creating key: [${newValue}].
-		/call WriteToIni "${MacroData_Ini},ValidationKey-${MacroQuest.Server},${Me.CleanName}" "${newValue}" 1	
+	/if (!${Ini[${iniTHF},ValidationKey-${MacroQuest.Server},${Me.CleanName}].Length}) {
+		/if (${outerDebug}) /echo |- rewrite_ValidationKey -| Creating key: [${newValue}].
+		/call writeToIni "${iniTHF},ValidationKey-${MacroQuest.Server},${Me.CleanName}" "${newValue}" 1	
 	} else {
 	
 		/declare i int local
-		/declare old_Key string local ${Ini[${MacroData_Ini},ValidationKey-${MacroQuest.Server},${Me.CleanName}]}
+		/declare old_Key string local ${Ini[${iniTHF},ValidationKey-${MacroQuest.Server},${Me.CleanName}]}
 		/declare new_Key string local
 		
 		/for i 1 to ${CurrentArg}
@@ -1089,16 +922,16 @@ SUB rewrite_ValidationKey(int newValue, int CurrentArg)
 		/varcalc i ${CurrentArg} + 1
 		
 		:check_NextArg
-		/if (${Ini[${MacroData_Ini},ValidationKey-${MacroQuest.Server},${Me.CleanName}].Arg[${i},-].Length}) {
+		/if (${Ini[${iniTHF},ValidationKey-${MacroQuest.Server},${Me.CleanName}].Arg[${i},-].Length}) {
 			/varset new_Key ${new_Key}${Int[${old_Key.Arg[${i},-]}]}- 
 			/varcalc i ${i} + 1
 			/goto :check_NextArg
 		}
-		/if (${Debug}) /echo |- rewrite_ValidationKey -| Rewriting key: [${new_Key}] 
-		/call WriteToIni "${MacroData_Ini},ValidationKey-${MacroQuest.Server},${Me.CleanName}" "${new_Key}" 1
+		/if (${outerDebug}) /echo |- rewrite_ValidationKey -| Rewriting key: [${new_Key}] 
+		/call writeToIni "${iniTHF},ValidationKey-${MacroQuest.Server},${Me.CleanName}" "${new_Key}" 1
 	}
 
-/if (${Debug}) /echo <== rewrite_ValidationKey -|
+/if (${outerDebug}) /echo <== rewrite_ValidationKey -|
 /RETURN
 
 ---------------------------------------------------------------------------------------------------------------------------------------------->

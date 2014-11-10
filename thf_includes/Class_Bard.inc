@@ -13,7 +13,7 @@
 #EVENT saveMelody "[MQ2] SaveMelody #2# #3#"
 #EVENT saveMelody "[MQ2] Save Melody #2# #3#"
 SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
-/if (${Debug}) /echo |- EVENT_saveMelody ==>
+/if (${outerDebug}) /echo |- EVENT_saveMelody ==>
 
 	| If no ChatSender is defined, make one.	
 	/if (!${Defined[ChatSender]}) /declare ChatSender string local ${Me.CleanName}
@@ -25,9 +25,9 @@ SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 
 		| Check if the melody already exists, and should not be overwritten.
 		/if (${Ini[${iniCharacter},${melodyName} Melody].Length}) {	
-			/if (${Debug}) /echo |- EVENT_saveMelody -| Overwriting [${melodyName}] melody...
+			/if (${outerDebug}) /echo |- EVENT_saveMelody -| Overwriting [${melodyName}] melody...
 			/for i 1 to 5
-				/if (${Ini[${iniCharacter},${melodyName} Melody,Song#${i}].Length}) /call WriteToIni "${iniCharacter},${melodyName} Melody,Song#${i}" *PLACEHOLDER 1
+				/if (${Ini[${iniCharacter},${melodyName} Melody,Song#${i}].Length}) /call writeToIni "${iniCharacter},${melodyName} Melody,Song#${i}" *PLACEHOLDER 1
 			/next i
 		}
 		
@@ -44,22 +44,22 @@ SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 			}
 		} else {
 			/echo Song#${i}=${Me.Gem[${songsToSave.Arg[${i}, ]}]}/gem|${songsToSave.Arg[${i}, ]}
-			/call WriteToIni "${iniCharacter},${melodyName} Melody,Song#${i}" "${Me.Gem[${songsToSave.Arg[${i}, ]}]}/gem|${songsToSave.Arg[${i}, ]}" ${If[${Ini[${iniCharacter},${melodyName} Melody,Song#${i}].Length},1,0]}
+			/call writeToIni "${iniCharacter},${melodyName} Melody,Song#${i}" "${Me.Gem[${songsToSave.Arg[${i}, ]}]}/gem|${songsToSave.Arg[${i}, ]}" ${If[${Ini[${iniCharacter},${melodyName} Melody,Song#${i}].Length},1,0]}
 		}
 		/varcalc i ${i} + 1
 		/if (${songsToSave.Arg[${i}, ].Length}) /goto :check_nextSong
 	}
 
-/if (${Debug}) /echo <== EVENT_saveMelody -|
-/return
+/if (${outerDebug}) /echo <== EVENT_saveMelody -|
+/RETURN
 
 #EVENT startMelody "<#1#> Melody #2#"
 #EVENT startMelody "[#1#] Melody #2#"
 SUB EVENT_startMelody(String line, String from, melodyName)
-	/if (${Debug}) /echo |- EVENT_startMelody ==>
+	/if (${outerDebug}) /echo |- EVENT_startMelody ==>
 
 	| -Verify the event
-	/call amIConcerned ${from} ${Me.CleanName}
+	/call amIConcerned ${from} ${Me.CleanName} FALSE
 	/if (${Macro.Return}) {
 		/if (${melodyName.Find[ /]}) /varset melodyName ${melodyName.Arg[1, /]}
 		| If I don't have the melodyName listed in my ini.
@@ -69,10 +69,10 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 			/if (${Select[${melodyName},Stop,End,Pause]}) {
 				/varset playingMelody FALSE
 				/varset songSet
-				/docommand ${ChatToggle} Ending melody.
+				/chat ${channel} Ending melody.
 				/twist end
 			} else {
-				/docommand ${ChatToggle} [${melodyName}] is not a known melody.
+				/chat ${channel} [${melodyName}] is not a known melody.
 			}
 		} else {
 		
@@ -113,46 +113,46 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 				| Twist the newly built songList.
 				/varset playingMelody TRUE
 				/varset songSet ${songList}
-				/docommand ${ChatToggle} Playing [${melodyName}] melody...
+				/chat ${channel} Playing [${melodyName}] melody...
 				/twist ${songSet}
 			}
 		}
 	}
 	
-/if (${Debug}) /echo <== EVENT_startMelody -|
-/return
-
-
-
-SUB restart_Melody
-/if (${Debug}) /echo |- check_Melody ==>
-
-	/if (!${Me.Casting.ID}) /twist ${Twist.List}
-
-/if (${Debug}) /echo <== check_Melody -|
+/if (${outerDebug}) /echo <== EVENT_startMelody -|
 /RETURN
 
 
 
-Sub BRD_Setup
-/if (${Debug}) /echo |- BRD_Setup ==>
+SUB restart_Melody
+/if (${outerDebug}) /echo |- check_Melody ==>
+
+	/if (!${Me.Casting.ID}) /twist ${Twist.List}
+
+/if (${outerDebug}) /echo <== check_Melody -|
+/RETURN
+
+
+
+SUB BRD_Setup
+/if (${outerDebug}) /echo |- BRD_Setup ==>
 
 	/declare returnTwist bool outer 0
 	
 	/if (!${Defined[playingMelody]}) /declare playingMelody bool global
 	/if (!${Defined[songSet]}) /declare songSet string global
 	
-	/call InitoVar "${iniCharacter},Bard,Auto-Melody" autoMelody string outer
+	/call iniToVar "${iniCharacter},Bard,Auto-Melody" autoMelody string outer
 	
-	| Start Auto-Melody at start-up.  Currently disabled to check auto start in check_Zone sub.
+	| Start Auto-Melody at start-up.  Currently disabled to check auto start in checkZone sub.
 	| /if (${Defined[autoMelody]} && !${songSet.Length}) /startmelody ${autoMelody} /only|ME
 	
-/if (${Debug}) /echo <== BRD_Setup -|
-/return
+/if (${outerDebug}) /echo <== BRD_Setup -|
+/RETURN
 
 
 
-Sub BRD_Background_Events
+SUB BRD_checkBackgroundEvents
 	
 	/doevents saveMelody
 	/doevents startMelody
@@ -161,40 +161,40 @@ Sub BRD_Background_Events
 	/if (${playingMelody} && !${Twist.Twisting} && !${Bool[${Me.Casting}]}) /call restart_Melody
 	
 	| Check Auto-Melody
-	| The call for Auto-Melody is located in e3 Background.inc -> check_Zone.  This is so Auto-Melody will only be checked when you zone, or load the macro.
+	| The call for Auto-Melody is located in e3 Background.inc -> checkZone.  This is so Auto-Melody will only be checked when you zone, or load the macro.
 
-/return
+/RETURN
 
 
 
 SUB BRD_MacroSettings
-/if (${Debug}) /echo |- BRD_MacroSettings ==>
+/if (${outerDebug}) /echo |- BRD_MacroSettings ==>
 
 	| Adv Settings
-	/call WriteToIni "${advSettings_Ini},BRD Functions,BRD Function#1" "check_Burns" 1
-	/call WriteToIni "${advSettings_Ini},BRD Functions,BRD Function#2" "check_CombatBuffs" 1
-	/call WriteToIni "${advSettings_Ini},BRD Functions,BRD Function#3" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},BRD Functions,BRD Function#1" "check_Burns" 1
+	/call writeToIni "${iniAdvanced},BRD Functions,BRD Function#2" "check_CombatBuffs" 1
+	/call writeToIni "${iniAdvanced},BRD Functions,BRD Function#3" "check_Buffs" 1
 
-/if (${Debug}) /echo <== BRD_MacroSettings -|
+/if (${outerDebug}) /echo <== BRD_MacroSettings -|
 /RETURN
 
 
 
 SUB BRD_CharacterSettings
-/if (${Debug}) /echo |- BRD_CharacterSettings ==>
+/if (${outerDebug}) /echo |- BRD_CharacterSettings ==>
 
-	/call WriteToIni "${iniCharacter},Bard,Auto-Melody"
+	/call writeToIni "${iniCharacter},Bard,Auto-Melody"
 
-/if (${Debug}) /echo <== BRD_CharacterSettings -|
+/if (${outerDebug}) /echo <== BRD_CharacterSettings -|
 /RETURN
 
 
 
-Sub BRD_Aliases
-/if (${Debug}) /echo |- BRD_Aliases ==>
+SUB BRD_Aliases
+/if (${outerDebug}) /echo |- BRD_Aliases ==>
 
 	/squelch /alias /SaveMelody /echo Save Melody
 	/squelch /alias /PlayMelody /bc  Melody
 
-/if (${Debug}) /echo <== BRD_Aliases -|
-/return
+/if (${outerDebug}) /echo <== BRD_Aliases -|
+/RETURN

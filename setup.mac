@@ -1,5 +1,5 @@
 
-Sub Main
+SUB Main
 	| load EQBC if needed
 	/if (!${Plugin[mq2eqbc].Name.NotEqual[NULL]}) {
 		/echo [SETUP] Loading MQ2EQBC...
@@ -44,4 +44,4 @@ Sub Main
 	/netbots send on
 
 	/echo [SETUP] All done!
-/return
+/RETURN
