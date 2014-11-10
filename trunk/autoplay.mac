@@ -1,6 +1,6 @@
 | - AutoMacro Example -|
 
-Sub Main
+SUB Main
 	/delay 5s
 	/popup Check the "MQ" chat window for setup information.
 	/echo ======================================
@@ -30,4 +30,4 @@ Sub Main
 	/echo 
 	/echo ======================================
 	/automacro default 
-/return
+/RETURN

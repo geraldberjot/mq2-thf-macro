@@ -1,3 +1,4 @@
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #turbo 40
 
 #Event	NoHold					"Your spell did not take hold."
@@ -20,22 +21,22 @@
 
 #include thf_includes\thf_Setup.inc
 
-Sub Main
-	/call checkPlugins
-	/call declareInis
+SUB Main
+	/declare iniGlobal 	string 	outer "thf_inis\global.ini"
+	/declare iniHail 	string 	outer "thf_inis\hail.ini"
+	/declare iniSetup 	string 	outer "thf_inis\${Me.CleanName}.ini"
+	/declare iniSpell 	string 	outer "thf_inis\spells_${Me.CleanName}.ini"
+	/declare channel 	int 	outer 0
 	
-	/declare Delai int outer 6
-	/declare myMain string outer "conradd"
-	/declare channel int outer 0
-
+	/call thfSetup FALSE
+	
 	/call joinChannel
-	/call checkPlugIn
-	/call SetupAdvLootVars
+	/call setupAdvLootVars
 	/call loadCustomVars
-	/chat ${channel} Starting THF Macro for ${Me.Class}
+	
+	/chat ${channel} THF Macro started for ${Me.Cleanname} [${Me.Class}]
 	
 	:MainLoop
-		/call checkToons
 		|/if (${Defined[looptest]}) /varset looptest ${Math.Calc[${looptest}+1]}
 		|/call LPS
 		/doevents
@@ -58,20 +59,22 @@ Sub Main
 		}
 	/goto :MainLoop
 	
-	/if (${Debug}) /echo |- MainLoop ==>
+	/if (${outerDebug}) /echo |- MainLoop ==>
 
 	| If my class is not set, I must not be in game, end the macro.
 	/if (!${Bool[${Me.Class}]}) {
 		/call endMacro
 	} else {
+		|- To update MQ2Hud
+		/call checkToons
+		
 		|***********************************************************************************|
 		|******************************* Background Functions ******************************|
 		|***********************************************************************************|
-	
 		/if (${ActionTaken}) /varset ActionTaken FALSE
 		
-		/if (${currentZone} != ${Zone.ID}) /call check_Zone
-		/if (${Following} && !${Assisting}) /call check_Follow
+		/if (${currentZone} != ${Zone.ID}) /call checkZone
+		/if (${Following} && !${outerAssisting}) /call check_Follow
 		/call check_Active
 		/call check_Combat
 		/call check_Idle
@@ -89,7 +92,7 @@ Sub Main
 			/chat ${channel} I have something on cursor !
 		}
 		
-		/call Background_Events
+		/call checkBackgroundEvents
 		/doevents
 	
 		| If I'm not active, call mainFunctions
@@ -117,10 +120,24 @@ Sub Main
 		}
 	}
 
-	/if (${Debug}) {
+	/if (${outerDebug}) {
 		/echo <== MainLoop -|
 		/delay 5
 	}
 	/goto :MainLoop	
 	/call endMacro
-/return
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Background events and functions that are checked even while casting or otherwise considered active.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- This function is checked constantly, included events and functions should have minimal character interaction.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB checkBackgroundEvents
+	/declare i int local
+
+	/for i 1 to ${macroSetups.Size}
+		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_checkBackgroundEvents
+	/next i
+
+/RETURN

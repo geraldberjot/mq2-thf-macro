@@ -1,5 +1,5 @@
 |Wait4rez.inc v2.21
-Sub Wait4Rez
+SUB Wait4Rez
 	/echo Awaiting rez: auto-accepting, and looting my corpse
 	/consent group
 	/delay 25
@@ -25,7 +25,7 @@ Sub Wait4Rez
 	/delay 5s ${Target.ID}==${Spawn[${Me}'s corpse].ID}
 	/if (${Target.CleanName.NotEqual[${Me}'s corpse]}) /goto :zoneffs
 	:corpsepull
-	/if (${Target.Distance}>100 || !${Spawn[${Me}'s corpse].ID}) /return
+	/if (${Target.Distance}>100 || !${Spawn[${Me}'s corpse].ID}) /RETURN
 	/if (${Target.Distance}>20) /corpse
 	/delay 5s ${Target.Distance}<20
 	/loot
@@ -44,4 +44,4 @@ Sub Wait4Rez
 	/if (${Corpse.Item[${i}].ID}) /goto :lootagain
 	/next i
 	/nomodkey /notify LootWnd DoneButton leftmouseup
-/return
+/RETURN

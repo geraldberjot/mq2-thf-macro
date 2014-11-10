@@ -10,18 +10,18 @@
 
 #EVENT petWeapons "<#1#> Pet Weapons"
 #EVENT petWeapons "<#1#> Pet Toys"
-sub EVENT_petWeapons(string line, string from)
-	/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_petWeapons ==>
+SUB EVENT_petWeapons(string line, string from)
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons ==>
 
 	/if (${petItems.Size}) {
 		| -Verify the event
-		/call amIConcerned ${from} ${Me.CleanName}
+		/call amIConcerned ${from} ${Me.CleanName} FALSE
 		/if (${Macro.Return}) {
-			/call IniToVar "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
+			/call iniToVar "${iniGeneral},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
 			:allowAccess
 			
 			/if (!${SpawnCount[pc ${from}]}) {
-				/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_petWeapons -| [${from}] is not in ${Zone}.
+				/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| [${from}] is not in ${Zone}.
 			} else {
 				
 				/if (${Spawn[pc ${from}].Distance} > 200) {
@@ -92,7 +92,7 @@ sub EVENT_petWeapons(string line, string from)
 								
 								/if (${FindItemCount[=${summonedItem}]}) {
 									
-									/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_petWeapons -| Dropped [${summonedItem}] in my inventory.
+									/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| Dropped [${summonedItem}] in my inventory.
 								
 									| Open InventoryWindow.
 									/varset miscTimer 3s
@@ -108,7 +108,7 @@ sub EVENT_petWeapons(string line, string from)
 									
 										| If the item in the packslot is the summoned item, pick it up.
 										/if (!${Me.Inventory[pack${x}].Container} && ${summonedItem.Equal[${Me.Inventory[pack${x}]}]}) {
-											/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_petWeapons -| Picking up [${summonedItem}] form pack${x}
+											/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| Picking up [${summonedItem}] form pack${x}
 											/itemnotify pack${x} leftmouseup
 										} else {
 										
@@ -117,7 +117,7 @@ sub EVENT_petWeapons(string line, string from)
 												/if (${summonedItem.Equal[${Me.Inventory[pack${x}].Item[${e}]}]}) {
 													/if (!${Window[pack${x}].Open}) /itemnotify pack${x} rightmouseup
 													/delay 1s ${Window[pack${x}].Open}
-													/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_petWeapons -| Picking up [${summonedItem}] form pack${x} slot${e}
+													/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| Picking up [${summonedItem}] form pack${x} slot${e}
 													/itemnotify in pack${x} ${e} leftmouseup
 												}
 											/next e
@@ -140,8 +140,8 @@ sub EVENT_petWeapons(string line, string from)
 		}
 	}
 
-/if (${Debug} || ${Debug_MAG}) /echo <== EVENT_petWeapons -|
-/return
+/if (${outerDebug} || ${outerDebug_MAG}) /echo <== EVENT_petWeapons -|
+/RETURN
 
 
 
@@ -149,8 +149,8 @@ sub EVENT_petWeapons(string line, string from)
 #EVENT distributePetWeapons "<#1#> Hand out Pet Weapons"
 #EVENT distributePetWeapons "#1# tells you, 'Distribute Pet Weapons'"
 #EVENT distributePetWeapons "<#1#> Distribute Pet Weapons"
-sub EVENT_distributePetWeapons(line, ChatSender)
-/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_distributePetWeapons ==>
+SUB EVENT_distributePetWeapons(line, ChatSender)
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_distributePetWeapons ==>
 
 	/if (${petItems.Size}) {
 	
@@ -160,7 +160,7 @@ sub EVENT_distributePetWeapons(line, ChatSender)
 		|    |-----------Valid User----------|
 		/if (!${Bool[${Macro.Return.Arg[2,_]}]}) {
 
-			/call IniToVar "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
+			/call iniToVar "${iniGeneral},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
 			
 			| If the user is not valid, check allow_BuffRequests
 			/if (${Macro.Return}) {
@@ -173,7 +173,7 @@ sub EVENT_distributePetWeapons(line, ChatSender)
 			:allowAccess
 			
 			/if (!${SpawnCount[pc ${ChatSender}]}) {
-				/if (${Debug} || ${Debug_MAG}) /echo |- EVENT_petWeapons -| [${ChatSender}] is not in ${Zone}.
+				/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| [${ChatSender}] is not in ${Zone}.
 			} else {
 				
 				/if (${Spawn[pc ${ChatSender}].Distance} > 200) {
@@ -229,13 +229,13 @@ sub EVENT_distributePetWeapons(line, ChatSender)
 		}
 	}
 
-/if (${Debug} || ${Debug_MAG}) /echo <== EVENT_distributePetWeapons -|
-/return
+/if (${outerDebug} || ${outerDebug_MAG}) /echo <== EVENT_distributePetWeapons -|
+/RETURN
 
 
 
 SUB check_PetWeapons
-/if (${Debug} || ${Debug_MAG}) /echo |- check_petWeapons ==>
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons ==>
 
 	/if (${autoWeapons} && ${Zone.ID}) {
 		
@@ -247,13 +247,13 @@ SUB check_PetWeapons
 				
 				/if (${NetBots[${NetBots.Client[${i}]}].Zone} && ${NetBots[${NetBots.Client[${i}]}].PetID}) {
 					
-					/if (${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName.Equal[${Ini[${MacroData_Ini},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}]}]}) {
-						/if (${Debug} || ${Debug_MAG}) /echo |- check_petWeapons -| I have already given weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}].
+					/if (${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName.Equal[${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}]}]}) {
+						/if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons -| I have already given weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}].
 					} else {
 
-						| /docommand ${ChatToggle} Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
+						| /chat ${channel} Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
 						/call EVENT_petWeapons PLACEHOLDER ${NetBots.Client[${i}]}
-						/call WriteToIni "${MacroData_Ini},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}" "${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}" 1
+						/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}" "${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}" 1
 					}
 				}
 
@@ -261,7 +261,7 @@ SUB check_PetWeapons
 		}
 	}
 
-/if (${Debug} || ${Debug_MAG}) /echo <== check_petWeapons -|
+/if (${outerDebug} || ${outerDebug_MAG}) /echo <== check_petWeapons -|
 /RETURN
 
 
@@ -269,70 +269,70 @@ SUB check_PetWeapons
 |**
 #EVENT CoH_Group "#*# tells the group, 'CoH the group"
 #EVENT CoH_Group "#*# tells the group, 'CoH group"
-sub EVENT_CoH_Group
-/if (${Debug} || ${Debug_MAG}) /echo |- CoH_Group ==>
+SUB EVENT_CoH_Group
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- CoH_Group ==>
 
 	/if (${Defined[cohSpell]}) {
 
 	}
 
-/if (${Debug} || ${Debug_MAG}) /echo |- CoH_Group ==>
-/return
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- CoH_Group ==>
+/RETURN
 **|
 
 
-Sub MAG_Setup
-/if (${Debug} || ${Debug_MAG}) /echo |- MAG_Setup ==>
+SUB MAG_Setup
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Setup ==>
 	
-	/call IniToVar "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
+	/call iniToVar "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
 	/call IniToArray "${iniCharacter},Magician,Summoned Pet Item#" petItems
 
-/if (${Debug} || ${Debug_MAG}) /echo <== MAG_Setup -|
-/return
+/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Setup -|
+/RETURN
 
 
 
-Sub MAG_Background_Events
+SUB MAG_checkBackgroundEvents
 
-/return
+/RETURN
 
 
 
 SUB MAG_MacroSettings
-/if (${Debug} || ${Debug_MAG}) /echo |- MAG_MacroSettings ==>
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_MacroSettings ==>
 
 	| Adv Settings
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#1" "check_CombatBuffs" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#2" "check_petHeal" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#3" "check_Burns" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#4" "check_Debuffs" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#5" "check_Rain" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#6" "check_Nukes" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#7" "check_Buffs" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#8" "check_Pets" 1
-	/call WriteToIni "${advSettings_Ini},MAG Functions,MAG Function#9" "check_PetWeapons" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#1" "check_CombatBuffs" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#2" "check_petHeal" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#3" "check_Burns" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#4" "check_Debuffs" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#5" "check_Rain" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#6" "check_Nukes" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#7" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#8" "check_Pets" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#9" "check_PetWeapons" 1
 
-/if (${Debug} || ${Debug_MAG}) /echo <== MAG_MacroSettings -|
+/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_MacroSettings -|
 /RETURN
 
 
 
 SUB MAG_CharacterSettings
-/if (${Debug} || ${Debug_MAG}) /echo |- MAG_CharacterSettings ==>
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_CharacterSettings ==>
 
-	/call WriteToIni "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)"
-	/call WriteToIni "${iniCharacter},Magician,Summoned Pet Item#1"
+	/call writeToIni "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)"
+	/call writeToIni "${iniCharacter},Magician,Summoned Pet Item#1"
 
-/if (${Debug} || ${Debug_MAG}) /echo <== MAG_CharacterSettings -|
+/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_CharacterSettings -|
 /RETURN
 
 
 
-Sub MAG_Aliases
-/if (${Debug} || ${Debug_MAG}) /echo |- MAG_Aliases ==>
+SUB MAG_Aliases
+/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Aliases ==>
 
 	/squelch /alias /dpw /bc Distribute Pet Weapons
 	/squelch /alias /PetWeapons /bc Pet Weapons
 
-/if (${Debug} || ${Debug_MAG}) /echo <== MAG_Aliases -|
-/return
+/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Aliases -|
+/RETURN

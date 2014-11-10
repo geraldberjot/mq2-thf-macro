@@ -11,7 +11,7 @@
 
 
 SUB check_Yaulp
-/if (${Debug}) /echo |- check_clrYaulp ==>
+/if (${outerDebug}) /echo |- check_clrYaulp ==>
 	
 	/if (${AutoYaulp} && !${medBreak})  {	
 
@@ -26,13 +26,13 @@ SUB check_Yaulp
 		}
 	}
 	
-/if (${Debug}) /echo <== check_clrYaulp -|
+/if (${outerDebug}) /echo <== check_clrYaulp -|
 /RETURN
 
 
 
-sub check_DivineArb
-/if (${Debug}) /echo |- check_DivineArb ==>
+SUB check_DivineArb
+/if (${outerDebug}) /echo |- check_DivineArb ==>
 
 	/if (${DivineArb_Pct} && ${Group}>1) {
 		/declare i int local
@@ -56,13 +56,13 @@ sub check_DivineArb
 		/if (!${ActionTaken}) /next i
 	}
 
-/if (${Debug}) /echo <== check_DivineArb -|
-/return
+/if (${outerDebug}) /echo <== check_DivineArb -|
+/RETURN
 
 
 
-sub check_celestialRegen
-/if (${Debug}) /echo |- check_celestialRegen ==>
+SUB check_celestialRegen
+/if (${outerDebug}) /echo |- check_celestialRegen ==>
 
 		/if (${celestialRegen_Pct} && ${Group}>2 && ${Me.AltAbilityReady[Celestial Regeneration]}) {
 		/declare groupSize int local
@@ -85,8 +85,8 @@ sub check_celestialRegen
 		}
 	}
 
-/if (${Debug}) /echo <== check_celestialRegen -|
-/return
+/if (${outerDebug}) /echo <== check_celestialRegen -|
+/RETURN
 
 
 
@@ -108,7 +108,7 @@ sub check_celestialRegen
 #EVENT Rez "#1# tells the group, 'Rezz me'"
 #EVENT Rez "#*# tells the group, 'RezOn #1#'"
 #EVENT Rez "#*# tells the group, 'Rez On #1#'"
-sub EVENT_Rez(string line, string ChatSender)
+SUB EVENT_Rez(string line, string ChatSender)
 /if (${Me.Class.ShortName.Equal[CLR]}) {
 	
 	/if (${ChatSender.Left[1].Compare[ ]}<0) /varset ChatSender ${ChatSender.Right[-2].Left[-1]}
@@ -141,7 +141,7 @@ sub EVENT_Rez(string line, string ChatSender)
 		/tell ${ChatSender} I don't see any of your corpses in ${Zone}.
 	}
 }
-/return
+/RETURN
 
 
 
@@ -149,7 +149,7 @@ sub EVENT_Rez(string line, string ChatSender)
 #EVENT AE_Rez "[MQ2] Rez all"
 SUB EVENT_AE_Rez
 /if (${Select[${Me.Class},Cleric,Paladin]}) {
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_AE_Rez ==>
+/if (${outerDebug} || ${outerDebug_Basics}) /echo |- EVENT_AE_Rez ==>
 	
 	/if (!${SpawnCount['s radius 100]}) {
 		/echo I couldn't summon any corpses to ressurect...
@@ -238,19 +238,19 @@ SUB EVENT_AE_Rez
 		/deletevar lastChecked
 		/deletevar rezzable
 		
-		/docommand ${ChatToggle} All viable corpses nearby, have been ressurected.
+		/chat ${channel} All viable corpses nearby, have been ressurected.
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_AE_Rez -|
+/if (${outerDebug} || ${outerDebug_Basics}) /echo <== EVENT_AE_Rez -|
 }
 /RETURN
 
 
 
 #EVENT CorpseExpired "This corpse #1# be resurrected."
-Sub EVENT_CorpseExpired(line, corpseExpired)
+SUB EVENT_CorpseExpired(line, corpseExpired)
 /if (${Defined[lastChecked]}) {
-	/if (${Debug}) /echo |- EVENT_CorpseExpired ==>
+	/if (${outerDebug}) /echo |- EVENT_CorpseExpired ==>
 
 		/varset lastChecked ${Target.ID}
 		/if (${corpseExpired.Equal[cannot]}) {
@@ -259,19 +259,19 @@ Sub EVENT_CorpseExpired(line, corpseExpired)
 			/varset rezzable TRUE
 		}
 
-	/if (${Debug}) /echo <== EVENT_CorpseExpire -|
+	/if (${outerDebug}) /echo <== EVENT_CorpseExpire -|
 }
-/return
+/RETURN
 
 
 
-Sub CLR_Setup
-/if (${Debug}) /echo |- CLR_Setup ==>
+SUB CLR_Setup
+/if (${outerDebug}) /echo |- CLR_Setup ==>
 
-	/call InitoVar "${iniCharacter},Cleric,Divine Arbitration (Pct)" DivineArb_Pct int outer
-	/call InitoVar "${iniCharacter},Cleric,Celestial Regeneration (Pct)" celestialRegen_Pct int outer
-	/call InitoVar "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" AutoYaulp bool outer
-	/call InitoVar "${iniCharacter},Cleric,Yaulp Spell" yaulpSpell string outer
+	/call iniToVar "${iniCharacter},Cleric,Divine Arbitration (Pct)" DivineArb_Pct int outer
+	/call iniToVar "${iniCharacter},Cleric,Celestial Regeneration (Pct)" celestialRegen_Pct int outer
+	/call iniToVar "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" AutoYaulp bool outer
+	/call iniToVar "${iniCharacter},Cleric,Yaulp Spell" yaulpSpell string outer
 	/if (${AutoYaulp}) {
 		/if (!${Defined[yaulpSpell]} || !${yaulpSpell.Length} || !${Me.Book[${yaulpSpell.Arg[1,/]}]}) {
 			/echo ERROR! ${iniCharacter} > [Cleric] > Yaulp Spell is not correctly defined.  Please check this entry, and restart the macro.
@@ -279,54 +279,54 @@ Sub CLR_Setup
 		}
 	}
 
-/if (${Debug}) /echo <== CLR_Setup -|
-/return
+/if (${outerDebug}) /echo <== CLR_Setup -|
+/RETURN
 
 
 
-Sub CLR_Background_Events
-/return
+SUB CLR_checkBackgroundEvents
+/RETURN
 
 
 
 SUB CLR_MacroSettings
-/if (${Debug}) /echo |- CLR_MacroSettings ==>
+/if (${outerDebug}) /echo |- CLR_MacroSettings ==>
 	
 	| Adv Settings
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#1" "check_DivineArb" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#2" "check_Yaulp" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#3" "check_celestialRegen" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#4" "check_healChain" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#5" "check_Heals" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#6" "check_CombatBuffs" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#7" "check_Debuffs" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#8" "check_Nukes" 1
-	/call WriteToIni "${advSettings_Ini},CLR Functions,CLR Function#9" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#1" "check_DivineArb" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#2" "check_Yaulp" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#3" "check_celestialRegen" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#4" "check_healChain" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#5" "check_Heals" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#6" "check_CombatBuffs" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#7" "check_Debuffs" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#8" "check_Nukes" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#9" "check_Buffs" 1
 
-/if (${Debug}) /echo <== CLR_MacroSettings -|
+/if (${outerDebug}) /echo <== CLR_MacroSettings -|
 /RETURN
 
 
 
 SUB CLR_CharacterSettings
-/if (${Debug}) /echo |- CLR_CharacterSettings ==>
+/if (${outerDebug}) /echo |- CLR_CharacterSettings ==>
 
-	/call WriteToIni "${iniCharacter},Cleric,Divine Arbitration (Pct)" 30 0
-	/call WriteToIni "${iniCharacter},Cleric,Celestial Regeneration (Pct)" 65 0
-	/call WriteToIni "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" On 0
-	/call WriteToIni "${iniCharacter},Cleric,Yaulp Spell"
-	/if (${Ini[${iniCharacter},Cleric,Yaulp#1].Length}) /call WriteToIni "${iniCharacter},Cleric,Yaulp#1" "*DEPRECATED*  This entry can be deleted'" 1
+	/call writeToIni "${iniCharacter},Cleric,Divine Arbitration (Pct)" 30 0
+	/call writeToIni "${iniCharacter},Cleric,Celestial Regeneration (Pct)" 65 0
+	/call writeToIni "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" On 0
+	/call writeToIni "${iniCharacter},Cleric,Yaulp Spell"
+	/if (${Ini[${iniCharacter},Cleric,Yaulp#1].Length}) /call writeToIni "${iniCharacter},Cleric,Yaulp#1" "*DEPRECATED*  This entry can be deleted'" 1
 
-/if (${Debug}) /echo <== CLR_CharacterSettings -|
+/if (${outerDebug}) /echo <== CLR_CharacterSettings -|
 /RETURN
 
 
 
-Sub CLR_Aliases
-/if (${Debug}) /echo |- CLR_Aliases ==>
+SUB CLR_Aliases
+/if (${outerDebug}) /echo |- CLR_Aliases ==>
 
 	/noparse /squelch /alias /RezIt /bc Rez on ${Target.CleanName.Arg[1,']}
 	/squelch /alias /AERez /echo AE Rez
 
-/if (${Debug}) /echo <== CLR_Aliases -|
-/return
+/if (${outerDebug}) /echo <== CLR_Aliases -|
+/RETURN

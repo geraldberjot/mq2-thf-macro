@@ -1,9 +1,9 @@
 
-Sub loadCustomVars
+SUB loadCustomVars
 	/declare stickCommand string outer ${Ini[${iniGlobal},Global,stickCommand]}
-/return
+/RETURN
 
-Sub joinChannel
+SUB joinChannel
 	/join Team
 	/doevents
 	:channelLoop
@@ -11,21 +11,21 @@ Sub joinChannel
 		/doevents
 		/goto :channelLoop
 	}
-/return
+/RETURN
 
-Sub isHolyShit
+SUB isHolyShit
 	/if (${Me.Combat} && !${Me.Casting.ID} && !${Cursor.ID}) {
-		/return TRUE
+		/RETURN TRUE
 	}
-/return FALSE
+/RETURN FALSE
 
-Sub isDownShit
+SUB isDownShit
 	/if (!${Me.Combat} && !${Me.Casting.ID} && !${Cursor.ID}) {
-		/return TRUE
+		/RETURN TRUE
 	}
-/return FALSE
+/RETURN FALSE
 
-Sub instantBuff
+SUB instantBuff
 	/declare i int local
 	/declare myInstantList string local ${Ini[${iniSetup},InstantBuff]}
 	/declare myInstantListCount int local ${myInstantList.Count[|]}
@@ -47,9 +47,9 @@ Sub instantBuff
 			}
 		/next i
 	}
-/return
+/RETURN
 
-Sub checkSpellBuff
+SUB checkSpellBuff
 	/declare i int local
 	/declare targetID int local
 	/declare mySpellList string local ${Ini[${iniSetup},SpellBuff]}
@@ -91,33 +91,33 @@ Sub checkSpellBuff
 			}
 		/next i
 	}
-/return
+/RETURN
 
-Sub checkTargetNeedBuff(string targetName, int spellID)
+SUB checkTargetNeedBuff(string targetName, int spellID)
 	/declare i int local
 	/declare targetBuffs string local
 	/declare targetBuff	string local
 	
 	/varset targetBuffs ${NetBots[${targetName}].Buff}
 	/if (${targetBuffs.Find[${spellID}]}) {
-		/return FALSE
+		/RETURN FALSE
 	}
 	/for i 1 to ${targetBuffs.Count[ ]} - 1
 		/varset targetBuff ${targetBuffs.Token[${i}, ]}
 		/if (${targetBuff.Length}) {
 			/if (!${Spell[${spellID}].WillStack[${Spell[${targetBuff}]}]}) {
 				/chat ${channel} '${Spell[${spellID}].Name}' won't stack with '${Spell[${targetBuff}]}' !
-				/return FALSE
+				/RETURN FALSE
 			}
 		}
 	/next i
-/return TRUE
+/RETURN TRUE
 
-Sub checkGroupNeedBuff(int spellID)
+SUB checkGroupNeedBuff(int spellID)
 
-/return FALSE
+/RETURN FALSE
 
-Sub checkDiscipline
+SUB checkDiscipline
 	/declare i int local
 	/declare myDiscList string local ${Ini[${iniSetup},Discipline]}
 	/declare myDiscListCount int local
@@ -134,9 +134,9 @@ Sub checkDiscipline
 			}
 		/next i
 	}
-/return
+/RETURN
 
-Sub checkHolyShitBuff
+SUB checkHolyShitBuff
 	/declare i int local
 	/declare j int local
 	/declare myHSBList string local ${Ini[${iniSetup},HolyShitBuff]}
@@ -186,9 +186,9 @@ Sub checkHolyShitBuff
 			}
 		/next i
 	}
-/return
+/RETURN
 
-Sub checkDownShitBuff
+SUB checkDownShitBuff
 	/declare i int local
 	/declare myDSBList string local ${Ini[${iniSetup},DownShitBuff]}
 	/declare myDSBListCount int local ${myDSBList.Count[|]}
@@ -221,19 +221,19 @@ Sub checkDownShitBuff
 			}
 		/next i
 	}
-/return
+/RETURN
 
-Sub EVENT_Dead
+SUB EVENT_Dead
 	|/call Wait4Rez
 	/ssm max
-/return
+/RETURN
 
-Sub EVENT_Camp
+SUB EVENT_Camp
 	/echo Camping...
 	/end
-/return
+/RETURN
 
-Sub EVENT_Hail(String Line, String Cible)
+SUB EVENT_Hail(String Line, String Cible)
 	/declare toTheZone string local
 	/varset toTheZone ${Ini[${iniHail},General,${Cible.Lower}]}
 	/if (${toTheZone.Length} && ${toTheZone.NotEqual[NULL]}) {
@@ -241,25 +241,25 @@ Sub EVENT_Hail(String Line, String Cible)
 	} else {
 		/echo ${Line}
 	}
-	/return
+	/RETURN
 
-Sub EVENT_Task(String Line, String Tache)
+SUB EVENT_Task(String Line, String Tache)
 	/tell ${myMain} ${Line}
-/return
+/RETURN
 
-Sub EVENT_Assign(String Line, String Tache)
+SUB EVENT_Assign(String Line, String Tache)
 	/tell ${myMain} ${Line}
-/return
+/RETURN
 
-Sub checkPlugIn
+SUB checkPlugIn
 	/if (!${Plugin[MQ2Cast].Name.Length}) {
 		/echo MQ2Cast is a REQUIRED PLUGIN
 		/echo Please Load MQ2Cast before running this macro
 		/end
 	}
-/return
+/RETURN
 
-Sub EVENT_Tell(Line, string From, string Msg)
+SUB EVENT_Tell(Line, string From, string Msg)
 	/if (${From.Find[${myMain}]}) {
 		/if (${Msg.Equal[loot]}) {
 			/call LootMobs
@@ -272,46 +272,46 @@ Sub EVENT_Tell(Line, string From, string Msg)
 			/chat ${channel} ${Line}
 		}
 	}
-/return
+/RETURN
 
-Sub EVENT_Group(Line, string From)
+SUB EVENT_Group(Line, string From)
 	/if (${From.Find[${myMain}]}) {
 		/if (!${Me.Grouped}) {
 			/invite
 		}
 	}
-/return
+/RETURN
 
-Sub EVENT_DraekonVoice(string Line, string targetName)
+SUB EVENT_DraekonVoice(string Line, string targetName)
 	/moveto id ${Spawn[npc ${targetName}].ID}
-/return
+/RETURN
 
 
-Sub EVENT_DraekonVoiceEnd(string Line, string targetName)
+SUB EVENT_DraekonVoiceEnd(string Line, string targetName)
 	/moveto id ${Spawn[npc Draekon].ID}
-/return
+/RETURN
 
 
-Sub EVENT_DraekonNoGrass
-	/if (${Me.Class.Name.Equal[Warrior]} || ${Me.Class.Name.Equal[Paladin]} || ${Me.Class.Name.Equal[Shadowknight]}) /return
+SUB EVENT_DraekonNoGrass
+	/if (${Me.Class.Name.Equal[Warrior]} || ${Me.Class.Name.Equal[Paladin]} || ${Me.Class.Name.Equal[Shadowknight]}) /RETURN
 
 	/declare EndX float local			-1609.88
 	/declare EndY float local			308.23
 
 	/call InternalMoveTo ${EndY} ${EndX}
-/return
+/RETURN
 
 
-Sub EVENT_DraekonGrass
+SUB EVENT_DraekonGrass
 	/moveto id ${Spawn[npc Draekon].ID}
-/return
+/RETURN
 
 
-Sub EVENT_DraekonBelly
+SUB EVENT_DraekonBelly
 	/moveto id ${Spawn[npc Draekon].ID}
-/return
+/RETURN
 
-Sub InternalMoveTo(int y, int x)
+SUB InternalMoveTo(int y, int x)
 
 	/declare currentX int local 0
 	/declare currentY int local 0
@@ -327,26 +327,26 @@ Sub InternalMoveTo(int y, int x)
 		/goto :waitUntilMovingFinished
 	}
 
-/return
+/RETURN
 
-Sub isOneOfMyToons(String from)
+SUB isOneOfMyToons(String from)
 	/if (${NetBots.Client.Find[${from}]}) {
-		/return TRUE
+		/RETURN TRUE
 	}
-/return FALSE
+/RETURN FALSE
 
-Sub cleanToonName(String toonName)
+SUB cleanToonName(String toonName)
 	/if (${NetBots.Client.Find[${toonName}]}) {
-		/return ${toonName}
+		/RETURN ${toonName}
 	}
 	/if (${NetBots.Client.Find[${toonName.Right[-2].Left[-1]}]}) {
-		/return ${toonName.Right[-2].Left[-1]}
+		/RETURN ${toonName.Right[-2].Left[-1]}
 	}
-/return ${toonName}
+/RETURN ${toonName}
 
-Sub sticking(String to)
+SUB sticking(String to)
     /if (${Spawn[${to}].ID} == ${Me.ID}) {
-        /return
+        /RETURN
     }
 	/call stopCurrentAction FALSE
     /target ${to}
@@ -354,10 +354,10 @@ Sub sticking(String to)
     /delay 1s
     /stick ${stickCommand}
     /chat ${channel} Sticking to ${to}
-/return
+/RETURN
 
 | Allow toon to gate to the Forest
-Sub gate(String from, String who)
+SUB gate(String from, String who)
 	/echo gate
     /call amIconcerned ${from} ${who}
     /if (${Macro.Return}) {
@@ -368,10 +368,10 @@ Sub gate(String from, String who)
             /chat ${channel} Gating to the Forest !
         }
     }
-/return
+/RETURN
 
 | stick off, attack off, interrupt, twist off (if specify)
-Sub stopCurrentAction(bool evenBard)
+SUB stopCurrentAction(bool evenBard)
 	/echo stopCurrentAction ${evenBard}
     /if (${evenBard}) {
         /twist off
@@ -381,94 +381,94 @@ Sub stopCurrentAction(bool evenBard)
     /attack off
     /interrupt
     /delay 1
-/return
+/RETURN
 
-Sub amIMelee
+SUB amIMelee
 	/if (${Me.Class.ShortName.Equal[WAR]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[ROG]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[BSK]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[MNK]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[BRD]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[PAL]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[SHD]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[RNG]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[BST]) {
-		/return TRUE
+		/RETURN TRUE
 	}
-/return FALSE
+/RETURN FALSE
 
-Sub amINuker
+SUB amINuker
 	/if (${Me.Class.ShortName.Equal[WIZ]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[MAG]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[ENC]) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${Me.Class.ShortName.Equal[NEC]) {
-		/return TRUE
+		/RETURN TRUE
 	}
-/return FALSE
+/RETURN FALSE
 
-Sub amIconcerned(String from, String who)
+SUB amIconcerned(String from, String who)
 	/echo amIconcerned ${from} ${who}
 	/if (${who.Equal[all]}) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${who.Equal[group]}) {
 		/if (${Me.Grouped} && ${Group.Member[${from}]}) {
-			/return TRUE
+			/RETURN TRUE
 		}
 	}
 	/if (${who.Equal[caster]}) {
 		| Can cast spells, including Bard 
 		/if (${Me.Class.CanCast}) {
-			/return TRUE
+			/RETURN TRUE
 		}
 	}
 	/if (${who.Equal[melee]}) {
 		| Monk/Rogue/Bard/Ranger/Warrior/Paladin/ShadowKnight?
 		/call amIMelee
-		/return ${Macro.Return}
+		/RETURN ${Macro.Return}
 	}
 	/if (${who.Equal[priest]}) {
 		| Cleric/Druid/Shaman? 
 		/if (${Me.Class.HealerType}) {
-			/return TRUE
+			/RETURN TRUE
 		}
 	}
 	/if (${who.Equal[nuker]}) {
 		| Wizard/Magician/Necromancer/Enchanter?
 		/call amINuker
-		/return ${Macro.Return}
+		/RETURN ${Macro.Return}
 	}
 	/if (${who.Equal[${Me.Class.Name}]} || ${who.Equal[${Me.Class.ShortName}]}) {
-		/return TRUE
+		/RETURN TRUE
 	}
 	/if (${who.Equal[${Me.CleanName}]}) {
-		/return TRUE
+		/RETURN TRUE
 	}
-/return FALSE
+/RETURN FALSE
 
-Sub makeGroup
+SUB makeGroup
 	/if (${Me.CleanName.Equal[conradd]}) {
 		/invite tiarra
 		/delay 1
@@ -479,7 +479,7 @@ Sub makeGroup
 		/invite gaya
 		/delay 1
 		/invite houdi
-		/return
+		/RETURN
 	}
 	/if (${Me.CleanName.Equal[vivyana]}) {
 		/invite arsen
@@ -491,7 +491,7 @@ Sub makeGroup
 		/invite shoalin
 		/delay 1
 		/invite korale
-		/return
+		/RETURN
 	}
 	/if (${Me.CleanName.Equal[namea]}) {
 		/invite margona
@@ -503,11 +503,11 @@ Sub makeGroup
 		/invite malefica
 		/delay 1
 		/invite aede
-		/return
+		/RETURN
 	}
-/return
+/RETURN
 
-Sub LPS
+SUB LPS
 	| ----------------------------------------------------------------------
 	| Declare loops / second variables
 	| ----------------------------------------------------------------------
@@ -531,10 +531,10 @@ Sub LPS
 		/varset loopsecmax 0
 		/varset loopsecmin 10000
 	}
-/return
+/RETURN
 
 | Allow toon to the guild hall
-Sub goToGuildHall(String from, String who)
+SUB goToGuildHall(String from, String who)
 	/call gate ${from} ${who}
     /call amIconcerned ${from} ${who}
     /if (${Macro.Return}) {
@@ -545,11 +545,11 @@ Sub goToGuildHall(String from, String who)
             /chat ${channel} Gating to the Forest !
         }
     }
-/return
+/RETURN
 
-Sub test()
+SUB test()
 	|/call putLinkInChatWindow
-/return
+/RETURN
 
 SUB putLinkInChatWindow
 	/notify InventoryWindow InvSlot13 rightmouseheld
@@ -571,12 +571,12 @@ SUB putLinkInChatWindow
 	/notify ItemDisplayWindow 0 close 
 /RETURN
 
-Sub endMacro
+SUB endMacro
 	/deletevar * global
 	/disband
 	/raiddisband
 	/end
-/return
+/RETURN
 
 SUB halloween
 	/if (!${Defined[Halloween]})		/declare Halloween 			bool outer false
@@ -762,7 +762,7 @@ SUB Triangulate_Distance(string loc#1, string loc#2)
 |-		Ex.  /call MoveTo -Loc|${Target.Y},${Target.X}												-|
 |----------------------------------------------------------------------------------------------------|
 SUB MoveTo(destinationInfo, int distCheck)
-	/if (${Debug}) /echo |- MoveTo ==>
+	/if (${outerDebug}) /echo |- MoveTo ==>
 
 	/declare X_Loc float local
 	/declare Y_Loc float local
@@ -787,7 +787,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 	} else {
 		|-Check if target is already close enough
 		/if (${Int[${Macro.Return}]} < 10) {
-			/if (${Debug}) /echo I am already at the destination.
+			/if (${outerDebug}) /echo I am already at the destination.
 		} else {
 			| Declare a timer based on how far you have to move (1s for every 50 units + 10).
 			/declare retryTimer timer local ${Math.Calc[${Macro.Return} / 50 + 10].Int}s
@@ -801,12 +801,12 @@ SUB MoveTo(destinationInfo, int distCheck)
 			:movingTo_Loop
 			
 			| Debug Echo
-			/if (${Debug} && !${spamTimer_MTLoop}) {
+			/if (${outerDebug} && !${spamTimer_MTLoop}) {
 				/echo |- MoveToSpawn -| :MoveTo_Loop
 				/call createTimer spamTimer_MTLoop 50
 			}
 
-			|/call Background_Events
+			|/call checkBackgroundEvents
 			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${Y_Loc},${X_Loc}
 			
 			/if (${MoveTo.Moving}) {
@@ -814,7 +814,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 					/goto :movingTo_Loop
 				} else {
 					/squelch /stick off
-					/if (${Debug} && !${spamTimer_MTFAIL}) {
+					/if (${outerDebug} && !${spamTimer_MTFAIL}) {
 						/echo I have failed to move to the intended target.
 						/call createTimer spamTimer_MTFAIL 30
 					}
@@ -824,21 +824,21 @@ SUB MoveTo(destinationInfo, int distCheck)
 					/if (${retryTimer}) {
 						/goto :retry_MoveToLoc
 					} else {
-						/if (${Debug} && !${spamTimer_MTFAIL}) {
+						/if (${outerDebug} && !${spamTimer_MTFAIL}) {
 							/echo I have failed to move to the intended target.
 							/call createTimer spamTimer_MTFAIL 30
 						}
 					}
 				} else {
 					/squelch /stick off
-					/if (${Debug}) /echo I have arrived at my intended destination.
+					/if (${outerDebug}) /echo I have arrived at my intended destination.
 					/delay 30 !${Me.Moving}
 				}
 			}
 		}
 	}
 
-	/if (${Debug}) /echo <== MoveTo -|
+	/if (${outerDebug}) /echo <== MoveTo -|
 /RETURN
 
 |------------------------------------------------------------|
@@ -847,7 +847,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 |- @param TargetID: The ID of the spawn you wish to target.	-|
 |------------------------------------------------------------|
 SUB TrueTarget(TargetID)
-	/if (${Debug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
+	/if (${outerDebug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
 
 	| Check if the target is in zone.
 	/if (${SpawnCount[id ${TargetID}]}) {
@@ -871,7 +871,7 @@ SUB TrueTarget(TargetID)
 		}
 	}
 
-	/if (${Debug}) /echo <== TrueTarget -|
+	/if (${outerDebug}) /echo <== TrueTarget -|
 /RETURN
 
 SUB putItemOnCursor(String itemName)
