@@ -54,7 +54,7 @@ SUB SHD_Aliases
 	/call writeToIni "${iniAdvanced},SHD Functions,SHD Function#4" "check_CombatBuffs" 1
 	/call writeToIni "${iniAdvanced},SHD Functions,SHD Function#5" "check_DoTs" 1
 	/call writeToIni "${iniAdvanced},SHD Functions,SHD Function#6" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},SHD Functions,SHD Function#7" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},SHD Functions,SHD Function#7" "checkBuffs" 1
 	/call writeToIni "${iniAdvanced},SHD Functions,SHD Function#8" "check_Pets" 1
 
 /if (${outerDebug}) /echo <== SHD_Aliases -|

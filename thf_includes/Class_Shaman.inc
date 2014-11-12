@@ -82,7 +82,7 @@ SUB SHM_MacroSettings
 	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#6" "check_petHeal" 1
 	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#7" "check_Rain" 1
 	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#8" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#9" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#9" "checkBuffs" 1
 	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#10" "check_Pets" 1
 	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#11" "check_Canni" 1
 

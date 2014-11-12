@@ -3,31 +3,6 @@ SUB loadCustomVars
 	/declare stickCommand string outer ${Ini[${iniGlobal},Global,stickCommand]}
 /RETURN
 
-#EVENT Channels "Channels: #*#"
-SUB EVENT_Channels(String line)
-	/declare i int local
-	/declare max int local ${line.Count[,]}
-	/varcalc max ${max} + 1
-	/declare chnl string local
-	/for i 1 to ${max}
-		/varset chnl ${line.Token[${i},,]}
-		/if (${chnl.Find[Team]} > 0) {
-			/varset channel ${chnl.Token[1,=]}
-			/echo channel=${channel}
-		}
-	/next i
-/RETURN
-
-SUB joinChannel
-	/join Team
-	/doevents Channels
-	:channelLoop
-	/if (${channel} == 0) {
-		/doevents Channels
-		/goto :channelLoop
-	}
-/RETURN
-
 SUB isHolyShit
 	/if (${Me.Combat} && !${Me.Casting.ID} && !${Cursor.ID}) {
 		/RETURN TRUE
@@ -496,9 +471,9 @@ SUB makeGroup
 /RETURN
 
 SUB LPS
-	| ----------------------------------------------------------------------
+	|- ---------------------------------------------------------------------
 	| Declare loops / second variables
-	| ----------------------------------------------------------------------
+	|- ---------------------------------------------------------------------
 	/if (!${Defined[looptest]}) 	/declare looptest 	int outer 0
 	/if (!${Defined[loops]}) 		/declare loops 		int outer 0
 	/if (!${Defined[looptime]}) 	/declare looptime 	int outer ${Time.Second}

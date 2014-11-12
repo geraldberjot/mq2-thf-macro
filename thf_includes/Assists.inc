@@ -99,7 +99,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 SUB EVENT_BackOff(String line, String from)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_BackOff ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call amIConcerned ${from} ${Me.CleanName} TRUE
 	/if (${Macro.Return}) {
 		/if (${outerAssisting} && ${outerAllowControl}) /chat ${channel} Backing off.
@@ -754,7 +754,7 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 SUB EVENT_DebuffsOn(line, ChatSender, MobID)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_DebuffsOn ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|    |------------In Range------------|
@@ -820,7 +820,7 @@ SUB EVENT_DebuffsOff(line, ChatSender, MobID)
 	| If I'm casting debuffs
 	/if (${Debuff_Targets.Size}) {
 
-		| -Verify the event
+		|- Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 		|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|
@@ -888,7 +888,7 @@ SUB Debuffs_OnCommand
 SUB EVENT_DoTsOn(line, ChatSender, MobID)
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_DoTsOn ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|    |------------In Range------------|
@@ -956,7 +956,7 @@ SUB EVENT_DoTsOff(line, ChatSender, MobID)
 	| If I'm casting debuffs
 	/if (${DoT_Targets.Size}) {
 
-		| -Verify the event
+		|- Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 		|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|
@@ -1024,7 +1024,7 @@ SUB EVENT_RainOn(line, ChatSender)
 
 /if (${Rain_Spells.Size}) {
 	
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|    |------------In Range------------|
@@ -1053,7 +1053,7 @@ SUB EVENT_RainOff(line, ChatSender)
 
 /if (${Defined[do_Rain]}) {
 	
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |---------Included Bot----------|
@@ -1113,7 +1113,7 @@ SUB check_Rain
 SUB EVENT_SwarmPets(line, ChatSender, int swarmTarget)
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_SwarmPets ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|    |------------In Range------------|
@@ -1122,7 +1122,7 @@ SUB EVENT_SwarmPets(line, ChatSender, int swarmTarget)
 		| Validate target.
 		/if (${SpawnCount[id ${swarmTarget}]} && ${Spawn[${swarmTarget}].Type.NotEqual[Corpse]} && ${Select[${Spawn[${swarmTarget}].Type},${outerAcceptableTargetTypes}]} && ${SpawnCount[pc ${ChatSender}]}) {
 
-			| --------------- Declare a swarmPets array based on class
+			|- -------------- Declare a swarmPets array based on class
 		
 			| Magician abilities.
 			/if (${Me.Class.ShortName.Equal[MAG]}) {
@@ -1192,7 +1192,7 @@ SUB EVENT_QuickBurn(line, ChatSender)
 		| Check for quickburns to cast
 		/if (${Defined[QuickBurns]}) {
 		
-			| -Verify the event
+			|- Verify the event
 			/call verifyEvent "${ChatSender}" "${line}"
 			/if (${Defined[ChatSender]}) /if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 			|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|    |------------In Range------------|
@@ -1223,7 +1223,7 @@ SUB EVENT_FullBurn(line, ChatSender)
 		| Check for quickburns to cast
 		/if (${Defined[FullBurns]}) {
 		
-			| -Verify the event
+			|- Verify the event
 			/call verifyEvent "${ChatSender}" "${line}"
 			/if (${Defined[ChatSender]}) /if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 			|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|    |------------In Range------------|
@@ -1307,7 +1307,7 @@ SUB EVENT_toggle_Taunt(line, ChatSender, eventParams)
 
 	/declare tauntSet string local ${eventParams.Arg[1, ]}
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
@@ -1338,7 +1338,7 @@ SUB EVENT_toggle_Taunt(line, ChatSender, eventParams)
 SUB EVENT_toggle_outerAssistType(line, ChatSender, eventParams)
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_toggle_outerAssistType ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|

@@ -199,7 +199,7 @@ SUB writeToIni(Ini_Key, WhatToWrite, bool OverWrite)
 |- Creates new arrays, or stacks onto existing arrays.	-|
 |--------------------------------------------------------|
 |- Syntax: /call BuildArray ArrayName Data				-|
-|-  Ex: /call BuildArray DebuffTargets ${Target.ID}		-|
+|- Ex: /call BuildArray DebuffTargets ${Target.ID}		-|
 |--------------------------------------------------------|
 |- @param ArrayName: Name of the array to build.		-|
 |- @param Data: Data you wish to add to the array.		-|

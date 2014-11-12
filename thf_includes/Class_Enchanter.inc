@@ -149,7 +149,7 @@ SUB ENC_MacroSettings
 	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#5" "check_DoTs" 1
 	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#6" "check_Rain" 1
 	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#7" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#8" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#8" "checkBuffs" 1
 	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#9" "check_Pets" 1
 
 /if (${outerDebug}) /echo <== ENC_MacroSettings -|
