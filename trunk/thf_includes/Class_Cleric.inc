@@ -301,7 +301,7 @@ SUB CLR_MacroSettings
 	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#6" "check_CombatBuffs" 1
 	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#7" "check_Debuffs" 1
 	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#8" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#9" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#9" "checkBuffs" 1
 
 /if (${outerDebug}) /echo <== CLR_MacroSettings -|
 /RETURN

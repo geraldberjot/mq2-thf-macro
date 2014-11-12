@@ -29,15 +29,15 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 		/declare SpawnToFollow string local ${If[${paramEvent.Arg[1, ].Find[/]} || ${paramEvent.Arg[1, ].Equal[me]} || ${paramEvent.Arg[1, ].Equal[on]},${paramSender},${paramEvent.Arg[1, ]}]}
 		/if (!${Bool[${SpawnToFollow}]}) /varset SpawnToFollow ${paramSender}
 		
-		| -Turn Following on and set the FollowTarget
+		|- Turn Following on and set the FollowTarget
 		/varset Following TRUE
 		/varset FollowTarget ${Spawn[pc ${SpawnToFollow}].CleanName}
 		
-		| -If I am the follow target
+		|- If I am the follow target
 		| =>
 		/if (${FollowTarget.Equal[${Me}]}) {
 
-			| -Turn off follow plugins.
+			|- Turn off follow plugins.
 			/if (${Stick.Active}) /squelch /stick off
 			/if (${NetAdvPath.State}) /squelch /netfollow off
 
@@ -50,23 +50,23 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 		| <=
 		} else {
 		
-		| -If I am not the follow target
+		|- If I am not the follow target
 		| =>
 		
-			| -Check Range
+			|- Check Range
 			/if (${Spawn[=${FollowTarget}].Distance} > ${MaxResponseDist}) {
 				/docommand ${ChatToggle} [${FollowTarget}] is too far away.
 			} else {
 			
-				| -Check LoS.
+				|- Check LoS.
 				/if (!${Spawn[=${FollowTarget}].paramLineOfSight}) {
 					/docommand ${ChatToggle} I cannot see [${FollowTarget}].
 				} else {
 				
-					| -Stop assisting so we don't try to stick to the AssistTarget.	
-					/if (${Assisting} || ${Me.Combat}) /call Event_BackOff
+					|- Stop assisting so we don't try to stick to the AssistTarget.	
+					/if (${Assisting} || ${Me.Combat}) /call EVENT_BackOff
 					
-					| -Start Following.
+					|- Start Following.
 					/if (${Verbosity}) /docommand ${ChatToggle} Following ${FollowTarget}.
 					/call AquireFollow
 				}
@@ -183,19 +183,19 @@ SUB AquireFollow
 SUB EVENT_Stop(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Stop ==>
 
-	| -Check if I'm following.
+	|- Check if I'm following.
 	/if (${Following}) {
 		
-		| -Verify the event
+		|- Verify the event
 		/call verifyEvent "${paramSender}" "${paramLine}"
 		/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 		|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 	
-			| -Wait to get close to the followTarget.
+			|- Wait to get close to the followTarget.
 			/if (!${Spawn[${FollowTarget}].Moving} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength}) /delay 100 ${Spawn[${FollowTarget}].Distance} < ${LeashLength} || ${Spawn[${FollowTarget}].Moving}
 		
-			| -Stop following
+			|- Stop following
 			/if (${Stick.Active}) /squelch /stick off
 			/if (${NetAdvPath.State}==1) /squelch /netfollow off
 			/varset FollowTarget NULL
@@ -215,22 +215,22 @@ SUB EVENT_Stop(paramLine, paramSender, paramEvent)
 SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_MoveHere ==>
 
-	| -Verify the event
+	|- Verify the event
 	/if (${Defined[paramSender]}) /call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check if the paramSender is me.
+		|- Check if the paramSender is me.
 		/if (${paramSender.Equal[${Me}]}) {
 			/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -| I am the paramSender, skipping.
 		} else {
 		
-			| -Set WhereTo.
+			|- Set WhereTo.
 			/declare moveTo_Name string local
 			/declare WhereTo string local ${If[${paramEvent.Arg[1, ].Find[/]} || ${paramEvent.Arg[1, ].Equal[me]} || ${paramEvent.Arg[1, ].Equal[here]},${paramSender},${paramEvent.Arg[1, ]}]}
 			
-			| -Change WhereTo to a spawnID
+			|- Change WhereTo to a spawnID
 			/if (!${Int[${WhereTo}]}) {
 				/if (${SpawnCount[pc =${WhereTo}]}) {
 					/varset WhereTo ${Spawn[pc =${WhereTo}].ID}
@@ -245,15 +245,15 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 			/varset moveTo_Name ${Spawn[id ${WhereTo}].CleanName}
 			/varset WhereTo ${Spawn[id ${WhereTo}].Loc.Replace[ ,]}
 			
-			| -Stop assisting so I don't try to stick to the AssistTarget.	
-			/if (${Assisting} || ${Me.Combat}) /call Event_BackOff
+			|- Stop assisting so I don't try to stick to the AssistTarget.	
+			/if (${Assisting} || ${Me.Combat}) /call EVENT_BackOff
 			
 			/declare retryTimer timer local 150
 			
 			:retry_MoveTo
 			/call MoveTo -Loc|${WhereTo}
 			
-			| -Check if I have moved to the Target.
+			|- Check if I have moved to the Target.
 			/call Triangulate_Distance ${WhereTo} ${Me.Loc.Replace[ ,]}
 			/if (${Macro.Return} > 10) {
 				/if  (${retryTimer}) {
@@ -265,7 +265,7 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 				/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -| I have arrived at the specified target.
 			}
 			
-			| -If I'm following, reaquire follow.
+			|- If I'm following, reaquire follow.
 			/if (${Following}) {
 				/if (${moveTo_Name.Equal[${FollowTarget}]}) {
 					/call AquireFollow
@@ -301,13 +301,13 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Bark ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |---------Included Bot----------|    |-------------In Zone-----------|    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 		
-		| -If msgTarget is not an ID, find TargetID.
+		|- If msgTarget is not an ID, find TargetID.
 		/if (!${Int[${msgTarget}]}) {
 			/if (${SpawnCount[npc =${msgTarget}]}) {
 				/varset msgTarget ${Spawn[npc =${msgTarget}].ID}
@@ -336,7 +336,7 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 			/call createTimer spamTimer_retryBark 20
 		}
 		
-		| -Target the msgTarget
+		|- Target the msgTarget
 		/call TrueTarget ${msgTarget}
 		/if (${Target.Distance} > 10) {
 			/call MoveTo -Loc|${Target.Y},${Target.X}
@@ -347,12 +347,12 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 			}
 		} else {
 		
-			| -Wait a moment, then bark the message.
+			|- Wait a moment, then bark the message.
 			/delay ${Math.Rand[30]}
 			
 			/varset startingLoc ${Me.Loc.Replace[ ,]}
 			
-			| -Reset barkMsg
+			|- Reset barkMsg
 			/if (${barkMsg.Find[-]} && ${barkMsg.Find[|]}) {
 				/varset barkMsg ${barkMsg.Arg[1,-]}
 				/varset barkMsg ${barkMsg.Left[${Math.Calc[${barkMsg.Length} - 1].Int}]}
@@ -360,10 +360,10 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 			
 			/say ${barkMsg}
 			
-			| -Wait up to 3 seconds for something to happen.
+			|- Wait up to 3 seconds for something to happen.
 			/delay 30 ${Zone.ID} != ${currentZone} || ${Me.Loc.Replace[ ,].NotEqual[${startingLoc}]} || ${Window[ConfirmationDialogBox].Open} || ${Window[LargeDialogWindow].Open}
 
-			| -Click Yes to a confirmation box.
+			|- Click Yes to a confirmation box.
 			/if (${Window[ConfirmationDialogBox].Open}) {
 				/notify ConfirmationDialogBox Yes_Button leftmouseup
 				/delay 10
@@ -372,7 +372,7 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 				/delay 10
 			}
 			
-			| -Check to see if the bark was successful.
+			|- Check to see if the bark was successful.
 			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${startingLoc}
 			
 			/doevents barkReturn
@@ -425,20 +425,20 @@ SUB EVENT_barkReturn(paramLine, returnBark)
 SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_clickIt ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 
-		| -Check LoS.
+		|- Check LoS.
 		/if (!${paramLineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
 			/docommand ${ChatToggle} I cannot see the object to click.
 		} else {
 			
 			/if (${locToStart.Find[ ]}) /varset locToStart ${locToStart.Arg[1, ]}
 			
-			| -Check range to object.
+			|- Check range to object.
 			/call Triangulate_Distance ${locToStart} ${Me.Loc.Replace[ ,]}
 			/if (${Macro.Return} > ${Math.Calc[${MaxResponseDist}*3].Int}) {
 				/docommand ${ChatToggle} That object is too far away to click.
@@ -454,7 +454,7 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 		
 				:retryClick
 				
-				| -Check if I need to move closer.
+				|- Check if I need to move closer.
 				/call Triangulate_Distance ${locToStart} ${Me.Loc.Replace[ ,]}
 				/if (${Macro.Return} > 10) {
 					/if (${retryTimer}) {
@@ -465,10 +465,10 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 					}
 				} else {
 				
-					| -Switch to first person camera.
+					|- Switch to first person camera.
 					/keypress First_Person_Camera
 				
-					| -Face object and attempt to click it for up to 5 seconds.
+					|- Face object and attempt to click it for up to 5 seconds.
 					/varset miscTimer 50
 					/squelch /doortarget
 					/squelch /face fast door
@@ -476,22 +476,22 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 
 					:keypress
 					
-					| -Shifts look angle up and down while attempting to click.
+					|- Shifts look angle up and down while attempting to click.
 					/look ${If[${Me.Look} < 75,${Math.Calc[${Me.Look} + 5]},-75]}
 					/if (${Target.ID}) /squelch /target clear
 					/keypress U
 					/delay 2
 					
-					| -Check if I have zoned, or moved.
+					|- Check if I have zoned, or moved.
 					/call Triangulate_Distance ${locToStart} ${Me.Loc.Replace[ ,]}
 					/if (${Zone.ID} == ${currentZone} && ${Macro.Return} < 50) {
 
-						| -Check keypressTimer.
+						|- Check keypressTimer.
 						/if (${miscTimer}) {
 							/goto :keypress
 						} else {
 						
-							| -Check the retryTimer.
+							|- Check the retryTimer.
 							/if (${retryTimer}) {
 								/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_clickIt -| Click attempt failed, retrying.
 								/keypress back hold
@@ -501,7 +501,7 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 								
 								/if (${retryTimer}) /goto :retryClick
 						
-							| -If the retryTimer has expired, and I have not clicked the object.
+							|- If the retryTimer has expired, and I have not clicked the object.
 							} else {
 								/docommand ${ChatToggle} I have failed to click the object.
 							}
@@ -532,7 +532,7 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_runThruZone ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
@@ -544,12 +544,12 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
 		/declare miscTimer timer local
 		/declare startZone int local ${Zone.ID}
 	
-		| -Check that you can see the location to start from.
+		|- Check that you can see the location to start from.
 		/if (!${paramLineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
 			/docommand ${ChatToggle} I cannot see the starting location.
 		} else {
 		
-			| -Check range to object.
+			|- Check range to object.
 			/call Triangulate_Distance ${locToStart} ${Me.Loc.Replace[ ,]}
 			/if (${Macro.Return} > ${Math.Calc[${MaxResponseDist}*3].Int}) {
 				/docommand ${ChatToggle} I am to far away from that zone paramLine.
@@ -561,7 +561,7 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
 			
 				:retryRTZ
 			
-				| -Check if I need to move closer.
+				|- Check if I need to move closer.
 				/call Triangulate_Distance ${locToStart} ${Me.Loc.Replace[ ,]}
 				/if (${Macro.Return} > 10) {
 					/if (${retryTimer}) {
@@ -572,16 +572,16 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
 					}
 				} else {
 				
-					| -Face the zone and run foward for 15 seconds.
+					|- Face the zone and run foward for 15 seconds.
 					/face fast heading ${Math.Calc[${startHeading}*-1]}
 					/delay 5
 					/keypress forward hold
 					
-					| -Wait to zone.
+					|- Wait to zone.
 					/delay 100 !${Zone.ID} || ${Zone.ID} != ${startZone}
 					/if (!${Zone.ID}) /delay 600 ${Zone.ID}
 	
-					| -Check if I zoned.
+					|- Check if I zoned.
 					/if (${Zone.ID} == ${startZone}) {
 						/if (${retryTimer}) {
 							/goto :retryRTZ
@@ -620,7 +620,7 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
 SUB EVENT_dropInvis(paramLine, paramSender)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_dropInvis ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
@@ -658,7 +658,7 @@ SUB EVENT_dropInvis(paramLine, paramSender)
 SUB EVENT_Exit(paramLine, paramSender)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Exit ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -688,13 +688,13 @@ SUB EVENT_Exit(paramLine, paramSender)
 SUB EVENT_LoadSpells(paramLine, paramSender)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_LoadSpells ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 
-		| -Check if I can cast, and have a spellset.	
+		|- Check if I can cast, and have a spellset.	
 		/if (${Me.Class.CanCast} && ${Defined[Default_SpellSet]}) {
 	
 			/declare spellsetMem_Timer timer local 300
@@ -728,7 +728,7 @@ SUB EVENT_LoadSpells(paramLine, paramSender)
 SUB EVENT_RemoveBuff(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -767,7 +767,7 @@ SUB EVENT_RemoveBuff(paramLine, paramSender, paramEvent)
 SUB EVENT_CheckBuffs(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_CheckBuffs ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -804,13 +804,13 @@ SUB EVENT_CheckBuffs(paramLine, paramSender, paramEvent)
 SUB EVENT_FindItems(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_FindItems ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 	
-		| -Declare counting variables.
+		|- Declare counting variables.
 		/declare i int local
 		/declare e int local
 		/declare itemName string local
@@ -821,19 +821,19 @@ SUB EVENT_FindItems(paramLine, paramSender, paramEvent)
 			/docommand ${ChatToggle} >>> Found (${Math.Calc[${FindItemCount[${ItemToFind}]} + ${FindItemBankCount[${ItemToFind}]}].Int}) examples of [${ItemToFind}] in the following slots ... <<<
 			
 		
-			| -Check cursor.
+			|- Check cursor.
 			/if (${Cursor.Name.Equal[${ItemToFind}]})  /docommand ${ChatToggle} >>> Found [${Cursor.Name}] -> [Cursor]. <<<
 			
-			| -Check Inventory.
+			|- Check Inventory.
 			/if (${FindItemCount[${ItemToFind}]}) {
 			
-				| -Search Equippped Items.
+				|- Search Equippped Items.
 				/for i 1 to 22
 					/varset itemName ${InvSlot[${i}].Item}
 					/if (${itemName.Find[${ItemToFind}]}) /docommand ${ChatToggle} [${InvSlot[${i}].Item}] -> (${InvSlot[${i}].Name})
 				/next i
 				
-				| -Search packslots.
+				|- Search packslots.
 				/for i 1 to 8	
 					/varset itemName ${Me.Inventory[pack${i}]}
 					/if (${itemName.Find[${ItemToFind}]}) /docommand ${ChatToggle} [${Me.Inventory[pack${i}]}] -> (InvSlot${i})
@@ -849,7 +849,7 @@ SUB EVENT_FindItems(paramLine, paramSender, paramEvent)
 			
 			/if (${FindItemBankCount[${ItemToFind}]}) {
 			
-				| -Search bank packslots.
+				|- Search bank packslots.
 				/for i 1 to 26	
 					/varset itemName ${Me.Bank[${i}]}
 					/if (${itemName.Find[${ItemToFind}]}) /docommand ${ChatToggle} [${Me.Bank[${i}]}] -> (BankSlot${i})
@@ -960,7 +960,7 @@ SUB EVENT_CountBots
 
 
 |----------------------------------------------------|
-|- Preforms item swaps, listed in Character_Inis.	-|
+|- Preforms item swaps, listed in iniCharacters.	-|
 |----------------------------------------------------|
 #EVENT Swap_Items "<#*#> Swap #1#"
 #EVENT Swap_Items "[MQ2] Swap #1#"
@@ -968,7 +968,7 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 /if (${Debug} || ${Debug_Basics}) /echo |- Event Swap_Items ==>
 
 	| If I don't have a matching Ini entry.
-	/if (!${Ini[${Character_Ini},Swap Items,${IniEntry}].Length}) {
+	/if (!${Ini[${iniCharacter},Swap Items,${IniEntry}].Length}) {
 		/echo |- Swap_Items -| I have no listing for [${IniEntry}].
 	} else {
 	
@@ -983,14 +983,14 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 		:SwapLoop
 		/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Swap_Items -| Swaploop.
 		
-		/varset itemToSwap ${Ini[${Character_Ini},Swap Items,${IniEntry}].Arg[${i},/].Arg[1,|]}
-		/varset slotToSwap ${Ini[${Character_Ini},Swap Items,${IniEntry}].Arg[${i},/].Arg[2,|]}
+		/varset itemToSwap ${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Arg[1,|]}
+		/varset slotToSwap ${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Arg[2,|]}
 		
 		| If I don't have the item in my inventory.
 		/if (!${FindItemCount[${itemToSwap}]}) {
 			/echo |- Event Swap_Items -| #*# Error #*# [${itemToSwap}] was not found.
 			/varcalc i + 1
-			/if (${Ini[${Character_Ini},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
+			/if (${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
 		} else {
 		
 			| If I'm swapping in a 2 hander, while dual wielding.
@@ -1001,7 +1001,7 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 			/call SwapItem "${itemToSwap}" ${slotToSwap}
 			
 			/varcalc i ${i} + 1
-			/if (${Ini[${Character_Ini},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
+			/if (${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
 		}
 	}
 
@@ -1021,8 +1021,8 @@ SUB EVENT_useItem(paramLine, itemToUse)
 	/if (!${FindItemCount[=${itemToUse}]}) {
 	
 		| check ini for an alias
-		/if (${Ini[${Character_Ini},Use Items,${itemToUse}].Length}) {
-			/varset itemToUse ${Ini[${Character_Ini},Use Items,${itemToUse}]}
+		/if (${Ini[${iniCharacter},Use Items,${itemToUse}].Length}) {
+			/varset itemToUse ${Ini[${iniCharacter},Use Items,${itemToUse}]}
 			/goto :TryAgain
 		} else {
 			/echo Could not find [${itemToUse}].
@@ -1071,7 +1071,7 @@ SUB EVENT_EndMacro
 SUB EVENT_medOn(paramLine, paramSender)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_medOn ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
@@ -1113,7 +1113,7 @@ SUB EVENT_medOn(paramLine, paramSender)
 SUB EVENT_medOff(paramLine, paramSender)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_medOff ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
@@ -1189,7 +1189,7 @@ SUB check_MedBreak
 SUB EVENT_set_AAXP(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- set_AAXP ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -1226,12 +1226,12 @@ SUB EVENT_fixCorpses
 |----------------------------------------|
 |- Consents a PC to drag your corpse.	-|
 |----------------------------------------|
-#event Consent "#1# tells you, 'Consent #2#'"
-#event Consent "<#1#> Consent #2#"
-SUB Event_Consent(paramLine, paramSender, ConsentTarget)
+#EVENT Consent "#1# tells you, 'Consent #2#'"
+#EVENT Consent "<#1#> Consent #2#"
+SUB EVENT_Consent(paramLine, paramSender, ConsentTarget)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Consent ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -1251,8 +1251,8 @@ SUB Event_Consent(paramLine, paramSender, ConsentTarget)
 |--------------------------------------------------------------------------------------------|
 |- Adds a PC name to your list of consentTargets.  This is used is corpse drag functions.	-|
 |--------------------------------------------------------------------------------------------|
-#event addConsent "You have been given permission to drag #1#'s corpse in all zones."
-SUB event_addConsent(paramLine, consentTarget)
+#EVENT addConsent "You have been given permission to drag #1#'s corpse in all zones."
+SUB EVENT_addConsent(paramLine, consentTarget)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_addConsent ==>
 
 	/if (!${Select[${consentTarget},${consentTargets}]}) {
@@ -1267,19 +1267,19 @@ SUB event_addConsent(paramLine, consentTarget)
 |--------------------------------------------------------------------------------|
 |- Clears your list of PCs who have consented to have you move their corpse.	-|
 |--------------------------------------------------------------------------------|
-#event flushConsent "<#*#> Flush consent"
-#event flushConsent "[MQ2] Flush consent"
-SUB event_flushConsent
+#EVENT flushConsent "<#*#> Flush consent"
+#EVENT flushConsent "[MQ2] Flush consent"
+SUB EVENT_flushConsent
 	/echo Flushing my current consented targets.
 	/if (${Defined[consentTargets]}) /varset consentTargets ${Me.CleanName}
 /RETURN
 
 
 
-#event gatherCorpses "[MQ2] Ping corpses"
-#event gatherCorpses "[MQ2] Gather corpses"
-#event gatherCorpses "[MQ2] Gather corpse"
-SUB event_gatherCorpses
+#EVENT gatherCorpses "[MQ2] Ping corpses"
+#EVENT gatherCorpses "[MQ2] Gather corpses"
+#EVENT gatherCorpses "[MQ2] Gather corpse"
+SUB EVENT_gatherCorpses
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_gatherCorpses ==>
 
 	/declare miscTimer timer local
@@ -1319,7 +1319,7 @@ SUB event_gatherCorpses
 SUB EVENT_ClickYes(paramLine, paramSender, paramEvent)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_ClickYes ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -1361,13 +1361,13 @@ SUB EVENT_ClickYes(paramLine, paramSender, paramEvent)
 SUB EVENT_gate(paramLine, paramSender)
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Gate ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 
-		| -Attempt to gate.
+		|- Attempt to gate.
 		/if (!${Me.Book[gate]}) {
 			/if (${FindItem[Philter of Major Translocation].ID}) {
 				/docommand ${ChatToggle} Preparing to gate...
@@ -1417,13 +1417,13 @@ SUB EVENT_Evacuate(paramLine, paramSender)
 /if (${Select[${Me.Class.ShortName},DRU,WIZ]}) {
 /if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Evacuate ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 
-		| -Attempt to evac.
+		|- Attempt to evac.
 		/if (${Me.AltAbilityReady[Exodus]}) {
 			/docommand ${ChatToggle} Evacuating!
 			/call e3_Cast ${Me.ID} "Exodus" alt
@@ -1460,7 +1460,7 @@ SUB EVENT_RaidAccept
 SUB EVENT_Request_RaidInvite(paramLine, paramSender)
 /if (${Debug} || ${Debug_Basics}) /echo |- Request_RaidInvite ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|
@@ -1484,7 +1484,7 @@ SUB EVENT_Request_RaidInvite(paramLine, paramSender)
 SUB EVENT_Force_RaidDisband
 /if (${Debug} || ${Debug_Basics}) /echo |- Force_RaidDisband ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -1504,16 +1504,16 @@ SUB EVENT_Force_RaidDisband
 SUB EVENT_Invite(paramLine, paramSender)
 /if (${Debug}) /echo |- EVENT_Invite ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]}) {
 	
-		| -Wait to finish casting
+		|- Wait to finish casting
 		/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /delay 300 !${Me.Casting.ID}
 	
-		| -If the groupleader was valid, disband a current group, and join the new one.
+		|- If the groupleader was valid, disband a current group, and join the new one.
 		| /if (${Group} || ${Raid.Members}) /call EVENT_Disband
 		
 		/declare retryTimer timer local 150
@@ -1549,23 +1549,23 @@ SUB EVENT_Invite(paramLine, paramSender)
 SUB EVENT_Disband(paramLine, paramSender)
 /if (${Debug}) /echo |- EVENT_Disband ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]}) {
 	
-		| -Wait to stop casting.
+		|- Wait to stop casting.
 		/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /delay 300 !${Me.Casting.ID}
 	
-		| -Disband from a raid.
+		|- Disband from a raid.
 		/if (${Raid.Members}) {
 			/call TrueTarget ${Me.ID}
 			/raiddisband
 			/delay 10 !${Raid.Members}
 		}
 		
-		| -Disband from a group.
+		|- Disband from a group.
 		/if (${Group}) {
 			/call TrueTarget ${Me.ID}
 			/disband
@@ -1589,12 +1589,12 @@ SUB EVENT_Disband(paramLine, paramSender)
 SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 /if (${Debug}) /echo |- EVENT_saveGroup ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
-		| -Check that I'm the group leader.
+		|- Check that I'm the group leader.
 		/if (!${Select[${Group.Leader},${Me}]}) {
 			/if (${Debug}) /echo I am not a group leader, skipping.
 		} else {
@@ -1636,10 +1636,10 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 			| Save the group configuration
 			/echo Group configuration(s) saved. Use [/group ${groupName}] to recall this group setup.
 			/for i 0 to 5
-				| -Save group members 0-5.
+				|- Save group members 0-5.
 				/if (${Bool[${Group.Member[${i}]}]}) {
 					/call WriteToIni "${Group_Ini},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" ${Group.Member[${i}]} 1
-				| -If the group has less that 5 members, set placeholders
+				|- If the group has less that 5 members, set placeholders
 				} else {
 					/call WriteToIni "${Group_Ini},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" PLACEHOLDER 1
 				}
@@ -1660,7 +1660,7 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 SUB EVENT_listGroups
 /if (${Debug}) /echo |- listGroups ==>
 
-	| -Check Group_Ini for groups on this server.
+	|- Check Group_Ini for groups on this server.
 	/if (!${Ini[${Group_Ini}].Find[${MacroQuest.Server}]}) {
 		/echo You don't have any group setups saved on, [${MacroQuest.Server}].
 	} else {
@@ -1674,12 +1674,12 @@ SUB EVENT_listGroups
 			/echo
 			/echo --- Group: [${Ini[${Group_Ini}].Arg[${i},|].Arg[2,_]}] ---
 			
-			| -Reset 'e' the group member counting variable.
+			|- Reset 'e' the group member counting variable.
 			/varset e 1
 			
 			:next_memberListing
 			
-			| -Check that the entry is not a PLACEHOLDER.
+			|- Check that the entry is not a PLACEHOLDER.
 			/if (${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]}].Arg[${e},|]}].NotEqual[PLACEHOLDER]}) {
 				/echo Group member#${e}: ${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]}].Arg[${e},|]}]}
 				/varcalc e ${e} + 1
@@ -1706,7 +1706,7 @@ SUB EVENT_listGroups
 SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
 /if (${Debug}) /echo |- EVENT_groupUp ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
 	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|
@@ -1721,7 +1721,7 @@ SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
 		/declare i int local 1
 		/declare e int local
 		
-		| -Check for groupName in Group_Ini.
+		|- Check for groupName in Group_Ini.
 		:nextGroupListing
 		/if (${Ini[${Group_Ini}].Arg[${i},|].Arg[2,_].Equal[${groupName}]} && ${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#0].NotEqual[DEPRECATED]}) {
 			| Disband from a current group
@@ -1736,7 +1736,7 @@ SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
 					/varset groupMembers[${e}] ${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#${e}]}
 					/if (${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#${e}].NotEqual[PLACEHOLDER]}) {
 						/varcalc groupSize ${groupSize}+1
-						| -Alert PC of incoming group invite.
+						|- Alert PC of incoming group invite.
 						/invite ${groupMembers[${e}]}
 					}
 				/next e
@@ -1769,7 +1769,7 @@ SUB EVENT_reportMana(paramLine,paramSender)
 		|- Verify the event
 		/call verifyEvent "${paramSender}" "${paramLine}"
 		/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
-		|-    |-----------Valid User----------|    |-----------In Zone-------------|	|--------Included Bot-----------|
+		|-   |-----------Valid User----------|    |-----------In Zone-------------|	|--------Included Bot-----------|
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {   	
 			/docommand ${ChatToggle} ${Me.PctMana}m${If[${Me.PctMana}!=100, - Full Mana in ${Math.Calc[((${Me.MaxMana}-${Me.CurrentMana})/${Me.ManaRegen})*6]}s,]}
 		}
@@ -1855,7 +1855,7 @@ SUB amIPetClass()
 /RETURN FALSE
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-| TRUE if @Param from is within the Netbots client list
+| TRUE if [@Param from] is within the Netbots client list
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB isOneOfMyToons(String from)
 	/if (${NetBots.Client.Find[${from}]}) {
@@ -1912,6 +1912,38 @@ SUB stopCurrentAction(bool evenBard)
 	/if (${Debug} || ${Debug_Basics}) /echo <== stopCurrentAction -|
 /RETURN
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+| 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT Channels "Channels: #*#"
+SUB EVENT_Channels(String line)
+	/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Channels ==>
+
+	/declare i int local
+	/declare max int local ${line.Count[,]}
+	/varcalc max ${max} + 1
+	/declare chnl string local
+	/for i 1 to ${max}
+		/varset chnl ${line.Token[${i},,]}
+		/if (${chnl.Find[Team]} > 0) {
+			/varset channel ${chnl.Token[1,=]}
+			/if (${Debug} || ${Debug_Basics}) /echo channel=${channel}
+		}
+	/next i
+	
+	/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Channels -|
+/RETURN
+
+SUB joinChannel()
+	/join Team
+	/doevents Channels
+	:channelLoop
+	/if (${channel} == 0) {
+		/doevents Channels
+		/goto :channelLoop
+	}
+/RETURN
+
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1946,10 +1978,10 @@ Sub basics_Setup
 	
 	/if (!${Ini[${genSettings_Ini},General,End MedBreak in Combat(On/Off)].Length}) /call IniToVar "${genSettings_Ini},General,End MedBreak in Combat(On/Off)" medOn_combatBreak bool outer
 	
-	| -Add Groups_Ini file path
+	|- Add Groups_Ini file path
 	/if (!${Ini[${MacroData_Ini},File Paths,Saved Groups].Length}) /call WriteToIni "${MacroData_Ini},File Paths,Saved Groups" "e3 Macro Inis\Saved Groups.ini" 1
 	
-	| -Import Groups_Ini.
+	|- Import Groups_Ini.
 	/if (!${Ini[${MacroData_Ini},File Paths,Saved Groups].Length}) {
 		/echo ERROR: Could not find designated file path for [Saved Groups], please review [${MacroData_Ini}] and restart.
 		/endmacro
@@ -2016,9 +2048,9 @@ SUB basics_MacroSettings
 SUB basics_CharacterSettings
 /if (${Debug} || ${Debug_Basics}) /echo |- basics_CharacterSettings ==>
 
-	/if (!${Ini[${Character_Ini},Swap Items].Length}) /call WriteToIni "${Character_Ini},Swap Items,(Example) Two Hander" "Lodestar|mainhand"
-	/if (!${Ini[${Character_Ini},Swap Items].Length}) /call WriteToIni "${Character_Ini},Swap Items,(Example) One Handers" "Heartwood Blade|mainhand/Chaotic Black Scimitar|offhand"
-	/if (!${Ini[${Character_Ini},Use Items].Length}) /call WriteToIni "${Character_Ini},Use Items,(Example) ShinkItem" "Bracelet of the Shadow Hive"
+	/if (!${Ini[${iniCharacter},Swap Items].Length}) /call WriteToIni "${iniCharacter},Swap Items,(Example) Two Hander" "Lodestar|mainhand"
+	/if (!${Ini[${iniCharacter},Swap Items].Length}) /call WriteToIni "${iniCharacter},Swap Items,(Example) One Handers" "Heartwood Blade|mainhand/Chaotic Black Scimitar|offhand"
+	/if (!${Ini[${iniCharacter},Use Items].Length}) /call WriteToIni "${iniCharacter},Use Items,(Example) ShinkItem" "Bracelet of the Shadow Hive"
 
 /if (${Debug} || ${Debug_Basics}) /echo <== basics_CharacterSettings -|
 /RETURN
@@ -2085,12 +2117,12 @@ Sub basics_Aliases
 /if (${Debug} || ${Debug_Basics}) /echo <== basics_Aliases -|
 /return
 
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
-| --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+|- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
 |**
 
-| -Add Filter File Path
+|- Add Filter File Path
 /if (!${Ini[${MacroData_Ini},File Paths,Filter Settings].Length}) /call WriteToIni "${MacroData_Ini},File Paths,Filter Settings" "Macro Inis\Filter Settings.ini"
 
 |- Filter Settings

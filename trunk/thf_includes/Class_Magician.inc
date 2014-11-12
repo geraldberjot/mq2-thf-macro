@@ -14,7 +14,7 @@ SUB EVENT_petWeapons(string line, string from)
 	/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons ==>
 
 	/if (${petItems.Size}) {
-		| -Verify the event
+		|- Verify the event
 		/call amIConcerned ${from} ${Me.CleanName} FALSE
 		/if (${Macro.Return}) {
 			/call iniToVar "${iniGeneral},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
@@ -154,7 +154,7 @@ SUB EVENT_distributePetWeapons(line, ChatSender)
 
 	/if (${petItems.Size}) {
 	
-		| -Verify the event
+		|- Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 		|    |-----------Valid User----------|
@@ -308,7 +308,7 @@ SUB MAG_MacroSettings
 	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#4" "check_Debuffs" 1
 	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#5" "check_Rain" 1
 	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#6" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#7" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#7" "checkBuffs" 1
 	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#8" "check_Pets" 1
 	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#9" "check_PetWeapons" 1
 

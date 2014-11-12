@@ -517,7 +517,7 @@ SUB toggleTribute(tributeSetting)
 SUB EVENT_manualTributeSet(line, ChatSender, eventParams)
 /if (${outerDebug}) /echo |- EVENT_manualTributeSet ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
@@ -585,9 +585,9 @@ SUB checkZoneType
 |- @param zoneSetting: Holds 'Raid' or 'Safe' zone settings.										-|
 |- @param charSender: The PC setting the zone type.													-|
 |----------------------------------------------------------------------------------------------------|
-#event Set_zoneType "<#1#> Set tribute zone #2#"
-#event Set_zoneType "[#1#] Set tribute zone #2#"
-SUB event_Set_zoneType(line, chatSender, zoneSetting)
+#EVENT Set_zoneType "<#1#> Set tribute zone #2#"
+#EVENT Set_zoneType "[#1#] Set tribute zone #2#"
+SUB EVENT_Set_zoneType(line, chatSender, zoneSetting)
 /if (${SpawnCount[pc ${chatSender}]} || !${Defined[chatSender]}) {
 
 	/if (${zoneSetting.Equal[off]}  ) {

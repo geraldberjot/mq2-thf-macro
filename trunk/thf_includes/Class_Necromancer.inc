@@ -120,7 +120,7 @@ SUB check_manaDump
 SUB EVENT_toggle_manaDump(line, from, eventParams)
 	/if (${outerDebug}) /echo |- EVENT_toggle_manaDump ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call amIConcerned ${from} ${Me.CleanName} TRUE
 	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
@@ -237,7 +237,7 @@ SUB NEC_MacroSettings
 	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#7" "check_lifeTap" 1
 	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#8" "check_Nukes" 1
 	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#9" "check_petHeal" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#10" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#10" "checkBuffs" 1
 	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#11" "check_Pets" 1
 
 /if (${outerDebug}) /echo <== NEC_MacroSettings -|

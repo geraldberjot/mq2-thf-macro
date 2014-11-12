@@ -58,7 +58,7 @@ SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 SUB EVENT_startMelody(String line, String from, melodyName)
 	/if (${outerDebug}) /echo |- EVENT_startMelody ==>
 
-	| -Verify the event
+	|- Verify the event
 	/call amIConcerned ${from} ${Me.CleanName} FALSE
 	/if (${Macro.Return}) {
 		/if (${melodyName.Find[ /]}) /varset melodyName ${melodyName.Arg[1, /]}
@@ -173,7 +173,7 @@ SUB BRD_MacroSettings
 	| Adv Settings
 	/call writeToIni "${iniAdvanced},BRD Functions,BRD Function#1" "check_Burns" 1
 	/call writeToIni "${iniAdvanced},BRD Functions,BRD Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},BRD Functions,BRD Function#3" "check_Buffs" 1
+	/call writeToIni "${iniAdvanced},BRD Functions,BRD Function#3" "checkBuffs" 1
 
 /if (${outerDebug}) /echo <== BRD_MacroSettings -|
 /RETURN

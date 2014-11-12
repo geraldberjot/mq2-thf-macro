@@ -508,9 +508,9 @@ SUB makeGroup
 /RETURN
 
 SUB LPS
-	| ----------------------------------------------------------------------
+	|- ---------------------------------------------------------------------
 	| Declare loops / second variables
-	| ----------------------------------------------------------------------
+	|- ---------------------------------------------------------------------
 	/if (!${Defined[looptest]}) 	/declare looptest 	int outer 0
 	/if (!${Defined[loops]}) 		/declare loops 		int outer 0
 	/if (!${Defined[looptime]}) 	/declare looptime 	int outer ${Time.Second}

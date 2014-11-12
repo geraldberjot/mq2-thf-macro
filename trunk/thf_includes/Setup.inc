@@ -10,26 +10,26 @@
 #include thf_includes\sub.inc
 #include thf_includes\events.inc
 
-#include thf_includes\thf_Alerts.inc
-#include thf_includes\thf_Assists.inc
-#include thf_includes\thf_Background.inc
+#include thf_includes\Alerts.inc
+#include thf_includes\Assists.inc
+#include thf_includes\Background.inc
 
-#include thf_includes\thf_Bard.inc
-#include thf_includes\thf_Beastlord.inc
-#include thf_includes\thf_Berserker.inc
-#include thf_includes\thf_Cleric.inc
-#include thf_includes\thf_Druid.inc
-#include thf_includes\thf_Enchanter.inc
-#include thf_includes\thf_Magician.inc
-#include thf_includes\thf_Monk.inc
-#include thf_includes\thf_Necromancer.inc
-#include thf_includes\thf_Paladin.inc
-#include thf_includes\thf_Ranger.inc
-#include thf_includes\thf_Rogue.inc
-#include thf_includes\thf_ShadowKnight.inc
-#include thf_includes\thf_Shaman.inc
-#include thf_includes\thf_Warrior.inc
-#include thf_includes\thf_Wizard.inc
+#include thf_includes\class_Bard.inc
+#include thf_includes\class_Beastlord.inc
+#include thf_includes\class_Berserker.inc
+#include thf_includes\class_Cleric.inc
+#include thf_includes\class_Druid.inc
+#include thf_includes\class_Enchanter.inc
+#include thf_includes\class_Magician.inc
+#include thf_includes\class_Monk.inc
+#include thf_includes\class_Necromancer.inc
+#include thf_includes\class_Paladin.inc
+#include thf_includes\class_Ranger.inc
+#include thf_includes\class_Rogue.inc
+#include thf_includes\class_ShadowKnight.inc
+#include thf_includes\class_Shaman.inc
+#include thf_includes\class_Warrior.inc
+#include thf_includes\class_Wizard.inc
 
 SUB thfSetup(bool debug)
 	/if (${outerDebug}) /echo |- thfSetup ==>
@@ -93,8 +93,8 @@ SUB thfSetup(bool debug)
 	/if (!${modeSelect.Equal[Debug]}) /call iniToVar "${iniAdvanced},Debug,Debug Mode (On/Off)" Debug bool outer
 	
 	|-- Chat Channel
-	/declare ChatToggle string outer /bc
-	/if (${Ini[${Macro_Ini},General,Macro Output Channel].Length}) /call iniToVar "${Macro_Ini},General,Macro Output Channel" ChatToggle string outer
+	/declare channel string outer /bc
+	/if (${Ini[${iniTHF},General,Channel].Length}) /call iniToVar "${iniTHF},General,Channel" channel string outer
 
 	/call IniToArray "${iniAdvanced},Includes,Include#" macroSetups
 	/call IniToArray "${iniAdvanced},${Me.Class.ShortName} Functions,${Me.Class.ShortName} Function#" mainLoop_Array
@@ -146,7 +146,7 @@ SUB EVENT_MakeMacroSettingsIni()
 
 	/echo Creating macro settings files...
 
-	/call writeToIni "${iniGeneral},General,Macro Output Channel" /bc
+	/call writeToIni "${iniGeneral},General,Channel" team
 	
 	/call writeToIni "${iniAdvanced},Debug,Debug Mode (On/Off)" Off
 	/call writeToIni "${iniAdvanced},Includes,Include#1" background 1
@@ -159,7 +159,7 @@ SUB EVENT_MakeMacroSettingsIni()
 	/call writeToIni "${iniAdvanced},Includes,Include#8" heal 1
 	/call writeToIni "${iniAdvanced},Includes,Include#9" healChain 1
 	/call writeToIni "${iniAdvanced},Includes,Include#10" assist 1
-	/call writeToIni "${iniAdvanced},Includes,Include#11" class 1
+	/call writeToIni "${iniAdvanced},Includes,Include#11" ${Me.Class.ShortName} 1
 	/call writeToIni "${iniAdvanced},Includes,Include#12" corpseSummon 1
 	/call writeToIni "${iniAdvanced},Includes,Include#13" loot 1
 	/call writeToIni "${iniAdvanced},Includes,Include#14" sell 1
@@ -175,7 +175,6 @@ SUB EVENT_MakeMacroSettingsIni()
 	/declare i int local
 	
 	/for i 1 to ${macroSetups.Size}
-		/if (${macroSetups[${i}].Equal[class]}) /varset macroSetups[${i}] ${Me.Class.ShortName}
 		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_MacroSettings
 	/next i
 	
@@ -188,7 +187,7 @@ SUB EVENT_MakeMacroSettingsIni()
 SUB checkPlugins()
 	/echo Checking plugins...
 
-	| REQUIRED PLUGINS ==>
+	|- REQUIRED PLUGINS ==>
 	
 	|- Check MQ2EQBC.
 	/if (!${Plugin[MQ2EQBC].Name.Length}) {
@@ -300,7 +299,6 @@ SUB EVENT_MakeCharacterSettingsIni()
 	/declare i int local
 	
 	/for i 1 to ${macroSetups.Size}
-		/if (${macroSetups[${i}].Equal[class]}) /varset macroSetups[${i}] ${Me.Class.ShortName}
 		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_CharacterSettings
 	/next i
 	
@@ -332,7 +330,6 @@ SUB EVENT_UpdateAliases()
 	/declare i int local
 	
 	/for i 1 to ${macroSetups.Size}
-		/if (${macroSetups[${i}].Equal[class]}) /varset macroSetups[${i}] ${Me.Class.ShortName}
 		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_Aliases
 	/next i
 	
