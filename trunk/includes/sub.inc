@@ -364,6 +364,9 @@ SUB gate(String from, String who)
         /call stopCurrentAction TRUE
         /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
         /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
+			/if (${from.Equal[${Me.CleanName}]}) {
+				/delay 10s
+			}
             /casting "${CharmOfQueenAdrianne}" charm
             /chat ${channel} Gating to the Forest !
         }

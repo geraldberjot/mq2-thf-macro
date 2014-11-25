@@ -729,6 +729,7 @@ SUB EVENT_Zone(String line)
 /RETURN
 
 SUB EVENT_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
+	/declare args string local
 	/if (${EQBCCommand.Lower.Find[follow]}) {
 		/call EVENT_Follow "" ${EQBCSender} "" ${EQBCCommand.Lower.Replace[follow ,]}
 		/RETURN
@@ -749,4 +750,8 @@ SUB EVENT_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
 	/if (${EQBCCommand.Lower.Find[halloween]}) {
 		/call halloween
 	}
-/RETURN
+	/if (${EQBCCommand.Lower.Find[buy]}) {
+		/varset args ${EQBCCommand.Replace[buy ,]}
+		/call Buy "${args.Arg[1,|]}" ${args.Arg[2,|]}
+	}
+/return

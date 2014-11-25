@@ -19,7 +19,7 @@
 #EVENT	Follow					"#1# tells Team:#2#, 'Follow #3#'"
 #EVENT	Zone					"You have entered #*#"
 
-#include thf_includes\thf_Setup.inc
+#include thf_includes\Setup.inc
 
 SUB Main
 	/declare iniGlobal 	string 	outer "thf_inis\global.ini"

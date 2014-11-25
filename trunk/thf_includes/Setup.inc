@@ -13,6 +13,8 @@
 #include thf_includes\Alerts.inc
 #include thf_includes\Assists.inc
 #include thf_includes\Background.inc
+#include thf_includes\Basics.inc
+#include thf_includes\Utilities.inc
 
 #include thf_includes\class_Bard.inc
 #include thf_includes\class_Beastlord.inc
@@ -226,14 +228,14 @@ SUB checkPlugins()
 		}
 		
 		|- Check MQ2NetAdvPath.
-		/if (!${Plugin[MQ2NetAdvPath].Name.Length}) {
-			/echo Plugin MQ2NetAdvPath is not loaded, attempting to resolve...
-			/plugin MQ2NetAdvPath
-			/delay 3s ${NetAdvPath}
-			/if (!${NetAdvPath}) {
-				/echo ***WARNING*** Could not load MQ2NetAdvPath. Please ensure you're using a copy of MQ2 which was compiled with the MQ2NetAdvPath plugin and try again.
-			}
-		}
+		|/if (!${Plugin[MQ2NetAdvPath].Name.Length}) {
+		|	/echo Plugin MQ2NetAdvPath is not loaded, attempting to resolve...
+		|	/plugin MQ2NetAdvPath
+		|	/delay 3s ${NetAdvPath}
+		|	/if (!${NetAdvPath}) {
+		|		/echo ***WARNING*** Could not load MQ2NetAdvPath. Please ensure you're using a copy of MQ2 which was compiled with the MQ2NetAdvPath plugin and try again.
+		|	}
+		|}
 	}
 	
 	|- Check MQ2MoveUtils.
