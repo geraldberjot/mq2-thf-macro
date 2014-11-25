@@ -111,11 +111,11 @@ SUB LootMobs
 		/squelch /alert add ${AlertList} FSP
 	}
 	/declare DeadCount int local ${SpawnCount[corpse radius ${CorpseRadius} zradius 50 noalert 25]}
-    /if (!${LootMobs}) {
-		/echo Can't loot mobs !
-		/chat ${channel} Can't loot mobs !
-		/RETURN
-	}
+    |/if (!${LootMobs}) {
+	|	/echo Can't loot mobs !
+	|	/chat ${channel} Can't loot mobs !
+	|	/return
+	|}
 	/if (${SpawnCount[npc radius ${MobsTooClose} zradius 50 noalert ${AlertList}]}) {
 		/echo Mobs near me, can't loot !
 		/chat ${channel} Mobs near me, can't loot !
