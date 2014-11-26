@@ -694,11 +694,20 @@ SUB Build_Class_Ini(Ini_File)
 /if (${outerDebug}) /echo |- Build_Class_Ini ==>
 /RETURN
 
+SUB checkToons()
+	/declare i int local 0
+	/declare count int local 0
 
+	/if (!${Defined[toonsInZone]}) /declare toonsInZone int outer 0
 
-|**
-
-e3 event template
+	/for i 0 to ${NetBots.Counts}
+		/if (${NetBots[${NetBots.Client.Arg[${i}]}].InZone}) {
+			/varcalc count ${count}+1
+		}
+	/next i
+	
+	/varset toonsInZone ${count}
+/RETURN
 
 #EVENT Follow "[#1#] Follow #2#"
 #EVENT Follow "<#1#> Follow #2#"
@@ -734,6 +743,12 @@ SUB stopCurrentAction(bool evenBard)
     /delay 1
 	/if (${outerDebug}) /echo <== stopCurrentAction -|
 /RETURN
+
+
+
+|**
+
+e3 event template
 
 
 e3 .inc template
@@ -779,8 +794,6 @@ SUB _Aliases
 
 /if (${outerDebug}) /echo <== _Aliases -|
 /RETURN
-
-
 
 **|
 
@@ -935,18 +948,3 @@ SUB rewrite_ValidationKey(int newValue, int CurrentArg)
 /RETURN
 
 ---------------------------------------------------------------------------------------------------------------------------------------------->
-
-SUB checkToons()
-	/declare i int local 0
-	/declare count int local 0
-
-	/if (!${Defined[toonsInZone]}) /declare toonsInZone int outer 0
-
-	/for i 0 to ${NetBots.Counts}
-		/if (${NetBots[${NetBots.Client.Arg[${i}]}].InZone} {
-			/varcalc count ${count}+1
-		}
-	/next i
-	
-	/varset toonsInZone ${count}
-/RETURN

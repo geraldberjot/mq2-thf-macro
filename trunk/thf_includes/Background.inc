@@ -631,7 +631,7 @@ SUB background_Setup
 	/declare currentZone int outer 0
 	
 	| Add Tribute Settings File Path
-	/if (!${Ini[${iniTHF},Paths,Tribute Settings].Length}) /call writeToIni "${iniTHF},Paths,Tribute Settings" "e3 Macro Inis\Tribute Settings.ini"
+	/if (!${Ini[${iniTHF},Paths,Tribute Settings].Length}) /call writeToIni "${iniTHF},Paths,Tribute Settings" "thf_inis\Tribute Settings.ini"
 	
 	| Import itemTimers_Ini.
 	/if (!${Ini[${iniTHF},Paths,Tribute Settings].Length}) {
