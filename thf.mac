@@ -22,42 +22,18 @@
 #include thf_includes\Setup.inc
 
 SUB Main
-	/declare iniGlobal 	string 	outer "thf_inis\global.ini"
-	/declare iniHail 	string 	outer "thf_inis\hail.ini"
+	/declare iniGlobal 	string 	outer "thf_inis\Global.ini"
+	/declare iniHail 	string 	outer "thf_inis\Hail.ini"
 	/declare iniSetup 	string 	outer "thf_inis\${Me.CleanName}.ini"
-	/declare iniSpell 	string 	outer "thf_inis\spells_${Me.CleanName}.ini"
 	/declare channel 	int 	outer 0
 	
-	/call thfSetup FALSE
+	/call thfSetup TRUE
 	
 	/call joinChannel
 	/call setupAdvLootVars
 	/call loadCustomVars
 	
-	/chat ${channel} THF Macro started for ${Me.Cleanname} [${Me.Class}]
-	
-	:MainLoop
-		|/if (${Defined[looptest]}) /varset looptest ${Math.Calc[${looptest}+1]}
-		|/call LPS
-		/doevents
-		/call instantBuff
-		| Commands will be executed when in combat, no casting going on and the cursor is free.
-		/call isHolyShit
-		/if (${Macro.Return}) {
-			/doevents
-			/call checkHolyShitBuff
-			/doevents
-			/call checkDiscipline
-		}
-		| Commands will be executed when not in combat, not casting and the cursor is free. 
-		/call isDownShit
-		/if (${Macro.Return}) {
-			/doevents
-			/call checkDownShitBuff
-			/doevents
-			/call checkSpellBuff
-		}
-	/goto :MainLoop
+	/chat ${channel} THF Macro started for ${Me.CleanName} [${Me.Class}]
 	
 	/if (${outerDebug}) /echo |- MainLoop ==>
 

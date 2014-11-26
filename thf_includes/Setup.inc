@@ -95,7 +95,7 @@ SUB thfSetup(bool debug)
 	/if (!${modeSelect.Equal[Debug]}) /call iniToVar "${iniAdvanced},Debug,Debug Mode (On/Off)" Debug bool outer
 	
 	|-- Chat Channel
-	/declare channel string outer /bc
+	/if (!${Defined[channel]}) /declare channel string outer /bc
 	/if (${Ini[${iniTHF},General,Channel].Length}) /call iniToVar "${iniTHF},General,Channel" channel string outer
 
 	/call IniToArray "${iniAdvanced},Includes,Include#" macroSetups
@@ -110,6 +110,7 @@ SUB thfSetup(bool debug)
 	|- Complete a pending exchange
 	/if (${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Pending Exchange].Length} && ${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Pending Exchange].NotEqual[NONE]} && !${itemExchange_Timer}) /call completePendingExchange
 	
+	/call checkToons
 	/echo THF loaded !
 	/echo
 	
@@ -153,19 +154,19 @@ SUB EVENT_MakeMacroSettingsIni()
 	/call writeToIni "${iniAdvanced},Debug,Debug Mode (On/Off)" Off
 	/call writeToIni "${iniAdvanced},Includes,Include#1" background 1
 	/call writeToIni "${iniAdvanced},Includes,Include#2" basics 1
-	/call writeToIni "${iniAdvanced},Includes,Include#3" casting 1
-	/call writeToIni "${iniAdvanced},Includes,Include#4" begForBuffs 1
-	/call writeToIni "${iniAdvanced},Includes,Include#5" buffCheck 1
-	/call writeToIni "${iniAdvanced},Includes,Include#6" buy 1
-	/call writeToIni "${iniAdvanced},Includes,Include#7" pet 1
-	/call writeToIni "${iniAdvanced},Includes,Include#8" heal 1
-	/call writeToIni "${iniAdvanced},Includes,Include#9" healChain 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#3" casting 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#4" begForBuffs 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#5" buffCheck 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#6" buy 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#7" pet 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#8" heal 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#9" healChain 1
 	/call writeToIni "${iniAdvanced},Includes,Include#10" assist 1
 	/call writeToIni "${iniAdvanced},Includes,Include#11" ${Me.Class.ShortName} 1
-	/call writeToIni "${iniAdvanced},Includes,Include#12" corpseSummon 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#12" corpseSummon 1
 	/call writeToIni "${iniAdvanced},Includes,Include#13" loot 1
-	/call writeToIni "${iniAdvanced},Includes,Include#14" sell 1
-	/call writeToIni "${iniAdvanced},Includes,Include#15" smoothMoves 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#14" sell 1
+	|/call writeToIni "${iniAdvanced},Includes,Include#15" smoothMoves 1
 	/call writeToIni "${iniAdvanced},Includes,Include#16" Wait4Rez 1
 	
 	/delay 15
@@ -323,7 +324,7 @@ SUB EVENT_UpdateAliases()
 	/squelch /alias /makeCharIni /echo Make Character Ini
 	/squelch /alias /makeSettingsIni /echo Make General Settings Ini
 	/squelch /alias /makeAdvSettingsIni /echo Make Advanced Settings Ini
-	/squelch /alias /e3help /echo Help
+	/squelch /alias /thfHelp /echo Help
 	/squelch /alias /debugon /varset Debug 1
 	/squelch /alias /debugoff /varset Debug 0
 
@@ -335,7 +336,7 @@ SUB EVENT_UpdateAliases()
 		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_Aliases
 	/next i
 	
-	/call VetAAs_Aliases
+	|/call VetAAs_Aliases
 
 	/if (${Debug}) /echo <== EVENT_UpdateAliases -|
 /RETURN

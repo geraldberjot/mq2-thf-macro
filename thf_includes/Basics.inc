@@ -1953,7 +1953,7 @@ SUB joinChannel()
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 Sub basics_Setup
-/call INItoVar "${advSettings_Ini},Debug,Debug Basics (On/Off)" Debug_Basics bool outer
+/call INItoVar "${iniAdvanced},Debug,Debug Basics (On/Off)" Debug_Basics bool outer
 /if (${Debug} || ${Debug_Basics}) /echo |- basics_Setup ==>
 
 	/if (!${Defined[Following]}) /declare Following bool global FALSE
@@ -1971,15 +1971,15 @@ Sub basics_Setup
 	/declare medbreak_Popup_Timer timer outer
 	
 	/declare MaxResponseDist int outer 250
-	/if (${Ini[${genSettings_Ini},General,Max Response Distance].Length} && ${Int[${Ini[${genSettings_Ini},General,Max Response Distance]}]}) /call IniToVar "${genSettings_Ini},General,Max Response Distance" MaxResponseDist int outer
+	/if (${Ini[${iniGeneral},General,Max Response Distance].Length} && ${Int[${Ini[${iniGeneral},General,Max Response Distance]}]}) /call IniToVar "${iniGeneral},General,Max Response Distance" MaxResponseDist int outer
 
 	/declare LeashLength int outer 100
-	/if (${Ini[${genSettings_Ini},General,Leash Length].Length} && ${Int[${Ini[${genSettings_Ini},General,Leash Length]}]}) /call IniToVar "${genSettings_Ini},General,Leash Length" LeashLength int outer
+	/if (${Ini[${iniGeneral},General,Leash Length].Length} && ${Int[${Ini[${iniGeneral},General,Leash Length]}]}) /call IniToVar "${iniGeneral},General,Leash Length" LeashLength int outer
 	
-	/if (!${Ini[${genSettings_Ini},General,End MedBreak in Combat(On/Off)].Length}) /call IniToVar "${genSettings_Ini},General,End MedBreak in Combat(On/Off)" medOn_combatBreak bool outer
+	/if (!${Ini[${iniGeneral},General,End MedBreak in Combat(On/Off)].Length}) /call IniToVar "${iniGeneral},General,End MedBreak in Combat(On/Off)" medOn_combatBreak bool outer
 	
 	|- Add Groups_Ini file path
-	/if (!${Ini[${MacroData_Ini},File Paths,Saved Groups].Length}) /call WriteToIni "${MacroData_Ini},File Paths,Saved Groups" "e3 Macro Inis\Saved Groups.ini" 1
+	/if (!${Ini[${MacroData_Ini},File Paths,Saved Groups].Length}) /call WriteToIni "${MacroData_Ini},File Paths,Saved Groups" "thf_inis\Saved Groups.ini" 1
 	
 	|- Import Groups_Ini.
 	/if (!${Ini[${MacroData_Ini},File Paths,Saved Groups].Length}) {
@@ -2034,11 +2034,11 @@ SUB basics_MacroSettings
 
 	
 
-	/call WriteToIni "${advSettings_Ini},Debug,Debug Basics (On/Off)"
+	/call WriteToIni "${iniAdvanced},Debug,Debug Basics (On/Off)"
 
-	/call WriteToIni "${genSettings_Ini},General,Max Response Distance" 500
-	/call WriteToIni "${genSettings_Ini},General,Leash Length" 250
-	/call WriteToIni "${genSettings_Ini},General,End MedBreak in Combat(On/Off)" On
+	/call WriteToIni "${iniGeneral},General,Max Response Distance" 500
+	/call WriteToIni "${iniGeneral},General,Leash Length" 250
+	/call WriteToIni "${iniGeneral},General,End MedBreak in Combat(On/Off)" On
 
 /if (${Debug} || ${Debug_Basics}) /echo <== basics_MacroSettings -|
 /RETURN
