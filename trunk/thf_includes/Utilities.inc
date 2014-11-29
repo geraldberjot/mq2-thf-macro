@@ -113,7 +113,7 @@ SUB IniToArray(Ini_Key, ArrayName, ArrayScope)
 |------------------------------------------------------------------------------------|
 |- Split a string with the specified separator and return the specified array		-|
 |------------------------------------------------------------------------------------|
-|- @param myString : The string to split											-|
+|- @param Ini_Key : The string to split											-|
 |- @param ArrayName : The name of the array you want to declare						-|
 |- @param ArrayScope : The scope of the array to be declared						-|
 |- @param separator : The char to split with										-|
@@ -122,35 +122,42 @@ SUB IniToArray(Ini_Key, ArrayName, ArrayScope)
 |-	Ex: /call IniToArray "Settings.ini,General,Debug Mode" Debug outer		-|
 |-		/call iniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local			-|
 |------------------------------------------------------------------------------------|
-SUB split(String myString, String ArrayName, String ArrayScope, String separator)
-	/if (${outerDebug}) /echo |- split [${myString} with ${separator}] ==>
+SUB split(String Ini_Key, String ArrayName, String ArrayScope, String separator)
+	/if (${outerDebug}) /echo |- split [(${Ini_Key})'s value with ${separator}] ==>
 
-	| Check if the spearator is in the string.
-	/if (!${myString.Find[${separator}]}) {
-		/if (${outerDebug}) /echo [${separator}] not found.
+	/declare value String local
+	/varset value ${Ini[${Ini_Key}]}
+	| Check for the specified ini key.
+	/if (!${value.Length}) {
+		/if (${outerDebug}) /echo [${Ini_Key}] not found.
 	} else {
-		| Count separator
-		/declare i int local 1
-		/declare count int local
-		/varset count ${myString.Count[${separator}]}
+		| Check if the separator is in the string.
+		/if (!${value.Find[${separator}]}) {
+			/if (${outerDebug}) /echo [${separator}] not found in ${value}.
+		} else {
+			| Count separator
+			/declare i int local 1
+			/declare count int local
+			/varcalc count ${value.Count[${separator}]}+1
 
-		| Declare the array and copy elements
-		/if (${Defined[${ArrayName}]}) /deletevar ${ArrayName}
-		/declare ${ArrayName}[${count}] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
-		
-		/for i 1 to ${${ArrayName}.Size}
-			/varset ${ArrayName}[${i}] ${myString.Token[${i},${separator}]}
-		/next i
-	}
-
-	/if (${outerDebug}) {
-		/if (${${ArrayName}.Size}) {
-			/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
+			| Declare the array and copy elements
+			/if (${Defined[${ArrayName}]}) /deletevar ${ArrayName}
+			/declare ${ArrayName}[${count}] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
+			
 			/for i 1 to ${${ArrayName}.Size}
-				/echo ${ArrayName}[${i}] - ${${ArrayName}[${i}]}
+				/varset ${ArrayName}[${i}] ${value.Token[${i},${separator}]}
 			/next i
 		}
-		/echo <== split -|
+
+		/if (${outerDebug}) {
+			/if (${${ArrayName}.Size}) {
+				/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
+				/for i 1 to ${${ArrayName}.Size}
+					/echo ${ArrayName}[${i}] - ${${ArrayName}[${i}]}
+				/next i
+			}
+			/echo <== split -|
+		}
 	}
 /RETURN ${ArrayName}
 

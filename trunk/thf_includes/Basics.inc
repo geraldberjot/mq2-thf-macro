@@ -960,7 +960,7 @@ SUB EVENT_CountBots
 
 
 |----------------------------------------------------|
-|- Preforms item swaps, listed in iniCharacters.	-|
+|- Preforms item swaps, listed in iniToons.	-|
 |----------------------------------------------------|
 #EVENT Swap_Items "<#*#> Swap #1#"
 #EVENT Swap_Items "[MQ2] Swap #1#"
@@ -968,7 +968,7 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 /if (${Debug} || ${Debug_Basics}) /echo |- Event Swap_Items ==>
 
 	| If I don't have a matching Ini entry.
-	/if (!${Ini[${iniCharacter},Swap Items,${IniEntry}].Length}) {
+	/if (!${Ini[${iniToon},Swap Items,${IniEntry}].Length}) {
 		/echo |- Swap_Items -| I have no listing for [${IniEntry}].
 	} else {
 	
@@ -983,14 +983,14 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 		:SwapLoop
 		/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Swap_Items -| Swaploop.
 		
-		/varset itemToSwap ${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Arg[1,|]}
-		/varset slotToSwap ${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Arg[2,|]}
+		/varset itemToSwap ${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Arg[1,|]}
+		/varset slotToSwap ${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Arg[2,|]}
 		
 		| If I don't have the item in my inventory.
 		/if (!${FindItemCount[${itemToSwap}]}) {
 			/echo |- Event Swap_Items -| #*# Error #*# [${itemToSwap}] was not found.
 			/varcalc i + 1
-			/if (${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
+			/if (${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
 		} else {
 		
 			| If I'm swapping in a 2 hander, while dual wielding.
@@ -1001,7 +1001,7 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 			/call SwapItem "${itemToSwap}" ${slotToSwap}
 			
 			/varcalc i ${i} + 1
-			/if (${Ini[${iniCharacter},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
+			/if (${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
 		}
 	}
 
@@ -1021,8 +1021,8 @@ SUB EVENT_useItem(paramLine, itemToUse)
 	/if (!${FindItemCount[=${itemToUse}]}) {
 	
 		| check ini for an alias
-		/if (${Ini[${iniCharacter},Use Items,${itemToUse}].Length}) {
-			/varset itemToUse ${Ini[${iniCharacter},Use Items,${itemToUse}]}
+		/if (${Ini[${iniToon},Use Items,${itemToUse}].Length}) {
+			/varset itemToUse ${Ini[${iniToon},Use Items,${itemToUse}]}
 			/goto :TryAgain
 		} else {
 			/echo Could not find [${itemToUse}].
@@ -1615,15 +1615,15 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 			/next i
 			
 			| Check to see if existing entries need to be overwritten.
-			/if (${Ini[${Group_Ini}].Find[${groupName}]}) {
+			/if (${Ini[${iniGroup}].Find[${groupName}]}) {
 				/echo Overwriting existing saved group(s)...
 				/varset i 1
 
 				:next_groupName
-				/if (${Ini[${Group_Ini}].Arg[${i},|].Length}) {
-					/if (${Ini[${Group_Ini}].Arg[${i},|].Arg[2,_].Equal[${groupName}]}) {
+				/if (${Ini[${iniGroup}].Arg[${i},|].Length}) {
+					/if (${Ini[${iniGroup}].Arg[${i},|].Arg[2,_].Equal[${groupName}]}) {
 						/for e 0 to 5
-							/call WriteToIni "${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#${e}" "DEPRECATED" 1
+							/call WriteToIni "${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},GroupMember#${e}" "DEPRECATED" 1
 						/next e
 					}
 					/varcalc i ${i}+1
@@ -1638,10 +1638,10 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 			/for i 0 to 5
 				|- Save group members 0-5.
 				/if (${Bool[${Group.Member[${i}]}]}) {
-					/call WriteToIni "${Group_Ini},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" ${Group.Member[${i}]} 1
+					/call WriteToIni "${iniGroup},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" ${Group.Member[${i}]} 1
 				|- If the group has less that 5 members, set placeholders
 				} else {
-					/call WriteToIni "${Group_Ini},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" PLACEHOLDER 1
+					/call WriteToIni "${iniGroup},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" PLACEHOLDER 1
 				}
 			/next i
 		}
@@ -1660,8 +1660,8 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 SUB EVENT_listGroups
 /if (${Debug}) /echo |- listGroups ==>
 
-	|- Check Group_Ini for groups on this server.
-	/if (!${Ini[${Group_Ini}].Find[${MacroQuest.Server}]}) {
+	|- Check iniGroup for groups on this server.
+	/if (!${Ini[${iniGroup}].Find[${MacroQuest.Server}]}) {
 		/echo You don't have any group setups saved on, [${MacroQuest.Server}].
 	} else {
 	
@@ -1670,9 +1670,9 @@ SUB EVENT_listGroups
 		
 		:next_groupListing
 
-		/if (${Ini[${Group_Ini}].Arg[${i},|].Arg[1,_].Find[${MacroQuest.Server}]}) {
+		/if (${Ini[${iniGroup}].Arg[${i},|].Arg[1,_].Find[${MacroQuest.Server}]}) {
 			/echo
-			/echo --- Group: [${Ini[${Group_Ini}].Arg[${i},|].Arg[2,_]}] ---
+			/echo --- Group: [${Ini[${iniGroup}].Arg[${i},|].Arg[2,_]}] ---
 			
 			|- Reset 'e' the group member counting variable.
 			/varset e 1
@@ -1680,15 +1680,15 @@ SUB EVENT_listGroups
 			:next_memberListing
 			
 			|- Check that the entry is not a PLACEHOLDER.
-			/if (${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]}].Arg[${e},|]}].NotEqual[PLACEHOLDER]}) {
-				/echo Group member#${e}: ${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]}].Arg[${e},|]}]}
+			/if (${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]}].Arg[${e},|]}].NotEqual[PLACEHOLDER]}) {
+				/echo Group member#${e}: ${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]}].Arg[${e},|]}]}
 				/varcalc e ${e} + 1
-				/if (${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]}].Arg[${e},|]}].Length}) /goto :next_memberListing
+				/if (${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]}].Arg[${e},|]}].Length}) /goto :next_memberListing
 			}
 		}	
 
 		/varcalc i ${i} + 1
-		/if (${Ini[${Group_Ini}].Arg[${i},|].Length}) /goto :next_groupListing
+		/if (${Ini[${iniGroup}].Arg[${i},|].Length}) /goto :next_groupListing
 		/echo
 	}
 
@@ -1721,20 +1721,20 @@ SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
 		/declare i int local 1
 		/declare e int local
 		
-		|- Check for groupName in Group_Ini.
+		|- Check for groupName in iniGroup.
 		:nextGroupListing
-		/if (${Ini[${Group_Ini}].Arg[${i},|].Arg[2,_].Equal[${groupName}]} && ${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#0].NotEqual[DEPRECATED]}) {
+		/if (${Ini[${iniGroup}].Arg[${i},|].Arg[2,_].Equal[${groupName}]} && ${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},GroupMember#0].NotEqual[DEPRECATED]}) {
 			| Disband from a current group
 			/if (${Group}) /call EVENT_Disband "PLACEHOLDER" "${Me.CleanName}"
 				
 			| check to see if I am the group leader(GroupMember#0)
-			/if (${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#0].Equal[${Me.CleanName}]}) {
+			/if (${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},GroupMember#0].Equal[${Me.CleanName}]}) {
 				/echo Recalling [${groupName}]...
 				/delay 20
 				| Invite group members while ignoring placeholders, and set 
 				/for e 1 to 5
-					/varset groupMembers[${e}] ${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#${e}]}
-					/if (${Ini[${Group_Ini},${Ini[${Group_Ini}].Arg[${i},|]},GroupMember#${e}].NotEqual[PLACEHOLDER]}) {
+					/varset groupMembers[${e}] ${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},GroupMember#${e}]}
+					/if (${Ini[${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},GroupMember#${e}].NotEqual[PLACEHOLDER]}) {
 						/varcalc groupSize ${groupSize}+1
 						|- Alert PC of incoming group invite.
 						/invite ${groupMembers[${e}]}
@@ -1751,7 +1751,7 @@ SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
 			}
 		}
 		/varcalc i ${i}+1
-		/if (${Ini[${Group_Ini}].Arg[${i},|].Length}) /goto :nextGroupListing
+		/if (${Ini[${iniGroup}].Arg[${i},|].Length}) /goto :nextGroupListing
 	}
 :skip
 /if (${Debug}) /echo <== EVENT_groupUp -|
@@ -1953,7 +1953,7 @@ SUB joinChannel()
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 Sub basics_Setup
-/call INItoVar "${iniAdvanced},Debug,Debug Basics (On/Off)" Debug_Basics bool outer
+/call INItoVar "${iniGeneral},Debug,Debug Basics (On/Off)" Debug_Basics bool outer
 /if (${Debug} || ${Debug_Basics}) /echo |- basics_Setup ==>
 
 	/if (!${Defined[Following]}) /declare Following bool global FALSE
@@ -1979,14 +1979,14 @@ Sub basics_Setup
 	/if (!${Ini[${iniGeneral},General,End MedBreak in Combat(On/Off)].Length}) /call IniToVar "${iniGeneral},General,End MedBreak in Combat(On/Off)" medOn_combatBreak bool outer
 	
 	|- Add Groups_Ini file path
-	/if (!${Ini[${MacroData_Ini},File Paths,Saved Groups].Length}) /call WriteToIni "${MacroData_Ini},File Paths,Saved Groups" "thf_inis\Saved Groups.ini" 1
+	/if (!${Ini[${iniToon},File Paths,Saved Groups].Length}) /call WriteToIni "${iniToon},File Paths,Saved Groups" "thf_inis\Saved Groups.ini" 1
 	
 	|- Import Groups_Ini.
-	/if (!${Ini[${MacroData_Ini},File Paths,Saved Groups].Length}) {
-		/echo ERROR: Could not find designated file path for [Saved Groups], please review [${MacroData_Ini}] and restart.
+	/if (!${Ini[${iniToon},File Paths,Saved Groups].Length}) {
+		/echo ERROR: Could not find designated file path for [Saved Groups], please review [${iniToon}] and restart.
 		/endmacro
 	} else {
-		/declare Group_Ini string outer ${Ini[${MacroData_Ini},File Paths,Saved Groups]}
+		/declare iniGroup string outer ${Ini[${iniToon},File Paths,Saved Groups]}
 	}
 	
 /if (${Debug} || ${Debug_Basics}) /echo <== basics_Setup -|
@@ -2034,7 +2034,7 @@ SUB basics_MacroSettings
 
 	
 
-	/call WriteToIni "${iniAdvanced},Debug,Debug Basics (On/Off)"
+	/call WriteToIni "${iniGeneral},Debug,Debug Basics (On/Off)"
 
 	/call WriteToIni "${iniGeneral},General,Max Response Distance" 500
 	/call WriteToIni "${iniGeneral},General,Leash Length" 250
@@ -2048,9 +2048,9 @@ SUB basics_MacroSettings
 SUB basics_CharacterSettings
 /if (${Debug} || ${Debug_Basics}) /echo |- basics_CharacterSettings ==>
 
-	/if (!${Ini[${iniCharacter},Swap Items].Length}) /call WriteToIni "${iniCharacter},Swap Items,(Example) Two Hander" "Lodestar|mainhand"
-	/if (!${Ini[${iniCharacter},Swap Items].Length}) /call WriteToIni "${iniCharacter},Swap Items,(Example) One Handers" "Heartwood Blade|mainhand/Chaotic Black Scimitar|offhand"
-	/if (!${Ini[${iniCharacter},Use Items].Length}) /call WriteToIni "${iniCharacter},Use Items,(Example) ShinkItem" "Bracelet of the Shadow Hive"
+	/if (!${Ini[${iniToon},Swap Items].Length}) /call WriteToIni "${iniToon},Swap Items,(Example) Two Hander" "Lodestar|mainhand"
+	/if (!${Ini[${iniToon},Swap Items].Length}) /call WriteToIni "${iniToon},Swap Items,(Example) One Handers" "Heartwood Blade|mainhand/Chaotic Black Scimitar|offhand"
+	/if (!${Ini[${iniToon},Use Items].Length}) /call WriteToIni "${iniToon},Use Items,(Example) ShinkItem" "Bracelet of the Shadow Hive"
 
 /if (${Debug} || ${Debug_Basics}) /echo <== basics_CharacterSettings -|
 /RETURN
@@ -2123,14 +2123,14 @@ Sub basics_Aliases
 |**
 
 |- Add Filter File Path
-/if (!${Ini[${MacroData_Ini},File Paths,Filter Settings].Length}) /call WriteToIni "${MacroData_Ini},File Paths,Filter Settings" "Macro Inis\Filter Settings.ini"
+/if (!${Ini[${iniToon},File Paths,Filter Settings].Length}) /call WriteToIni "${iniToon},File Paths,Filter Settings" "Macro Inis\Filter Settings.ini"
 
 |- Filter Settings
-/if (!${Ini[${MacroData_Ini},File Paths,Filter Settings].Length}) {
-	/echo ERROR: Could not find designated file path for [Filter Settings].  Please review review settings in [${MacroData_Ini} > File Paths].
+/if (!${Ini[${iniToon},File Paths,Filter Settings].Length}) {
+	/echo ERROR: Could not find designated file path for [Filter Settings].  Please review review settings in [${iniToon} > File Paths].
 	/endmacro
 } else {
-	/declare filterSettings_ini string outer ${Ini[${MacroData_Ini},File Paths, Filter Settings]}
+	/declare filterSettings_ini string outer ${Ini[${iniToon},File Paths, Filter Settings]}
 }
 
 

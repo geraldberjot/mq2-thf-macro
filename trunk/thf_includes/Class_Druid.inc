@@ -13,7 +13,7 @@
 SUB DRU_Setup
 /if (${outerDebug}) /echo |- DRU_Setup ==>
 	
-	/call iniToVar "${iniCharacter},Druid,Evac Spell" Evac_Spell string outer
+	/call iniToVar "${iniToon},Druid,Evac Spell" Evac_Spell string outer
 	
 /if (${outerDebug}) /echo <== DRU_Setup -|
 /RETURN
@@ -30,15 +30,15 @@ SUB DRU_MacroSettings
 /if (${outerDebug}) /echo |- DRU_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#1" "check_healChain" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#2" "check_Heals" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#3" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#4" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#5" "check_Debuffs" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#6" "check_DoTs" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#7" "check_Rain" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#8" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},DRU Functions,DRU Function#9" "checkBuffs" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#1" "check_healChain" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#2" "check_Heals" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#3" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#4" "check_Burns" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#5" "check_Debuffs" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#6" "check_DoTs" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#7" "check_Rain" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#8" "check_Nukes" 1
+	/call writeToIni "${iniTHF},DRU Functions,DRU Function#9" "checkBuffs" 1
 
 /if (${outerDebug}) /echo <== DRU_MacroSettings -|
 /RETURN
@@ -49,7 +49,7 @@ SUB DRU_CharacterSettings
 /if (${outerDebug}) /echo |- DRU_CharacterSettings ==>
 
 	| Bot Ini
-	/call writeToIni "${iniCharacter},Druid,Evac Spell"
+	/call writeToIni "${iniToon},Druid,Evac Spell"
 
 /if (${outerDebug}) /echo <== DRU_CharacterSettings -|
 /RETURN

@@ -57,8 +57,8 @@ SUB check_Canni
 SUB SHM_Setup
 /if (${outerDebug}) /echo |- SHM_Setup ==>
 	
-	/call iniToVar "${iniCharacter},Shaman,Auto-Canni (On/Off)" AutoCanni bool outer
-	/call IniToArray "${iniCharacter},Shaman,Canni#" canniSpells
+	/call iniToVar "${iniToon},Shaman,Auto-Canni (On/Off)" AutoCanni bool outer
+	/call IniToArray "${iniToon},Shaman,Canni#" canniSpells
 	
 /if (${outerDebug}) /echo <== SHM_Setup -|
 /RETURN
@@ -74,17 +74,17 @@ SUB SHM_MacroSettings
 /if (${outerDebug}) /echo |- SHM_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#1" "check_Debuffs" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#2" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#3" "check_Heals" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#4" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#5" "check_DoTs" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#6" "check_petHeal" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#7" "check_Rain" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#8" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#9" "checkBuffs" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#10" "check_Pets" 1
-	/call writeToIni "${iniAdvanced},SHM Functions,SHM Function#11" "check_Canni" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#1" "check_Debuffs" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#2" "check_Burns" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#3" "check_Heals" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#4" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#5" "check_DoTs" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#6" "check_petHeal" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#7" "check_Rain" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#8" "check_Nukes" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#9" "checkBuffs" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#10" "check_Pets" 1
+	/call writeToIni "${iniTHF},SHM Functions,SHM Function#11" "check_Canni" 1
 
 /if (${outerDebug}) /echo <== SHM_MacroSettings -|
 /RETURN
@@ -94,8 +94,8 @@ SUB SHM_MacroSettings
 SUB SHM_CharacterSettings
 /if (${outerDebug}) /echo |- SHM_CharacterSettings ==>
 
-	/call writeToIni "${iniCharacter},Shaman,Auto-Canni (On/Off)"
-	/call writeToIni "${iniCharacter},Shaman,Canni#1"
+	/call writeToIni "${iniToon},Shaman,Auto-Canni (On/Off)"
+	/call writeToIni "${iniToon},Shaman,Canni#1"
 
 /if (${outerDebug}) /echo <== SHM_CharacterSettings -|
 /RETURN

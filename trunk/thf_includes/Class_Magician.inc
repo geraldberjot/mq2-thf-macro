@@ -284,8 +284,8 @@ SUB EVENT_CoH_Group
 SUB MAG_Setup
 /if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Setup ==>
 	
-	/call iniToVar "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
-	/call IniToArray "${iniCharacter},Magician,Summoned Pet Item#" petItems
+	/call iniToVar "${iniToon},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
+	/call IniToArray "${iniToon},Magician,Summoned Pet Item#" petItems
 
 /if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Setup -|
 /RETURN
@@ -302,15 +302,15 @@ SUB MAG_MacroSettings
 /if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#1" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#2" "check_petHeal" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#3" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#4" "check_Debuffs" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#5" "check_Rain" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#6" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#7" "checkBuffs" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#8" "check_Pets" 1
-	/call writeToIni "${iniAdvanced},MAG Functions,MAG Function#9" "check_PetWeapons" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#1" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#2" "check_petHeal" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#3" "check_Burns" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#4" "check_Debuffs" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#5" "check_Rain" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#6" "check_Nukes" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#7" "checkBuffs" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#8" "check_Pets" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#9" "check_PetWeapons" 1
 
 /if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_MacroSettings -|
 /RETURN
@@ -320,8 +320,8 @@ SUB MAG_MacroSettings
 SUB MAG_CharacterSettings
 /if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_CharacterSettings ==>
 
-	/call writeToIni "${iniCharacter},Magician,Auto-Pet Weapons (On/Off)"
-	/call writeToIni "${iniCharacter},Magician,Summoned Pet Item#1"
+	/call writeToIni "${iniToon},Magician,Auto-Pet Weapons (On/Off)"
+	/call writeToIni "${iniToon},Magician,Summoned Pet Item#1"
 
 /if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_CharacterSettings -|
 /RETURN

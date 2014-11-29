@@ -28,15 +28,15 @@ SUB BST_MacroSettings
 /if (${outerDebug}) /echo |- BST_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#1" "check_Debuffs" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#2" "check_DoTs" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#3" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#4" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#5" "check_Heals" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#6" "check_PetHeal" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#7" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#8" "checkBuffs" 1
-	/call writeToIni "${iniAdvanced},BST Functions,BST Function#9" "check_Pets" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#1" "check_Debuffs" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#2" "check_DoTs" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#3" "check_Burns" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#4" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#5" "check_Heals" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#6" "check_PetHeal" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#7" "check_Nukes" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#8" "checkBuffs" 1
+	/call writeToIni "${iniTHF},BST Functions,BST Function#9" "check_Pets" 1
 
 /if (${outerDebug}) /echo <== BST_MacroSettings -|
 /RETURN

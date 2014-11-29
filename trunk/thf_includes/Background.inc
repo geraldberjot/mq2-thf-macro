@@ -604,8 +604,9 @@ SUB EVENT_Set_zoneType(line, chatSender, zoneSetting)
 
 
 SUB background_Setup
-/call iniToVar "${iniAdvanced},Debug,Debug Background (On/Off)" Debug_Background bool outer
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_Setup ==>
+	/call iniToVar "${iniGeneral},Debug,Debug Background (On/Off)" outerDebug_Background bool outer
+	
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_Setup ==>
 
 	| Create outer variables.
 	/if (!${Defined[idle]}) /declare idle bool global
@@ -680,7 +681,7 @@ SUB background_Setup
 	/call iniToVar "${iniGeneral},Auto-Tribute,Auto-Tribute (On/Off)" autoTribute bool outer
 	
 	| Import NetBots HUD array
-	/call IniToArray "${iniAdvanced},NetBots HUD,NetBot#" netBotsHUDArray
+	/call IniToArray "${iniGeneral},NetBots HUD,NetBot#" netBotsHUDArray
 
 /if (${outerDebug} || ${outerDebug_Background}) /echo <== background_Setup -|
 /RETURN
@@ -695,7 +696,7 @@ SUB background_checkBackgroundEvents
 SUB background_MacroSettings
 /if (${outerDebug} || ${outerDebug_Background}) /echo |- background_MacroSettings ==>
 
-	/call writeToIni "${iniAdvanced},Debug,Debug Background (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Background (On/Off)"
 
 	/call writeToIni "${iniGeneral},Background,Auto-Destroy List"
 	/call writeToIni "${iniGeneral},Background,Idle Time Out (Min)" 10
