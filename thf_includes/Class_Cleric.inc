@@ -266,42 +266,38 @@ SUB EVENT_CorpseExpired(line, corpseExpired)
 
 
 SUB CLR_Setup
-/if (${outerDebug}) /echo |- CLR_Setup ==>
+	/if (${outerDebug}) /echo |- CLR_Setup ==>
 
-	/call iniToVar "${iniCharacter},Cleric,Divine Arbitration (Pct)" DivineArb_Pct int outer
-	/call iniToVar "${iniCharacter},Cleric,Celestial Regeneration (Pct)" celestialRegen_Pct int outer
-	/call iniToVar "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" AutoYaulp bool outer
-	/call iniToVar "${iniCharacter},Cleric,Yaulp Spell" yaulpSpell string outer
+	/call iniToVar "${iniToon},Cleric,Divine Arbitration (Pct)" DivineArb_Pct int outer
+	/call iniToVar "${iniToon},Cleric,Celestial Regeneration (Pct)" celestialRegen_Pct int outer
+	/call iniToVar "${iniToon},Cleric,Auto-Yaulp (On/Off)" AutoYaulp bool outer
+	/call iniToVar "${iniToon},Cleric,Yaulp Spell" yaulpSpell string outer
 	/if (${AutoYaulp}) {
 		/if (!${Defined[yaulpSpell]} || !${yaulpSpell.Length} || !${Me.Book[${yaulpSpell.Arg[1,/]}]}) {
-			/echo ERROR! ${iniCharacter} > [Cleric] > Yaulp Spell is not correctly defined.  Please check this entry, and restart the macro.
+			/echo ERROR! ${iniToon} > [Cleric] > Yaulp Spell is not correctly defined.  Please check this entry, and restart the macro.
 			/varset AutoYaulp FALSE
 		}
 	}
 
-/if (${outerDebug}) /echo <== CLR_Setup -|
+	/if (${outerDebug}) /echo <== CLR_Setup -|
 /RETURN
-
-
 
 SUB CLR_checkBackgroundEvents
 /RETURN
 
-
-
 SUB CLR_MacroSettings
-/if (${outerDebug}) /echo |- CLR_MacroSettings ==>
+	/if (${outerDebug}) /echo |- CLR_MacroSettings ==>
 	
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#1" "check_DivineArb" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#2" "check_Yaulp" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#3" "check_celestialRegen" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#4" "check_healChain" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#5" "check_Heals" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#6" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#7" "check_Debuffs" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#8" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},CLR Functions,CLR Function#9" "checkBuffs" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#1" "check_DivineArb" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#2" "check_Yaulp" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#3" "check_celestialRegen" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#4" "check_healChain" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#5" "check_Heals" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#6" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#7" "check_Debuffs" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#8" "check_Nukes" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#9" "checkBuffs" 1
 
 /if (${outerDebug}) /echo <== CLR_MacroSettings -|
 /RETURN
@@ -309,15 +305,14 @@ SUB CLR_MacroSettings
 
 
 SUB CLR_CharacterSettings
-/if (${outerDebug}) /echo |- CLR_CharacterSettings ==>
+	/if (${outerDebug}) /echo |- CLR_CharacterSettings ==>
 
-	/call writeToIni "${iniCharacter},Cleric,Divine Arbitration (Pct)" 30 0
-	/call writeToIni "${iniCharacter},Cleric,Celestial Regeneration (Pct)" 65 0
-	/call writeToIni "${iniCharacter},Cleric,Auto-Yaulp (On/Off)" On 0
-	/call writeToIni "${iniCharacter},Cleric,Yaulp Spell"
-	/if (${Ini[${iniCharacter},Cleric,Yaulp#1].Length}) /call writeToIni "${iniCharacter},Cleric,Yaulp#1" "*DEPRECATED*  This entry can be deleted'" 1
+	/call writeToIni "${iniToon},Cleric,Divine Arbitration (Pct)" 30 0
+	/call writeToIni "${iniToon},Cleric,Celestial Regeneration (Pct)" 65 0
+	/call writeToIni "${iniToon},Cleric,Auto-Yaulp (On/Off)" On 0
+	/call writeToIni "${iniToon},Cleric,Yaulp Spell"
 
-/if (${outerDebug}) /echo <== CLR_CharacterSettings -|
+	/if (${outerDebug}) /echo <== CLR_CharacterSettings -|
 /RETURN
 
 

@@ -13,8 +13,8 @@
 SUB PAL_Setup
 /if (${outerDebug}) /echo |- PAL_Setup ==>
 	
-	/call iniToVar "${iniCharacter},Paladin,Auto-Yaulp (On/Off)" AutoYaulp bool outer
-	/call iniToVar "${iniCharacter},Paladin,Yaulp Spell" yaulpSpell string outer
+	/call iniToVar "${iniToon},Paladin,Auto-Yaulp (On/Off)" AutoYaulp bool outer
+	/call iniToVar "${iniToon},Paladin,Yaulp Spell" yaulpSpell string outer
 	
 /if (${outerDebug}) /echo <== PAL_Setup -|
 /RETURN
@@ -31,12 +31,12 @@ SUB PAL_MacroSettings
 /if (${outerDebug}) /echo |- PAL_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},PAL Functions,PAL Function#1" "check_Yaulp" 1
-	/call writeToIni "${iniAdvanced},PAL Functions,PAL Function#2" "check_Heals" 1
-	/call writeToIni "${iniAdvanced},PAL Functions,PAL Function#3" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},PAL Functions,PAL Function#4" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},PAL Functions,PAL Function#5" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},PAL Functions,PAL Function#6" "checkBuffs" 1
+	/call writeToIni "${iniTHF},PAL Functions,PAL Function#1" "check_Yaulp" 1
+	/call writeToIni "${iniTHF},PAL Functions,PAL Function#2" "check_Heals" 1
+	/call writeToIni "${iniTHF},PAL Functions,PAL Function#3" "check_Burns" 1
+	/call writeToIni "${iniTHF},PAL Functions,PAL Function#4" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},PAL Functions,PAL Function#5" "check_Nukes" 1
+	/call writeToIni "${iniTHF},PAL Functions,PAL Function#6" "checkBuffs" 1
 
 /if (${outerDebug}) /echo <== PAL_MacroSettings -|
 /RETURN
@@ -46,8 +46,8 @@ SUB PAL_MacroSettings
 SUB PAL_CharacterSettings
 /if (${outerDebug}) /echo |- PAL_CharacterSettings ==>
 
-	/call writeToIni "${iniCharacter},Paladin,Auto-Yaulp (On/Off)" On 0
-	/call writeToIni "${iniCharacter},Paladin,Yaulp Spell"
+	/call writeToIni "${iniToon},Paladin,Auto-Yaulp (On/Off)" On 0
+	/call writeToIni "${iniToon},Paladin,Yaulp Spell"
 	
 /if (${outerDebug}) /echo <== PAL_CharacterSettings -|
 /RETURN

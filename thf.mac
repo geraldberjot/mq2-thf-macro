@@ -24,7 +24,6 @@
 SUB Main
 	/declare iniGlobal 	string 	outer "thf_inis\Global.ini"
 	/declare iniHail 	string 	outer "thf_inis\Hail.ini"
-	/declare iniSetup 	string 	outer "thf_inis\${Me.CleanName}.ini"
 	/declare channel 	int 	outer 0
 	
 	/call thfSetup TRUE

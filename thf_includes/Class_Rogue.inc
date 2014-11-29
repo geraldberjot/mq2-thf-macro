@@ -132,10 +132,10 @@ SUB ROG_Setup
 	/if (${outerDebug}) /echo |- ROG_Setup ==>
 
 	| Auto-Hide
-	/call iniToVar "${iniCharacter},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
+	/call iniToVar "${iniToon},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
 	
 	| Auto-Evade
-	/call iniToVar "${iniCharacter},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
+	/call iniToVar "${iniToon},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
 	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
 ﻿	
 	| Pick up the lastest discipline
@@ -216,9 +216,9 @@ SUB ROG_MacroSettings
    /call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
 
 	 | Adv Settings
-	 /call writeToIni "${iniAdvanced},ROG Functions,ROG Function#1" "check_Burns" 1
-	 /call writeToIni "${iniAdvanced},ROG Functions,ROG Function#2" "check_CombatBuffs" 1
-	 /call writeToIni "${iniAdvanced},ROG Functions,ROG Function#3" "checkBuffs" 1
+	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#1" "check_Burns" 1
+	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#2" "check_CombatBuffs" 1
+	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#3" "checkBuffs" 1
 
 	/if (${outerDebug}) /echo <== ROG_MacroSettings -|
 /RETURN
@@ -228,8 +228,8 @@ SUB ROG_MacroSettings
 SUB ROG_CharacterSettings
 /if (${outerDebug}) /echo |- ROG_CharacterSettings ==>
 
-	 /call writeToIni "${iniCharacter},${Me.Class},Auto-Hide (On/Off)"
-	 /call writeToIni "${iniCharacter},${Me.Class},Auto-Evade (On/Off)"
+	 /call writeToIni "${iniToon},${Me.Class},Auto-Hide (On/Off)"
+	 /call writeToIni "${iniToon},${Me.Class},Auto-Evade (On/Off)"
 
 /if (${outerDebug}) /echo <== ROG_CharacterSettings -|
 /RETURN

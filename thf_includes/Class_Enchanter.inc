@@ -122,7 +122,7 @@ SUB check_Rune
 SUB ENC_Setup
 /if (${outerDebug}) /echo |- ENC_Setup ==>
 
-	/if (${Ini[${iniCharacter},Enchanter,Chain Rune].Length}) /call iniToVar "${iniCharacter},Enchanter,Chain Rune" chainRune string outer
+	/if (${Ini[${iniToon},Enchanter,Chain Rune].Length}) /call iniToVar "${iniToon},Enchanter,Chain Rune" chainRune string outer
 
 /if (${outerDebug}) /echo <== ENC_Setup -|
 /RETURN
@@ -142,15 +142,15 @@ SUB ENC_MacroSettings
 /if (${outerDebug}) /echo |- ENC_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#1" "check_Rune" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#3" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#4" "check_Debuffs" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#5" "check_DoTs" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#6" "check_Rain" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#7" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#8" "checkBuffs" 1
-	/call writeToIni "${iniAdvanced},ENC Functions,ENC Function#9" "check_Pets" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#1" "check_Rune" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#2" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#3" "check_Burns" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#4" "check_Debuffs" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#5" "check_DoTs" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#6" "check_Rain" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#7" "check_Nukes" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#8" "checkBuffs" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#9" "check_Pets" 1
 
 /if (${outerDebug}) /echo <== ENC_MacroSettings -|
 /RETURN
@@ -160,7 +160,7 @@ SUB ENC_MacroSettings
 SUB ENC_CharacterSettings
 /if (${outerDebug}) /echo |- ENC_CharacterSettings ==>
 
-	/call writeToIni "${iniCharacter},Enchanter,Chain Rune"
+	/call writeToIni "${iniToon},Enchanter,Chain Rune"
 
 /if (${outerDebug}) /echo <== ENC_CharacterSettings -|
 /RETURN
@@ -186,8 +186,8 @@ SUB ENC_Aliases
 #EVENT AutoMez "<#*#> Mez All"
 SUB EVENT_AutoMez
 /if (${outerDebug}) /echo |- AutoMez -| ==>
-/if (!${Defined[AutoMez_Spell]} && ${Ini[${iniCharacter},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)].Length}) {
-	/call iniToVar "${iniCharacter},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)" UNDEFINED string local
+/if (!${Defined[AutoMez_Spell]} && ${Ini[${iniToon},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)].Length}) {
+	/call iniToVar "${iniToon},Enchanter,Auto-Mez (Spell/Gem/MaxLevel)" UNDEFINED string local
 	/declare AutoMez_Spell string outer ${Macro.Return.Arg[1,/]}
 	/declare AutoMez_Gem int outer ${Macro.Return.Arg[2,/]}
 	/declare MaxMezLevel int outer ${Macro.Return.Arg[3,/]}

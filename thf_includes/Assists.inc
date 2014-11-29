@@ -1073,7 +1073,7 @@ SUB EVENT_RainOff(line, ChatSender)
 
 
 |------------------------------------------------------------------------------------------------------------|
-|- Casts spells listed in the [Rain] section of the iniCharacter on mobs which wander into your outerAoeRadius.	-|
+|- Casts spells listed in the [Rain] section of the iniToon on mobs which wander into your outerAoeRadius.	-|
 |------------------------------------------------------------------------------------------------------------|
 SUB check_Rain
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_Rain ==>
@@ -1178,7 +1178,7 @@ SUB check_Burns
 
 
 |----------------------------------------------------|
-|- Engages QuickBurns listed in the iniCharacter.	-|
+|- Engages QuickBurns listed in the iniToon.	-|
 |----------------------------------------------------|
 #EVENT QuickBurn "<#1#> Quick Burn"
 SUB EVENT_QuickBurn(line, ChatSender)
@@ -1209,7 +1209,7 @@ SUB EVENT_QuickBurn(line, ChatSender)
 
 
 |----------------------------------------------------|
-|- Engages FullBurns listed in the iniCharacter.	-|
+|- Engages FullBurns listed in the iniToon.	-|
 |----------------------------------------------------|
 #EVENT FullBurn "<#1#> Full Burn"
 SUB EVENT_FullBurn(line, ChatSender)
@@ -1366,13 +1366,13 @@ SUB EVENT_toggle_outerAssistType(line, ChatSender, eventParams)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB setupAssist
-	/call iniToVar "${iniAdvanced},Debug,Debug Assists (On/Off)" Debug_Assists bool outer
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- setupAssist ==>
+SUB assist_Setup
+	/call iniToVar "${iniGeneral},Debug,Debug Assists (On/Off)" Debug_Assists bool outer
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assist_Setup ==>
 	
 	| Add Assists Paths
-	/if (!${Ini[${iniTHF},Paths,Enrage Settings].Length}) /call writeToIni "${iniTHF},Paths,Enrage Settings" "thf Macro Inis\Enrage Settings.ini"
-	/if (!${Ini[${iniTHF},Paths,Stick Settings].Length}) /call writeToIni "${iniTHF},Paths,Stick Settings" "thf Macro Inis\Stick Settings.ini"
+	/if (!${Ini[${iniTHF},Paths,Enrage Settings].Length}) /call writeToIni "${iniTHF},Paths,Enrage Settings" "thf_inis\Enrage Settings.ini"
+	/if (!${Ini[${iniTHF},Paths,Stick Settings].Length}) /call writeToIni "${iniTHF},Paths,Stick Settings" "thf_inis\Stick Settings.ini"
 	
 	| Enrage Settings
 	/if (!${Ini[${iniTHF},Paths,Enrage Settings].Length}) {
@@ -1400,14 +1400,14 @@ SUB setupAssist
 	/call iniToVar "${iniGeneral},Assists,Acceptable Target Types" outerAcceptableTargetTypes string outer
 	/call iniToVar "${iniGeneral},Assists,Auto-Assist (On/Off)" outerAutoAssistOn bool outer
 	
-	|- Import iniCharacter Settings.
+	|- Import iniToon Settings.
 
 	| [Melee/Ranged].
-	/if (${Ini[${iniCharacter},Assist Settings,Assist Type (Melee/Ranged)].Length}) /call iniToVar "${iniCharacter},Assist Settings,Assist Type (Melee/Ranged)" outerAssistType string outer
-	/if (${Ini[${iniCharacter},Assist Settings,Melee Stick Point].Length}) /call iniToVar "${iniCharacter},Assist Settings,Melee Stick Point" outerAssistStickPoint string outer
-	/if (${Ini[${iniCharacter},Assist Settings,Melee Distance].Length}) /call iniToVar "${iniCharacter},Assist Settings,Melee Distance" outerAssistDistanceSetting string outer
-	/if (${Ini[${iniCharacter},Assist Settings,Ranged Distance].Length}) /call iniToVar "${iniCharacter},Assist Settings,Ranged Distance" outerRangedStickDistance string outer
-	/if (${Ini[${iniCharacter},Assist Settings,Auto-Assist Engage Percent].Length}) /call iniToVar "${iniCharacter},Assist Settings,Auto-Assist Engage Percent" outerEngagePct int outer
+	/if (${Ini[${iniToon},Assist Settings,Assist Type (Melee/Ranged)].Length}) /call iniToVar "${iniToon},Assist Settings,Assist Type (Melee/Ranged)" outerAssistType string outer
+	/if (${Ini[${iniToon},Assist Settings,Melee Stick Point].Length}) /call iniToVar "${iniToon},Assist Settings,Melee Stick Point" outerAssistStickPoint string outer
+	/if (${Ini[${iniToon},Assist Settings,Melee Distance].Length}) /call iniToVar "${iniToon},Assist Settings,Melee Distance" outerAssistDistanceSetting string outer
+	/if (${Ini[${iniToon},Assist Settings,Ranged Distance].Length}) /call iniToVar "${iniToon},Assist Settings,Ranged Distance" outerRangedStickDistance string outer
+	/if (${Ini[${iniToon},Assist Settings,Auto-Assist Engage Percent].Length}) /call iniToVar "${iniToon},Assist Settings,Auto-Assist Engage Percent" outerEngagePct int outer
 	/if (!${Defined[outerEngagePct]}) {
 		/if (${outerDebug} || ${outerDebug_Assists}) /echo ERROR: @[outerEngagePct] - outerEngagePct is invalid, defaulting to 98%
 		/declare outerEngagePct int outer 98
@@ -1417,40 +1417,40 @@ SUB setupAssist
 	}
 	
 	| [Melee Abilities].
-	/if (${Ini[${iniCharacter},Melee Abilities,Ability#1].Length}) /call INItoArray "${iniCharacter},Melee Abilities,Ability#" MyAbilities
+	/if (${Ini[${iniToon},Melee Abilities,Ability#1].Length}) /call INItoArray "${iniToon},Melee Abilities,Ability#" MyAbilities
 
 	| [Nukes].
-	/if (${Ini[${iniCharacter},Nukes,Nuke#1].Length}) /call INItoArray "${iniCharacter},Nukes,Nuke#" MyNukes
+	/if (${Ini[${iniToon},Nukes,Nuke#1].Length}) /call INItoArray "${iniToon},Nukes,Nuke#" MyNukes
 	
 	| [DoTs].
 	
 	|- On Assist
-	/if (${Ini[${iniCharacter},DoTs,DoT on Assist#1].Length}) /call INItoArray "${iniCharacter},DoTs,DoT on Assist#" Assist_DoTs
+	/if (${Ini[${iniToon},DoTs,DoT on Assist#1].Length}) /call INItoArray "${iniToon},DoTs,DoT on Assist#" Assist_DoTs
 
 	|- On Command
-	/if (${Ini[${iniCharacter},DoTs,DoT on Command#1].Length}) /call INItoArray "${iniCharacter},DoTs,DoT on Command#" Command_DoTs
+	/if (${Ini[${iniToon},DoTs,DoT on Command#1].Length}) /call INItoArray "${iniToon},DoTs,DoT on Command#" Command_DoTs
 
 	| [Debuffs].
 
 	|- On Assist
-	/if (${Ini[${iniCharacter},Debuffs,Debuff on Assist#1].Length}) /call INItoArray "${iniCharacter},Debuffs,Debuff on Assist#" Assist_Debuffs
+	/if (${Ini[${iniToon},Debuffs,Debuff on Assist#1].Length}) /call INItoArray "${iniToon},Debuffs,Debuff on Assist#" Assist_Debuffs
 
 	|- On Command
-	/if (${Ini[${iniCharacter},Debuffs,Debuff on Command#1].Length}) /call INItoArray "${iniCharacter},Debuffs,Debuff on Command#" Command_Debuffs
+	/if (${Ini[${iniToon},Debuffs,Debuff on Command#1].Length}) /call INItoArray "${iniToon},Debuffs,Debuff on Command#" Command_Debuffs
 	
 	| [Rain].
-	/if (${Ini[${iniCharacter},Rain,Rain#1].Length}) /call INItoArray "${iniCharacter},Rain,Rain#" Rain_Spells
+	/if (${Ini[${iniToon},Rain,Rain#1].Length}) /call INItoArray "${iniToon},Rain,Rain#" Rain_Spells
 
 	| [QuickBurns].
-	/if (${Ini[${iniCharacter},Burn,Quick Burn#1].Length}) /call IniToArray "${iniCharacter},Burn,Quick Burn#" QuickBurns
+	/if (${Ini[${iniToon},Burn,Quick Burn#1].Length}) /call IniToArray "${iniToon},Burn,Quick Burn#" QuickBurns
 	
 	| [FullBurns].	
-	/if (${Ini[${iniCharacter},Burn,Full Burn#1].Length}) /call IniToArray "${iniCharacter},Burn,Full Burn#" FullBurns
+	/if (${Ini[${iniToon},Burn,Full Burn#1].Length}) /call IniToArray "${iniToon},Burn,Full Burn#" FullBurns
 	
 	| If Assisting variables are defined, turn assists on.
 	/if (${Defined[outerAssistType]} || ${Defined[MyAbilities]} || ${Defined[${arrayName}]} || ${Defined[Assist_DoTs]} || ${Defined[Command_DoTs]} || ${Defined[Assist_Debuffs]} || ${Defined[Command_Debuffs]} || ${Defined[Rain_Spells]} || ${Defined[QuickBurns]} || ${Defined[FullBurns]}) /declare AssistsOn bool outer TRUE
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== setupAssist -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assist_Setup -|
 /RETURN
 
 
@@ -1490,17 +1490,16 @@ SUB checkAssistBackgroundEvents
 
 
 SUB assist_MacroSettings
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assist_MacroSettings ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assist_MacroSettings ==>
 
-	/call writeToIni "${iniAdvanced},Debug,Debug Assists (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Assists (On/Off)"
 
 	/call writeToIni "${iniGeneral},Assists,Auto-Assist (On/Off)" On
-	/if (${Ini[${iniGeneral},Assists,Auto-Assist Engage Percent].Length}) /call writeToIni "${iniGeneral},Assists,Auto-Assist Engage Percent" "DEPRECATED - YOU MAY DELETE THIS ENTRY" 1
 	/call writeToIni "${iniGeneral},Assists,Max Engage Distance" 250
 	/call writeToIni "${iniGeneral},Assists,AE Threat Range" 100
 	/call writeToIni "${iniGeneral},Assists,Acceptable Target Types" NPC,Pet
 	
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assist_MacroSettings -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assist_MacroSettings -|
 /RETURN
 
 
@@ -1509,47 +1508,47 @@ SUB assistCharacterSettings
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assistCharacterSettings ==>
 
 	| Add Assist_Stick entries.
-	/call writeToIni "${iniCharacter},Assist Settings,Assist Type (Melee/Ranged)" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Melee,]}
-	/call writeToIni "${iniCharacter},Assist Settings,Auto-Assist Engage Percent" 98
-	/call writeToIni "${iniCharacter},Assist Settings,Melee Stick Point" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Behind,]}
-	/call writeToIni "${iniCharacter},Assist Settings,Melee Distance" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},MaxMelee,]}
-	/call writeToIni "${iniCharacter},Assist Settings,Ranged Distance" 100
+	/call writeToIni "${iniToon},Assist Settings,Assist Type (Melee/Ranged)" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Melee,]}
+	/call writeToIni "${iniToon},Assist Settings,Auto-Assist Engage Percent" 98
+	/call writeToIni "${iniToon},Assist Settings,Melee Stick Point" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Behind,]}
+	/call writeToIni "${iniToon},Assist Settings,Melee Distance" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},MaxMelee,]}
+	/call writeToIni "${iniToon},Assist Settings,Ranged Distance" 100
 
 	| If I'm a melee class, add Melee Abilities entries.
 	/if (${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]}) {
-		/if (!${Ini[${iniCharacter},Melee Abilities].Length}) /call writeToIni "${iniCharacter},Melee Abilities,Ability#1"
+		/if (!${Ini[${iniToon},Melee Abilities].Length}) /call writeToIni "${iniToon},Melee Abilities,Ability#1"
 	}
 
 	| If I'm a casting class, add Nuke entries.
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,MAG,PAL,NEC,RNG,SHD,SHM,WIZ]}) {
-		/if (!${Ini[${iniCharacter},Nukes].Length}) /call writeToIni "${iniCharacter},Nukes,Nuke#1"
+		/if (!${Ini[${iniToon},Nukes].Length}) /call writeToIni "${iniToon},Nukes,Nuke#1"
 	}
 
 	| If I'm a casting class, add DoT entries.
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,NEC,RNG,SHD,SHM]}) {
-		/if (!${Ini[${iniCharacter},DoTs].Length}) {
-			/call writeToIni "${iniCharacter},DoTs,DoT on Assist#1"
-			/call writeToIni "${iniCharacter},DoTs,DoT on Command#1"
+		/if (!${Ini[${iniToon},DoTs].Length}) {
+			/call writeToIni "${iniToon},DoTs,DoT on Assist#1"
+			/call writeToIni "${iniToon},DoTs,DoT on Command#1"
 		}
 	}
 
 	| If I'm a casting class, add Debuff entries.
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,MAG,NEC,SHM]}) {
-		/if (!${Ini[${iniCharacter},Debuffs].Length}) {
-			/call writeToIni "${iniCharacter},Debuffs,Debuff on Assist#1"
-			/call writeToIni "${iniCharacter},Debuffs,Debuff on Command#1"
+		/if (!${Ini[${iniToon},Debuffs].Length}) {
+			/call writeToIni "${iniToon},Debuffs,Debuff on Assist#1"
+			/call writeToIni "${iniToon},Debuffs,Debuff on Command#1"
 		}
 	}
 
 	| If I'm a casting class, add Rain entries.
 	/if (${Select[${Me.Class.ShortName},DRU,MAG,SHM,WIZ]}) {
-		/if (!${Ini[${iniCharacter},Rain].Length}) /call writeToIni "${iniCharacter},Rain,Rain#1"
+		/if (!${Ini[${iniToon},Rain].Length}) /call writeToIni "${iniToon},Rain,Rain#1"
 	}
 
 	| Burn entries.
-	/if (!${Ini[${iniCharacter},Burn].Length}) {
-		/call writeToIni "${iniCharacter},Burn,Quick Burn#1"
-		/call writeToIni "${iniCharacter},Burn,Full Burn#1"
+	/if (!${Ini[${iniToon},Burn].Length}) {
+		/call writeToIni "${iniToon},Burn,Quick Burn#1"
+		/call writeToIni "${iniToon},Burn,Full Burn#1"
 	}
 
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assistCharacterSettings -|

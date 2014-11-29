@@ -197,16 +197,16 @@ SUB NEC_Setup
 /if (${outerDebug}) /echo |- NEC_Setup ==>
 	
 	| Lich
-	/if (${Ini[${iniCharacter},${Me.Class},Lich Spell].Length}) /call iniToVar "${iniCharacter},${Me.Class},Lich Spell" lichSpell string outer
+	/if (${Ini[${iniToon},${Me.Class},Lich Spell].Length}) /call iniToVar "${iniToon},${Me.Class},Lich Spell" lichSpell string outer
 	
 	| LifeTap
-	/if (${Ini[${iniCharacter},${Me.Class},LifeTap#1].Length}) /call IniToArray "${iniCharacter},${Me.Class},LifeTap#" lifeTaps
+	/if (${Ini[${iniToon},${Me.Class},LifeTap#1].Length}) /call IniToArray "${iniToon},${Me.Class},LifeTap#" lifeTaps
 	
 	| Mana Dump
-	/if (${Ini[${iniCharacter},${Me.Class},Mana Dump (On/Off)].Length}) /call iniToVar "${iniCharacter},${Me.Class},Mana Dump (On/Off)" manaDump bool outer
-	/declare manaDump_Pct int outer ${Ini[${iniCharacter},${Me.Class},Mana Dump Engage Pct]}
-	/declare manaDump_Targets string outer ${Ini[${iniCharacter},${Me.Class},Who to Mana Dump]}
-	/if (${Ini[${iniCharacter},${Me.Class},Mana Dump#1].Length}) /call IniToArray "${iniCharacter},${Me.Class},Mana Dump#" manaDump_Spells
+	/if (${Ini[${iniToon},${Me.Class},Mana Dump (On/Off)].Length}) /call iniToVar "${iniToon},${Me.Class},Mana Dump (On/Off)" manaDump bool outer
+	/declare manaDump_Pct int outer ${Ini[${iniToon},${Me.Class},Mana Dump Engage Pct]}
+	/declare manaDump_Targets string outer ${Ini[${iniToon},${Me.Class},Who to Mana Dump]}
+	/if (${Ini[${iniToon},${Me.Class},Mana Dump#1].Length}) /call IniToArray "${iniToon},${Me.Class},Mana Dump#" manaDump_Spells
 	
 	| Reset manaDump_Targets to replace spaces with commas
 	/if (${manaDump_Targets.Find[ ]}) /varset manaDump_Targets ${manaDump_Targets.Replace[ ,]}
@@ -228,17 +228,17 @@ SUB NEC_MacroSettings
 /if (${outerDebug}) /echo |- NEC_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#1" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#2" "check_castLich" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#3" "check_manaDump" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#4" "check_Debuffs" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#5" "check_DoTs" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#6" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#7" "check_lifeTap" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#8" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#9" "check_petHeal" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#10" "checkBuffs" 1
-	/call writeToIni "${iniAdvanced},NEC Functions,NEC Function#11" "check_Pets" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#1" "check_Burns" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#2" "check_castLich" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#3" "check_manaDump" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#4" "check_Debuffs" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#5" "check_DoTs" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#6" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#7" "check_lifeTap" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#8" "check_Nukes" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#9" "check_petHeal" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#10" "checkBuffs" 1
+	/call writeToIni "${iniTHF},NEC Functions,NEC Function#11" "check_Pets" 1
 
 /if (${outerDebug}) /echo <== NEC_MacroSettings -|
 /RETURN
@@ -249,16 +249,16 @@ SUB NEC_CharacterSettings
 /if (${outerDebug}) /echo |- NEC_CharacterSettings ==>
 
 	| Lich
-	/call writeToIni "${iniCharacter},${Me.Class},Lich Spell"
+	/call writeToIni "${iniToon},${Me.Class},Lich Spell"
 
 	| Life Taps
-	/call writeToIni "${iniCharacter},${Me.Class},LifeTap#1"
+	/call writeToIni "${iniToon},${Me.Class},LifeTap#1"
 
 	| Mana Dumps
-	/call writeToIni "${iniCharacter},${Me.Class},Mana Dump (On/Off)"
-	/call writeToIni "${iniCharacter},${Me.Class},Who to Mana Dump"
-	/call writeToIni "${iniCharacter},${Me.Class},Mana Dump Engage Pct"
-	/call writeToIni "${iniCharacter},${Me.Class},Mana Dump#1"
+	/call writeToIni "${iniToon},${Me.Class},Mana Dump (On/Off)"
+	/call writeToIni "${iniToon},${Me.Class},Who to Mana Dump"
+	/call writeToIni "${iniToon},${Me.Class},Mana Dump Engage Pct"
+	/call writeToIni "${iniToon},${Me.Class},Mana Dump#1"
 
 	| Twitch
 	
@@ -279,10 +279,10 @@ SUB NEC_Aliases
 
 
 |**
-	/if (${Ini[${iniCharacter},Necromancer,Allow Twitch requests (On/Off)].Length}) /call iniToVar "${iniCharacter},Necromancer,Allow Twitch requests (On/Off)" allowTwitch bool outer
-	/if (${Ini[${iniCharacter},Necromancer,Min Mana to Allow Twitch Requests (Pct)].Length}) /call iniToVar "${iniCharacter},Necromancer,Min Mana to Allow Twitch Requests (Pct)" minTwitchMana int outer
-	/call writeToIni "${iniCharacter},Necromancer,Allow Twitch requests (On/Off)"
-	/call writeToIni "${iniCharacter},Necromancer,Min Mana to Allow Twitch Requests (Pct)"
+	/if (${Ini[${iniToon},Necromancer,Allow Twitch requests (On/Off)].Length}) /call iniToVar "${iniToon},Necromancer,Allow Twitch requests (On/Off)" allowTwitch bool outer
+	/if (${Ini[${iniToon},Necromancer,Min Mana to Allow Twitch Requests (Pct)].Length}) /call iniToVar "${iniToon},Necromancer,Min Mana to Allow Twitch Requests (Pct)" minTwitchMana int outer
+	/call writeToIni "${iniToon},Necromancer,Allow Twitch requests (On/Off)"
+	/call writeToIni "${iniToon},Necromancer,Min Mana to Allow Twitch Requests (Pct)"
 
 #EVENT twitchMe "#*# tells you, 'Twitch on #1# #2#'"
 #EVENT twitchMe "#*# tells the group, 'Twitch on #1# #2#'"

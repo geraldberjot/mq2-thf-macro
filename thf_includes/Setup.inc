@@ -36,11 +36,12 @@
 SUB thfSetup(bool debug)
 	/if (${outerDebug}) /echo |- thfSetup ==>
 
+	|-- Debug
 	/declare outerDebug bool outer FALSE
 	/if (${Bool[${debug}]}) /varset outerDebug TRUE
 
 	|- The file path for thf.ini will still need to be updated in corresponding includes because you must use /noparse to write variables to inis.
-	/declare iniTHF string outer thf_inis\thf.ini
+	/declare iniTHF string outer thf_inis\Thf.ini
 	/declare i int local
 
 	/call checkPlugins
@@ -62,14 +63,6 @@ SUB thfSetup(bool debug)
 		/declare iniGeneral string outer ${Ini[${iniTHF},Paths,General]}
 	}
 
-	|-- Advanced Settings
-	/if (!${Ini[${iniTHF},Paths,Advanced].Length}) {
-		/echo ERROR: Could not find designated file path for [Advanced].  Please review review settings in [${iniTHF} > Paths].
-		/endmacro
-	} else {
-		/declare iniAdvanced string outer ${Ini[${iniTHF},Paths,Advanced]}
-	}
-	
 	|-- Toon Settings
 	/if (!${Ini[${iniTHF},Paths,Toon].Length}) {
 		/echo ERROR: Could not find designated file path for [Toon].  Please review review settings in [${iniTHF} > Paths].
@@ -78,9 +71,13 @@ SUB thfSetup(bool debug)
 		/declare iniToon string outer ${Ini[${iniTHF},Paths,Toon]}
 	}
 	
-	|- Create Ini files
+	|- Create/Read Ini files
 	|-- Macro Setting Inis
-	/if (!${Bool[${Ini[${iniGeneral}]}]}) /call EVENT_MakeMacroSettingsIni
+	/if (${Bool[${Ini[${iniGeneral}]}]}) {
+		/call ReadMacroSettings
+	} else {
+		/call EVENT_MakeMacroSettingsIni
+	}
 	
 	|-- Generate iniToon.
 	/if (!${Bool[${Ini[${iniToon}]}]}) /call EVENT_MakeCharacterSettingsIni
@@ -91,26 +88,11 @@ SUB thfSetup(bool debug)
 	|- Import ini settings
 	/echo Importing user settings...
 	
-	|-- Debug
-	/if (!${modeSelect.Equal[Debug]}) /call iniToVar "${iniAdvanced},Debug,Debug Mode (On/Off)" Debug bool outer
-	
-	|-- Chat Channel
-	/if (!${Defined[channel]}) /declare channel string outer /bc
-	/if (${Ini[${iniTHF},General,Channel].Length}) /call iniToVar "${iniTHF},General,Channel" channel string outer
-
-	/call IniToArray "${iniAdvanced},Includes,Include#" macroSetups
-	/call IniToArray "${iniAdvanced},${Me.Class.ShortName} Functions,${Me.Class.ShortName} Function#" mainLoop_Array
-	
-	|- Setup Includes
-	/for i 1 to ${macroSetups.Size}
-		/if (${macroSetups[${i}].Equal[class]}) /varset macroSetups[${i}] ${Me.Class.ShortName}
-		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_Setup
-	/next i
-
 	|- Complete a pending exchange
 	/if (${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Pending Exchange].Length} && ${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Pending Exchange].NotEqual[NONE]} && !${itemExchange_Timer}) /call completePendingExchange
 	
 	/call checkToons
+	
 	/echo THF loaded !
 	/echo
 	
@@ -131,57 +113,117 @@ SUB thfSetup(bool debug)
 |- Creates a file settings file to change Paths, and store various pieces of data
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB makeThfIni()
-	/if (${Debug}) /echo |- makeThfIni ==>
+	/if (${outerDebug}) /echo |- makeThfIni ==>
 
-	/noparse /ini "thf_inis\thf.ini" "Paths" "Toon" "thf_inis\${MacroQuest.Server}-${Me.CleanName}.ini"
-	/noparse /ini "thf_inis\thf.ini" "Paths" "General" "thf_inis\General.ini"
-	/noparse /ini "thf_inis\thf.ini" "Paths" "Advanced" "thf_inis\Advanced.ini"
+	/noparse /ini "thf_inis\Thf.ini" "Paths" "Toon" "thf_inis\${MacroQuest.Server}-${Me.CleanName}.ini"
+	/noparse /ini "thf_inis\Thf.ini" "Paths" "General" "thf_inis\General.ini"
 
-	/if (${Debug}) /echo <== makeThfIni -|
+	/if (${outerDebug}) /echo <== makeThfIni -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Launch every subroutine for each array element
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB loadAll(String tableau, String subToCall)
+	/if (${outerDebug}) /echo |- makeThfIni ==>
+
+	/echo Calling ${Me.Class.ShortName}_${subToCall}
+	/call ${Me.Class.ShortName}_${subToCall}
+	/declare i int local
+	/for i 1 to ${${tableau}.Size}
+		/if (${outerDebug}) /echo Calling ${${tableau}[${i}]}_${subToCall}
+		/if (${Bool[${${tableau}[${i}]}]}) /call ${${tableau}[${i}]}_${subToCall}
+	/next i
+
+	/if (${outerDebug}) /echo <== makeThfIni -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Generate the general Macro Settings file
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT MakeMacroSettingsIni "[MQ2] Make Macro ini"
+SUB EVENT_MakeMacroSettingsIni()
+	/if (${outerDebug}) /echo |- MakeMacroSettingsIni ==>
+
+	/echo Creating macro settings files...
+
+	/call writeToIni "${iniGeneral},General,Channel" team
+	/call writeToIni "${iniGeneral},Debug,Debug Mode (On/Off)" Off
+	/call writeToIni "${iniGeneral},General,Includes" assist/background/basics
+	
+	/call split "${iniGeneral},General,Includes" includes outer /
+	
+	/call loadAll ${includes} "MacroSettings"
+	
+	/if (${outerDebug}) /echo <== MakeMacroSettingsIni -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Read the general Macro Settings file
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB ReadMacroSettings()
+	/if (${outerDebug}) /echo |- ReadMacroSettings ==>
+
+	|-- Chat Channel
+	/if (!${Defined[channelNumber]}) /declare channelNumber string outer
+	/call iniToVar "${iniGeneral},General,Channel" channel string outer
+	
+	/call split "${iniGeneral},General,Includes" includes outer /
+	
+	/call loadAll includes Setup
+	
+	/if (${outerDebug}) /echo <== ReadMacroSettings -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Generates a general Macro Settings file, to be used by multiple includes.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT MakeMacroSettingsIni "[MQ2] Make Macro ini"
-SUB EVENT_MakeMacroSettingsIni()
-	/if (${Debug}) /echo |- MakeMacroSettingsIni ==>
+#EVENT MakeCharacterSettingsIni "[MQ2] Make bot ini"
+SUB EVENT_MakeCharacterSettingsIni()
+	/if (${outerDebug}) /echo |- EVENT_MakeCharacterSettingsIni ==>
 
-	/echo Creating macro settings files...
+	/echo Creating ${Me.CleanName}'${If[${Me.CleanName.Right[1].Equal[s]},,s]} settings file...
+	
+	/call ${Me.Class.ShortName}_CharacterSettings
+	/declare i int local
+	/for i 1 to ${includes.Size}
+		/if (${Bool[${includes[${i}]}]}) /call ${includes[${i}]}_CharacterSettings
+	/next i
+	
+	/if (${outerDebug}) /echo <== EVENT_MakeCharacterSettingsIni -|
+/RETURN	
 
-	/call writeToIni "${iniGeneral},General,Channel" team
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Deletes and Recreates aliases associated with thf.mac.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT UpdateAliases "[MQ2] Update macro aliases"
+SUB EVENT_UpdateAliases()
+	/if (${outerDebug}) /echo |- EVENT_UpdateAliases ==>
+
+	/echo Updating macro aliases....
+	/echo (WARNING: Your clients will lock up for a few moments.  Stand fast, friend...)
+	/echo Aliases may not work properly until you restart MQ2 on ALL clients.
 	
-	/call writeToIni "${iniAdvanced},Debug,Debug Mode (On/Off)" Off
-	/call writeToIni "${iniAdvanced},Includes,Include#1" background 1
-	/call writeToIni "${iniAdvanced},Includes,Include#2" basics 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#3" casting 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#4" begForBuffs 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#5" buffCheck 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#6" buy 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#7" pet 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#8" heal 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#9" healChain 1
-	/call writeToIni "${iniAdvanced},Includes,Include#10" assist 1
-	/call writeToIni "${iniAdvanced},Includes,Include#11" ${Me.Class.ShortName} 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#12" corpseSummon 1
-	/call writeToIni "${iniAdvanced},Includes,Include#13" loot 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#14" sell 1
-	|/call writeToIni "${iniAdvanced},Includes,Include#15" smoothMoves 1
-	/call writeToIni "${iniAdvanced},Includes,Include#16" Wait4Rez 1
-	
-	/delay 15
-	
-	| Import the array of Includes
+	| Core aliases
+	/squelch /alias /updateAliases /echo Update macro aliases
+	/squelch /alias /makeCharIni /echo Make Character Ini
+	/squelch /alias /makeSettingsIni /echo Make General Settings Ini
+	/squelch /alias /makeAdvSettingsIni /echo Make Advanced Settings Ini
+	/squelch /alias /thfHelp /echo Help
+	/squelch /alias /debugon /varset Debug 1
+	/squelch /alias /debugoff /varset Debug 0
+
 	/call IniToArray "${iniAdvanced},Includes,Include#" macroSetups
 	
-	| Call each setup
 	/declare i int local
 	
 	/for i 1 to ${macroSetups.Size}
-		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_MacroSettings
+		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_Aliases
 	/next i
 	
-	/if (${Debug}) /echo <== MakeMacroSettingsIni -|
+	|/call VetAAs_Aliases
+
+	/if (${outerDebug}) /echo <== EVENT_UpdateAliases -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -228,15 +270,6 @@ SUB checkPlugins()
 			/squelch /netbots on grab=on send=on
 		}
 		
-		|- Check MQ2NetAdvPath.
-		|/if (!${Plugin[MQ2NetAdvPath].Name.Length}) {
-		|	/echo Plugin MQ2NetAdvPath is not loaded, attempting to resolve...
-		|	/plugin MQ2NetAdvPath
-		|	/delay 3s ${NetAdvPath}
-		|	/if (!${NetAdvPath}) {
-		|		/echo ***WARNING*** Could not load MQ2NetAdvPath. Please ensure you're using a copy of MQ2 which was compiled with the MQ2NetAdvPath plugin and try again.
-		|	}
-		|}
 	}
 	
 	|- Check MQ2MoveUtils.
@@ -288,55 +321,3 @@ SUB checkPlugins()
 	| <== REQUIRED PLUGINS
 /RETURN
 
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Generates a general Macro Settings file, to be used by multiple includes.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT MakeCharacterSettingsIni "[MQ2] Make bot ini"
-SUB EVENT_MakeCharacterSettingsIni()
-	/if (${Debug}) /echo |- EVENT_MakeCharacterSettingsIni ==>
-
-	/echo Creating ${Me.CleanName}'${If[${Me.CleanName.Right[1].Equal[s]},,s]} settings file...
-	
-	/call IniToArray "${iniAdvanced},Includes,Include#" macroSetups
-	
-	/declare i int local
-	
-	/for i 1 to ${macroSetups.Size}
-		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_CharacterSettings
-	/next i
-	
-	/if (${Debug}) /echo <== EVENT_MakeCharacterSettingsIni -|
-/RETURN	
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Deletes and Recreates aliases associated with e3.mac.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT UpdateAliases "[MQ2] Update macro aliases"
-SUB EVENT_UpdateAliases()
-	/if (${Debug}) /echo |- EVENT_UpdateAliases ==>
-
-	/echo Updating macro aliases....
-	/echo (WARNING: Your clients will lock up for a few moments.  Stand fast, friend...)
-	/echo Aliases may not work properly until you restart MQ2 on ALL clients.
-	
-	| Core aliases
-	/squelch /alias /updateAliases /echo Update macro aliases
-	/squelch /alias /makeCharIni /echo Make Character Ini
-	/squelch /alias /makeSettingsIni /echo Make General Settings Ini
-	/squelch /alias /makeAdvSettingsIni /echo Make Advanced Settings Ini
-	/squelch /alias /thfHelp /echo Help
-	/squelch /alias /debugon /varset Debug 1
-	/squelch /alias /debugoff /varset Debug 0
-
-	/call IniToArray "${iniAdvanced},Includes,Include#" macroSetups
-	
-	/declare i int local
-	
-	/for i 1 to ${macroSetups.Size}
-		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_Aliases
-	/next i
-	
-	|/call VetAAs_Aliases
-
-	/if (${Debug}) /echo <== EVENT_UpdateAliases -|
-/RETURN

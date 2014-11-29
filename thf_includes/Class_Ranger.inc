@@ -28,12 +28,12 @@ SUB RNG_MacroSettings
 /if (${outerDebug}) /echo |- RNG_MacroSettings ==>
 
 	| Adv Settings
-	/call writeToIni "${iniAdvanced},RNG Functions,RNG Function#1" "check_Burns" 1
-	/call writeToIni "${iniAdvanced},RNG Functions,RNG Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniAdvanced},RNG Functions,RNG Function#3" "check_Heals"	 1
-	/call writeToIni "${iniAdvanced},RNG Functions,RNG Function#4" "check_DoTs" 1
-	/call writeToIni "${iniAdvanced},RNG Functions,RNG Function#5" "check_Nukes" 1
-	/call writeToIni "${iniAdvanced},RNG Functions,RNG Function#6" "checkBuffs" 1
+	/call writeToIni "${iniTHF},RNG Functions,RNG Function#1" "check_Burns" 1
+	/call writeToIni "${iniTHF},RNG Functions,RNG Function#2" "check_CombatBuffs" 1
+	/call writeToIni "${iniTHF},RNG Functions,RNG Function#3" "check_Heals"	 1
+	/call writeToIni "${iniTHF},RNG Functions,RNG Function#4" "check_DoTs" 1
+	/call writeToIni "${iniTHF},RNG Functions,RNG Function#5" "check_Nukes" 1
+	/call writeToIni "${iniTHF},RNG Functions,RNG Function#6" "checkBuffs" 1
 
 /if (${outerDebug}) /echo <== RNG_MacroSettings -|
 /RETURN
