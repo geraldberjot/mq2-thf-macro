@@ -17,7 +17,7 @@ SUB EVENT_add_RuneTarget(string line, string RuneTarget)
 /if (${outerDebug}) /echo |- EVENT_add_RuneTarget ==>
 	
 	/if (!${SpawnCount[pc ${RuneTarget}]}) {
-		/chat ${channel} I don't see any PCs matching [${RuneTarget}]...
+		/chat ${channelNumber} I don't see any PCs matching [${RuneTarget}]...
 	} else {
 	
 		/varset RuneTarget ${Spawn[pc ${RuneTarget}].CleanName}
@@ -25,7 +25,7 @@ SUB EVENT_add_RuneTarget(string line, string RuneTarget)
 		/if (!${Defined[RuneTargets]}) {
 			/declare RuneTargets[1] string outer
 			/varset RuneTargets[1] ${RuneTarget}
-			/chat ${channel} Maintaining [${chainRune.Arg[1,/]}] on [${RuneTarget}].
+			/chat ${channelNumber} Maintaining [${chainRune.Arg[1,/]}] on [${RuneTarget}].
 		} else {
 			
 			/declare i int local
@@ -39,10 +39,10 @@ SUB EVENT_add_RuneTarget(string line, string RuneTarget)
 			/next i
 			
 			/if (${Select[${RuneTarget},${RuneTarget_Names}]}) {
-				/chat ${channel} I am already maintaining [${chainRune.Arg[1,/]}] on [${RuneTarget}].
+				/chat ${channelNumber} I am already maintaining [${chainRune.Arg[1,/]}] on [${RuneTarget}].
 			} else {
 				/call BuildArray RuneTargets ${RuneTarget}
-				/chat ${channel} Maintaining [${chainRune.Arg[1,/]}] on [${RuneTarget_Names}${RuneTarget}].
+				/chat ${channelNumber} Maintaining [${chainRune.Arg[1,/]}] on [${RuneTarget_Names}${RuneTarget}].
 			}
 		}
 	}
@@ -71,14 +71,14 @@ SUB EVENT_remove_RuneTarget(line, ChatSender)
 			/for i 1 to ${RuneTargets.Size}
 
 				/if (${RuneTargets[${i}].Equal[${ChatSender}]}) {
-					/chat ${channel} No longer maintaining [${chainRune.Arg[1,/]}] on [${RuneTargets[${i}]}].
+					/chat ${channelNumber} No longer maintaining [${chainRune.Arg[1,/]}] on [${RuneTargets[${i}]}].
 					/call RemoveArrayElement RuneTargets "${RuneTargets[${i}]}"
 				}
 			
 			/next i
 			
 		} else {
-			/chat ${channel} Ending chain runes.
+			/chat ${channelNumber} Ending chain runes.
 			/deletevar RuneTargets
 		}
 		
@@ -102,7 +102,7 @@ SUB check_Rune
 		/if (${chainRune.Arg[3,/].Length} && ${chainRune.Arg[3,/].Find[reagent::]}) /declare runeReagent string local ${chainRune.Arg[3,/].Arg[2,::]}
 		
 		/if (${Defined[runeReagent]} && !${FindItemCount[${runeReagent}]}) {
-			/chat ${channel} I have run out of [${runeReagent}] and can no longer maintain [${runeSpell}].  Ending chain runes.
+			/chat ${channelNumber} I have run out of [${runeReagent}] and can no longer maintain [${runeSpell}].  Ending chain runes.
 			/deletevar RuneTargets
 		} else {
 		
@@ -149,7 +149,7 @@ SUB ENC_MacroSettings
 	/call writeToIni "${iniTHF},ENC Functions,ENC Function#5" "check_DoTs" 1
 	/call writeToIni "${iniTHF},ENC Functions,ENC Function#6" "check_Rain" 1
 	/call writeToIni "${iniTHF},ENC Functions,ENC Function#7" "check_Nukes" 1
-	/call writeToIni "${iniTHF},ENC Functions,ENC Function#8" "checkBuffs" 1
+	/call writeToIni "${iniTHF},ENC Functions,ENC Function#8" "check_Buffs" 1
 	/call writeToIni "${iniTHF},ENC Functions,ENC Function#9" "check_Pets" 1
 
 /if (${outerDebug}) /echo <== ENC_MacroSettings -|
@@ -217,26 +217,26 @@ SUB MezTarget
 	/call e3_Cast ${Target.ID} "${AutoMez_Spell}" Gem${AutoMez_Gem} 5s
 	/if (${Select[${castReturn},CAST_RESISTED]}) {
 		/if (!${Defined[ResistRetry]}) /declare ResistRetry int local 0
-		/chat ${channel} **Warning** ${Target.CleanName} resisted ${AutoMez_Spell}.
+		/chat ${channelNumber} **Warning** ${Target.CleanName} resisted ${AutoMez_Spell}.
 		/if (${Defined[ResistRetry]}) /varcalc ResistRetry ${ResistRetry}+1
 		/if (${ResistRetry} < ${GiveUpValue}) /goto :recast
 	} else /if (${Select[${castReturn},CAST_IMMUNE]}) {
 		/varset ${Target.ID}${Spell[${AutoMez_Spell}].ID} 20000000
-		/chat ${channel} **Warning** ${Target.CleanName} is IMMUNE to ${AutoMez_Spell}.
+		/chat ${channelNumber} **Warning** ${Target.CleanName} is IMMUNE to ${AutoMez_Spell}.
 	} else /if (${Select[${castReturn},CAST_CANNOTSEE]} && ${spamTimer}==0) {
 		/if (!${Defined[Retry]}) /declare LOSRetry int local 0
-		/chat ${channel} **Warning** I cannot see ${Target.CleanName}!!.
+		/chat ${channelNumber} **Warning** I cannot see ${Target.CleanName}!!.
 		/if (${Defined[spamTimer]}) /varset spamTimer 15s
 		/if (${Defined[LOSRetry]}) /varcalc LOSRetry ${LOSRetry}+1
 		/if (${LOSRetry} < ${GiveUpValue}) /goto :recast
 	} else /if (${Select[${castReturn},CAST_OUTOFMANA]} && ${spamTimer}==0) {
-		/chat ${channel} **Warning** I do not have enough mana to cast ${MyDebuffs[${i}]}!!.
+		/chat ${channelNumber} **Warning** I do not have enough mana to cast ${MyDebuffs[${i}]}!!.
 		/if (${Defined[spamTimer]}) /varset spamTimer 15s
 	} else /if (${Select[${castReturn},CAST_OUTOFRANGE]} && ${spamTimer}==0) {
-		/chat ${channel} **Warning** ${MyDebuffs[${i}]} is out of range for ${MyDebuffs[${i}]}!!.
+		/chat ${channelNumber} **Warning** ${MyDebuffs[${i}]} is out of range for ${MyDebuffs[${i}]}!!.
 		/if (${Defined[spamTimer]}) /varset spamTimer 15s
 	} else /if (${Select[${castReturn},CAST_SUCCESS]})	{
-		/chat ${channel} Landed ${AutoMez_Spell} on ${Target.CleanName}!!.
+		/chat ${channelNumber} Landed ${AutoMez_Spell} on ${Target.CleanName}!!.
 		/if (${Defined[${Target.ID}${Spell[${AutoMez_Spell}].ID}]}) /varset ${Target.ID}${Spell[${AutoMez_Spell}].ID} ${Math.Calc[${Spell[${AutoMez_Spell}].Duration} * 6-6]}s
 	}
 }
@@ -246,7 +246,7 @@ SUB MezTarget
 #EVENT AutoMez_Off "<#*#> AutoMez off"
 SUB EVENT_AutoMez_Off
 /if (${do_AutoMez}) {
-	/chat ${channel} I will no longer mez targets.
+	/chat ${channelNumber} I will no longer mez targets.
 	/varset do_AutoMez FALSE
 }
 /RETURN
@@ -254,7 +254,7 @@ SUB EVENT_AutoMez_Off
 #EVENT AutoMez_On "<#*#> AutoMez On"
 SUB EVENT_AutoMez_On
 /if (!${do_AutoMez}) {
-	/chat ${channel} Attempting to mez adds.
+	/chat ${channelNumber} Attempting to mez adds.
 	/varset do_AutoMez TRUE
 }
 /RETURN

@@ -72,7 +72,7 @@ SUB WIZ_MacroSettings
 	/call writeToIni "${iniTHF},WIZ Functions,WIZ Function#3" "check_Rain" 1
 	/call writeToIni "${iniTHF},WIZ Functions,WIZ Function#4" "check_Nukes" 1
 	/call writeToIni "${iniTHF},WIZ Functions,WIZ Function#5" "check_Harvest" 1
-	/call writeToIni "${iniTHF},WIZ Functions,WIZ Function#6" "checkBuffs" 1
+	/call writeToIni "${iniTHF},WIZ Functions,WIZ Function#6" "check_Buffs" 1
 
 /if (${outerDebug}) /echo <== WIZ_MacroSettings -|
 /RETURN

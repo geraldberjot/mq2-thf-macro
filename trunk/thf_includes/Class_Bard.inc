@@ -69,10 +69,10 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 			/if (${Select[${melodyName},Stop,End,Pause]}) {
 				/varset playingMelody FALSE
 				/varset songSet
-				/chat ${channel} Ending melody.
+				/chat ${channelNumber} Ending melody.
 				/twist end
 			} else {
-				/chat ${channel} [${melodyName}] is not a known melody.
+				/chat ${channelNumber} [${melodyName}] is not a known melody.
 			}
 		} else {
 		
@@ -113,7 +113,7 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 				| Twist the newly built songList.
 				/varset playingMelody TRUE
 				/varset songSet ${songList}
-				/chat ${channel} Playing [${melodyName}] melody...
+				/chat ${channelNumber} Playing [${melodyName}] melody...
 				/twist ${songSet}
 			}
 		}
@@ -173,7 +173,7 @@ SUB BRD_MacroSettings
 	| Adv Settings
 	/call writeToIni "${iniTHF},BRD Functions,BRD Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},BRD Functions,BRD Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},BRD Functions,BRD Function#3" "checkBuffs" 1
+	/call writeToIni "${iniTHF},BRD Functions,BRD Function#3" "check_Buffs" 1
 
 /if (${outerDebug}) /echo <== BRD_MacroSettings -|
 /RETURN

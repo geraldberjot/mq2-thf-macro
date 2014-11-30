@@ -18,7 +18,7 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Follow "[#1#] Follow #2#"
 SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
-	/if (${Debug} || ${Debug_Basics}) {
+	/if (${outerDebug} || ${Debug_Basics}) {
 		/echo |- EVENT_Follow ==>
 		/echo paramSender=${paramSender} | paramEvent=${paramEvent}
 	}
@@ -86,7 +86,7 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 			/RETURN
 		}
 	}
-	/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Follow -|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Follow -|
 /RETURN
 
 
@@ -97,7 +97,7 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 |- Uses NetAdvPath if the follow target is one of your bots, or MoveUtils, if its someone elses.	-|		
 |----------------------------------------------------------------------------------------------------|
 SUB AquireFollow
-/if (${Debug} || ${Debug_Basics}) /echo |- AquireFollow ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- AquireFollow ==>
 
 	|------------------------------------------------------------------------------------Check for FollowTarget in zone.
 	/if (${SpawnCount[=${FollowTarget}]}) {
@@ -150,7 +150,7 @@ SUB AquireFollow
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== AquireFollow -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== AquireFollow -|
 |** 
 	ADD A LOOP TO CALCULATE DISTANCE TO YOUR TARGET. ONCE DISTANCE STOPS DECREASING REISSUE FOLLOW COMMAND, TO SNAP TO TARGET
 	
@@ -181,7 +181,7 @@ SUB AquireFollow
 #EVENT Stop "#1# tells the group, 'Stop #2#'"
 #EVENT Stop "#1# you tell your party, 'Stop #2#'"
 SUB EVENT_Stop(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Stop ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Stop ==>
 
 	|- Check if I'm following.
 	/if (${Following}) {
@@ -203,7 +203,7 @@ SUB EVENT_Stop(paramLine, paramSender, paramEvent)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Stop -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Stop -|
 /RETURN STOP
 
 
@@ -213,7 +213,7 @@ SUB EVENT_Stop(paramLine, paramSender, paramEvent)
 #EVENT MoveHere "#1# tells the group, 'Move to #2#'"
 #EVENT MoveHere "#1# you tell your party, 'Move to #2#'"
 SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_MoveHere ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_MoveHere ==>
 
 	|- Verify the event
 	/if (${Defined[paramSender]}) /call verifyEvent "${paramSender}" "${paramLine}"
@@ -223,7 +223,7 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 	
 		|- Check if the paramSender is me.
 		/if (${paramSender.Equal[${Me}]}) {
-			/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -| I am the paramSender, skipping.
+			/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -| I am the paramSender, skipping.
 		} else {
 		
 			|- Set WhereTo.
@@ -262,7 +262,7 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 					/echo |- EVENT_MoveHere -| Failed to move to the specified target.
 				}
 			} else {
-				/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -| I have arrived at the specified target.
+				/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -| I have arrived at the specified target.
 			}
 			
 			|- If I'm following, reaquire follow.
@@ -276,7 +276,7 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_MoveHere -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_MoveHere -|
 /RETURN
 
 
@@ -299,7 +299,7 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 #EVENT bark "#1# tells the group, 'Bark at #2# #3#'"
 #EVENT bark "#1# you tell your party, 'Bark at #2# #3#'"
 SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Bark ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Bark ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -331,7 +331,7 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 		/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /delay 300 !${Me.Casting.ID}
 		
 		:retry_Bark
-		/if (${Debug} && !${spamTimer_retryBark}) {
+		/if (${outerDebug} && !${spamTimer_retryBark}) {
 			/echo |- EVENT_bark -| :retry_Bark loop
 			/call createTimer spamTimer_retryBark 20
 		}
@@ -389,7 +389,7 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 		/deletevar barkReturned
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Bark -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Bark -|
 /RETURN
 
 
@@ -402,11 +402,11 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 |------------------------------------------------------------|
 #EVENT barkReturn "|${barkTarget}| #*#"
 SUB EVENT_barkReturn(paramLine, returnBark)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_barkReturn ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_barkReturn ==>
 	
 	/varset barkReturned TRUE
 	
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_barkReturn -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_barkReturn -|
 /RETURN
 
 
@@ -423,7 +423,7 @@ SUB EVENT_barkReturn(paramLine, returnBark)
 #EVENT clickIt "#1# tells the group, 'Click object at #2#'"
 #EVENT clickIt "#1# you tell your party, 'Click object at #2#'"
 SUB EVENT_clickIt(paramLine, paramSender, locToStart)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_clickIt ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_clickIt ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -493,7 +493,7 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 						
 							|- Check the retryTimer.
 							/if (${retryTimer}) {
-								/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_clickIt -| Click attempt failed, retrying.
+								/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_clickIt -| Click attempt failed, retrying.
 								/keypress back hold
 								/delay 5
 								/keypress forward
@@ -512,7 +512,7 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_clickIt -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_clickIt -|
 /RETURN
 
 
@@ -530,7 +530,7 @@ SUB EVENT_clickIt(paramLine, paramSender, locToStart)
 #EVENT runThruZone "#1# tells the group, 'Run through zone at #2#'"
 #EVENT runThruZone "#1# you tell your party, 'Run through zone at #2#'"
 SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_runThruZone ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_runThruZone ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -595,7 +595,7 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_runThruZone -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_runThruZone -|
 /RETURN
 
 
@@ -618,7 +618,7 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramEvent)
 #EVENT dropInvis "#1# tells the group, 'Drop Invis |/|#*#'"
 #EVENT dropInvis "#1# tells the group, 'Drop Invisibility |/|#*#'"
 SUB EVENT_dropInvis(paramLine, paramSender)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_dropInvis ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_dropInvis ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -639,7 +639,7 @@ SUB EVENT_dropInvis(paramLine, paramSender)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_dropInvis -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_dropInvis -|
 /RETURN
 
 
@@ -656,7 +656,7 @@ SUB EVENT_dropInvis(paramLine, paramSender)
 #EVENT Exit "#1# tell you, 'Exit |/|#*#'"
 #EVENT Exit "#1# tells the group, 'Exit |/|#*#'"
 SUB EVENT_Exit(paramLine, paramSender)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Exit ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Exit ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -668,7 +668,7 @@ SUB EVENT_Exit(paramLine, paramSender)
 		/if (${Spawn[${paramSender}].ID}!=${Me.ID}) /exit
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Exit -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Exit -|
 /RETURN
 
 
@@ -686,7 +686,7 @@ SUB EVENT_Exit(paramLine, paramSender)
 #EVENT LoadSpells "#1# you tell your party, 'Load Spells |/|#*#'"
 #EVENT LoadSpells "#1# tells the group, 'Load Spells |/|#*#'"
 SUB EVENT_LoadSpells(paramLine, paramSender)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_LoadSpells ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_LoadSpells ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -701,16 +701,16 @@ SUB EVENT_LoadSpells(paramLine, paramSender)
 			/docommand ${ChatToggle} Loading spells...
 			/memspellset ${Default_SpellSet}
 			:Memloop
-			/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_LoadSpells -| :Memloop
+			/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_LoadSpells -| :Memloop
 			
 			/call Background_Events
-			/if (${Debug} || ${Debug_Basics}) /echo spellsetMem_Timer = [${spellsetMem_Timer}]
+			/if (${outerDebug} || ${Debug_Basics}) /echo spellsetMem_Timer = [${spellsetMem_Timer}]
 			/if (${Window[SpellBookWnd].Open} && ${spellsetMem_Timer}) /goto :Memloop
 			/if (${Me.Sitting}) /stand	
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_LoadSpells -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_LoadSpells -|
 /RETURN
 
 
@@ -726,7 +726,7 @@ SUB EVENT_LoadSpells(paramLine, paramSender)
 #EVENT RemoveBuff "#1# tells the group, 'Remove buff #2#'"
 #EVENT RemoveBuff "#1# you tell your party, 'Remove buff #2#'"
 SUB EVENT_RemoveBuff(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -742,14 +742,14 @@ SUB EVENT_RemoveBuff(paramLine, paramSender, paramEvent)
 			/if (${Bool[${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip}]} && ${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip.Find[${badBuff}]}) {
 				/varset badBuff ${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip.Arg[1,(]}
 				/varset badBuff ${badBuff.Left[${Math.Calc[${badBuff.Length}-1]}]}
-				/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff -| Removing [${badBuff}]
+				/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff -| Removing [${badBuff}]
 				/if (${Bool[${badBuff}]}) /nomodkey /notify BuffWindow Buff${Math.Calc[${Me.Buff[${badBuff}].ID}-1].Int} leftmouseup
 			}
 			
 		/next i
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_RemoveBuff -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_RemoveBuff -|
 /RETURN
 
 
@@ -759,13 +759,13 @@ SUB EVENT_RemoveBuff(paramLine, paramSender, paramEvent)
 |------------------------------------------------------------|
 |- Use, /bc Check Buff [Name], or /bc Check buff 'Name'.	-|
 |------------------------------------------------------------|
-#EVENT CheckBuffs "[#1#] Check buff #2#"
-#EVENT CheckBuffs "<#1#> Check buff #2#"
-#EVENT CheckBuffs "#1# tells you, 'Check buff #2#'"
-#EVENT CheckBuffs "#1# you tell your party, 'Check buff #2#'"
-#EVENT CheckBuffs "#1# tells the group, 'Check buff #2#'"
-SUB EVENT_CheckBuffs(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_CheckBuffs ==>
+#EVENT check_Buffs "[#1#] Check buff #2#"
+#EVENT check_Buffs "<#1#> Check buff #2#"
+#EVENT check_Buffs "#1# tells you, 'Check buff #2#'"
+#EVENT check_Buffs "#1# you tell your party, 'Check buff #2#'"
+#EVENT check_Buffs "#1# tells the group, 'Check buff #2#'"
+SUB EVENT_check_Buffs(paramLine, paramSender, paramEvent)
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_check_Buffs ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -781,14 +781,14 @@ SUB EVENT_CheckBuffs(paramLine, paramSender, paramEvent)
 			/if (${Bool[${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip}]} && ${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip.Find[${badBuff}]}) {
 				/varset badBuff ${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip.Arg[1,(]}
 				/varset badBuff ${badBuff.Left[${Math.Calc[${badBuff.Length}-1]}]}
-				/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff -| Removing [${badBuff}]
+				/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff -| Removing [${badBuff}]
 				/docommand ${ChatToggle} I have [${Math.Calc[${Me.Buff[${badBuff}].Duration} * 6 / 60].Int} minutes] left on [${badBuff}].
 			}
 			
 		/next i
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_CheckBuffs -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_check_Buffs -|
 /RETURN
 
 
@@ -802,7 +802,7 @@ SUB EVENT_CheckBuffs(paramLine, paramSender, paramEvent)
 #EVENT FindItems "<#1#> Find Item #2#"
 #EVENT FindItems "<#1#> Find Item #2# |/|#*#"
 SUB EVENT_FindItems(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_FindItems ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_FindItems ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -865,7 +865,7 @@ SUB EVENT_FindItems(paramLine, paramSender, paramEvent)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_FindItems -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_FindItems -|
 /RETURN
 
 
@@ -888,7 +888,7 @@ SUB EVENT_FindItems(paramLine, paramSender, paramEvent)
 #EVENT CountBots "[#*#] Head Count"
 #EVENT CountBots "<#*#> Head Count"
 SUB EVENT_CountBots
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_CountBots ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_CountBots ==>
 
 	/if (!${NetBots.Counts}) {
 		/echo You must be connected to MQ2EQBC, and, MQ2NetBots, to use this function.
@@ -954,7 +954,7 @@ SUB EVENT_CountBots
 		/echo ------------------------------------------
 	}
 	
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_CountBots -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_CountBots -|
 /RETURN
 
 
@@ -965,7 +965,7 @@ SUB EVENT_CountBots
 #EVENT Swap_Items "<#*#> Swap #1#"
 #EVENT Swap_Items "[MQ2] Swap #1#"
 SUB EVENT_Swap_Items(paramLine, IniEntry)
-/if (${Debug} || ${Debug_Basics}) /echo |- Event Swap_Items ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- Event Swap_Items ==>
 
 	| If I don't have a matching Ini entry.
 	/if (!${Ini[${iniToon},Swap Items,${IniEntry}].Length}) {
@@ -981,7 +981,7 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 		/declare slotToSwap string local
 		
 		:SwapLoop
-		/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Swap_Items -| Swaploop.
+		/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Swap_Items -| Swaploop.
 		
 		/varset itemToSwap ${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Arg[1,|]}
 		/varset slotToSwap ${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Arg[2,|]}
@@ -1005,14 +1005,14 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== Swap_Items -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== Swap_Items -|
 /RETURN
 
 
 
 #EVENT useItem "[MQ2] Use Item #1#"
 SUB EVENT_useItem(paramLine, itemToUse)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_useItem ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_useItem ==>
 
 	/if (${Bool[${Cursor}]}) /call ClearCursor
 
@@ -1044,7 +1044,7 @@ SUB EVENT_useItem(paramLine, itemToUse)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_useItem -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_useItem -|
 /RETURN
 
 
@@ -1069,7 +1069,7 @@ SUB EVENT_EndMacro
 #EVENT medOn "#1# tells the group, 'MedBreak On#*#'"
 #EVENT medOn "#1# you tell your party, 'MedBreak On#*#'"
 SUB EVENT_medOn(paramLine, paramSender)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_medOn ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_medOn ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1097,7 +1097,7 @@ SUB EVENT_medOn(paramLine, paramSender)
 		}
 	}
 	
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_medOn -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_medOn -|
 /RETURN
 
 
@@ -1111,7 +1111,7 @@ SUB EVENT_medOn(paramLine, paramSender)
 #EVENT medOff "#1# tells the group, 'MedBreak Off#*#'"
 #EVENT medOff "#1# you tell your party, 'MedBreak Off#*#'"
 SUB EVENT_medOff(paramLine, paramSender)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_medOff ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_medOff ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1130,7 +1130,7 @@ SUB EVENT_medOff(paramLine, paramSender)
 		}
 	}
 	
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_medOff -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_medOff -|
 /RETURN
 
 
@@ -1142,7 +1142,7 @@ SUB EVENT_medOff(paramLine, paramSender)
 |- Ends MedBreak mode at 99% mana, unless, 'MedBreak hold command is given.		-|
 |--------------------------------------------------------------------------------|
 SUB check_MedBreak
-/if (${Debug} || ${Debug_Basics}) /echo |- check_MedBreak ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- check_MedBreak ==>
 
 	| If I'm following, check distance to follow target
 	/if (${Following} && ${SpawnCount[pc ${FollowTarget}]} && ${Spawn[pc ${FollowTarget}].Distance} > ${LeashLength}  && !${Me.Moving}) {
@@ -1179,7 +1179,7 @@ SUB check_MedBreak
 		}
 	}
 	
-/if (${Debug} || ${Debug_Basics}) /echo <== check_MedBreak -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== check_MedBreak -|
 /RETURN
 
 
@@ -1187,7 +1187,7 @@ SUB check_MedBreak
 #EVENT set_AAXP "<#1#> Set AA XP #2#"
 #EVENT set_AAXP "[#1#] Set AA XP #2#"
 SUB EVENT_set_AAXP(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- set_AAXP ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- set_AAXP ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1202,14 +1202,14 @@ SUB EVENT_set_AAXP(paramLine, paramSender, paramEvent)
 		/alternateadv ON ${paramEvent}
 	}
 	
-/if (${Debug} || ${Debug_Basics}) /echo <== set_AAXP -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== set_AAXP -|
 /RETURN
 
 
 
 #EVENT fixCorpses "<#*#> Fix Corpses"
 SUB EVENT_fixCorpses
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_fixCorpses ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_fixCorpses ==>
 
 	/echo Attempting to reset corpse positions...
 	/hidecorpse all
@@ -1218,7 +1218,7 @@ SUB EVENT_fixCorpses
 	/delay 2
 	/hidecorpse looted
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_fixCorpses -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_fixCorpses -|
 /RETURN
 
 
@@ -1229,7 +1229,7 @@ SUB EVENT_fixCorpses
 #EVENT Consent "#1# tells you, 'Consent #2#'"
 #EVENT Consent "<#1#> Consent #2#"
 SUB EVENT_Consent(paramLine, paramSender, ConsentTarget)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Consent ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Consent ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1243,7 +1243,7 @@ SUB EVENT_Consent(paramLine, paramSender, ConsentTarget)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Consent -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Consent -|
 /RETURN
 
 
@@ -1253,13 +1253,13 @@ SUB EVENT_Consent(paramLine, paramSender, ConsentTarget)
 |--------------------------------------------------------------------------------------------|
 #EVENT addConsent "You have been given permission to drag #1#'s corpse in all zones."
 SUB EVENT_addConsent(paramLine, consentTarget)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_addConsent ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_addConsent ==>
 
 	/if (!${Select[${consentTarget},${consentTargets}]}) {
 		/varset consentTargets ${consentTargets},${consentTarget}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_addConsent -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_addConsent -|
 /RETURN
 
 
@@ -1280,7 +1280,7 @@ SUB EVENT_flushConsent
 #EVENT gatherCorpses "[MQ2] Gather corpses"
 #EVENT gatherCorpses "[MQ2] Gather corpse"
 SUB EVENT_gatherCorpses
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_gatherCorpses ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_gatherCorpses ==>
 
 	/declare miscTimer timer local
 	/declare i int local
@@ -1299,7 +1299,7 @@ SUB EVENT_gatherCorpses
 		
 	/squelch /target clear
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_gatherCorpses -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_gatherCorpses -|
 /RETURN
 
 
@@ -1317,7 +1317,7 @@ SUB EVENT_gatherCorpses
 #EVENT ClickYes	"#1# you tell your party, 'Click #2#'"
 #EVENT ClickYes	"#1# tells the group, 'Click #2#'"
 SUB EVENT_ClickYes(paramLine, paramSender, paramEvent)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_ClickYes ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_ClickYes ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1339,7 +1339,7 @@ SUB EVENT_ClickYes(paramLine, paramSender, paramEvent)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_ClickYes -|	
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_ClickYes -|	
 /RETURN
 
 
@@ -1359,7 +1359,7 @@ SUB EVENT_ClickYes(paramLine, paramSender, paramEvent)
 #EVENT gate "#1# you tell your party, 'Gate |/|#*#'"
 #EVENT gate "#1# tells the group, 'Gate |/|#*#'"
 SUB EVENT_gate(paramLine, paramSender)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Gate ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Gate ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1384,7 +1384,7 @@ SUB EVENT_gate(paramLine, paramSender)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Gate -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Gate -|
 /RETURN
 
 
@@ -1415,7 +1415,7 @@ SUB EVENT_gate(paramLine, paramSender)
 #EVENT Evacuate "#1# tells the group, 'Evacuate |/|#*#'"
 SUB EVENT_Evacuate(paramLine, paramSender)
 /if (${Select[${Me.Class.ShortName},DRU,WIZ]}) {
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Evacuate ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Evacuate ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1435,7 +1435,7 @@ SUB EVENT_Evacuate(paramLine, paramSender)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Evacuate -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Evacuate -|
 }
 /RETURN
 
@@ -1458,7 +1458,7 @@ SUB EVENT_RaidAccept
 |--------------------------------------------|
 #EVENT Request_RaidInvite "#1# tells you, 'Request raid invite'"
 SUB EVENT_Request_RaidInvite(paramLine, paramSender)
-/if (${Debug} || ${Debug_Basics}) /echo |- Request_RaidInvite ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- Request_RaidInvite ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1468,7 +1468,7 @@ SUB EVENT_Request_RaidInvite(paramLine, paramSender)
 		/gu Raid invite
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== Request_RaidInvite -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== Request_RaidInvite -|
 /RETURN
 
 
@@ -1482,7 +1482,7 @@ SUB EVENT_Request_RaidInvite(paramLine, paramSender)
 #EVENT Force_RaidDisband "<#*#> Disband from raid"
 #EVENT Force_RaidDisband "#*# tells you, '[Force Raid Disband]'"
 SUB EVENT_Force_RaidDisband
-/if (${Debug} || ${Debug_Basics}) /echo |- Force_RaidDisband ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- Force_RaidDisband ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1492,7 +1492,7 @@ SUB EVENT_Force_RaidDisband
 		/bcaa //raiddisband
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== Force_RaidDisband -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== Force_RaidDisband -|
 /RETURN
 
 
@@ -1502,7 +1502,7 @@ SUB EVENT_Force_RaidDisband
 |----------------------------------------|
 #EVENT Invite "#1# invites you to join a group."
 SUB EVENT_Invite(paramLine, paramSender)
-/if (${Debug}) /echo |- EVENT_Invite ==>
+/if (${outerDebug}) /echo |- EVENT_Invite ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1519,7 +1519,7 @@ SUB EVENT_Invite(paramLine, paramSender)
 		/declare retryTimer timer local 150
 		
 		:retry_Invite
-		/if (${Debug}) /echo |- EVENT_Invite -| retry_Invite loop.
+		/if (${outerDebug}) /echo |- EVENT_Invite -| retry_Invite loop.
 		
 		/call Background_Events
 		/invite
@@ -1534,7 +1534,7 @@ SUB EVENT_Invite(paramLine, paramSender)
 		}
 	}	
 
-/if (${Debug}) /echo <== EVENT_Invite -|
+/if (${outerDebug}) /echo <== EVENT_Invite -|
 /RETURN
 
 
@@ -1547,7 +1547,7 @@ SUB EVENT_Invite(paramLine, paramSender)
 #EVENT Disband "#1# tells you, 'Incoming group invite...'"
 #EVENT Disband "<#1#> Disband all"
 SUB EVENT_Disband(paramLine, paramSender)
-/if (${Debug}) /echo |- EVENT_Disband ==>
+/if (${outerDebug}) /echo |- EVENT_Disband ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1575,7 +1575,7 @@ SUB EVENT_Disband(paramLine, paramSender)
 		/squelch /target clear
 	}
 
-/if (${Debug}) /echo <== EVENT_Disband -|
+/if (${outerDebug}) /echo <== EVENT_Disband -|
 /RETURN
 
 
@@ -1587,7 +1587,7 @@ SUB EVENT_Disband(paramLine, paramSender)
 |--------------------------------------------------------------------------------------------|
 #EVENT saveGroup "<#1#> Save Group #2#"
 SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
-/if (${Debug}) /echo |- EVENT_saveGroup ==>
+/if (${outerDebug}) /echo |- EVENT_saveGroup ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1596,7 +1596,7 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 		|- Check that I'm the group leader.
 		/if (!${Select[${Group.Leader},${Me}]}) {
-			/if (${Debug}) /echo I am not a group leader, skipping.
+			/if (${outerDebug}) /echo I am not a group leader, skipping.
 		} else {
 			
 			/echo Preparing to save...
@@ -1647,7 +1647,7 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 		}
 	}
 
-/if (${Debug}) /echo <== EVENT_saveGroup -|
+/if (${outerDebug}) /echo <== EVENT_saveGroup -|
 /RETURN
 
 
@@ -1658,7 +1658,7 @@ SUB EVENT_saveGroup(paramLine, paramSender, paramEvent)
 #EVENT listGroups "<#1#> List Groups"
 #EVENT listGroups "<#1#> ListGroups"
 SUB EVENT_listGroups
-/if (${Debug}) /echo |- listGroups ==>
+/if (${outerDebug}) /echo |- listGroups ==>
 
 	|- Check iniGroup for groups on this server.
 	/if (!${Ini[${iniGroup}].Find[${MacroQuest.Server}]}) {
@@ -1692,7 +1692,7 @@ SUB EVENT_listGroups
 		/echo
 	}
 
-/if (${Debug}) /echo <== listGroups -|
+/if (${outerDebug}) /echo <== listGroups -|
 /RETURN
 
 
@@ -1704,7 +1704,7 @@ SUB EVENT_listGroups
 |------------------------------------------------|
 #EVENT groupUp "<#1#> Group #2#"
 SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
-/if (${Debug}) /echo |- EVENT_groupUp ==>
+/if (${outerDebug}) /echo |- EVENT_groupUp ==>
 
 	|- Verify the event
 	/call verifyEvent "${paramSender}" "${paramLine}"
@@ -1754,7 +1754,7 @@ SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
 		/if (${Ini[${iniGroup}].Arg[${i},|].Length}) /goto :nextGroupListing
 	}
 :skip
-/if (${Debug}) /echo <== EVENT_groupUp -|
+/if (${outerDebug}) /echo <== EVENT_groupUp -|
 /RETURN
 
 
@@ -1765,7 +1765,7 @@ SUB EVENT_groupUp(paramLine, paramSender, paramEvent)
 #EVENT reportMana "<#1#> Report mana"
 SUB EVENT_reportMana(paramLine,paramSender)
 /if (${Me.Class.CanCast}) {
-	/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_reportMana ==>
+	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_reportMana ==>
 		|- Verify the event
 		/call verifyEvent "${paramSender}" "${paramLine}"
 		/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
@@ -1773,14 +1773,14 @@ SUB EVENT_reportMana(paramLine,paramSender)
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {   	
 			/docommand ${ChatToggle} ${Me.PctMana}m${If[${Me.PctMana}!=100, - Full Mana in ${Math.Calc[((${Me.MaxMana}-${Me.CurrentMana})/${Me.ManaRegen})*6]}s,]}
 		}
-	/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_reportMana [${Me.PctMana}m] -|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_reportMana [${Me.PctMana}m] -|
 }
 /RETURN
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 | Check if I should answer to the order
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB amIconcerned(string from, string who, bool sameZone)
-	/if (${Debug} || ${Debug_Basics}) {
+	/if (${outerDebug} || ${Debug_Basics}) {
 		/echo |- amIconcerned ==>
 		/echo from=${from} | who=${who}
 	}
@@ -1890,14 +1890,14 @@ SUB sticking(String to)
     /face fast
     /delay 1s
     /stick ${stickCommand}
-    /chat ${channel} Sticking to ${to}
+    /chat ${channelNumber} Sticking to ${to}
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 | stick off, attack off, interrupt, twist off (if specify)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB stopCurrentAction(bool evenBard)
-	/if (${Debug} || ${Debug_Basics}) {
+	/if (${outerDebug} || ${Debug_Basics}) {
 		/echo |- stopCurrentAction ==>
 		/echo evenBard=${evenBard}
 	}
@@ -1909,7 +1909,7 @@ SUB stopCurrentAction(bool evenBard)
     /stick off
     /attack off
     /delay 1
-	/if (${Debug} || ${Debug_Basics}) /echo <== stopCurrentAction -|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== stopCurrentAction -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1917,7 +1917,7 @@ SUB stopCurrentAction(bool evenBard)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Channels "Channels: #*#"
 SUB EVENT_Channels(String line)
-	/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_Channels ==>
+	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Channels ==>
 
 	/declare i int local
 	/declare max int local ${line.Count[,]}
@@ -1926,22 +1926,25 @@ SUB EVENT_Channels(String line)
 	/for i 1 to ${max}
 		/varset chnl ${line.Token[${i},,]}
 		/if (${chnl.Find[Team]} > 0) {
-			/varset channel ${chnl.Token[1,=]}
-			/if (${Debug} || ${Debug_Basics}) /echo channel=${channel}
+			/varset channelNumber ${chnl.Token[1,=]}
+			/if (${outerDebug} || ${Debug_Basics}) /echo channel=${channelNumber}
 		}
 	/next i
 	
-	/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_Channels -|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Channels -|
 /RETURN
 
 SUB joinChannel()
-	/join Team
+	/if (${outerDebug} || ${Debug_Basics}) /echo |- joinChannel ==>
+	/join ${channel}
 	/doevents Channels
 	:channelLoop
-	/if (${channel} == 0) {
+	/if (${channelNumber} == 0) {
 		/doevents Channels
+		/delay 1
 		/goto :channelLoop
 	}
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== joinChannel -|
 /RETURN
 
 
@@ -1954,7 +1957,7 @@ SUB joinChannel()
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 Sub basics_Setup
 /call INItoVar "${iniGeneral},Debug,Debug Basics (On/Off)" Debug_Basics bool outer
-/if (${Debug} || ${Debug_Basics}) /echo |- basics_Setup ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- basics_Setup ==>
 
 	/if (!${Defined[Following]}) /declare Following bool global FALSE
 	/if (!${Defined[FollowTarget]}) /declare FollowTarget string global NULL
@@ -1989,7 +1992,7 @@ Sub basics_Setup
 		/declare iniGroup string outer ${Ini[${iniToon},File Paths,Saved Groups]}
 	}
 	
-/if (${Debug} || ${Debug_Basics}) /echo <== basics_Setup -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== basics_Setup -|
 /return
 
 
@@ -2008,7 +2011,7 @@ Sub basics_Background_Events
 	/doevents barkReturn
 	/doevents Exit
 	/doevents RemoveBuff
-	/doevents CheckBuffs
+	/doevents check_Buffs
 	/doevents FindItems
 	/doevents CountBots
 	/doevents EndMacro
@@ -2030,7 +2033,7 @@ Sub basics_Background_Events
 
 
 SUB basics_MacroSettings
-/if (${Debug} || ${Debug_Basics}) /echo |- basics_MacroSettings ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- basics_MacroSettings ==>
 
 	
 
@@ -2040,25 +2043,25 @@ SUB basics_MacroSettings
 	/call WriteToIni "${iniGeneral},General,Leash Length" 250
 	/call WriteToIni "${iniGeneral},General,End MedBreak in Combat(On/Off)" On
 
-/if (${Debug} || ${Debug_Basics}) /echo <== basics_MacroSettings -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== basics_MacroSettings -|
 /RETURN
 
 
 
 SUB basics_CharacterSettings
-/if (${Debug} || ${Debug_Basics}) /echo |- basics_CharacterSettings ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- basics_CharacterSettings ==>
 
 	/if (!${Ini[${iniToon},Swap Items].Length}) /call WriteToIni "${iniToon},Swap Items,(Example) Two Hander" "Lodestar|mainhand"
 	/if (!${Ini[${iniToon},Swap Items].Length}) /call WriteToIni "${iniToon},Swap Items,(Example) One Handers" "Heartwood Blade|mainhand/Chaotic Black Scimitar|offhand"
 	/if (!${Ini[${iniToon},Use Items].Length}) /call WriteToIni "${iniToon},Use Items,(Example) ShinkItem" "Bracelet of the Shadow Hive"
 
-/if (${Debug} || ${Debug_Basics}) /echo <== basics_CharacterSettings -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== basics_CharacterSettings -|
 /RETURN
 
 
 
 Sub basics_Aliases
-/if (${Debug} || ${Debug_Basics}) /echo |- basics_Aliases ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- basics_Aliases ==>
 
 	/noparse /squelch /alias /followon /bc Follow ${Me.CleanName}
 	/noparse /squelch /alias /followme /bc Follow ${Me.CleanName}
@@ -2114,7 +2117,7 @@ Sub basics_Aliases
 	/squelch /alias /gathercorpses /echo Gather Corpses
 	/squelch /alias /mana /bc Report Mana
 
-/if (${Debug} || ${Debug_Basics}) /echo <== basics_Aliases -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== basics_Aliases -|
 /return
 
 |- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
@@ -2142,7 +2145,7 @@ Sub basics_Aliases
 |- Must have created an entry in the Filter Settings.ini file for refName by using /savefilters refName
 #EVENT serverFilters "[MQ2] Server Filters: #1#"
 SUB EVENT_serverFilters(paramLine,refName)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_serverFilters [${refName}] ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_serverFilters [${refName}] ==>
 /if (${Ini[${filterSettings_ini},${refName}].Length}) {
 	/call openOptions Filters
 	/declare filterList string local Window[OptionsWindow].Child[OFP_FilterList]
@@ -2173,7 +2176,7 @@ SUB EVENT_serverFilters(paramLine,refName)
 }
 |- Close the options window
 /keypress ALT+O
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_serverFilters [${filterSetting}] -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_serverFilters [${filterSetting}] -|
 /RETURN
 
 
@@ -2182,7 +2185,7 @@ SUB EVENT_serverFilters(paramLine,refName)
 |- Saves current chat filter settings to the Filter Settings.ini file
 #EVENT saveFilters "[MQ2] Save Filters: #1#"
 SUB EVENT_saveFilters(paramLine,refName)
-/if (${Debug} || ${Debug_Basics}) /echo |- EVENT_saveFilters [${refName}] ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_saveFilters [${refName}] ==>
 /call openOptions Filters
 /declare filterNames[32] string local
 /declare filterSettings[32] string local
@@ -2191,13 +2194,13 @@ SUB EVENT_saveFilters(paramLine,refName)
 /for i 1 to 32
 	/ini "${filterSettings_ini}" "${refName}" "${${filterList}.List[${i},1]}" "${${filterList}.List[${i},2]}"
 /next i
-/if (${Debug} || ${Debug_Basics}) /echo <== EVENT_saveFilters -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_saveFilters -|
 /RETURN
 
 
 |- Opens the options window and opens to a specified tabName. If given no tabName, opens to General tab.
 SUB openOptions(string tabName)
-/if (${Debug} || ${Debug_Basics}) /echo |- openOptions [${tabName}] ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- openOptions [${tabName}] ==>
 |- open the options window. this happens even if no tab is given. default tab is general.
 /declare tabNum int local 1
 /declare pageName string local OptionsGeneralPage
@@ -2239,7 +2242,7 @@ SUB openOptions(string tabName)
 	/echo Could not open ${tabName} tab. Retrying...
 	/goto :openTab
 }
-/if (${Debug} || ${Debug_Basics}) /echo <== openOptions -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== openOptions -|
 /RETURN
 
 
@@ -2253,7 +2256,7 @@ SUB openOptions(string tabName)
 #EVENT corpseDrag "[MQ2] drag corpses"
 #EVENT corpseDrag "[MQ2] start corpse drag"
 SUB EVENT_corpseDrag
-/if (${Debug}) /echo |- EVENT_corpseDrag ==>
+/if (${outerDebug}) /echo |- EVENT_corpseDrag ==>
 
 	/declare i int local 1
 	
@@ -2276,14 +2279,14 @@ SUB EVENT_corpseDrag
 		/goto :next_consentTarget
 	}
 	
-/if (${Debug}) /echo <== EVENT_corpseDrag -|
+/if (${outerDebug}) /echo <== EVENT_corpseDrag -|
 /RETURN
 
 | need some way to turn off corpse drag; but, I'm bored, and dont want to do it.
 
 #EVENT add_AutoDestroyItem "[MQ2] Add Auto Destroy Item #1#"
 SUB EVENT_add_AutoDestroyItem(paramLine, WhatToAdd)
-/if (${Debug} || ${Debug_Basics}) /echo |- add_AutoDestroyItem ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- add_AutoDestroyItem ==>
 
 	/if (!${Cursor.ID}) {
 		/echo You must be holding the item you wish to add to the auto destroy list.
@@ -2304,12 +2307,12 @@ SUB EVENT_add_AutoDestroyItem(paramLine, WhatToAdd)
 		}
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== add_AutoDestroyItem -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== add_AutoDestroyItem -|
 /RETURN
 
 #EVENT remove_AutoDestroyItem "[MQ2] Remove Auto Destroy Item #1#"
 SUB EVENT_remove_AutoDestroyItem(paramLine, WhatToAdd)
-/if (${Debug} || ${Debug_Basics}) /echo |- remove_AutoDestroyItem ==>
+/if (${outerDebug} || ${Debug_Basics}) /echo |- remove_AutoDestroyItem ==>
 
 	/if (!${Select[${WhatToAdd},${Ini[${Macro_Ini},Background,Auto-Destroy List]}]}) {
 		/echo [${WhatToAdd}] is not on the Auto-Destroy List.
@@ -2317,5 +2320,5 @@ SUB EVENT_remove_AutoDestroyItem(paramLine, WhatToAdd)
 		/echo this function is not yet finished
 	}
 
-/if (${Debug} || ${Debug_Basics}) /echo <== remove_AutoDestroyItem -|
+/if (${outerDebug} || ${Debug_Basics}) /echo <== remove_AutoDestroyItem -|
 /RETURN

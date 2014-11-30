@@ -6,9 +6,9 @@
 |- along with many minimally invasive macro functions.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 
-|----------------------------------------------------------------------------|
-|- Updates zone related variables, and safeZone via 'SUB checkZoneType'.	-|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Updates zone related variables, and safeZone via 'SUB checkZoneType'.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB checkZone
 	/if (${outerDebug} || ${outerDebug_Background}) /echo |- checkZone ==>
 
@@ -56,7 +56,7 @@ SUB checkGems
 	| If more than 3 are empty
 	/if (${spellCount} > 3) {
 		/declare spellsetMem_Timer timer local 300
-		/chat ${channel} Loading spells...
+		/chat ${channelNumber} Loading spells...
 		/ssm ${Default_SpellSet}
 		:Memloop
 		/if (${outerDebug} || ${outerDebug_Background}) /echo |- checkGems -| :Memloop
@@ -236,7 +236,7 @@ SUB check_Active
 		} else {
 		
 			/if (!${Defined[feign_Timer]}) {
-				/chat ${channel} I AM FEIGNED.
+				/chat ${channelNumber} I AM FEIGNED.
 				/declare feign_Timer timer outer 15s
 			}
 		}
@@ -360,7 +360,7 @@ SUB check_Feigning
 		} else {
 		
 			/if (!${Defined[feign_Timer]}) {
-				/chat ${channel} I AM FEIGNED.
+				/chat ${channelNumber} I AM FEIGNED.
 				/declare feign_Timer timer outer 15s
 			}
 		}
@@ -558,7 +558,7 @@ SUB EVENT_manualTributeSet(line, ChatSender, eventParams)
 |- When new zones are entered, they are added to the safeZones_Ini, and set to 'safe'.	-|
 |----------------------------------------------------------------------------------------|
 SUB checkZoneType
-/if (${outerDebug}) /echo |- checkZoneType ==>
+	/if (${outerDebug}) /echo |- checkZoneType ==>
 
 	| If a safeZones_Ini entry for this zone does not exist, create one, and default to 'safe'.
 	/if (!${Ini[${safeZones_Ini},${Zone.ShortName.Left[1]},${Zone.ShortName}].Length}) {
@@ -573,7 +573,7 @@ SUB checkZoneType
 		}
 	}
 
-/if (${outerDebug}) /echo <== checkZoneType -|
+	/if (${outerDebug}) /echo <== checkZoneType -|
 /RETURN
 
 

@@ -24,11 +24,9 @@
 SUB Main
 	/declare iniGlobal 	string 	outer "thf_inis\Global.ini"
 	/declare iniHail 	string 	outer "thf_inis\Hail.ini"
-	/declare channel 	int 	outer 0
 	
 	/call thfSetup TRUE
 	
-	/call joinChannel
 	/call setupAdvLootVars
 	/call loadCustomVars
 	
@@ -48,7 +46,6 @@ SUB Main
 		|***********************************************************************************|
 		/if (${ActionTaken}) /varset ActionTaken FALSE
 		
-		/if (${currentZone} != ${Zone.ID}) /call checkZone
 		/if (${Following} && !${outerAssisting}) /call check_Follow
 		/call check_Active
 		/call check_Combat
@@ -79,8 +76,9 @@ SUB Main
 |	******************************************************************************	|
 |   ******************************* Main Functions *******************************	|
 |	******************************************************************************	|
-			/for i 1 to ${mainLoop_Array.Size}
-				/if (${Bool[${mainLoop_Array[${i}]}]}) /call ${mainLoop_Array[${i}]}
+			/declare i int local
+			/for i 1 to ${functions.Size}
+				/if (${Bool[${functions[${i}]}]}) /call ${functions[${i}]}
 			/if (!${ActionTaken}) /next i
 	
 |	**********************************************************************************	|

@@ -238,7 +238,7 @@ SUB EVENT_AE_Rez
 		/deletevar lastChecked
 		/deletevar rezzable
 		
-		/chat ${channel} All viable corpses nearby, have been ressurected.
+		/chat ${channelNumber} All viable corpses nearby, have been ressurected.
 	}
 
 /if (${outerDebug} || ${outerDebug_Basics}) /echo <== EVENT_AE_Rez -|
@@ -297,7 +297,7 @@ SUB CLR_MacroSettings
 	/call writeToIni "${iniTHF},CLR Functions,CLR Function#6" "check_CombatBuffs" 1
 	/call writeToIni "${iniTHF},CLR Functions,CLR Function#7" "check_Debuffs" 1
 	/call writeToIni "${iniTHF},CLR Functions,CLR Function#8" "check_Nukes" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#9" "checkBuffs" 1
+	/call writeToIni "${iniTHF},CLR Functions,CLR Function#9" "check_Buffs" 1
 
 /if (${outerDebug}) /echo <== CLR_MacroSettings -|
 /RETURN

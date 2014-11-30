@@ -218,7 +218,7 @@ SUB ROG_MacroSettings
 	 | Adv Settings
 	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#1" "check_Burns" 1
 	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#2" "check_CombatBuffs" 1
-	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#3" "checkBuffs" 1
+	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#3" "check_Buffs" 1
 
 	/if (${outerDebug}) /echo <== ROG_MacroSettings -|
 /RETURN

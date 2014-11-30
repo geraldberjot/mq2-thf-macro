@@ -30,7 +30,7 @@ SUB BER_MacroSettings
 	| Adv Settings
 	/call writeToIni "${iniTHF},BER Functions,BER Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},BER Functions,BER Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},BER Functions,BER Function#3" "checkBuffs" 1
+	/call writeToIni "${iniTHF},BER Functions,BER Function#3" "check_Buffs" 1
 
 /if (${outerDebug}) /echo <== BER_MacroSettings -|
 /RETURN
