@@ -79,7 +79,7 @@ SUB WAR_MacroSettings
 	| AdvSettings
 	/call writeToIni "${iniTHF},WAR Functions,WAR Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},WAR Functions,WAR Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},WAR Functions,WAR Function#3" "checkBuffs" 1
+	/call writeToIni "${iniTHF},WAR Functions,WAR Function#3" "check_Buffs" 1
 	
 /if (${outerDebug}) /echo <== WAR_MacroSettings -|
 /RETURN

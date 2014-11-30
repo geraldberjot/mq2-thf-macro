@@ -33,7 +33,7 @@ SUB RNG_MacroSettings
 	/call writeToIni "${iniTHF},RNG Functions,RNG Function#3" "check_Heals"	 1
 	/call writeToIni "${iniTHF},RNG Functions,RNG Function#4" "check_DoTs" 1
 	/call writeToIni "${iniTHF},RNG Functions,RNG Function#5" "check_Nukes" 1
-	/call writeToIni "${iniTHF},RNG Functions,RNG Function#6" "checkBuffs" 1
+	/call writeToIni "${iniTHF},RNG Functions,RNG Function#6" "check_Buffs" 1
 
 /if (${outerDebug}) /echo <== RNG_MacroSettings -|
 /RETURN

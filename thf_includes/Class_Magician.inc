@@ -251,7 +251,7 @@ SUB check_PetWeapons
 						/if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons -| I have already given weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}].
 					} else {
 
-						| /chat ${channel} Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
+						| /chat ${channelNumber} Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
 						/call EVENT_petWeapons PLACEHOLDER ${NetBots.Client[${i}]}
 						/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}" "${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}" 1
 					}
@@ -308,7 +308,7 @@ SUB MAG_MacroSettings
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#4" "check_Debuffs" 1
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#5" "check_Rain" 1
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#6" "check_Nukes" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#7" "checkBuffs" 1
+	/call writeToIni "${iniTHF},MAG Functions,MAG Function#7" "check_Buffs" 1
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#8" "check_Pets" 1
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#9" "check_PetWeapons" 1
 

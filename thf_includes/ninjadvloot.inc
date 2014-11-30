@@ -112,23 +112,23 @@ SUB LootMobs
 	}
 	/declare DeadCount int local ${SpawnCount[corpse radius ${CorpseRadius} zradius 50 noalert 25]}
     /if (!${LootMobs}) {
-		/chat ${channel} Can't loot mobs !
+		/chat ${channelNumber} Can't loot mobs !
 		/RETURN
 	}
 	/if (${SpawnCount[npc radius ${MobsTooClose} zradius 50 noalert ${AlertList}]}) {
-		/chat ${channel} Mobs near me, can't loot !
+		/chat ${channelNumber} Mobs near me, can't loot !
 		/RETURN
 	}
 	/if (!${DeadCount}) {
-		/chat ${channel} No mobs' corpses to loot !
+		/chat ${channelNumber} No mobs' corpses to loot !
 		/RETURN
 	}
 	/if (${Me.Combat}) {
-		/chat ${channel} In combat, can't loot !
+		/chat ${channelNumber} In combat, can't loot !
 		/RETURN
 	}
 	/if (!${Me.FreeInventory}) {
-		/chat ${channel} Inventory FULL !
+		/chat ${channelNumber} Inventory FULL !
 		/RETURN
 	}
     /if (!${CorpseRotTimer}) /squelch /alert clear 25
@@ -136,7 +136,7 @@ SUB LootMobs
     /declare CorpseList string local 
     /declare CorpseToLoot int local
     /declare ZDist float local ${Math.Distance[${Target.Z}:${Me.Z}]}
-	/chat ${channel} "Number of corpse = ${DeadCount}"
+	/chat ${channelNumber} "Number of corpse = ${DeadCount}"
     /for i 1 to ${DeadCount}
         /varset CorpseList ${CorpseList}${NearestSpawn[${i},corpse radius ${CorpseRadius} zradius 50 noalert 25].ID}|
     /next i
@@ -156,7 +156,7 @@ SUB LootMobs
             /if (${Target.Distance}<10) /call LootCorpse
         :SkipCorpse
     /next i
-	/chat ${channel} "Looting done !"
+	/chat ${channelNumber} "Looting done !"
 /RETURN
 
 SUB LootCorpse

@@ -32,7 +32,7 @@ SUB Main
 	/declare iniGlobal 	string outer "ini\global.ini"
 	/declare iniSetup 	string outer "ini\setup_${Me.CleanName}.ini"
 	/declare iniSpell 	string outer "ini\spells_${Me.CleanName}.ini"
-	/declare iniHail 	string outer "ini\hail.ini"
+	/declare iniHail 	string outer "ini\Hail.ini"
 
 	/call joinChannel
 	/call checkPlugIn

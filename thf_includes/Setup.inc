@@ -40,8 +40,8 @@ SUB thfSetup(bool debug)
 	/declare outerDebug bool outer FALSE
 	/if (${Bool[${debug}]}) /varset outerDebug TRUE
 
-	|- The file path for thf.ini will still need to be updated in corresponding includes because you must use /noparse to write variables to inis.
-	/declare iniTHF string outer thf_inis\Thf.ini
+	|- The file path for THF.ini will still need to be updated in corresponding includes because you must use /noparse to write variables to inis.
+	/declare iniTHF string outer thf_inis\THF.ini
 	/declare i int local
 
 	/call checkPlugins
@@ -82,6 +82,14 @@ SUB thfSetup(bool debug)
 	|-- Generate iniToon.
 	/if (!${Bool[${Ini[${iniToon}]}]}) /call EVENT_MakeCharacterSettingsIni
 	
+	|- Initializing functions
+	/if (${Bool[${Ini[${iniTHF},${Me.Class},Functions]}]}) {
+		/call split "${iniTHF},${Me.Class},Functions" functions outer /
+	} else {
+		/call MakeFunctionsSettings
+	}
+
+	
 	|-- Macro Aliases
 	/call EVENT_UpdateAliases
 
@@ -115,14 +123,14 @@ SUB thfSetup(bool debug)
 SUB makeThfIni()
 	/if (${outerDebug}) /echo |- makeThfIni ==>
 
-	/noparse /ini "thf_inis\Thf.ini" "Paths" "Toon" "thf_inis\${MacroQuest.Server}-${Me.CleanName}.ini"
-	/noparse /ini "thf_inis\Thf.ini" "Paths" "General" "thf_inis\General.ini"
+	/noparse /ini "thf_inis\THF.ini" "Paths" "Toon" "thf_inis\${MacroQuest.Server}-${Me.CleanName}.ini"
+	/noparse /ini "thf_inis\THF.ini" "Paths" "General" "thf_inis\General.ini"
 
 	/if (${outerDebug}) /echo <== makeThfIni -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Launch every subroutine for each array element
+|- Launch subroutine for each array element
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB loadAll(String tableau, String subToCall)
 	/if (${outerDebug}) /echo |- makeThfIni ==>
@@ -153,7 +161,7 @@ SUB EVENT_MakeMacroSettingsIni()
 	
 	/call split "${iniGeneral},General,Includes" includes outer /
 	
-	/call loadAll ${includes} "MacroSettings"
+	/call loadAll includes MacroSettings
 	
 	/if (${outerDebug}) /echo <== MakeMacroSettingsIni -|
 /RETURN
@@ -165,9 +173,10 @@ SUB ReadMacroSettings()
 	/if (${outerDebug}) /echo |- ReadMacroSettings ==>
 
 	|-- Chat Channel
-	/if (!${Defined[channelNumber]}) /declare channelNumber string outer
+	/if (!${Defined[channelNumber]}) /declare channelNumber int outer 0
 	/call iniToVar "${iniGeneral},General,Channel" channel string outer
-	
+	/call joinChannel
+
 	/call split "${iniGeneral},General,Includes" includes outer /
 	
 	/call loadAll includes Setup
@@ -184,14 +193,32 @@ SUB EVENT_MakeCharacterSettingsIni()
 
 	/echo Creating ${Me.CleanName}'${If[${Me.CleanName.Right[1].Equal[s]},,s]} settings file...
 	
-	/call ${Me.Class.ShortName}_CharacterSettings
-	/declare i int local
-	/for i 1 to ${includes.Size}
-		/if (${Bool[${includes[${i}]}]}) /call ${includes[${i}]}_CharacterSettings
-	/next i
+	/call loadAll includes CharacterSettings
 	
 	/if (${outerDebug}) /echo <== EVENT_MakeCharacterSettingsIni -|
 /RETURN	
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Generates functions for each class
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB MakeFunctionsSettings()
+	/ini ${iniTHF} "Bard" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
+	/ini ${iniTHF} "Beastlord" "functions" "check_Debuffs/check_DoTs/check_Burns/check_CombatBuffs/check_Heals/check_PetHeal/check_Nukes/check_Buffs/check_Pets" 
+	/ini ${iniTHF} "Berserker" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
+	/ini ${iniTHF} "Cleric" "functions" "check_DivineArb/check_Yaulp/check_celestialRegen/check_healChain/check_Heals/check_CombatBuffs/check_Debuffs/check_Nukes/check_Buffs" 
+	/ini ${iniTHF} "Druid" "functions" "check_healChain/check_Heals/check_CombatBuffs/check_Burns/check_Debuffs/check_DoTs/check_Rain/check_Nukes/check_Buffs" 
+	/ini ${iniTHF} "Enchanter" "functions" "check_Rune/check_CombatBuffs/check_Burns/check_Debuffs/check_DoTs/check_Rain/check_Nukes/check_Buffs/check_Pets" 
+	/ini ${iniTHF} "Magician" "functions" "check_CombatBuffs/check_petHeal/check_Burns/check_Debuffs/check_Rain/check_Nukes/check_Buffs/check_Pets/check_PetWeapons" 
+	/ini ${iniTHF} "Monk" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
+	/ini ${iniTHF} "Necromancer" "functions" "check_Burns/check_castLich/check_manaDump/check_Debuffs/check_DoTs/check_CombatBuffs/check_lifeTap/check_Nukes/check_petHeal/check_Buffs/check_Pets" 
+	/ini ${iniTHF} "Paladin" "functions" "check_Yaulp/check_Heals/check_Burns/check_CombatBuffs/check_Nukes/check_Buffs" 
+	/ini ${iniTHF} "Ranger" "functions" "check_Burns/check_CombatBuffs/check_Heals/check_DoTs/check_Nukes/check_Buffs" 
+	/ini ${iniTHF} "Rogue" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
+	/ini ${iniTHF} "ShadowKnight" "functions" "check_Burns/check_lifeTap/check_Debuffs/check_CombatBuffs/check_DoTs/check_Nukes/check_Buffs/check_Pets" 
+	/ini ${iniTHF} "Shaman" "functions" "check_Debuffs/check_Burns/check_Heals/check_CombatBuffs/check_DoTs/check_petHeal/check_Rain/check_Nukes/check_Buffs/check_Pets/check_Canni" 
+	/ini ${iniTHF} "Warrior" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
+	/ini ${iniTHF} "Wizard" "functions" "check_Burns/check_CombatBuffs/check_Rain/check_Nukes/check_Harvest/check_Buffs" 
+/RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Deletes and Recreates aliases associated with thf.mac.
@@ -213,13 +240,7 @@ SUB EVENT_UpdateAliases()
 	/squelch /alias /debugon /varset Debug 1
 	/squelch /alias /debugoff /varset Debug 0
 
-	/call IniToArray "${iniAdvanced},Includes,Include#" macroSetups
-	
-	/declare i int local
-	
-	/for i 1 to ${macroSetups.Size}
-		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_Aliases
-	/next i
+	/call loadAll includes Aliases
 	
 	|/call VetAAs_Aliases
 
