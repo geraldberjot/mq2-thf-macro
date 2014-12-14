@@ -30,7 +30,7 @@ SUB Main
 	/call setupAdvLootVars
 	/call loadCustomVars
 	
-	/chat ${channel} THF Macro started for ${Me.CleanName} [${Me.Class}]
+	/chat ${channelNumber} THF Macro started for ${Me.CleanName} [${Me.Class}]
 	
 	/if (${outerDebug}) /echo |- MainLoop ==>
 
@@ -61,7 +61,7 @@ SUB Main
 				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call buffInstants
 			}
 		} else {
-			/chat ${channel} I have something on cursor !
+			/chat ${channelNumber} I have something on cursor !
 		}
 		
 		/call checkBackgroundEvents

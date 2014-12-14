@@ -68,7 +68,7 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 					
 					|- Start Following.
 					/if (${Verbosity}) /docommand ${ChatToggle} Following ${FollowTarget}.
-					/call AquireFollow
+					/call AcquireFollow
 				}
 			}
 		| <=
@@ -92,29 +92,23 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 
 
 |----------------------------------------------------------------------------------------------------|
-|- Engages follow plugins on specified follow targets.												-|
+|- Engages follow plugins on specified follow targets.
 |----------------------------------------------------------------------------------------------------|
-|- Uses NetAdvPath if the follow target is one of your bots, or MoveUtils, if its someone elses.	-|		
-|----------------------------------------------------------------------------------------------------|
-SUB AquireFollow
-/if (${outerDebug} || ${Debug_Basics}) /echo |- AquireFollow ==>
+SUB AcquireFollow
+	/if (${outerDebug} || ${Debug_Basics}) /echo |- AcquireFollow ==>
 
-	|------------------------------------------------------------------------------------Check for FollowTarget in zone.
+	|- Check for FollowTarget in zone.
 	/if (${SpawnCount[=${FollowTarget}]}) {
-
-		|--------------------------------------------------------------------------------Check range to the FollowTarget
+		|- Check range to the FollowTarget
 		/if (${SpawnCount[=${FollowTarget} radius ${MaxResponseDist}]}) {
-
-			|----------------------------------------------------------------------------Check that I'm not the follow target.
+			|- Check that I'm not the follow target.
 			/if (${FollowTarget.NotEqual[${Me.CleanName}]}) {
-
-				|------------------------------------------------------------------------Turn off any previous follow plugins.
+				|- Turn off any previous follow plugins.
 				/if (${Stick.Active}) /squelch /stick off
-				/if (${NetAdvPath.State}==1) /squelch /netfollow off
 				
 				/declare followTargetID int local
 				
-				|--------------------------------------------------------------------Check Target ID
+				|- Check Target ID
 				/if (${SpawnCount[pc =${FollowTarget}]}) {
 					/varset followTargetID ${Spawn[pc =${FollowTarget}].ID}
 				} else /if (${SpawnCount[npc ${FollowTarget}]}) {
@@ -123,65 +117,39 @@ SUB AquireFollow
 					/varset followTargetID ${Spawn[pet =${FollowTarget}].ID}
 				}
 
-				| If the FollowTarget is a NetBot, and you're using NetAdvPath
-				/if (${NetBots[${FollowTarget}].ID} && ${NetAdvPath}) {
-
-					| If the FollowTarget is a NetBot, engage MQ2NetAdvPath.
-					/if (${Spawn[id ${followTargetID}].paramLineOfSight}) {
-						/call TrueTarget ${followTargetID}
-						/squelch /netfollow on
-					} else /if (${NetAdvPath.State}==2) {
-						/squelch /netfollow unpause
-					}
-				} else {
-					
-				| If MQ2NetAdvPath was not detected, or the FollowTarget was not a NetBot, engage MQ2MoveUtils.
-				
-					|---------------------------------------------------Check LoS
-					/if (${Spawn[id ${followTargetID}].paramLineOfSight}) {
-						/call TrueTarget ${followTargetID}
-						/squelch /stick hold 20 uw
-					}
+				|- Check LoS
+				/if (${Spawn[id ${followTargetID}].paramLineOfSight}) {
+					/call TrueTarget ${followTargetID}
+					/squelch /stick ${stickCommand}
 				}
 
-				|-------------------------------------------------------Clear my target
+				|- Clear my target
 				/if (${Target.ID} == ${followTargetID}) /squelch /target clear
 			}
 		}
 	}
 
-/if (${outerDebug} || ${Debug_Basics}) /echo <== AquireFollow -|
-|** 
-	ADD A LOOP TO CALCULATE DISTANCE TO YOUR TARGET. ONCE DISTANCE STOPS DECREASING REISSUE FOLLOW COMMAND, TO SNAP TO TARGET
-	
-	/declare HeadingToSpawn string local ${Spawn[pc ${FollowTarget}].HeadingTo}
-	:movingLoop
-	/if (${Me.Moving}) {
-		/if () {
-		
-		}
-	}
-**|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== AcquireFollow -|
 /RETURN
 
 
 
 |----------------------------------------------------------------------------|
-|- Disengages follow on bots who are in the same zone as the paramSender.	-|
+|- Disengages follow on bots who are in the same zone as the paramSender.
 |----------------------------------------------------------------------------|
 |- Use, /stop, or, 'stop' in /tell, /goup, or /bc.							-|
 |----------------------------------------------------------------------------|
 #EVENT Stop	"[#1#] Stop"
 #EVENT Stop	"<#1#> Stop"
-#EVENT Stop "#1# tells you, 'Stop'"
-#EVENT Stop "#1# tells the group, 'Stop'"
-#EVENT Stop "#1# you tell your party, 'Stop'"
+#EVENT Stop	"#1# tells you, 'Stop'"
+#EVENT Stop	"#1# tells the group, 'Stop'"
+#EVENT Stop	"#1# you tell your party, 'Stop'"
 #EVENT Stop	"<#1#> Stop #2#"
-#EVENT Stop "#1# tells you, 'Stop #2#'"
-#EVENT Stop "#1# tells the group, 'Stop #2#'"
-#EVENT Stop "#1# you tell your party, 'Stop #2#'"
+#EVENT Stop	"#1# tells you, 'Stop #2#'"
+#EVENT Stop	"#1# tells the group, 'Stop #2#'"
+#EVENT Stop	"#1# you tell your party, 'Stop #2#'"
 SUB EVENT_Stop(paramLine, paramSender, paramEvent)
-/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Stop ==>
+	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Stop ==>
 
 	|- Check if I'm following.
 	/if (${Following}) {
@@ -197,13 +165,12 @@ SUB EVENT_Stop(paramLine, paramSender, paramEvent)
 		
 			|- Stop following
 			/if (${Stick.Active}) /squelch /stick off
-			/if (${NetAdvPath.State}==1) /squelch /netfollow off
 			/varset FollowTarget NULL
 			/varset Following FALSE
 		}
 	}
 
-/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Stop -|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Stop -|
 /RETURN STOP
 
 
@@ -268,7 +235,7 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 			|- If I'm following, reaquire follow.
 			/if (${Following}) {
 				/if (${moveTo_Name.Equal[${FollowTarget}]}) {
-					/call AquireFollow
+					/call AcquireFollow
 				} else {
 					/call EVENT_Stop "<${Me.CleanName}> Stop" ${Me.CleanName}
 				}
