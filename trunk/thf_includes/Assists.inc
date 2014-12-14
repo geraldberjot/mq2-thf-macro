@@ -143,7 +143,7 @@ SUB AssistOff
 	
 	| Check loot, and reacquire follow.
 	/if (${Select[${Stick},ON]}) /squelch /stick off
-	/if (${Following}) /call AquireFollow
+	/if (${Following}) /call AcquireFollow
 	
 	/if (${outerDebug}) {
 		/echo Assisting: [${outerAssisting}] || AssistTarget: [${outerAssistTarget}]

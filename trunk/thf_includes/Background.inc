@@ -76,7 +76,7 @@ SUB checkGems
 |- Reports bots who have fallen behind, and attempts to re-aquire follow when it breaks.	-|
 |--------------------------------------------------------------------------------------------|
 SUB check_Follow
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Follow ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Follow ==>
 
 	/if (${FollowTarget.Equal[${Me.CleanName}]}) {
 		/if (!${spamTimer}) {
@@ -97,14 +97,14 @@ SUB check_Follow
 	} else {
 
 		/if (${SpawnCount[pc ${FollowTarget}]} && ${Spawn[pc ${FollowTarget}].Distance} < ${LeashLength} && ${Spawn[pc ${FollowTarget}].LineOfSight}) {
-			/if (!${NetAdvPath.Status} && !${Stick.Active}) {
-				/call AquireFollow
+			/if (!${Stick.Active}) {
+				/call AcquireFollow
 			}
 			/if (${Me.FeetWet}) /squelch /face fast ${FollowTarget}
 		}
 	}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Follow -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Follow -|
 /RETURN
 
 
@@ -136,36 +136,35 @@ SUB check_Idle
 
 
 
-|--------------------------------------------------------------------------------------------|
-|- Checks to see if your character is active.												-|	
-|--------------------------------------------------------------------------------------------|			
-|- Pauses the macro while you're moving, or have a corpse open.								-|
-|- Pauses the macro while you have items on your cursor, and clears them after 30 seconds.	-|
-|- Pauses the macro when you manually cast spells.											-|
-|- Automatically closes your spellbook, if its been open for more than 30 seconds.			-|
-|- Announces in /bc when you're feigning death.												-|
-|- Pauses the macro when you're trading / banking.											-|
-|- Automatically turns off combat when attacking PCs or when you have no target.			-|
-|--------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks to see if your character is active.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Pauses the macro while you're moving, or have a corpse open.
+|- Pauses the macro while you have items on your cursor, and clears them after 30 seconds.
+|- Pauses the macro when you manually cast spells.
+|- Automatically closes your spellbook, if its been open for more than 30 seconds.
+|- Announces in /bc when you're feigning death.
+|- Pauses the macro when you're trading / banking.
+|- Automatically turns off combat when attacking PCs or when you have no target.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Active
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Active ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Active ==>
 
-	| Check Zoning
+	|- Check Zoning
 	/if (!${SpawnCount[pc ${Me}]}) {
 		/varset activeTimer 15
 		/varset rebuffTimer 0
 	}
 	
-	| Check Movement
+	|- Check Movement
 	/if (${Me.Moving} || ${Corpse.Open}) {
 		/varset activeTimer 5
 		/varset rebuffTimer ${rebuffDelay}
 	}
 
-	| Check Cursor
+	|- Check Cursor
 	/if (${Cursor.ID}) {
-	
-		| Destroy badItems.
+		|-- Destroy badItems.
 		/if (${Defined[badItems]}) {
 			/if (${Select[${Cursor},${badItems}]} || ${Select[${Cursor.ID},${badItems}]}) {
 				/echo Destroying ${Cursor}...
@@ -173,7 +172,7 @@ SUB check_Active
 			}
 		}
 
-		| Check to see if I'm waiting to drop this item, or if I've picked up something new
+		|-- Check to see if I'm waiting to drop this item, or if I've picked up something new
 		/if (${Old_cursorID} != ${Cursor.ID}) {
 			/varset cursorTimer ${Math.Calc[${inventoryTimer} * 10].Int}
 			/varset Old_cursorID ${Cursor.ID}
@@ -191,12 +190,12 @@ SUB check_Active
 		}
 	}
 	
-	| Check AutoAttack
+	|- Check AutoAttack
 	/if (${Me.Combat}) {
-		/if (!${Target.ID} || ${Target.Type.Equal[corpse]} && !${outerAssisting}|| ${Spawn[${Target.ID}].Type.Equal[PC]} && !${Toggle-PvP}) /attack off
+		/if (!${Target.ID} || ${Target.Type.Equal[corpse]} && !${outerAssisting}|| ${Spawn[${Target.ID}].Type.Equal[PC]}) /attack off
 	}
 	
-	| Check Casting
+	|- Check Casting
 	/if (${Me.Class.ShortName.NotEqual[BRD]} && ${Me.Casting.ID}) {
 		/call e3_CastingChecks
 		/varset activeTimer 5
@@ -209,11 +208,10 @@ SUB check_Active
 		/doevents flush
 	}
 	
-	| Check spellbook
+	|- Check spellbook
 	/if (${Window[SpellbookWnd].Open}) {
 		/if (!${spellbook_Timer}) {
-		
-			| if the timer isn't defined, make one.
+			|-- if the timer isn't defined, make one.
 			/if (!${Defined[spellbook_Timer]}) {
 				/declare spellbook_Timer timer outer ${spellbookTimer}s
 			} else {
@@ -228,15 +226,14 @@ SUB check_Active
 		/if (${Defined[spellbook_Timer]}) /deletevar spellbook_Timer
 	}
 	
-	| Check Feigning
+	|- Check Feigning
 	/if (${Me.Feigning}) {
 		/if (!${Select[${Me.Class.ShortName},NEC,SHD,MNK]}) {
 			/stand
 			/if (${outerAssisting} && ${StickOn}) /attack on
 		} else {
-		
 			/if (!${Defined[feign_Timer]}) {
-				/chat ${channelNumber} I AM FEIGNED.
+				/chat ${channelNumber} CURRENTLY IN 'FEIGN DEATH' !
 				/declare feign_Timer timer outer 15s
 			}
 		}
@@ -248,7 +245,7 @@ SUB check_Active
 		/if (${Defined[feign_Timer]}) /deletevar feign_Timer
 	}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Active -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Active -|
 /RETURN
 
 

@@ -177,8 +177,9 @@ SUB ReadMacroSettings()
 	/call iniToVar "${iniGeneral},General,Channel" channel string outer
 	/call joinChannel
 
-	/call split "${iniGeneral},General,Includes" includes outer /
+	/call iniToVar "${iniGeneral},General,StickCommand" stickCommand string outer
 	
+	/call split "${iniGeneral},General,Includes" includes outer /
 	/call loadAll includes Setup
 	
 	/if (${outerDebug}) /echo <== ReadMacroSettings -|
