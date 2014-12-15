@@ -22,13 +22,11 @@
 #include thf_includes\Setup.inc
 
 SUB Main
-	/declare iniGlobal 	string 	outer "thf_inis\Global.ini"
 	/declare iniHail 	string 	outer "thf_inis\Hail.ini"
 	
 	/call thfSetup TRUE
 	
-	/call setupAdvLootVars
-	/call loadCustomVars
+	/call setupAdvLootVars "thf_inis\Loot.ini"
 	
 	/chat ${channelNumber} THF Macro started for ${Me.CleanName} [${Me.Class}]
 	
@@ -46,7 +44,7 @@ SUB Main
 		|***********************************************************************************|
 		/if (${ActionTaken}) /varset ActionTaken FALSE
 		
-		/if (${Following} && !${outerAssisting}) /call check_Follow
+		/if (${globalFollowing} && !${outerAssisting}) /call check_Follow
 		/call check_Active
 		/call check_Combat
 		/call check_Idle

@@ -756,7 +756,7 @@ SUB Triangulate_Distance(string loc#1, string loc#2)
 |----------------------------------------------------------------------------------------------------|
 |- Attempts to utilize MQ2MoveUtils /moveto function, to move to a given destination.				-|
 |----------------------------------------------------------------------------------------------------|
-|- @param1 destination: Destinations can be provided as an ID, or loc, using the following syntax:	-|
+|- @param1 destination: Destinations can be provided as an ID, or loc, using the globalFollowing syntax:	-|
 |-																									-|
 |- Move to a Spawn ID use, -SpawnID|#																-|
 |-		Ex.  /call MoveTo -SpawnID|${Target.ID}														-|

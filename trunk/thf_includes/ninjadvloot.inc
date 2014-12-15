@@ -1,7 +1,7 @@
 | Ninjadvloot.inc v3.1 05/11/2013 Redguides.com 
 | Author A_Druid_00 12/19/2005
 | Based on original looting code of toomanynames
-| The following updates were all individually posted and consolidated by Maskoi into the current version.
+| The globalFollowing updates were all individually posted and consolidated by Maskoi into the current version.
 | Updated: Moeymoejoe added strip out comma in item names when accessing ini file 08/02/2006
 | Updated: mystikule added sell option to ini file 01/07/2008
 | Updated: drkrain for House of Thule 10/23/2010
@@ -16,7 +16,7 @@
 |   dewey2461 - Add sold items to ini file Event
 |
 | Requirements: MQ2Moveutils
-| Usage: add the following to your macro for looting
+| Usage: add the globalFollowing to your macro for looting
 |   #include Ninjadvloot.inc
 |   /call setupAdvLootVars
 |   /call LootMobs
@@ -26,7 +26,7 @@
 |   /call setupAdvLootVars "LootMesa.ini"
 |
 | Commands
-| Usage. Grab the item and put it on your cursor then use one of the following commands
+| Usage. Grab the item and put it on your cursor then use one of the globalFollowing commands
 | 	/lootdestroy - Mark item on cursor to Destroy in Loot.ini file
 | 	/lootignore - Mark item on cursor to Ignore in Loot.ini file
 | 	/lootkeep - Mark item on cursor to Keep in Loot.ini file

@@ -27,11 +27,11 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 				/chat ${channelNumber} ${Spawn[${mobID}].CleanName} is too far away.
 			} else {
 				| Wait to catch up to group, before engage.
-				/if (${Following} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength} && ${Me.Moving}) {
+				/if (${globalFollowing} && ${Spawn[${globalFollowTarget}].Distance} > ${LeashLength} && ${Me.Moving}) {
 					/declare Assist_Moving_Timer timer local 100
 					:movetoAssist_Loop
 					/call checkBackgroundEvents
-					/if (${Spawn[=${FollowTarget}].Distance} > ${LeashLength} && ${Assist_Moving_Timer}) /goto :movetoAssist_Loop
+					/if (${Spawn[=${globalFollowTarget}].Distance} > ${LeashLength} && ${Assist_Moving_Timer}) /goto :movetoAssist_Loop
 				}
 
 				| Disengage follow.
@@ -143,7 +143,7 @@ SUB AssistOff
 	
 	| Check loot, and reacquire follow.
 	/if (${Select[${Stick},ON]}) /squelch /stick off
-	/if (${Following}) /call AcquireFollow
+	/if (${globalFollowing}) /call AcquireFollow
 	
 	/if (${outerDebug}) {
 		/echo Assisting: [${outerAssisting}] || AssistTarget: [${outerAssistTarget}]

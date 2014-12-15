@@ -9,7 +9,7 @@
 |- Engages, and sets variables related to Follow.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Only toons in the same zone will engage follow.
-|- Toons will wait to engage follow until, they can see the FollowTarget, and it is within the MaxResponseDist.
+|- Toons will wait to engage follow until, they can see the globalFollowTarget, and it is within the MaxResponseDist.
 |- If toons are assisting, they will back off and follow until re-engage.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param paramLine: The paramLine that called the event
@@ -29,23 +29,23 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 		/declare SpawnToFollow string local ${If[${paramEvent.Arg[1, ].Find[/]} || ${paramEvent.Arg[1, ].Equal[me]} || ${paramEvent.Arg[1, ].Equal[on]},${paramSender},${paramEvent.Arg[1, ]}]}
 		/if (!${Bool[${SpawnToFollow}]}) /varset SpawnToFollow ${paramSender}
 		
-		|- Turn Following on and set the FollowTarget
-		/varset Following TRUE
-		/varset FollowTarget ${Spawn[pc ${SpawnToFollow}].CleanName}
+		|- Turn globalFollowing on and set the globalFollowTarget
+		/varset globalFollowing TRUE
+		/varset globalFollowTarget ${Spawn[pc ${SpawnToFollow}].CleanName}
 		
 		|- If I am the follow target
 		| =>
-		/if (${FollowTarget.Equal[${Me}]}) {
+		/if (${globalFollowTarget.Equal[${Me}]}) {
 
 			|- Turn off follow plugins.
 			/if (${Stick.Active}) /squelch /stick off
 			/if (${NetAdvPath.State}) /squelch /netfollow off
 
-			|- create a list of bots following you.
-			/varset Followers 
+			|- create a list of bots globalFollowing you.
+			/varset globalFollowers 
 			/declare i int local
 			/for i 1 to ${NetBots.Counts}
-				/if (${NetBots.Client.Arg[${i}, ].NotEqual[${Me.CleanName}]} && ${SpawnCount[pc =${NetBots.Client.Arg[${i}, ]}]} && ${Spawn[pc =${NetBots.Client.Arg[${i}, ]}].Distance}<${MaxResponseDist}) /varset Followers ${Followers}${NetBots.Client.Arg[${i}, ]},
+				/if (${NetBots.Client.Arg[${i}, ].NotEqual[${Me.CleanName}]} && ${SpawnCount[pc =${NetBots.Client.Arg[${i}, ]}]} && ${Spawn[pc =${NetBots.Client.Arg[${i}, ]}].Distance}<${MaxResponseDist}) /varset globalFollowers ${globalFollowers}${NetBots.Client.Arg[${i}, ]},
 			/next i
 		| <=
 		} else {
@@ -54,20 +54,20 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 		| =>
 		
 			|- Check Range
-			/if (${Spawn[=${FollowTarget}].Distance} > ${MaxResponseDist}) {
-				/docommand ${ChatToggle} [${FollowTarget}] is too far away.
+			/if (${Spawn[=${globalFollowTarget}].Distance} > ${MaxResponseDist}) {
+				/docommand ${ChatToggle} [${globalFollowTarget}] is too far away.
 			} else {
 			
 				|- Check LoS.
-				/if (!${Spawn[=${FollowTarget}].paramLineOfSight}) {
-					/docommand ${ChatToggle} I cannot see [${FollowTarget}].
+				/if (!${Spawn[=${globalFollowTarget}].paramLineOfSight}) {
+					/docommand ${ChatToggle} I cannot see [${globalFollowTarget}].
 				} else {
 				
 					|- Stop assisting so we don't try to stick to the AssistTarget.	
 					/if (${Assisting} || ${Me.Combat}) /call EVENT_BackOff
 					
-					|- Start Following.
-					/if (${Verbosity}) /docommand ${ChatToggle} Following ${FollowTarget}.
+					|- Start globalFollowing.
+					/if (${Verbosity}) /docommand ${ChatToggle} globalFollowing ${globalFollowTarget}.
 					/call AcquireFollow
 				}
 			}
@@ -97,34 +97,34 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramEvent)
 SUB AcquireFollow
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- AcquireFollow ==>
 
-	|- Check for FollowTarget in zone.
-	/if (${SpawnCount[=${FollowTarget}]}) {
-		|- Check range to the FollowTarget
-		/if (${SpawnCount[=${FollowTarget} radius ${MaxResponseDist}]}) {
+	|- Check for globalFollowTarget in zone.
+	/if (${SpawnCount[=${globalFollowTarget}]}) {
+		|- Check range to the globalFollowTarget
+		/if (${SpawnCount[=${globalFollowTarget} radius ${MaxResponseDist}]}) {
 			|- Check that I'm not the follow target.
-			/if (${FollowTarget.NotEqual[${Me.CleanName}]}) {
+			/if (${globalFollowTarget.NotEqual[${Me.CleanName}]}) {
 				|- Turn off any previous follow plugins.
 				/if (${Stick.Active}) /squelch /stick off
 				
-				/declare followTargetID int local
+				/declare globalFollowTargetID int local
 				
 				|- Check Target ID
-				/if (${SpawnCount[pc =${FollowTarget}]}) {
-					/varset followTargetID ${Spawn[pc =${FollowTarget}].ID}
-				} else /if (${SpawnCount[npc ${FollowTarget}]}) {
-					/varset followTargetID ${Spawn[npc =${FollowTarget}].ID}
-				} else /if (${SpawnCount[pet ${FollowTarget}]}) {
-					/varset followTargetID ${Spawn[pet =${FollowTarget}].ID}
+				/if (${SpawnCount[pc =${globalFollowTarget}]}) {
+					/varset globalFollowTargetID ${Spawn[pc =${globalFollowTarget}].ID}
+				} else /if (${SpawnCount[npc ${globalFollowTarget}]}) {
+					/varset globalFollowTargetID ${Spawn[npc =${globalFollowTarget}].ID}
+				} else /if (${SpawnCount[pet ${globalFollowTarget}]}) {
+					/varset globalFollowTargetID ${Spawn[pet =${globalFollowTarget}].ID}
 				}
 
 				|- Check LoS
-				/if (${Spawn[id ${followTargetID}].paramLineOfSight}) {
-					/call TrueTarget ${followTargetID}
+				/if (${Spawn[id ${globalFollowTargetID}].paramLineOfSight}) {
+					/call TrueTarget ${globalFollowTargetID}
 					/squelch /stick ${stickCommand}
 				}
 
 				|- Clear my target
-				/if (${Target.ID} == ${followTargetID}) /squelch /target clear
+				/if (${Target.ID} == ${globalFollowTargetID}) /squelch /target clear
 			}
 		}
 	}
@@ -151,8 +151,8 @@ SUB AcquireFollow
 SUB EVENT_Stop(paramLine, paramSender, paramEvent)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Stop ==>
 
-	|- Check if I'm following.
-	/if (${Following}) {
+	|- Check if I'm globalFollowing.
+	/if (${globalFollowing}) {
 		
 		|- Verify the event
 		/call verifyEvent "${paramSender}" "${paramLine}"
@@ -160,13 +160,13 @@ SUB EVENT_Stop(paramLine, paramSender, paramEvent)
 		|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 	
-			|- Wait to get close to the followTarget.
-			/if (!${Spawn[${FollowTarget}].Moving} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength}) /delay 100 ${Spawn[${FollowTarget}].Distance} < ${LeashLength} || ${Spawn[${FollowTarget}].Moving}
+			|- Wait to get close to the globalFollowTarget.
+			/if (!${Spawn[${globalFollowTarget}].Moving} && ${Spawn[${globalFollowTarget}].Distance} > ${LeashLength}) /delay 100 ${Spawn[${globalFollowTarget}].Distance} < ${LeashLength} || ${Spawn[${globalFollowTarget}].Moving}
 		
-			|- Stop following
+			|- Stop globalFollowing
 			/if (${Stick.Active}) /squelch /stick off
-			/varset FollowTarget NULL
-			/varset Following FALSE
+			/varset globalFollowTarget NULL
+			/varset globalFollowing FALSE
 		}
 	}
 
@@ -232,9 +232,9 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramEvent)
 				/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -| I have arrived at the specified target.
 			}
 			
-			|- If I'm following, reaquire follow.
-			/if (${Following}) {
-				/if (${moveTo_Name.Equal[${FollowTarget}]}) {
+			|- If I'm globalFollowing, reaquire follow.
+			/if (${globalFollowing}) {
+				/if (${moveTo_Name.Equal[${globalFollowTarget}]}) {
 					/call AcquireFollow
 				} else {
 					/call EVENT_Stop "<${Me.CleanName}> Stop" ${Me.CleanName}
@@ -785,7 +785,7 @@ SUB EVENT_FindItems(paramLine, paramSender, paramEvent)
 
 		/if (${FindItemCount[${ItemToFind}]} || ${FindItemBankCount[${ItemToFind}]} || ${Cursor.Name.Equal[${ItemToFind}]}) {
 			
-			/docommand ${ChatToggle} >>> Found (${Math.Calc[${FindItemCount[${ItemToFind}]} + ${FindItemBankCount[${ItemToFind}]}].Int}) examples of [${ItemToFind}] in the following slots ... <<<
+			/docommand ${ChatToggle} >>> Found (${Math.Calc[${FindItemCount[${ItemToFind}]} + ${FindItemBankCount[${ItemToFind}]}].Int}) examples of [${ItemToFind}] in the globalFollowing slots ... <<<
 			
 		
 			|- Check cursor.
@@ -1111,8 +1111,8 @@ SUB EVENT_medOff(paramLine, paramSender)
 SUB check_MedBreak
 /if (${outerDebug} || ${Debug_Basics}) /echo |- check_MedBreak ==>
 
-	| If I'm following, check distance to follow target
-	/if (${Following} && ${SpawnCount[pc ${FollowTarget}]} && ${Spawn[pc ${FollowTarget}].Distance} > ${LeashLength}  && !${Me.Moving}) {
+	| If I'm globalFollowing, check distance to follow target
+	/if (${globalFollowing} && ${SpawnCount[pc ${globalFollowTarget}]} && ${Spawn[pc ${globalFollowTarget}].Distance} > ${LeashLength}  && !${Me.Moving}) {
 		/call check_Follow
 		/delay 30 ${Me.Moving}
 	}
@@ -1926,9 +1926,9 @@ Sub basics_Setup
 /call INItoVar "${iniGeneral},Debug,Debug Basics (On/Off)" Debug_Basics bool outer
 /if (${outerDebug} || ${Debug_Basics}) /echo |- basics_Setup ==>
 
-	/if (!${Defined[Following]}) /declare Following bool global FALSE
-	/if (!${Defined[FollowTarget]}) /declare FollowTarget string global NULL
-	/if (!${Defined[Followers]}) /declare Followers string global NULL
+	/if (!${Defined[globalFollowing]}) /declare globalFollowing bool global FALSE
+	/if (!${Defined[globalFollowTarget]}) /declare globalFollowTarget string global NULL
+	/if (!${Defined[globalFollowers]}) /declare globalFollowers string global NULL
 
 	/if (!${Defined[consentTargets]}) /declare consentTargets string global ${Me.CleanName}
 

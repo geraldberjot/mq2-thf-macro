@@ -78,29 +78,29 @@ SUB checkGems
 SUB check_Follow
 	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Follow ==>
 
-	/if (${FollowTarget.Equal[${Me.CleanName}]}) {
+	/if (${globalFollowTarget.Equal[${Me.CleanName}]}) {
 		/if (!${spamTimer}) {
 			/declare i int local 1
 			:NextFollower
 			
-				/if (!${SpamTimer_${Followers.Arg[${i},,]}}) {
-					/if (${SpawnCount[pc ${Followers.Arg[${i},,]}]} && !${Spawn[pc ${Followers.Arg[${i},,]} radius ${LeashLength}].ID}) {
-						/popup ${Followers.Arg[${i},,]} has fallen behind.
-						/call createTimer SpamTimer_${Followers.Arg[${i},,]} 100
+				/if (!${SpamTimer_${globalFollowers.Arg[${i},,]}}) {
+					/if (${SpawnCount[pc ${globalFollowers.Arg[${i},,]}]} && !${Spawn[pc ${globalFollowers.Arg[${i},,]} radius ${LeashLength}].ID}) {
+						/popup ${globalFollowers.Arg[${i},,]} has fallen behind.
+						/call createTimer SpamTimer_${globalFollowers.Arg[${i},,]} 100
 						/varset spamTimer 10
 					}
 				}
 
 			/varcalc i ${i} + 1
-			/if (${Followers.Arg[${i},,].Length}) /goto :NextFollower
+			/if (${globalFollowers.Arg[${i},,].Length}) /goto :NextFollower
 		}
 	} else {
 
-		/if (${SpawnCount[pc ${FollowTarget}]} && ${Spawn[pc ${FollowTarget}].Distance} < ${LeashLength} && ${Spawn[pc ${FollowTarget}].LineOfSight}) {
+		/if (${SpawnCount[pc ${globalFollowTarget}]} && ${Spawn[pc ${globalFollowTarget}].Distance} < ${LeashLength} && ${Spawn[pc ${globalFollowTarget}].LineOfSight}) {
 			/if (!${Stick.Active}) {
 				/call AcquireFollow
 			}
-			/if (${Me.FeetWet}) /squelch /face fast ${FollowTarget}
+			/if (${Me.FeetWet}) /squelch /face fast ${globalFollowTarget}
 		}
 	}
 
@@ -116,22 +116,21 @@ SUB check_Follow
 |- Sets idle=TRUE if you're in a safeZone, or when you have been inactive for longer than the idleInterval.			-|
 |--------------------------------------------------------------------------------------------------------------------|
 SUB check_Idle
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Idle ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Idle ==>
 	
 	| Check to see if I have been active recently.  If so, set Idle false, and update the idleTimer	
 	/if (${activeTimer} || ${combatTimer}) {
 		/varset idleTimer ${idleInterval}m
 		/if (${idle}) /varset idle FALSE
 	} else {
-	
 		| If I haven't been active, and the idleTimer is spent, set idle TRUE.
 		/if (!${idle} && !${idleTimer}) /varset idle TRUE
 	}
 	
-/if (${outerDebug}) {
-	/echo idleTimer = [${idleTimer}] || idle = [${idle}]
-	/echo <== check_Idle -|
-}
+	/if (${outerDebug}) {
+		/echo idleTimer = [${idleTimer}] || idle = [${idle}]
+		/echo <== check_Idle -|
+	}
 /RETURN
 
 
@@ -384,13 +383,12 @@ SUB check_Combat
 	| Check NetBots to see if anyone is in combat.
 	/declare i int local
 	/for i 1 to ${NetBots.Counts}
-	
-	/if (${SpawnCount[pc ${NetBots.Client.Arg[${i}, ]}]} && ${Spawn[pc ${NetBots.Client.Arg[${i}, ]}].Distance} < ${MaxResponseDist} && ${NetBots[${NetBots.Client.Arg[${i}, ]}].Attacking} || ${Me.Combat} || ${outerAssisting}) {
-		/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Combat -| ${NetBots[${NetBots.Client.Arg[${i}, ]}]} is attacking, setting combatTimer
-		
-		| Update macro timers.
-		/varset combatTimer ${combatDelay}
-	}
+		/if (${SpawnCount[pc ${NetBots.Client.Arg[${i}, ]}]} && ${Spawn[pc ${NetBots.Client.Arg[${i}, ]}].Distance} < ${MaxResponseDist} && ${NetBots[${NetBots.Client.Arg[${i}, ]}].Attacking} || ${Me.Combat} || ${outerAssisting}) {
+			/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Combat -| ${NetBots[${NetBots.Client.Arg[${i}, ]}]} is attacking, setting combatTimer
+
+			| Update macro timers.
+			/varset combatTimer ${combatDelay}
+		}
 	/if (!${combatTimer}) /next i
 
 /RETURN

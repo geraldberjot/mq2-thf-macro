@@ -9,11 +9,13 @@
 #include thf_includes\wait4Rez.inc
 #include thf_includes\sub.inc
 #include thf_includes\events.inc
+#include thf_includes\MQ2Cast_Spell_Routines.inc
 
 #include thf_includes\Alerts.inc
 #include thf_includes\Assists.inc
 #include thf_includes\Background.inc
 #include thf_includes\Basics.inc
+#include thf_includes\Heals.inc
 #include thf_includes\Utilities.inc
 
 #include thf_includes\class_Bard.inc
