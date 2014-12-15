@@ -11,7 +11,7 @@ SUB Main
 	/echo First make sure EQBCServer.exe has been started.
 	/echo it is located in your regular Macroquest folder. 
 	/echo Then login to your MQEmulator.net gold account with 
-	/echo the following command:
+	/echo the globalFollowing command:
 	/echo 
 	/echo -     /login <forum username> <forum password>
 	/echo 
