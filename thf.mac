@@ -1,5 +1,7 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#turbo 40
+#TURBO 40
+
+#DEFINE /channel /chat ${channelNumber}
 
 #EVENT	NoHold					"Your spell did not take hold."
 #EVENT	Tell					"#1# tells you, '#2#'"
@@ -19,7 +21,7 @@
 #EVENT	Follow					"#1# tells Team:#2#, 'Follow #3#'"
 #EVENT	Zone					"You have entered #*#"
 
-#include thf_includes\Setup.inc
+#INCLUDE thf_includes\Setup.inc
 
 SUB Main
 	/declare iniHail 	string 	outer "thf_inis\Hail.ini"
@@ -56,7 +58,7 @@ SUB Main
 				| Check LifeSupport
 				/if (${lifeSupport.Size} && ${Me.PctHPs} < 100) /call check_lifeSupport
 				| Check Instant buffs
-				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call buffInstants
+				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_BuffInstants
 			}
 		} else {
 			/chat ${channelNumber} I have something on cursor !

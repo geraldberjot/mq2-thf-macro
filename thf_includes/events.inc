@@ -1,4 +1,4 @@
-| v2.1
+|- v2.1
 
 SUB EVENT_Chat(string ChatType, string Sender, string ChatText)
 	/echo ${ChatType}, ${Sender}, ${ChatText}
@@ -650,11 +650,11 @@ SUB EVENT_Hail(String line, String Cible)
 	/RETURN
 
 SUB EVENT_Task(String line, String Tache)
-	/chat ${channelNumber} ${myMain} ${line}
+	/channel ${myMain} ${line}
 /RETURN
 
 SUB EVENT_Assign(String line, String Tache)
-	/chat ${channelNumber} ${myMain} ${line}
+	/channel ${myMain} ${line}
 /RETURN
 
 SUB EVENT_Tell(line, string from, string Msg)
@@ -671,12 +671,12 @@ SUB EVENT_Tell(line, string from, string Msg)
 		}
 	} else {
 		/if (${Me.CleanName.NotEqual[${myMain}]}) {
-			/chat ${channelNumber} ${line}
+			/channel ${line}
 		}
 	}
 /RETURN
 
-| "#1# tells Team:#2#, 'Follow #3#'"
+|- "#1# tells Team:#2#, 'Follow #3#'"
 SUB EVENT_Follow(String line, String from, String channelNumber, String who)
 	/declare toonName string local
 	/call cleanToonName ${from}

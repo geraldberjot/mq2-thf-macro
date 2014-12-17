@@ -5,40 +5,42 @@
 |- Contains setup functions for thf.mac
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 
-#include thf_includes\ninjadvloot.inc
-#include thf_includes\wait4Rez.inc
-#include thf_includes\sub.inc
-#include thf_includes\events.inc
-#include thf_includes\MQ2Cast_Spell_Routines.inc
+#INCLUDE thf_includes\ninjadvloot.inc
+#INCLUDE thf_includes\wait4Rez.inc
+#INCLUDE thf_includes\sub.inc
+#INCLUDE thf_includes\events.inc
+#INCLUDE thf_includes\MQ2Cast_Spell_Routines.inc
 
-#include thf_includes\Alerts.inc
-#include thf_includes\Assists.inc
-#include thf_includes\Background.inc
-#include thf_includes\Basics.inc
-#include thf_includes\Heals.inc
-#include thf_includes\Utilities.inc
+#INCLUDE thf_includes\Alerts.inc
+#INCLUDE thf_includes\Assists.inc
+#INCLUDE thf_includes\Background.inc
+#INCLUDE thf_includes\Basics.inc
+#INCLUDE thf_includes\BuffCheck.inc
+#INCLUDE thf_includes\Casting.inc
+#INCLUDE thf_includes\Heals.inc
+#INCLUDE thf_includes\Utilities.inc
 
-#include thf_includes\class_Bard.inc
-#include thf_includes\class_Beastlord.inc
-#include thf_includes\class_Berserker.inc
-#include thf_includes\class_Cleric.inc
-#include thf_includes\class_Druid.inc
-#include thf_includes\class_Enchanter.inc
-#include thf_includes\class_Magician.inc
-#include thf_includes\class_Monk.inc
-#include thf_includes\class_Necromancer.inc
-#include thf_includes\class_Paladin.inc
-#include thf_includes\class_Ranger.inc
-#include thf_includes\class_Rogue.inc
-#include thf_includes\class_ShadowKnight.inc
-#include thf_includes\class_Shaman.inc
-#include thf_includes\class_Warrior.inc
-#include thf_includes\class_Wizard.inc
+#INCLUDE thf_includes\class_Bard.inc
+#INCLUDE thf_includes\class_Beastlord.inc
+#INCLUDE thf_includes\class_Berserker.inc
+#INCLUDE thf_includes\class_Cleric.inc
+#INCLUDE thf_includes\class_Druid.inc
+#INCLUDE thf_includes\class_Enchanter.inc
+#INCLUDE thf_includes\class_Magician.inc
+#INCLUDE thf_includes\class_Monk.inc
+#INCLUDE thf_includes\class_Necromancer.inc
+#INCLUDE thf_includes\class_Paladin.inc
+#INCLUDE thf_includes\class_Ranger.inc
+#INCLUDE thf_includes\class_Rogue.inc
+#INCLUDE thf_includes\class_ShadowKnight.inc
+#INCLUDE thf_includes\class_Shaman.inc
+#INCLUDE thf_includes\class_Warrior.inc
+#INCLUDE thf_includes\class_Wizard.inc
 
 SUB thfSetup(bool debug)
 	/if (${outerDebug}) /echo |- thfSetup ==>
 
-	|-- Debug
+	|- Debug
 	/declare outerDebug bool outer FALSE
 	/if (${Bool[${debug}]}) /varset outerDebug TRUE
 
@@ -234,7 +236,7 @@ SUB EVENT_UpdateAliases()
 	/echo (WARNING: Your clients will lock up for a few moments.  Stand fast, friend...)
 	/echo Aliases may not work properly until you restart MQ2 on ALL clients.
 	
-	| Core aliases
+	|- Core aliases
 	/squelch /alias /updateAliases /echo Update macro aliases
 	/squelch /alias /makeCharIni /echo Make Character Ini
 	/squelch /alias /makeSettingsIni /echo Make General Settings Ini
@@ -342,6 +344,6 @@ SUB checkPlugins()
 	|- Check MQ2HUD.
 	/if (!${Plugin[mq2hud].Name.Length}) /plugin MQ2HUD	
 	
-	| <== REQUIRED PLUGINS
+	|- <== REQUIRED PLUGINS
 /RETURN
 

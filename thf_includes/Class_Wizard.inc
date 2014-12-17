@@ -13,8 +13,8 @@
 SUB check_Harvest
 
 	/if (${autoHarvest} && ${Me.PctMana} < 70 && ${Me.PctHPs} > 35) {
-		| AltAbility
-		/if (${Me.PctMana} < 65 && ${Me.AltAbilityReady[Harvest of Druzzil]}) /call e3_Cast 0 "Harvest of Druzzil"
+		|- AltAbility
+		/if (${Me.PctMana} < 65 && ${Me.AltAbilityReady[Harvest of Druzzil]}) /call thf_Casting 0 "Harvest of Druzzil"
 
 		/if (!${ActionTaken}) {
 		
@@ -24,7 +24,7 @@ SUB check_Harvest
 			/for i 1 to ${harvestSpells.Size}
 			
 				/varset castName ${harvestSpells[${i}].Arg[1,/]}
-				/call e3_Cast 0 "${harvestSpells[${i}]}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
+				/call thf_Casting 0 "${harvestSpells[${i}]}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
 
 			/if (!${ActionTaken}) /next i
 		}
@@ -41,9 +41,9 @@ SUB WIZ_Setup
 	
 	/call iniToVar "${iniToon},Wizard,Evac Spell" Evac_Spell string outer
 	/call iniToVar "${iniToon},Wizard,Auto-Harvest (On/Off)" autoHarvest bool outer
-	/call IniToArray "${iniToon},Wizard,Harvest#" harvestSpells
+	/call iniToArray "${iniToon},Wizard,Harvest#" harvestSpells
 	
-	| Look for a familiar to cast
+	|- Look for a familiar to cast
 	/if (${Defined[SelfBuffs]}) {
 		/for i 1 to ${SelfBuffs.Size}
 			

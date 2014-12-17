@@ -17,11 +17,11 @@ SUB check_Yaulp
 
 		/declare castName string local ${yaulpSpell.Arg[1,/]}
 
-		| Auto-yaulp spell
+		|- Auto-yaulp spell
 		/if (!${Bool[${Me.Buff[${castName}]}]} && ${Me.PctMana} < 95) {
 			/if (${Target.ID}) /declare tempTarget int local ${Target.ID}
 			/squelch /target clear
-			/call e3_Cast 0 "${yaulpSpell}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
+			/call thf_Casting 0 "${yaulpSpell}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
 			/if (${tempTarget}) /call TrueTarget ${tempTarget}
 		}
 	}
@@ -45,9 +45,9 @@ SUB check_DivineArb
 					
 					/if (${NetBots[${Group.Member[${i}]}].PctHPs}<${DivineArb_Pct}) {
 						/if (${FindItemCount[Ancient Shield of the Divine]} && !${FindItem[Ancient Shield of the Divine].Timer} && !${itemTimer_${FindItem[=Ancient Shield of the Divine].ID}}) {
-							/call e3_Cast ${Me.ID} "Ancient Shield of the Divine"
+							/call thf_Casting ${Me.ID} "Ancient Shield of the Divine"
 						} else /if (${Me.AltAbilityReady[Divine Arbitration]}) {
-							/call e3_Cast ${Me.ID} "Divine Arbitration"
+							/call thf_Casting ${Me.ID} "Divine Arbitration"
 						}
 					}
 				}
@@ -69,7 +69,7 @@ SUB check_celestialRegen
 		/declare averageHP int local
 		/declare i int local
 		
-		| Count group members in zone
+		|- Count group members in zone
 		/for i 0 to ${Group}
 			
 			/if (${SpawnCount[pc ${Group.Member[${i}]}]}) {
@@ -81,7 +81,7 @@ SUB check_celestialRegen
 		
 		/if (${groupSize}) {
 			/varcalc averageHP ${averageHP} / ${groupSize}
-			/if (${averageHP} < ${celestialRegen_Pct}) /call e3_Cast ${Me.ID} "Celestial Regeneration"
+			/if (${averageHP} < ${celestialRegen_Pct}) /call thf_Casting ${Me.ID} "Celestial Regeneration"
 		}
 	}
 
@@ -117,25 +117,25 @@ SUB EVENT_Rez(string line, string ChatSender)
 		/if (${Select[${Me.Race},High Elf]}) /em pops a toot!
 	 
 		/if (${FindItem[Water Sprinkler of Nem Ankh].ID}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Water Sprinkler of Nem Ankh"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Water Sprinkler of Nem Ankh"
 		} else /if (${Me.Book[Reviviscence]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Reviviscence/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reviviscence/giveuptimer|45s"
 		} else /if (${Me.Book[Ressurection]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Resurrection/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Resurrection/giveuptimer|45s"
 		} else /if (${Me.Book[Restoration]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Restoration/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Restoration/giveuptimer|45s"
 		} else /if (${Me.Book[Resuscitate]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Resuscitate/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Resuscitate/giveuptimer|45s"
 		} else /if (${Me.Book[Renewal]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Renewal/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Renewal/giveuptimer|45s"
 		} else /if (${Me.Book[Revive]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Revive/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Revive/giveuptimer|45s"
 		} else /if (${Me.Book[Reparation]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Reparation/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reparation/giveuptimer|45s"
 		} else /if (${Me.Book[Reconstitution]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Reconstitution/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reconstitution/giveuptimer|45s"
 		} else /if (${Me.Book[Reanimation]}) {
-			/call e3_Cast ${Spawn[${ChatSender}'s].ID} "Reanimation/giveuptimer|45s"
+			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reanimation/giveuptimer|45s"
 		}
 	} else /if (!${Spawn[${ChatSender}'s].ID}) {
 		/tell ${ChatSender} I don't see any of your corpses in ${Zone}.
@@ -172,7 +172,7 @@ SUB EVENT_AE_Rez
 			
 			/if (!${playerName.Find[_]}) {
 			
-				| Check if the corpse is rezzable
+				|- Check if the corpse is rezzable
 				/call TrueTarget ${corpseID}
 				/consider
 				
@@ -209,25 +209,25 @@ SUB EVENT_AE_Rez
 						/tell ${playerName} Wait4Rez
 
 						/if (${FindItem[Water Sprinkler of Nem Ankh].ID}) {
-							/call e3_Cast ${corpseID} "Water Sprinkler of Nem Ankh" item
+							/call thf_Casting ${corpseID} "Water Sprinkler of Nem Ankh" item
 						} else /if (${Me.Book[Reviviscence]}) {
-							/call e3_Cast ${corpseID} "Reviviscence" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Reviviscence" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Ressurection]}) {
-							/call e3_Cast ${corpseID} "Ressurection" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Ressurection" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Restoration]}) {
-							/call e3_Cast ${corpseID} "Restoration" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Restoration" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Resuscitate]}) {
-							/call e3_Cast ${corpseID} "Resuscitate" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Resuscitate" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Renewal]}) {
-							/call e3_Cast ${corpseID} "Renewal" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Renewal" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Revive]}) {
-							/call e3_Cast ${corpseID} "Revive" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Revive" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Reparation]}) {
-							/call e3_Cast ${corpseID} "Reparation" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Reparation" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Reconstitution]}) {
-							/call e3_Cast ${corpseID} "Reconstitution" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Reconstitution" Gem${DefaultGem} 45s
 						} else /if (${Me.Book[Reanimation]}) {
-							/call e3_Cast ${corpseID} "Reanimation" Gem${DefaultGem} 45s
+							/call thf_Casting ${corpseID} "Reanimation" Gem${DefaultGem} 45s
 						}
 					}
 				}
@@ -238,7 +238,7 @@ SUB EVENT_AE_Rez
 		/deletevar lastChecked
 		/deletevar rezzable
 		
-		/chat ${channelNumber} All viable corpses nearby, have been ressurected.
+		/channel All viable corpses nearby, have been ressurected.
 	}
 
 /if (${outerDebug} || ${outerDebug_Basics}) /echo <== EVENT_AE_Rez -|
@@ -288,7 +288,7 @@ SUB CLR_checkBackgroundEvents
 SUB CLR_MacroSettings
 	/if (${outerDebug}) /echo |- CLR_MacroSettings ==>
 	
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},CLR Functions,CLR Function#1" "check_DivineArb" 1
 	/call writeToIni "${iniTHF},CLR Functions,CLR Function#2" "check_Yaulp" 1
 	/call writeToIni "${iniTHF},CLR Functions,CLR Function#3" "check_celestialRegen" 1

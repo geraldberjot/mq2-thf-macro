@@ -13,7 +13,7 @@
 SUB SHD_Setup
 /if (${outerDebug}) /echo |- SHD_Setup ==>
 
-	/if (${Ini[${iniToon},${Me.Class},LifeTap#1].Length}) /call IniToArray "${iniToon},${Me.Class},LifeTap#" lifeTaps
+	/if (${Ini[${iniToon},${Me.Class},LifeTap#1].Length}) /call iniToArray "${iniToon},${Me.Class},LifeTap#" lifeTaps
 
 /if (${outerDebug}) /echo <== SHD_Setup -|
 /RETURN
@@ -47,7 +47,7 @@ SUB SHD_CharacterSettings
 SUB SHD_Aliases
 /if (${outerDebug}) /echo |- SHD_Aliases ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},SHD Functions,SHD Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},SHD Functions,SHD Function#2" "check_lifeTap" 1
 	/call writeToIni "${iniTHF},SHD Functions,SHD Function#3" "check_Debuffs" 1

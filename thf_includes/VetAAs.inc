@@ -12,13 +12,13 @@
 SUB EVENT_Lessons(line, ChatSender)
 /if (${Debug}) /echo |- EVENT_Lessons ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Lesson of the Devoted]}) {
 			/docommand ${ChatToggle} Lesson of the Devoted is not ready.
 		} else {
@@ -33,7 +33,7 @@ SUB EVENT_Lessons(line, ChatSender)
 				/doability Hide
 			}
 			
-			/call e3_Cast ${Me.ID} "Lesson of the Devoted"
+			/call thf_Casting ${Me.ID} "Lesson of the Devoted"
 
 			/if (${returnTwist}) {
 				/timed 70 /squelch /twist start
@@ -61,13 +61,13 @@ SUB EVENT_Lessons(line, ChatSender)
 SUB EVENT_Infusion(line, ChatSender, eventParams)
 /if (${Debug}) /echo |- EVENT_Infusion ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Infusion of the Faithful]}) {
 			/docommand ${ChatToggle} Infusion of the Faithful is not ready.
 		} else {
@@ -82,7 +82,7 @@ SUB EVENT_Infusion(line, ChatSender, eventParams)
 				/doability Hide
 			}
 			
-			/call e3_Cast ${Me.ID} "Infusion of the Faithful"
+			/call thf_Casting ${Me.ID} "Infusion of the Faithful"
 
 			/if (${returnTwist}) {
 				/timed 70 /squelch /twist start
@@ -96,9 +96,9 @@ SUB EVENT_Infusion(line, ChatSender, eventParams)
 
 
 
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Uses 'Staunch Recovery', on all bots who are able.	-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Staunch "[#1#] Staunch Recovery"
 #EVENT Staunch "<#1#> Staunch Recovery"
 #EVENT Staunch "#1# tells you, 'Staunch Recovery'"
@@ -110,13 +110,13 @@ SUB EVENT_Infusion(line, ChatSender, eventParams)
 SUB EVENT_Staunch(line, ChatSender, eventParams)
 /if (${Debug}) /echo |- EVENT_Staunch ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Staunch Recovery]}) {
 			/docommand ${ChatToggle} Staunch Recovery is not ready.
 		} else {
@@ -131,7 +131,7 @@ SUB EVENT_Staunch(line, ChatSender, eventParams)
 				/doability Hide
 			}
 			
-			/call e3_Cast ${Me.ID} "Staunch Recovery"
+			/call thf_Casting ${Me.ID} "Staunch Recovery"
 
 			/if (${returnTwist}) {
 				/timed 70 /squelch /twist start
@@ -145,9 +145,9 @@ SUB EVENT_Staunch(line, ChatSender, eventParams)
 
 
 
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Uses 'Steadfast Servant', on all bots who are able.	-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Servant "[#1#] Steadfast Servant"
 #EVENT Servant "<#1#> Steadfast Servant"
 #EVENT Servant "#1# tells you, 'Steadfast Servant'"
@@ -159,13 +159,13 @@ SUB EVENT_Staunch(line, ChatSender, eventParams)
 SUB EVENT_Servant(line, ChatSender, eventParams)
 /if (${Debug}) /echo |- EVENT_Servant ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Steadfast Servant]}) {
 			/docommand ${ChatToggle} Steadfast Servant is not ready.
 		} else {
@@ -180,7 +180,7 @@ SUB EVENT_Servant(line, ChatSender, eventParams)
 				/doability Hide
 			}
 			
-			/call e3_Cast ${Me.ID} "Steadfast Servant"
+			/call thf_Casting ${Me.ID} "Steadfast Servant"
 
 			/if (${returnTwist}) {
 				/timed 70 /squelch /twist start
@@ -208,13 +208,13 @@ SUB EVENT_Servant(line, ChatSender, eventParams)
 SUB EVENT_Intensity(line, ChatSender, eventParams)
 /if (${Debug}) /echo |- EVENT_Intensity ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Intensity of the Resolute]}) {
 			/docommand ${ChatToggle} Intensity of the Resolute is not ready.
 		} else {
@@ -229,7 +229,7 @@ SUB EVENT_Intensity(line, ChatSender, eventParams)
 				/doability Hide
 			}
 			
-			/call e3_Cast ${Me.ID} "Intensity of the Resolute"
+			/call thf_Casting ${Me.ID} "Intensity of the Resolute"
 
 			/if (${returnTwist}) {
 				/timed 70 /squelch /twist start
@@ -243,9 +243,9 @@ SUB EVENT_Intensity(line, ChatSender, eventParams)
 
 
 
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Uses 'Expedient Recovery', on all bots who are able.	-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT RecoverCorpses "[#1#] Expedient Recovery"
 #EVENT RecoverCorpses "<#1#> Expedient Recovery"
 #EVENT RecoverCorpses "#1# tells you, 'Expedient Recovery'"
@@ -257,13 +257,13 @@ SUB EVENT_Intensity(line, ChatSender, eventParams)
 SUB EVENT_RecoverCorpses(line, ChatSender, eventParams)
 /if (${Debug}) /echo |- EVENT_RecoverCorpses ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Expedient Recovery]}) {
 			/docommand ${ChatToggle} Expedient Recovery is not ready.
 		} else {
@@ -278,7 +278,7 @@ SUB EVENT_RecoverCorpses(line, ChatSender, eventParams)
 				/doability Hide
 			}
 			
-			/call e3_Cast ${Me.ID} "Expedient Recovery"
+			/call thf_Casting ${Me.ID} "Expedient Recovery"
 
 			/if (${returnTwist}) {
 				/timed 70 /squelch /twist start
@@ -308,13 +308,13 @@ SUB EVENT_RecoverCorpses(line, ChatSender, eventParams)
 SUB EVENT_MGB(line, ChatSender, eventParams)
 /if (${Debug}) /echo |- EVENT_MGB ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (${Me.AltAbility[Mass Group Buff]}) {
 			/if (!${Me.AltAbilityReady[Mass Group Buff]}) {
 				/docommand ${ChatToggle} Mass Group Buff is not ready.
@@ -330,7 +330,7 @@ SUB EVENT_MGB(line, ChatSender, eventParams)
 					/doability Hide
 				}
 				
-				/call e3_Cast ${Me.ID} "Mass Group Buff"
+				/call thf_Casting ${Me.ID} "Mass Group Buff"
 
 				/if (${returnTwist}) {
 					/squelch /twist start
@@ -345,9 +345,9 @@ SUB EVENT_MGB(line, ChatSender, eventParams)
 
 
 
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Uses 'Throne of Heroes', on all bots who are able.	-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT GateToLobby "[#1#] Throne of Heroes"
 #EVENT GateToLobby "<#1#> Throne of Heroes"
 #EVENT GateToLobby "#1# tells you, 'Throne of Heroes'"
@@ -359,13 +359,13 @@ SUB EVENT_MGB(line, ChatSender, eventParams)
 SUB EVENT_GateToLobby(line, ChatSender, eventParams)
 /if (${Debug}) /echo |- EVENT_GateToLobby ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 	
-		| -Check AA is ready.
+		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Throne of Heroes]}) {
 			/docommand ${ChatToggle} Throne of Heroes is not ready.
 		} else {
@@ -380,7 +380,7 @@ SUB EVENT_GateToLobby(line, ChatSender, eventParams)
 				/doability Hide
 			}
 			
-			/call e3_Cast 0 "Throne of Heroes"
+			/call thf_Casting 0 "Throne of Heroes"
 
 			/if (${restartTwist}) {
 				/timed 180 /squelch /twist start
@@ -394,7 +394,7 @@ SUB EVENT_GateToLobby(line, ChatSender, eventParams)
 
 
 
-Sub VetAAs_Aliases
+SUB VetAAs_Aliases
 /if (${Debug}) /echo |- VetAAs_Aliases ==>
 
 	/squelch /alias /Lessons /bc Lesson of the Devoted
@@ -412,4 +412,4 @@ Sub VetAAs_Aliases
 	/squelch /alias /throne /bc Throne of Heroes
 
 /if (${Debug}) /echo <== VetAAs_Aliases -|
-/return
+/RETURN

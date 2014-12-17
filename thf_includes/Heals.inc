@@ -5,10 +5,10 @@
 |- Contains heal related functions for thf.mac
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 
-| add group heals
-| add heals for non netbot group members
-| add an event to create an array of non netbot heal targets.
-| Add a list for tank only heals?
+|- add group heals
+|- add heals for non netbot group members
+|- add an event to create an array of non netbot heal targets.
+|- Add a list for tank only heals?
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Heals.inc's mainLoop hook.
@@ -16,30 +16,30 @@
 |- Calls heal functions, as an extention of the main loop.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Heals
-/if (${Debug} || ${Debug_Heals}) /echo |- healLoop  ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- healLoop  ==>
 
-	| Check Group Heal array
+	|- Check Group Heal array
 	/if (${do_GroupHeals}) /call check_groupHeals
 	/if (!${ActionTaken}) {
 		
-		| Check healFunctions array.
+		|- Check healFunctions array.
 		/if (${do_Heals}) /call check_healSpells
 		/if (!${ActionTaken}) {
 		
-			| Check HoT.
+			|- Check HoT.
 			/if (${do_HoTs}) /call check_HoTs
 		}
 	}
 	
-	| If I've healed someone in the last few seconds, set ActionTaken TRUE.  
-	| This creates a stopping point in the mainLoop which prioritizes heals, and all higher functions, for a brief time.
+	|- If I've healed someone in the last few seconds, set ActionTaken TRUE.  
+	|- This creates a stopping point in the mainLoop which prioritizes heals, and all higher functions, for a brief time.
 	/if (${recentHeal_Timer}) /varset ActionTaken TRUE
 
-/if (${Debug} || ${Debug_Heals}) /echo <== healLoop -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== healLoop -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Uses Items, Spells, Abilities, AAs, and Disciplines listed in the [LifeSupport] section of the Character_Ini.
+|- Uses Items, Spells, Abilities, AAs, and Disciplines listed in the [LifeSupport] section of the iniToon.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_lifeSupport
 	/if (${Debug} || ${Debug_Heals}) /echo |- check_lifeSupport ==>
@@ -51,10 +51,10 @@ SUB check_lifeSupport
 	
 	/for i 1 to ${lifeSupport.Size}
 		/varset castName ${lifeSupport[${i}].Arg[1,/]}
-		| get healPct
+		|- get healPct
 		/if (!${lifeSupport[${i}].Find[/healpct|]}) {
 			/echo There is no HealPct listed with, [Life Support#${i}=${lifeSupport[${i}]}]; removing it from my Life Support list. Please review this entry, and restart the macro
-			/chat ${channelNumber} There is no HealPct listed with, [Life Support#${i}=${lifeSupport[${i}]}]; removing it from my Life Support list. Please review this entry, and restart the macro
+			/channel There is no HealPct listed with, [Life Support#${i}=${lifeSupport[${i}]}]; removing it from my Life Support list. Please review this entry, and restart the macro
 		} else {
 			/call argueString HealPct "${lifeSupport[${i}]}"
 			/varset healPct ${Macro.Return}
@@ -65,7 +65,7 @@ SUB check_lifeSupport
 				/doability "${castName}"
 			} else {
 				/if (${Target.ID} && ${Target.ID} != ${Me.ID}) /declare oldTarget int local ${Target.ID} 
-				/call e3_Cast ${Me.ID} "${lifeSupport[${i}]}"
+				/call thf_Casting ${Me.ID} "${lifeSupport[${i}]}"
 			}
 		}
 	/next i
@@ -75,8 +75,9 @@ SUB check_lifeSupport
 	/if (${Debug} || ${Debug_Heals}) /echo <== check_lifeSupport -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_healSpells
 	/if (${Debug} || ${Debug_Heals}) /echo |- check_healSpells ==>	
 
@@ -108,34 +109,35 @@ SUB check_healSpells
 			
 				/if (${NetBots[${healTarget}].PctHPs} && ${NetBots[${healTarget}].PctHPs} < 100) {
 				
-					| this is stupid, and I dont like being forced into using a static array name in the for loops, but when I tried using ${${healSpell_Array}.Size} I got several unexplainable errors.
+					|- this is stupid, and I dont like being forced into using a static array name in the for loops, but when I tried using ${${healSpell_Array}.Size} I got several unexplainable errors.
 					/if (${healSpell_Array.Equal[tankHeals]}) {
 					
 						/for x 1 to ${tankHeals.Size}
 
 							/varset healToCheck ${tankHeals[${x}].Arg[1,/]}
 					
-							| /HealPct Check
+							|- /HealPct Check
 							/if (!${tankHeals[${x}].Find[/HealPct|]}) {
 								/echo There is no /HealPct associated with [${tankHeals[${x}]}].  Please check this entry, and restart the macro.
+								/channel There is no /HealPct associated with [${tankHeals[${x}]}].  Please check this entry, and restart the macro.
 								/call RemoveArrayElement tankHeals "${tankHeals[${x}]}"
 							} else {
 								/call argueString HealPct "${tankHeals[${x}]}"
 								/varset healPct ${Macro.Return}
 							}
 					
-							| Check bot health vs healpct
+							|- Check bot health vs healpct
 							/if (${NetBots[${healTarget}].PctHPs} < ${healPct}) {
 							
-								| ----------------------------------------- Item -----------------------------------------|
+								|- Item
 								/if (${FindItemCount[=${healToCheck}]}) {
 									
-									| Check Timer 
+									|- Check Timer 
 									/if (${FindItem[=${healToCheck}].Timer} || ${itemTimer_${FindItem[=${healToCheck}].ID}}) {
 										/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] is not ready! [${If[${FindItem[=${healToCheck}].Timer},${FindItem[=${healToCheck}].Timer} ticks,${Math.Calc[${itemTimer_${FindItem[=${healToCheck}].ID}}/10].Int} sec]}] until this item is available.
 									} else {
 										
-										| Check Range 
+										|- Check Range 
 										/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${FindItem[=${healToCheck}].Spell}].MyRange}) {
 											/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 										} else {
@@ -146,15 +148,15 @@ SUB check_healSpells
 										}
 									}
 									
-								| ----------------------------------------- Alt Ability -----------------------------------------|
+								|- Alt Ability
 								} else /if (${Me.AltAbility[${healToCheck}]}) {
 									
-									| Check Timer 
+									|- Check Timer 
 									/if (!${Me.AltAbilityReady[${healToCheck}]} || ${altTimer_${Me.AltAbility[${nukeName}].ID}}) {
 										/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] wont be ready for another [${altTimer_${Me.AltAbility[${healToCheck}].ID}}] seconds!
 									} else {
 										
-										| Check Range 
+										|- Check Range 
 										/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${Me.AltAbility[${healToCheck}].Spell}].MyRange}) {
 											/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 										} else {
@@ -165,15 +167,15 @@ SUB check_healSpells
 										}
 									}
 									
-								| ----------------------------------------- Spell -----------------------------------------|	
+								|- Spell
 								} else /if (${Me.Book[${healToCheck}]}) {
 									
-									| Check mana 
+									|- Check mana 
 									/if (${Me.CurrentMana[${healToCheck}]} < ${Spell[${healToCheck}].Mana}) {
 										/if (${Debug} || ${Debug_Heals}) /echo I don't have enough mana to cast [${healToCheck}].
 									} else {
 										
-										| Check Range 
+										|- Check Range 
 										/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${healToCheck}].MyRange}) {
 											/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 										} else {
@@ -194,27 +196,28 @@ SUB check_healSpells
 							
 							/varset healToCheck ${patchHeals[${x}].Arg[1,/]}
 					
-							| /HealPct Check
+							|- /HealPct Check
 							/if (!${patchHeals[${x}].Find[/HealPct|]}) {
 								/echo There is no /HealPct associated with [${patchHeals[${x}]}].  Please check this entry, and restart the macro.
+								/channel There is no /HealPct associated with [${patchHeals[${x}]}].  Please check this entry, and restart the macro.
 								/call RemoveArrayElement patchHeals "${patchHeals[${x}]}"
 							} else {
 								/call argueString HealPct "${patchHeals[${x}]}"
 								/varset healPct ${Macro.Return}
 							}
 					
-							| Check bot health vs healpct
+							|- Check bot health vs healpct
 							/if (${NetBots[${healTarget}].PctHPs} < ${healPct}) {
 							
-								| ----------------------------------------- Item -----------------------------------------|
+								|- Item
 								/if (${FindItemCount[=${healToCheck}]}) {
 									
-									| Check Timer 
+									|- Check Timer 
 									/if (${FindItem[=${healToCheck}].Timer} || ${itemTimer_${FindItem[=${healToCheck}].ID}}) {
 										/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] is not ready! [${If[${FindItem[=${healToCheck}].Timer},${FindItem[=${healToCheck}].Timer} ticks,${Math.Calc[${itemTimer_${FindItem[=${healToCheck}].ID}}/10].Int} sec]}] until this item is available.
 									} else {
 										
-										| Check Range 
+										|- Check Range 
 										/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${FindItem[=${healToCheck}].Spell}].MyRange}) {
 											/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 										} else {
@@ -225,15 +228,15 @@ SUB check_healSpells
 										}
 									}
 									
-								| ----------------------------------------- Alt Ability -----------------------------------------|
+								|- Alt Ability
 								} else /if (${Me.AltAbility[${healToCheck}]}) {
 									
-									| Check Timer 
+									|- Check Timer 
 									/if (!${Me.AltAbilityReady[${healToCheck}]} || ${altTimer_${Me.AltAbility[${nukeName}].ID}}) {
 										/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] wont be ready for another [${altTimer_${Me.AltAbility[${healToCheck}].ID}}] seconds!
 									} else {
 										
-										| Check Range 
+										|- Check Range 
 										/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${Me.AltAbility[${healToCheck}].Spell}].MyRange}) {
 											/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 										} else {
@@ -244,15 +247,15 @@ SUB check_healSpells
 										}
 									}
 									
-								| ----------------------------------------- Spell -----------------------------------------|	
+								|- Spell
 								} else /if (${Me.Book[${healToCheck}]}) {
 									
-									| Check mana 
+									|- Check mana 
 									/if (${Me.CurrentMana[${healToCheck}]} < ${Spell[${healToCheck}].Mana}) {
 										/if (${Debug} || ${Debug_Heals}) /echo I don't have enough mana to cast [${healToCheck}].
 									} else {
 										
-										| Check Range 
+										|- Check Range 
 										/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${healToCheck}].MyRange}) {
 											/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 										} else {
@@ -269,10 +272,10 @@ SUB check_healSpells
 		
 					}
 					
-					| If I have a heal to cast, cast it
+					|- If I have a heal to cast, cast it
 					/if (${Bool[${healToUse}]}) {
 						/if (${Debug} || ${Debug_Heals}) /echo Attempting to cast [${healToUse}] on [${healTarget} ${NetBots[${healTarget}].PctHPs}]
-						/call e3_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|Heal_CastingChecks"
+						/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|Heal_CastingChecks"
 						/varset recentHeal_Timer 20
 					}
 				}
@@ -281,18 +284,16 @@ SUB check_healSpells
 	
 	/if (!${ActionTaken}) /next i
 
-/if (${Debug} || ${Debug_Heals}) /echo <== check_healSpells -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== check_healSpells -|
 /RETURN
 
-
-
-|----
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- check_tanks
-|-----
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Find the tank to be healed, and passes the name to determineHeal function.
-|---
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_tanks
-/if (${Debug} || ${Debug_Heals}) /echo |- check_tanks ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- check_tanks ==>
 
 	/declare currentTank string local NULL
 	/declare healSpell_Range int local ${If[${Select[${Me.Class.ShortName},CLR,PAL]},100,200]}
@@ -304,18 +305,16 @@ SUB check_tanks
 
 	/if (!${Bool[${currentTank}]}) /next i
 	
-/if (${Debug} || ${Debug_Heals}) /echo <== check_tanks -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== check_tanks -|
 /RETURN ${currentTank}
 
-
-
-|------------------------------------------------|
-|- check_PriorityTargets						-|
-|------------------------------------------------|
-|- Checks NetBots listed as PriorityTargets.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- check_PriorityTargets
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks NetBots listed as PriorityTargets.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_importantBots
-/if (${Debug} || ${Debug_Heals}) /echo |- check_ImportantBots ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- check_ImportantBots ==>
 
 	/declare currentTarget string local NULL
 	/declare healSpell_Range int local ${If[${Select[${Me.Class.ShortName},CLR,PAL]},100,200]}
@@ -329,18 +328,16 @@ SUB check_importantBots
 	
 	/next i
 
-/if (${Debug} || ${Debug_Heals}) /echo <== check_ImportantBots -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== check_ImportantBots -|
 /RETURN ${currentTarget}
 
-
-
-|----------------------------------------------------|
-|- check_NetBots									-|
-|----------------------------------------------------|
-|- Checks all NetBots, and heals whoever is lowest.	-|
-|----------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- check_NetBots
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks all NetBots, and heals whoever is lowest.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_NetBots
-/if (${Debug} || ${Debug_Heals}) /echo |- check_NetBots ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- check_NetBots ==>
 
 	/declare currentTarget string local NULL
 	/declare healSpell_Range int local ${If[${Select[${Me.Class.ShortName},CLR,PAL]},100,200]}
@@ -352,19 +349,17 @@ SUB check_NetBots
 		}
 	/next i
 
-/if (${Debug} || ${Debug_Heals}) /echo <== check_NetBots -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== check_NetBots -|
 /RETURN ${currentTarget}
 
-
-
-|----------------------------------------|
-|- Checks to make while casting heals.	-|
-|----------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks to make while casting heals.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB Heal_CastingChecks
-/if (${Debug} || ${Debug_Heals}) /echo |- Heal_CastingChecks ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- Heal_CastingChecks ==>
 
 	/if (${Debug} && !${debugTimer_Heal_CastingChecks}) {
-		/echo [${Target.CleanName}|${NetBots[${Target.CleanName}].PctHPs} >=90
+		/echo [${Target.CleanName}|${NetBots[${Target.CleanName}].PctHPs} >=90]
 		/call createTimer debugTimer_Heal_CastingChecks 15
 	}
 	
@@ -373,14 +368,12 @@ SUB Heal_CastingChecks
 		/varset castReturn CANCELLED
 	}
 
-/if (${Debug} || ${Debug_Heals}) /echo <== Heal_CastingChecks -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== Heal_CastingChecks -|
 /RETURN
 
-
-
-|----------------|
-|- check_HoT	-|
-|----------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- check_HoT
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_HoTs
 /if (${Debug} || ${Debug_Heals}) /echo |- check_HoTs ==>	
 	
@@ -414,9 +407,10 @@ SUB check_HoTs
 					/varset healToCheck ${hotSpells[${i}].Arg[1,/]}
 					/varset dontOverwrite
 
-					| /HealPct Check
+					|- /HealPct Check
 					/if (!${hotSpells[${i}].Find[/HealPct|]}) {
 						/echo There is no /HealPct associated with [${hotSpells[${i}]}].  Please check this entry, and restart the macro.
+						/channel There is no /HealPct associated with [${hotSpells[${i}]}].  Please check this entry, and restart the macro.
 						/call RemoveArrayElement hotSpells "${hotSpells[${i}]}"
 					} else {
 						/call argueString HealPct "${hotSpells[${i}]}"
@@ -425,15 +419,15 @@ SUB check_HoTs
 					
 					/if (${NetBots[${healTarget}].PctHPs} < ${healPct}) {
 					
-						| ----------------------------------------- Item -----------------------------------------|
+						|- Item
 						/if (${FindItemCount[=${healToCheck}]}) {
 							
-							| Check Timer 
+							|- Check Timer 
 							/if (${FindItem[=${healToCheck}].Timer} || ${itemTimer_${FindItem[=${healToCheck}].ID}}) {
 								/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] is not ready! [${If[${FindItem[=${healToCheck}].Timer},${FindItem[=${healToCheck}].Timer} ticks,${Math.Calc[${itemTimer_${FindItem[=${healToCheck}].ID}}/10].Int} sec]}] until this item is available.
 							} else {
 								
-								| Check Range 
+								|- Check Range 
 								/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${FindItem[=${healToCheck}].Spell}].MyRange}) {
 									/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 								} else {
@@ -444,15 +438,15 @@ SUB check_HoTs
 								}
 							}
 							
-						| ----------------------------------------- Alt Ability -----------------------------------------|
+						|- Alt Ability
 						} else /if (${Me.AltAbility[${healToCheck}]}) {
 							
-							| Check Timer 
+							|- Check Timer 
 							/if (!${Me.AltAbilityReady[${healToCheck}]} || ${altTimer_${Me.AltAbility[${nukeName}].ID}}) {
 								/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] wont be ready for another [${altTimer_${Me.AltAbility[${healToCheck}].ID}}] seconds!
 							} else {
 								
-								| Check Range 
+								|- Check Range 
 								/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${Me.AltAbility[${healToCheck}].Spell}].MyRange}) {
 									/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 								} else {
@@ -463,15 +457,15 @@ SUB check_HoTs
 								}
 							}
 							
-						| ----------------------------------------- Spell -----------------------------------------|	
+						|- Spell
 						} else /if (${Me.Book[${healToCheck}]}) {
 							
-							| Check mana 
+							|- Check mana 
 							/if (${Me.CurrentMana[${healToCheck}]} < ${Spell[${healToCheck}].Mana}) {
 								/if (${Debug} || ${Debug_Heals}) /echo I don't have enough mana to cast [${healToCheck}].
 							} else {
 								
-								| Check Range 
+								|- Check Range 
 								/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${healToCheck}].MyRange}) {
 									/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 								} else {
@@ -486,36 +480,36 @@ SUB check_HoTs
 				
 				/next i
 				
-				| cast heal
+				|- cast heal
 				/if (${Bool[${healToUse}]}) {
 				
-					| Create a list of the healTargets Buffs, replacing the spaces with commas to be used in a Select
+					|- Create a list of the healTargets Buffs, replacing the spaces with commas to be used in a Select
 					/varset bot_BuffList ${NetBots[${healTarget}].ShortBuff.Replace[ ,,]}${NetBots[${healTarget}].Buff.Replace[ ,,]}
 
-					| Use Select to search for the ID if the spell you want to cast, in the list of NetBot buffs.
+					|- Use Select to search for the ID if the spell you want to cast, in the list of NetBot buffs.
 					/if (${Select[${Spell[${healToUse.Arg[1,/]}].ID},${bot_BuffList}]}) {
 						/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] already has [${healToUse.Arg[1,/]}], waiting to cast.
 					} else {
 					
-						| Check for spells you dont want to overwrite
+						|- Check for spells you dont want to overwrite
 						/if (${healToUse.Find[/DontOverwrite|]}) {
 							/call argueString DontOverwrite "${healToUse}"
 							/varset dontOverwrite ${Macro.Return}
 						}
 						
-						| Check for spells you dont want to overwrite
+						|- Check for spells you dont want to overwrite
 						/if (${healToUse.Find[/CheckFor|]}) {
 							/call argueString CheckFor "${healToUse}"
 							/varset dontOverwrite ${Macro.Return}
 						}
 						
-						| Check for spells you don't want to overwrite
+						|- Check for spells you don't want to overwrite
 						/if (${Select[${Spell[${dontOverwrite}].ID},${bot_BuffList}]}) {
 							/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] already has [${dontOverwrite}], waiting to cast.
 						} else {
 						
-							| Cast the HoT
-							/call e3_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_CastingChecks"
+							|- Cast the HoT
+							/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_CastingChecks"
 							/varset recentHeal_Timer 30
 						}
 					}
@@ -525,16 +519,14 @@ SUB check_HoTs
 
 	/if (!${ActionTaken}) /next x
 
-/if (${Debug} || ${Debug_Heals}) /echo <== check_HoTs -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== check_HoTs -|
 /RETURN
 
-
-
-|--------------------------------------------|
-|- Checks to make while casting HoT spells.	-|
-|--------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks to make while casting HoT spells.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB HoT_CastingChecks
-/if (${Debug} || ${Debug_Heals}) /echo |- HoT_CastingChecks ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- HoT_CastingChecks ==>
 	
 	/if (${Select[${Me.Casting.ID},${NetBots[${Target.CleanName}].ShortBuff.Replace[ ,,]}]} || ${Select[${Me.Casting.ID},${NetBots[${Target.CleanName}].Buff.Replace[ ,,]}]} || ${Select[${Spell[${dontOverwrite}].ID},${NetBots[${Target.CleanName}].ShortBuff.Replace[ ,,]}]} || ${Select[${Spell[${dontOverwrite}].ID},${NetBots[${Target.CleanName}].Buff.Replace[ ,,]}]}) {
 		/if (${Debug} || ${Debug_Heals}) /echo [${Target.CleanName}] already has a HoT, canceling
@@ -542,20 +534,18 @@ SUB HoT_CastingChecks
 		/varset castReturn CANCELLED
 	}
 	
-/if (${Debug} || ${Debug_Heals}) /echo <== HoT_CastingChecks -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== HoT_CastingChecks -|
 /RETURN
 
-
-
-|------------------------------
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- check_GroupHeals
-|------------------------------
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Finds the average health of the healers group when groups have more than 3 members.
-|------------------------------
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_groupHeals
-/if (${Debug} || ${Debug_Heals}) /echo |- check_Group ==>	
+	/if (${Debug} || ${Debug_Heals}) /echo |- check_Group ==>	
 
-	| Check that I have a group.
+	|- Check that I have a group.
 	/if (${Group}) {
 	
 		/declare avgGrpHealth int local
@@ -573,46 +563,46 @@ SUB check_groupHeals
 		
 		/declare targetCount int local 
 			
-		| Check range of group members and add their healths together.
+		|- Check range of group members and add their healths together.
 		/for i 0 to ${Group}
-			/if (${Spawn[${Group.Member[${i}]}].Distance} < 70) {
+			/if (${Spawn[${Group.Member[${i}]}].Distance} < 100) {
 				/varcalc targetCount ${targetCount} + 1
 				/varcalc avgGrpHealth ${avgGrpHealth} + ${NetBots[${Group.Member[${i}]}].PctHPs}
 			}
 		/next i
 		
-		| Calculate avgGrpHealth.
+		|- Calculate avgGrpHealth.
 		/varcalc avgGrpHealth ${avgGrpHealth} / ${targetCount}
 		
-		| If Enough group members are in range, check group heals.
+		|- If enough group members are in range, check group heals.
 		/if (${targetCount} > 2 && ${avgGrpHealth} < 100) {
-			
 			/for i 1 to ${groupHeals.Size}
 			
 				/varset healToCheck ${groupHeals[${i}].Arg[1,/]}
 				
-				| /HealPct Check
+				|- /HealPct Check
 				/if (!${groupHeals[${i}].Find[/HealPct|]}) {
 					/echo There is no /HealPct associated with [${groupHeals[${i}]}].  Please check this entry, and restart the macro.
+					/channel There is no /HealPct associated with [${groupHeals[${i}]}].  Please check this entry, and restart the macro.
 					/call RemoveArrayElement groupHeals "${groupHeals[${i}]}"
 				} else {
 					/call argueString HealPct "${groupHeals[${i}]}"
 					/varset healPct ${Macro.Return}
 				}
 			
-				| Check bot health vs healpct
+				|- Check bot health vs healpct
 				
 				/if (${avgGrpHealth} < ${healPct}) {
 				
-					| ----------------------------------------- Item -----------------------------------------|
+					|- Item
 					/if (${FindItemCount[=${healToCheck}]}) {
 						
-						| Check Timer 
+						|- Check Timer 
 						/if (${FindItem[=${healToCheck}].Timer} || ${itemTimer_${FindItem[=${healToCheck}].ID}}) {
 							/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] is not ready! [${If[${FindItem[=${healToCheck}].Timer},${FindItem[=${healToCheck}].Timer} ticks,${Math.Calc[${itemTimer_${FindItem[=${healToCheck}].ID}}/10].Int} sec]}] until this item is available.
 						} else {
 							
-							| Check Range 
+							|- Check Range 
 							/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${FindItem[=${healToCheck}].Spell}].MyRange}) {
 								/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 							} else {
@@ -623,15 +613,15 @@ SUB check_groupHeals
 							}
 						}
 						
-					| ----------------------------------------- Alt Ability -----------------------------------------|
+					|- Alt Ability
 					} else /if (${Me.AltAbility[${healToCheck}]}) {
 						
-						| Check Timer 
+						|- Check Timer 
 						/if (!${Me.AltAbilityReady[${healToCheck}]} || ${altTimer_${Me.AltAbility[${nukeName}].ID}}) {
 							/if (${Debug} || ${Debug_Heals}) /echo [${healToCheck}] wont be ready for another [${altTimer_${Me.AltAbility[${healToCheck}].ID}}] seconds!
 						} else {
 							
-							| Check Range 
+							|- Check Range 
 							/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${Me.AltAbility[${healToCheck}].Spell}].MyRange}) {
 								/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 							} else {
@@ -642,15 +632,15 @@ SUB check_groupHeals
 							}
 						}
 						
-					| ----------------------------------------- Spell -----------------------------------------|	
+					|- Spell
 					} else /if (${Me.Book[${healToCheck}]}) {
 						
-						| Check mana 
+						|- Check mana 
 						/if (${Me.CurrentMana[${healToCheck}]} < ${Spell[${healToCheck}].Mana}) {
 							/if (${Debug} || ${Debug_Heals}) /echo I don't have enough mana to cast [${healToCheck}].
 						} else {
 							
-							| Check Range 
+							|- Check Range 
 							/if (${Spawn[pc ${healTarget}].Distance} > ${Spell[${healToCheck}].MyRange}) {
 								/if (${Debug} || ${Debug_Heals}) /echo [${healTarget}] is out of range for [${healToCheck}].
 							} else {
@@ -664,70 +654,50 @@ SUB check_groupHeals
 				}
 			/next i
 			
-			| If I have a heal to cast, cast it
+			|- If I have a heal to cast, cast it
 			/if (${Bool[${healToUse}]}) {
 				/if (${Debug} || ${Debug_Heals}) /echo Attempting to cast [${healToUse}] on [${healTarget} ${NetBots[${healTarget}].PctHPs}]
-				/call e3_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}"
+				/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}"
 				/varset recentHeal_Timer 20
 			}
 		}
 	}
 
-/if (${Debug} || ${Debug_Heals}) /echo <== check_Group -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== check_Group -|
 /RETURN
 
-
-
-
-
-|** THIS NEEDS TO BE FINISHED
-SUB check_Pets
-/declare i int local
-/for i 1 to ${NetBots.Counts}
-/if (${NetBots[${NetBots.Client[${i}]}].PetID}) {
-	/if (${NetBots[${NetBots.Client[${i}]}].PetHP} < ${PetHeal_Pct} && ${Spawn[${NetBots[${NetBots.Client[${i}]}].PetID}].Distance} < ${Spell[${PetHeal_Spell}].MyRange}) {
-		/if (${Target.ID} != ${NetBots[${NetBots.Client[${i}]}].PetID}) /call TrueTarget ${NetBots[${NetBots.Client[${i}]}].PetID}
-		/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${PetHeal_Spell}].ID}" Gem${PetHeal_Gem} 3s
-		/varset ActionTaken TRUE
-	}
-}
-/next i
-/RETURN
-**|
-
-
-
-|--------------------------------------------------------------------|
-|- setup_Heals														-|
-|--------------------------------------------------------------------|
-|- Imports and validates ini settings from Character Ini,[Heals].	-|
-|--------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- setup_Heals
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Imports and validates ini settings from Character Ini,[Heals].
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB heal_Setup
-/call INItoVar "${advSettings_Ini},Debug,Debug Heals (On/Off)" Debug_Heals bool outer
-/if (${Debug} || ${Debug_Heals}) /echo |- heal_Setup ==>
+	/call iniToVar "${iniGeneral},Debug,Debug Heals (On/Off)" Debug_Heals bool outer
+	/if (${Debug} || ${Debug_Heals}) /echo |- heal_Setup ==>
 
 	/declare recentHeal_Timer timer outer
 
-	| Import settings from Character_Ini > [Life Support]
-	/if (${Ini[${Character_Ini},Life Support,Life Support#1].Length}) /call IniToArray "${Character_Ini},Life Support,Life Support#" lifeSupport
+	|- Import settings from iniToon > [Life Support]
+	|- /call split "${iniTHF},${Me.Class},Functions" functions outer /
+	/if (${Ini[${iniToon},Heals,Life Support].Length}) /call split "${iniToon},Heals,Life Support" lifeSupport outer /
 
-	| Import settings from Character_Ini > [Heals]
-	/if (${Bool[${Ini[${Character_Ini},Heals]}]}) {
-		/if (${Ini[${Character_Ini},Heals,Tank#1].Length})  /call IniToArray "${Character_Ini},Heals,Tank#" tanks
-		/if (${Ini[${Character_Ini},Heals,Important Bot#1].Length})  /call IniToArray "${Character_Ini},Heals,Important Bot#" importantBots
+	|- Import settings from iniToon > [Heals]
+	/if (${Bool[${Ini[${iniToon},Heals]}]}) {
+		/if (${Ini[${iniToon},Heals,Tanks].Length})  /call split "${iniToon},Heals,Tanks" tanks outer /
+		/if (${Ini[${iniToon},Heals,Important Bots].Length})  /call split "${iniToon},Heals,Important Bots" importantBots outer /
 		
-		/if (${Ini[${Character_Ini},Heals,Tank Heal#1].Length})  /call IniToArray "${Character_Ini},Heals,Tank Heal#" tankHeals
-		/if (${Ini[${Character_Ini},Heals,Patch Heal#1].Length})  /call IniToArray "${Character_Ini},Heals,Patch Heal#" patchHeals
-		/if (${Ini[${Character_Ini},Heals,Heal Over Time Spell#1].Length})  /call InitoArray "${Character_Ini},Heals,Heal Over Time Spell#" hotSpells
-		/if (${Ini[${Character_Ini},Heals,Heal Over Time Spell#1].Length})  /call InitoArray "${Character_Ini},Heals,Group Heal#" groupHeals
+		/if (${Ini[${iniToon},Heals,Tank Heals].Length})  /call split "${iniToon},Heals,Tank Heals" tankHeals outer /
+		/if (${Ini[${iniToon},Heals,Patch Heals].Length})  /call split "${iniToon},Heals,Patch Heals" patchHeals outer /
+		/if (${Ini[${iniToon},Heals,Heal Over Time Spells].Length})  /call split "${iniToon},Heals,Heal Over Time Spells" hotSpells outer /
+		/if (${Ini[${iniToon},Heals,Group Heals].Length})  /call split "${iniToon},Heals,Group Heals" groupHeals outer /
 
-		/if (${Ini[${Character_Ini},Heals,Who to Heal].Length})  /call IniToVar "${Character_Ini},Heals,Who to Heal" WhoToHeal string outer
-		/if (${Ini[${Character_Ini},Heals,Who to HoT].Length})  /call IniToVar "${Character_Ini},Heals,Who to HoT" WhoToHoT string outer
+		/if (${Ini[${iniToon},Heals,Who to Heal].Length})  /call iniToVar "${iniToon},Heals,Who to Heal" WhoToHeal string outer
+		/if (${Ini[${iniToon},Heals,Who to HoT].Length})  /call iniToVar "${iniToon},Heals,Who to HoT" WhoToHoT string outer
 	}
 	
 	/declare i int local
 
-	| Convert tank array to a string, to be used in ${Select[x,y]} variables
+	|- Convert tank array to a string, to be used in ${Select[x,y]} variables
 	/if (${Defined[tanks]}) {
 		/declare tankList string outer
 		/for i 1 to ${tanks.Size}
@@ -736,7 +706,7 @@ SUB heal_Setup
 		/if (${Debug} || ${Debug_Heals}) /echo tankList=${tankList}
 	}
 	
-	| Convert WhoToHeal to an array of healFunctions
+	|- Convert WhoToHeal to an array of healFunctions
 	/if (${Defined[WhoToHeal]} && ${Defined[tankHeals]} || ${Defined[WhoToHeal]} && ${Defined[patchHeals]}) {
 		
 		/varset i 1
@@ -759,7 +729,7 @@ SUB heal_Setup
 		/if (${Defined[healFunctions]}) /declare do_Heals bool outer TRUE
 	}
 	
-	| Convert WhoToHoT to an array of healFunctions
+	|- Convert WhoToHoT to an array of healFunctions
 	/if (${Defined[WhoToHoT]} && ${Defined[hotSpells]}) {
 		
 		/varset i 1
@@ -782,64 +752,86 @@ SUB heal_Setup
 	
 	/if (${Defined[groupHeals]}) /declare do_GroupHeals bool outer TRUE
 	
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_Setup -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== heal_Setup -|
 /RETURN
-
-
  
-Sub heal_Background_Events
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB heal_Background_Events
 
-/return
-
-
-
-SUB heal_MacroSettings
-/if (${Debug} || ${Debug_Heals}) /echo |- assist_MacroSettings ==>
-
-	/call WriteToIni "${advSettings_Ini},Debug,Debug Heals (On/Off)"
-
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_MacroSettings -|
 /RETURN
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB heal_MacroSettings
+	/if (${Debug} || ${Debug_Heals}) /echo |- assist_MacroSettings ==>
 
+	/call writeToIni "${iniGeneral},Debug,Debug Heals (On/Off)"
 
+	/if (${Debug} || ${Debug_Heals}) /echo <== heal_MacroSettings -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB heal_CharacterSettings
-/if (${Debug} || ${Debug_Heals}) /echo |- heal_CharacterSettings ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- heal_CharacterSettings ==>
 
-	| LifeSupport entries.
-	/call WriteToIni "${Character_Ini},Life Support,Life Support#1"
+	|- LifeSupport entries.
+	/call writeToIni "${iniToon},Heals,Life Support"
 
-	| If I'm a healer, add e3_Macro_Heals.inc entries.
+	|- If I'm a healer, add Heals.inc entries.
 	/if (${Me.Class.HealerType}) {
-		/call WriteToIni "${Character_Ini},Heals,Tank#1"
-		/call WriteToIni "${Character_Ini},Heals,Important Bot#1"
+		/call writeToIni "${iniToon},Heals,Tanks"
+		/call writeToIni "${iniToon},Heals,Important Bots"
 		
-		/call WriteToIni "${Character_Ini},Heals,Tank Heal#1"
-		/call WriteToIni "${Character_Ini},Heals,Patch Heal#1"
-		/call WriteToIni "${Character_Ini},Heals,Who to Heal" "Tanks/ImportantBots/All"
+		/call writeToIni "${iniToon},Heals,Tank Heals"
+		/call writeToIni "${iniToon},Heals,Patch Heals"
+		/call writeToIni "${iniToon},Heals,Group Heals"
+		/call writeToIni "${iniToon},Heals,Who to Heal" "Tanks/ImportantBots/All"
 		
-		/call WriteToIni "${Character_Ini},Heals,Heal Over Time Spell#1"
-		/call WriteToIni "${Character_Ini},Heals,Who to HoT" "Tanks/ImportantBots/All"
+		/call writeToIni "${iniToon},Heals,Heal Over Time Spells"
+		/call writeToIni "${iniToon},Heals,Who to HoT" "Tanks/ImportantBots/All"
 		
-		/if (${Me.Class.ShortName.Equal[CLR]} || ${Me.Class.ShortName.Equal[PAL]}) /call WriteToIni "${Character_Ini},Heals,Group Heal#1"
 		
-		| /call WriteToIni "${Character_Ini},Heals,Pet Heal Spell"
+		|- /call writeToIni "${iniToon},Heals,Pet Heal Spell"
 		
-		| /if (${Me.Class.ShortName.Equal[CLR]} || ${Me.Class.ShortName.Equal[DRU]}) /call WriteToIni "${Character_Ini},Heals,Join CH-Chain (On/Off)"
+		|- /if (${Me.Class.ShortName.Equal[CLR]} || ${Me.Class.ShortName.Equal[DRU]}) /call writeToIni "${iniToon},Heals,Join CH-Chain (On/Off)"
 	}
 
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_CharacterSettings -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== heal_CharacterSettings -|
 /RETURN
 
-
-
-Sub heal_Aliases
-/if (${Debug} || ${Debug_Heals}) /echo |- heal_Aliases ==>
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB heal_Aliases
+	/if (${Debug} || ${Debug_Heals}) /echo |- heal_Aliases ==>
 
 	/squelch /tankheals /bc -Set- Tank Heals
 	/squelch /patchheals /bc -Set- Patch Heals
 	/squelch /HoTSpells /bc -Set- HoT Spells
 	/squelch /groupheals /bc -Set- Group Heals
 	
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_Aliases -|
-/return
+	/if (${Debug} || ${Debug_Heals}) /echo <== heal_Aliases -|
+/RETURN
+
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|** THIS NEEDS TO BE FINISHED
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB check_Pets
+/declare i int local
+/for i 1 to ${NetBots.Counts}
+/if (${NetBots[${NetBots.Client[${i}]}].PetID}) {
+	/if (${NetBots[${NetBots.Client[${i}]}].PetHP} < ${PetHeal_Pct} && ${Spawn[${NetBots[${NetBots.Client[${i}]}].PetID}].Distance} < ${Spell[${PetHeal_Spell}].MyRange}) {
+		/if (${Target.ID} != ${NetBots[${NetBots.Client[${i}]}].PetID}) /call TrueTarget ${NetBots[${NetBots.Client[${i}]}].PetID}
+		/call thf_Casting ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${PetHeal_Spell}].ID}" Gem${PetHeal_Gem} 3s
+		/varset ActionTaken TRUE
+	}
+}
+/next i
+/RETURN
+**|

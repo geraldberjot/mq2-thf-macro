@@ -15,17 +15,17 @@
 SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 /if (${outerDebug}) /echo |- EVENT_saveMelody ==>
 
-	| If no ChatSender is defined, make one.	
+	|- If no ChatSender is defined, make one.	
 	/if (!${Defined[ChatSender]}) /declare ChatSender string local ${Me.CleanName}
 
-	| If I'm the ChatSender.
+	|- If I'm the ChatSender.
 	/if (${ChatSender.Equal[${Me.CleanName}]}) {
 
 		/declare i int local
 
-		| Check if the melody already exists, and should not be overwritten.
+		|- Check if the melody already exists, and should not be overwritten.
 		/if (${Ini[${iniToon},${melodyName} Melody].Length}) {	
-			/if (${outerDebug}) /echo |- EVENT_saveMelody -| Overwriting [${melodyName}] melody...
+			/if (${outerDebug}) /echo |- EVENT_saveMelody -|- Overwriting [${melodyName}] melody...
 			/for i 1 to 5
 				/if (${Ini[${iniToon},${melodyName} Melody,Song#${i}].Length}) /call writeToIni "${iniToon},${melodyName} Melody,Song#${i}" *PLACEHOLDER 1
 			/next i
@@ -37,7 +37,7 @@ SUB EVENT_saveMelody(line, ChatSender, melodyName, songsToSave)
 	
 		:check_nextSong
 
-		| If the gem number is not recognized
+		|- If the gem number is not recognized
 		/if (!${Int[${songsToSave.Arg[${i}, ]}]} || ${Int[${songsToSave.Arg[${i}, ]}]} < 1 || ${Int[${songsToSave.Arg[${i}, ]}]} > 9) {
 			/if (${songsToSave.Arg[${i}, ].NotEqual[-Overwrite]}) {
 				/echo [${songsToSave.Arg[${i}, ]}] is not a valid gem number.  Please use the globalFollowing syntax when saving melodies, "Save Melody [NAME] [# # # # #] (-Overwrite)".  Ex.  /echo Save Melody Raid 1 2 3 4 5 -Overwrite
@@ -62,17 +62,17 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 	/call amIConcerned ${from} ${Me.CleanName} FALSE
 	/if (${Macro.Return}) {
 		/if (${melodyName.Find[ /]}) /varset melodyName ${melodyName.Arg[1, /]}
-		| If I don't have the melodyName listed in my ini.
+		|- If I don't have the melodyName listed in my ini.
 		/if (!${Ini[${iniToon},${melodyName} Melody,Song#1].Length}) {
 			
-			| If Stop, end, or pause were used, stop the melody.
+			|- If Stop, end, or pause were used, stop the melody.
 			/if (${Select[${melodyName},Stop,End,Pause]}) {
 				/varset playingMelody FALSE
 				/varset songSet
-				/chat ${channelNumber} Ending melody.
+				/channel Ending melody.
 				/twist end
 			} else {
-				/chat ${channelNumber} [${melodyName}] is not a known melody.
+				/channel [${melodyName}] is not a known melody.
 			}
 		} else {
 		
@@ -81,19 +81,19 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 			/declare spellName string local
 			/declare i int local
 			
-			| For 1 to 5 (maximum melody size)
+			|- For 1 to 5 (maximum melody size)
 			/for i 1 to 5
 			
 			/if (${Ini[${iniToon},${melodyName} Melody,Song#${i}].Length} && ${Ini[${iniToon},${melodyName} Melody,Song#${i}].NotEqual[PLACEHOLDER]}) {
 				
 				/varset spellName ${Ini[${iniToon},${melodyName} Melody,Song#${i}].Arg[1,/]}
 				
-				| Check that the song is in my book
+				|- Check that the song is in my book
 				/if (!${Me.Book[${spellName}]}) {	
 					/echo I don't have [${spellName}] in my spellbook, playing the melody without it.
 				} else {
 				
-					| If the song is not memmed, use e3_Casting.inc functions to mem it.
+					|- If the song is not memmed, use thf_Castinging.inc functions to mem it.
 					/if (!${Me.Gem[${spellName}]}) {
 						/call argueString gem "${Ini[${iniToon},${melodyName} Melody,Song#${i}]}"
 						/varset pendingCast ${spellName}
@@ -101,19 +101,19 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 						/call memSpell "${Macro.Return}"
 					}
 					
-					| Update songList with the corresponding gem#
+					|- Update songList with the corresponding gem#
 					/varset songList ${songList} ${Me.Gem[${spellName}]}
 				}
 				/next i
 			}
 			
-			| If I have a songList, start singing the melody
+			|- If I have a songList, start singing the melody
 			/if (${Bool[${songList}]}) {
 				
-				| Twist the newly built songList.
+				|- Twist the newly built songList.
 				/varset playingMelody TRUE
 				/varset songSet ${songList}
-				/chat ${channelNumber} Playing [${melodyName}] melody...
+				/channel Playing [${melodyName}] melody...
 				/twist ${songSet}
 			}
 		}
@@ -144,8 +144,8 @@ SUB BRD_Setup
 	
 	/call iniToVar "${iniToon},Bard,Auto-Melody" autoMelody string outer
 	
-	| Start Auto-Melody at start-up.  Currently disabled to check auto start in checkZone sub.
-	| /if (${Defined[autoMelody]} && !${songSet.Length}) /startmelody ${autoMelody} /only|ME
+	|- Start Auto-Melody at start-up.  Currently disabled to check auto start in check_Zone sub.
+	|- /if (${Defined[autoMelody]} && !${songSet.Length}) /startmelody ${autoMelody} /only|ME
 	
 /if (${outerDebug}) /echo <== BRD_Setup -|
 /RETURN
@@ -157,11 +157,11 @@ SUB BRD_checkBackgroundEvents
 	/doevents saveMelody
 	/doevents startMelody
 	
-	| Check melody
+	|- Check melody
 	/if (${playingMelody} && !${Twist.Twisting} && !${Bool[${Me.Casting}]}) /call restart_Melody
 	
-	| Check Auto-Melody
-	| The call for Auto-Melody is located in e3 Background.inc -> checkZone.  This is so Auto-Melody will only be checked when you zone, or load the macro.
+	|- Check Auto-Melody
+	|- The call for Auto-Melody is located in e3 Background.inc -> check_Zone.  This is so Auto-Melody will only be checked when you zone, or load the macro.
 
 /RETURN
 
@@ -170,7 +170,7 @@ SUB BRD_checkBackgroundEvents
 SUB BRD_MacroSettings
 /if (${outerDebug}) /echo |- BRD_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},BRD Functions,BRD Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},BRD Functions,BRD Function#2" "check_CombatBuffs" 1
 	/call writeToIni "${iniTHF},BRD Functions,BRD Function#3" "check_Buffs" 1

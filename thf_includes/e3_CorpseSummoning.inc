@@ -7,25 +7,25 @@
 
 
 
-#event UseCoprseSummoner "<#1#> Use corpse summoner"
-#event UseCoprseSummoner "<#1#> Use corpse summoner |/|#*#"
-#event UseCoprseSummoner "[#1#] Use corpse summoner"
-#event UseCoprseSummoner "<#1#> Summon Corpse"
-#event UseCoprseSummoner "<#1#> Summon Corpse |/|#*#"
-#event UseCoprseSummoner "[#1#] Summon Corpse"
-#event UseCoprseSummoner "<#1#> Summon Corpses"
-#event UseCoprseSummoner "<#1#> Summon Corpses |/|#*#"
-#event UseCoprseSummoner "[#1#] Summon Corpses"
+#EVENT UseCoprseSummoner "<#1#> Use corpse summoner"
+#EVENT UseCoprseSummoner "<#1#> Use corpse summoner |/|#*#"
+#EVENT UseCoprseSummoner "[#1#] Use corpse summoner"
+#EVENT UseCoprseSummoner "<#1#> Summon Corpse"
+#EVENT UseCoprseSummoner "<#1#> Summon Corpse |/|#*#"
+#EVENT UseCoprseSummoner "[#1#] Summon Corpse"
+#EVENT UseCoprseSummoner "<#1#> Summon Corpses"
+#EVENT UseCoprseSummoner "<#1#> Summon Corpses |/|#*#"
+#EVENT UseCoprseSummoner "[#1#] Summon Corpses"
 SUB event_UseCoprseSummoner(line, ChatSender)
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo |- event_UseCoprseSummoner ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 		
-		| Check to see if you need to summon a corpse
+		|- Check to see if you need to summon a corpse
 		/declare itemCount int local
 		/declare i int local
 		
@@ -39,10 +39,10 @@ SUB event_UseCoprseSummoner(line, ChatSender)
 		}
 		
 		
-		| If I'm in The Guild Lobby.
+		|- If I'm in The Guild Lobby.
 		/if (${Zone.ID} == 344) {
 
-			| Find a starting point
+			|- Find a starting point
 			/declare startingPoint string outer
 			/if (${LineOfSight[400,250:${Me.Loc.Replace[ ,]}]}) {
 				/varset startingPoint 400,250
@@ -56,14 +56,14 @@ SUB event_UseCoprseSummoner(line, ChatSender)
 			
 				/declare GiveUpTimer	int outer 600
 				
-				| Decide which soulstone to use
+				|- Decide which soulstone to use
 				/call find_Soulstone
 				/declare SoulStoneToUse string outer ${Macro.Return.Arg[1,_]}
 				/declare SoulStoneCost string outer ${Macro.Return.Arg[2,_]}
 				
 				/if (${Spawn[${Me}'s].ID}) /goto :lootNow
 			
-				| If I dont have a soulstone, get money to buy one
+				|- If I dont have a soulstone, get money to buy one
 				/if (!${FindItemCount[=${SoulStoneToUse}]}) {
 					/if (${Me.Platinum} < ${SoulStoneCost}) {
 						/if (${Math.Calc[${Me.CashBank} / 1000].Int} > ${SoulStoneCost}) {
@@ -75,14 +75,14 @@ SUB event_UseCoprseSummoner(line, ChatSender)
 					}
 				}
 				
-				| Buy a soulstone
+				|- Buy a soulstone
 				/if (!${FindItemCount[=${SoulStoneToUse}]} && ${Me.Platinum} >= ${SoulStoneCost}) /call buy_SoulStone "${SoulStoneToUse}"
 
-				| Summon Corpse.
+				|- Summon Corpse.
 				/if (${FindItemCount[=${SoulStoneToUse}]}) /call summon_Corpse "${SoulStoneToUse}" 
 				
-				| Loot the corpse
-				/call IniToVar "${genSettings_Ini},Corpse Summoning,Loot After Summoning (On/Off)" PLACEHOLDER bool local
+				|- Loot the corpse
+				/call iniToVar "${genSettings_Ini},Corpse Summoning,Loot After Summoning (On/Off)" PLACEHOLDER bool local
 				:lootNow
 				/if (${Bool[${Macro.Return}]} && ${Spawn[${Me}'s].ID}) /call event_LootNow "PLACEHOLDER" "${Me.CleanName}"
 
@@ -96,7 +96,7 @@ SUB event_UseCoprseSummoner(line, ChatSender)
 			}
 		} else {
 		
-			| in shadowrest
+			|- in shadowrest
 			
 		}
 	}
@@ -158,82 +158,82 @@ SUB find_Soulstone
 SUB withdraw_Plat
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo |- withdraw_Plat ==>
 
-	| Move to the startingPoint
+	|- Move to the startingPoint
 	/call MoveTo -Loc|${startingPoint}
 
-	| Look for the west side banker.
+	|- Look for the west side banker.
 	/if (!${Spawn[npc A Shrewd Banker].LineOfSight}) {
 		/echo I couldn't find a banker.  Move to either the west or east wings of the Guild Lobby, and try again.
 	} else {
 	
-		| Move to the banker.
+		|- Move to the banker.
 		/call MoveTo -SpawnID|${Spawn[npc A Shrewd Banker].ID}
 		
 		/if (${Target.Distance} > 15) {
 			/docommand ${ChatToggle} I failed to move to the banker
 		} else {
 			
-			| Create a retryTimer and set it for 30 seconds.
+			|- Create a retryTimer and set it for 30 seconds.
 			/declare retryTimer timer local ${GiveUpTimer}
 			/declare miscTimer timer local
 			/declare i int local
 			
 			:withdraw_Loop
 			
-			| Target the banker.
+			|- Target the banker.
 			/if (${Target.ID} != ${Spawn[npc A Shrewd Banker].ID}) /call TrueTarget ${Spawn[npc A Shrewd Banker].ID}
 			
-			| Open the bank window.
+			|- Open the bank window.
 			/click right target
 			/delay 10 ${Window[BigBankWnd].Open}
 			
-			| If the bank window has not opened.
+			|- If the bank window has not opened.
 			/if (!${Window[BigBankWnd].Open}) {
 				
-				| If there is still time, retry.
+				|- If there is still time, retry.
 				/if (${retryTimer}) {
 					/goto :withdraw_Loop
 				
-				| Else, announce to user.
+				|- Else, announce to user.
 				} else {
 					/docommand ${ChatToggle} ERROR: Failed to open the bank window.
 				}
 				
-			| Else, if the bank window is open.
+			|- Else, if the bank window is open.
 			} else {
 			
-				| Open the platinum QuantityWnd.
+				|- Open the platinum QuantityWnd.
 				/notify BigBankWnd BIGB_Money0 leftmouseup
 				/delay 5 ${Window[QuantityWnd].Open}
 				
-				| If the platinum QuantityWnd did not open.
+				|- If the platinum QuantityWnd did not open.
 				/if (!${Window[QuantityWnd].Open}) {
 					
-					| If there is still time, retry.
+					|- If there is still time, retry.
 					/if (${retryTimer}) {
 						/goto :withdraw_Loop
 					
-					| Else, announce to user.
+					|- Else, announce to user.
 					} else {
 						/docommand ${ChatToggle} ERROR: Failed to open the platinum withdraw box.
 					}
 					
-				| Else, if the platinum QuantityWnd did open.
+				|- Else, if the platinum QuantityWnd did open.
 				} else {
 				
-					| Clear the text in the platinum QuantityWnd.
+					|- Clear the text in the platinum QuantityWnd.
 					/varset miscTimer 20
 					
 					:clearText
 					/nomodkey /keypress backspace chat hold
 					/if (${miscTimer}) /goto :clearText
 				
-					| Withdraw money.
+					|- Withdraw money.
 					/varset miscTimer 3s
 					
 					/for i 1 to ${SoulStoneCost.Length}
 					
-						/if (${Debug} || ${Debug_CorpseSummoning}) /echo |- withdraw_Plat -| Entering [${SoulStoneCost.Mid[${i},1]}]
+						/if (${Debug} || ${Debug_CorpseSummoning}) /echo |- withdraw_Plat -|- Entering [${SoulStoneCost.Mid[${i},1]}]
 						/keypress ${SoulStoneCost.Mid[${i},1]} chat
 						/delay 3
 						
@@ -243,7 +243,7 @@ SUB withdraw_Plat
 					/delay 2
 					/autoinventory
 					
-					| If I didn't get enough money, try again. Otherwise, close the bank.
+					|- If I didn't get enough money, try again. Otherwise, close the bank.
 					/if (${Me.Platinum} < ${SoulStoneCost}) {
 						/if (${retryTimer}) {
 							/goto :withdraw_Loop
@@ -266,7 +266,7 @@ SUB withdraw_Plat
 SUB buy_SoulStone(SoulStoneToUse)
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo |- buy_SoulStone ==>
 
-	| Move to the startingPoint
+	|- Move to the startingPoint
 	/call MoveTo -Loc|${startingPoint}
 	
 	|-------------------------------------------------------------------------------------------------------------------------------------------------------------Look for the west side banker.
@@ -291,7 +291,7 @@ SUB buy_SoulStone(SoulStoneToUse)
 		
 			:buyLoop
 			
-			| Target the merchant
+			|- Target the merchant
 			/if (${Target.ID} != ${Spawn[npc A Disciple of Luclin].ID}) /call TrueTarget ${Spawn[npc A Disciple of Luclin].ID}
 			
 			|-------------------------------------------------------------------------------------------------------------------------------------------------------Open the soulstone merchant.
@@ -350,7 +350,7 @@ SUB buy_SoulStone(SoulStoneToUse)
 SUB	summon_Corpse(SoulStoneToUse)
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo |- summon_Corpse ==>
 
-	| Move to the startingPoint
+	|- Move to the startingPoint
 	/call MoveTo -Loc|${startingPoint}
 	
 	|--------------------------------------------------------------------------------------------------------------------------------------------------------------Look for the corpse summoner.
@@ -365,7 +365,7 @@ SUB	summon_Corpse(SoulStoneToUse)
 			/echo ERROR: I failed to move to the corpse summoner. Move me to the west side of The Guild Lobby, and try again.
 		} else {
 		
-			| Target the summoner
+			|- Target the summoner
 			/if (${Target.ID} != ${Spawn[npc A Priest of Luclin].ID}) /call TrueTarget ${Spawn[npc A Priest of Luclin].ID}
 			
 		
@@ -492,7 +492,7 @@ SUB	summon_Corpse(SoulStoneToUse)
 
 
 SUB corpseSummon_Setup
-/call INItoVar "${advSettings_Ini},Debug,Debug CorpseSummoning (On/Off)" Debug_CorpseSummoning bool outer
+/call iniToVar "${iniGeneral},Debug,Debug CorpseSummoning (On/Off)" Debug_CorpseSummoning bool outer
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo |- _Setup ==>
 
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo <== _Setup -|
@@ -500,17 +500,17 @@ SUB corpseSummon_Setup
 
 
  
-Sub corpseSummon_Background_Events
+SUB corpseSummon_Background_Events
 
-/return
+/RETURN
 
 
 
 SUB corpseSummon_MacroSettings
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo |- _MacroSettings ==>
 
-	/call WriteToIni "${advSettings_Ini},Debug,Debug CorpseSummoning (On/Off)"
-	/call WriteToIni "${genSettings_Ini},Corpse Summoning,Loot After Summoning (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug CorpseSummoning (On/Off)"
+	/call writeToIni "${genSettings_Ini},Corpse Summoning,Loot After Summoning (On/Off)"
 
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo <== _MacroSettings -|
 /RETURN
@@ -525,11 +525,11 @@ SUB corpseSummon_CharacterSettings
 
 
 
-Sub corpseSummon_Aliases
+SUB corpseSummon_Aliases
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo |- _Aliases ==>
 	
 	/squelch /alias /summoncorpses /bc Use Corpse Summoner
 	/squelch /alias /summoncorpse /echo Use Corpse Summoner
 
 /if (${Debug} || ${Debug_CorpseSummoning}) /echo <== _Aliases -|
-/return
+/RETURN

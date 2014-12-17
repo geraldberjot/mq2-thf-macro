@@ -27,7 +27,7 @@ SUB RNG_checkBackgroundEvents
 SUB RNG_MacroSettings
 /if (${outerDebug}) /echo |- RNG_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},RNG Functions,RNG Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},RNG Functions,RNG Function#2" "check_CombatBuffs" 1
 	/call writeToIni "${iniTHF},RNG Functions,RNG Function#3" "check_Heals"	 1

@@ -27,7 +27,7 @@ SUB BST_checkBackgroundEvents
 SUB BST_MacroSettings
 /if (${outerDebug}) /echo |- BST_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},BST Functions,BST Function#1" "check_Debuffs" 1
 	/call writeToIni "${iniTHF},BST Functions,BST Function#2" "check_DoTs" 1
 	/call writeToIni "${iniTHF},BST Functions,BST Function#3" "check_Burns" 1

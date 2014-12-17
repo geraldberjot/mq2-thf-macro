@@ -34,13 +34,13 @@ SUB check_warProvoke(provokeDisc)
 	
 	/if (${Me.CombatAbilityReady[${provokeDisc}]}) {
 	
-		| check endurance
+		|- check endurance
 		/if (${Me.Endurance} < ${MinBellowEndurance}) {
-			/if (${outerDebug}) /echo |- attemptProvoke -| I do not have enough endurance to use [${provokeDisc}].
+			/if (${outerDebug}) /echo |- attemptProvoke -|- I do not have enough endurance to use [${provokeDisc}].
 		} else {
 	
 			/if (${provokeTimer_${Target.ID}} && ${Spawn[${Me.TargetOfTarget}].CleanName.Equal[${Me}]}) {
-				/if (${outerDebug}) /echo |- attemptProvoke -| I still have aggro, and have not met my recast timer for [${provokeDisc}] [${provokeTimer_${Target.ID}}].
+				/if (${outerDebug}) /echo |- attemptProvoke -|- I still have aggro, and have not met my recast timer for [${provokeDisc}] [${provokeTimer_${Target.ID}}].
 			} else {
 	
 				/call useDisc 0 "${provokeDisc}"
@@ -73,10 +73,10 @@ SUB WAR_checkBackgroundEvents
 SUB WAR_MacroSettings
 /if (${outerDebug}) /echo |- WAR_MacroSettings ==>
 
-	| MacroData settings
+	|- MacroData settings
 	/call writeToIni "${iniTHF},Class Specific Info,Warrior Provoke Disciplines" "Provoke,Bellow,Berate,Incite,Bellow of the Mastruq,Ancient: Chaos Cry" 0
 	
-	| AdvSettings
+	|- AdvSettings
 	/call writeToIni "${iniTHF},WAR Functions,WAR Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},WAR Functions,WAR Function#2" "check_CombatBuffs" 1
 	/call writeToIni "${iniTHF},WAR Functions,WAR Function#3" "check_Buffs" 1

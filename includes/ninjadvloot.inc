@@ -1,38 +1,38 @@
-| Ninjadvloot.inc v3.1 05/11/2013 Redguides.com 
-| Author A_Druid_00 12/19/2005
-| Based on original looting code of toomanynames
-| The globalFollowing updates were all individually posted and consolidated by Maskoi into the current version.
-| Updated: Moeymoejoe added strip out comma in item names when accessing ini file 08/02/2006
-| Updated: mystikule added sell option to ini file 01/07/2008
-| Updated: drkrain for House of Thule 10/23/2010
-| Updated: Maskoi with Sell Routines 11/27/2010
-| Updated: Maskoi with /item keep/sell/destroy ini commands 07/21/2011
-| Updated: Maskoi with Foraged item handling 08/31/2011
-| Updated: Maskoi with Buying item handling 07/31/2012
-| Updated: Maskoi with Assign different ini file for item handling 01/01/2013
+|- Ninjadvloot.inc v3.1 05/11/2013 Redguides.com 
+|- Author A_Druid_00 12/19/2005
+|- Based on original looting code of toomanynames
+|- The globalFollowing updates were all individually posted and consolidated by Maskoi into the current version.
+|- Updated: Moeymoejoe added strip out comma in item names when accessing ini file 08/02/2006
+|- Updated: mystikule added sell option to ini file 01/07/2008
+|- Updated: drkrain for House of Thule 10/23/2010
+|- Updated: Maskoi with Sell Routines 11/27/2010
+|- Updated: Maskoi with /item keep/sell/destroy ini commands 07/21/2011
+|- Updated: Maskoi with Foraged item handling 08/31/2011
+|- Updated: Maskoi with Buying item handling 07/31/2012
+|- Updated: Maskoi with Assign different ini file for item handling 01/01/2013
 |
-| Selling Contributions by
-|   drkrain - TLInv item check
-|   dewey2461 - Add sold items to ini file Event
+|- Selling Contributions by
+|-   drkrain - TLInv item check
+|-   dewey2461 - Add sold items to ini file Event
 |
-| Requirements: MQ2Moveutils
-| Usage: add the globalFollowing to your macro for looting
-|   #include Ninjadvloot.inc
-|   /call setupAdvLootVars
-|   /call LootMobs
+|- Requirements: MQ2Moveutils
+|- Usage: add the globalFollowing to your macro for looting
+|-   /RETURN Ninjadvloot.inc
+|-   /call setupAdvLootVars
+|-   /call LootMobs
 |
-| Assign differnent ini files. Default is Loot.ini
-|   /call setupAdvLootVars "MyToonLoot.ini"
-|   /call setupAdvLootVars "LootMesa.ini"
+|- Assign differnent ini files. Default is Loot.ini
+|-   /call setupAdvLootVars "MyToonLoot.ini"
+|-   /call setupAdvLootVars "LootMesa.ini"
 |
-| Commands
-| Usage. Grab the item and put it on your cursor then use one of the globalFollowing commands
-| 	/lootdestroy - Mark item on cursor to Destroy in Loot.ini file
-| 	/lootignore - Mark item on cursor to Ignore in Loot.ini file
-| 	/lootkeep - Mark item on cursor to Keep in Loot.ini file
-| 	/lootsell - Mark item on cursor to Sell in Loot.ini file
-| 	/sellstuff - Target a vendor and this command will sell any item in your inventory marked sell. 
-| 	/depositstuff - Target your guildbanker and this command will deposit any item in your inventory marked keep into the guild bank.
+|- Commands
+|- Usage. Grab the item and put it on your cursor then use one of the globalFollowing commands
+|- 	/lootdestroy - Mark item on cursor to Destroy in Loot.ini file
+|- 	/lootignore - Mark item on cursor to Ignore in Loot.ini file
+|- 	/lootkeep - Mark item on cursor to Keep in Loot.ini file
+|- 	/lootsell - Mark item on cursor to Sell in Loot.ini file
+|- 	/sellstuff - Target a vendor and this command will sell any item in your inventory marked sell. 
+|- 	/depositstuff - Target your guildbanker and this command will deposit any item in your inventory marked keep into the guild bank.
 
 #EVENT CantLoot         "#*#may not loot this corpse#*#"
 #EVENT Sell             "#*#You receive#*# for the #1#(s)#*#"
@@ -72,7 +72,7 @@ SUB setupAdvLootVars(string ChangeIniFile)
         /ini "${NinjaIniFile}" "Settings" "Version" "${NinjadVersion}"
     }
 
-    | Loot ini settings
+    |- Loot ini settings
     /call ALLoadVar Settings OpenAllBags        1                   int
     /call ALLoadVar Settings AddNewSales        1                   int
     /call ALLoadVar Settings LootForage         1                   int
@@ -82,7 +82,7 @@ SUB setupAdvLootVars(string ChangeIniFile)
     /call ALLoadVar Settings CorpseRotTime      440s                string
     /call ALLoadVar Settings ReportLoot         TRUE                bool
     /call ALLoadVar Settings LootForageSpam     1                   int
-    | Alert list 9 used to define an ignore list like campfires untargetable etc.
+    |- Alert list 9 used to define an ignore list like campfires untargetable etc.
     /if (!${Defined[${AlertList}]}) /declare AlertList int outer 9
 
 /RETURN
@@ -97,7 +97,7 @@ SUB ALLoadVar(IniSection,IniVar,IniValue,VarType)
     } 
 /RETURN
 
-| ****************  Loot Mobs Section ******************** |
+|- ****************  Loot Mobs Section ******************** |
 
 SUB EVENT_CantLoot
    /varset CantLootID ${Target.ID}
@@ -114,7 +114,7 @@ SUB LootMobs
     |/if (!${LootMobs}) {
 	|	/echo Can't loot mobs !
 	|	/chat ${channel} Can't loot mobs !
-	|	/return
+	|	/RETURN
 	|}
 	/if (${SpawnCount[npc radius ${MobsTooClose} zradius 50 noalert ${AlertList}]}) {
 		/echo Mobs near me, can't loot !
@@ -248,7 +248,7 @@ SUB CheckCursor
     }
 /RETURN
 
-| **************** Foraged Items Section ******************** |
+|- **************** Foraged Items Section ******************** |
 SUB EVENT_Forage
     /if (!${LootForage}) /RETURN
     /declare ForagedItem string local
@@ -272,7 +272,7 @@ SUB EVENT_Forage
     /if (${Cursor.ID}) /goto :MoreToAutoInventory
 /RETURN
 
-| **************** Search Loot Section ******************** |
+|- **************** Search Loot Section ******************** |
 SUB DoLootStuff(LootAction)
     /declare i int local
     /declare j int local
@@ -283,12 +283,12 @@ SUB DoLootStuff(LootAction)
         /keypress OPEN_INV_BAGS
     }
    /call NPC "${Target.CleanName}"
-   | Top level inv has its own loop since ${FindItem[=${ItemToSell}].InvSlot} looks at top lev inv slots first in SUB SellToVendor for the item to sell.
-   | Loop through top level inventory slots for sellable items
+   |- Top level inv has its own loop since ${FindItem[=${ItemToSell}].InvSlot} looks at top lev inv slots first in SUB SellToVendor for the item to sell.
+   |- Loop through top level inventory slots for sellable items
    /for k 1 to 10
-        | Check if top level inv slot is not a container/bag
+        |- Check if top level inv slot is not a container/bag
         /if (${InvSlot[pack${k}].Item.Container}==0) {
-            | If top level inv slot is empty check for an item marked sell
+            |- If top level inv slot is empty check for an item marked sell
             /if (${InvSlot[pack${k}].Item.ID}) {
                 /varset LootItem ${InvSlot[pack${k}].Item}
                 /if (${LootAction.Equal[sell]})  {
@@ -300,11 +300,11 @@ SUB DoLootStuff(LootAction)
             }
         }
     /next k      
-    | Loop through top level inventory slots for containers
+    |- Loop through top level inventory slots for containers
     /for i 1 to 10
-        | Check if top level inv slot has a bag
+        |- Check if top level inv slot has a bag
         /if (${InvSlot[pack${i}].Item.Container}==0) /next i
-        | Set j 1 to number of bag slots and loop through slots looking for items marked sell
+        |- Set j 1 to number of bag slots and loop through slots looking for items marked sell
         /for j 1 to ${InvSlot[pack${i}].Item.Container}
             /if (${InvSlot[pack${i}].Item.Item[${j}].ID}) {
             /varset LootItem ${InvSlot[pack${i}].Item.Item[${j}].Name}
@@ -322,7 +322,7 @@ SUB DoLootStuff(LootAction)
         /echo Closing all bags
         /keypress CLOSE_INV_BAGS
     }
-    | Prevent spam from Sell event after selling items in SUB SellStuff
+    |- Prevent spam from Sell event after selling items in SUB SellStuff
     /doevents flush Sell
     /if (${Window[MerchantWnd].Open}) {
         /echo Closing merchant window
@@ -356,7 +356,7 @@ SUB NPC(NPCName)
     /delay 5s
 /RETURN
 
-| **************** Sell Loot Section ******************** |
+|- **************** Sell Loot Section ******************** |
 SUB EVENT_Sell(string soldstr, string ItemName)
     /if ( ${AddNewSales} ) {
         /echo Setting ${ItemName} to sell
@@ -376,7 +376,7 @@ SUB SellToVendor(ItemToSell)
     }
 /RETURN
 
-| **************** Deposit Loot Section ******************** 
+|- **************** Deposit Loot Section ******************** 
 SUB DepositToGuildBank(ItemToDeposit)
     /if (${Window[GuildBankWnd].Open}) {
         :deposit
@@ -394,7 +394,7 @@ SUB DepositToGuildBank(ItemToDeposit)
     }
 /RETURN
 
-| **************** Item set ini file event ******************** 
+|- **************** Item set ini file event ******************** 
     SUB EVENT_EditIniItem(ItemString,ItemAction,ItemName)
         /if (${Cursor.ID}) {
             /echo -- Setting ${ItemName} to ${ItemAction}
@@ -404,24 +404,24 @@ SUB DepositToGuildBank(ItemToDeposit)
         }
     /RETURN
 
-| **************** Sell Stuff Event ******************** 
+|- **************** Sell Stuff Event ******************** 
     SUB EVENT_SellStuff
         /call DoLootStuff sell
     /RETURN
     
-| **************** Deposit Stuff Event *******************
+|- **************** Deposit Stuff Event *******************
     SUB EVENT_DepositStuff
         /call DoLootStuff deposit
     /RETURN
     
-| **************** Broke Event ******************** 
+|- **************** Broke Event ******************** 
 SUB EVENT_Broke 
     /echo You are out of money! 
     /endMacro 
 /RETURN
 
-| **************** Type Stuff  ******************** 
-| Lifted from commonsubs.inc by Armysoldier    
+|- **************** Type Stuff  ******************** 
+|- Lifted from commonsubs.inc by Armysoldier    
 SUB Type(String InStr)
     /declare char string local 
     /declare loopctr int local 
@@ -435,10 +435,10 @@ SUB Type(String InStr)
     /next loopctr 
 /RETURN 
 
-| **************** Buy Stuff ********************  
+|- **************** Buy Stuff ********************  
 SUB Buy(string ItemToBuy, int amount)
     /declare i int local
-    | /echo Buying ${ItemToBuy}!
+    |- /echo Buying ${ItemToBuy}!
     /declare QTY int local
     /declare ListItem int local
     /varcalc QTY ${amount}-${FindItemCount[${ItemToBuy}]}
@@ -486,7 +486,7 @@ SUB Buy(string ItemToBuy, int amount)
 /RETURN
     
 SUB ZCheck(float Zcur, float Zdiff)
-    | Move down if Z distance more than Zcheck due to levitation
+    |- Move down if Z distance more than Zcheck due to levitation
     /if (${Zcur}>=${Zdiff}) {
         /keypress end hold
         /delay 10

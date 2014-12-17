@@ -25,10 +25,10 @@
 #EVENT invFull "#*#Your inventory appears full! How can you buy more?#*#" 
 SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 /if (${Debug}) /echo |- EVENT_AutoBuy [${eventParams}] ==>
-	| Verify the event
+	|- Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|   |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+	|-   |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 		/declare itemToBuy string local
 		/declare numToBuy int local
@@ -37,34 +37,34 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 		/declare startingLoc string local
 		/declare listPosition int local
 		/declare i int local 1
-		| Record starting location.
+		|- Record starting location.
 		/varset startingLoc string local ${Me.Loc.Replace[ ,]}	
-		| Open trade with the nearest merchant and waits for merchant list to populate
+		|- Open trade with the nearest merchant and waits for merchant list to populate
 		/call openMerchant ${merchantID}
 		
 		:lookForItems
-		| Makes sure merchant window is open
+		|- Makes sure merchant window is open
 		/if (${Window[MerchantWnd].Open}) {
 			/if (${eventParams.Arg[${i},/].Length}) {
 				/varset itemToBuy ${eventParams.Arg[${i},/].Arg[1,|]}
 				/varset numToBuy ${eventParams.Arg[${i},/].Arg[2,|]}
 				/varset lastItemCount ${FindItemCount[${itemToBuy}]}
 				/echo Buying ${itemToBuy} (x${numToBuy})
-				| Searches merchant's item list for the item, sets variable for list position of item.
+				|- Searches merchant's item list for the item, sets variable for list position of item.
 				/varset listPosition ${Window[MerchantWnd].Child[ItemList].List[=${itemToBuy},2]}
-				| Checks if the item has been found on the merchant's list.
+				|- Checks if the item has been found on the merchant's list.
 				/if (!${listPosition}) {
 					/docommand ${ChatToggle} This merchant doesn't have ${itemToBuy}!
 				} else {
-					| Selects item on merchant's list.
+					|- Selects item on merchant's list.
 					/notify MerchantWnd ItemList listselect ${listPosition}
 					/delay 10 ${Window[MerchantWnd].Child[MW_SelectedItemLabel].Text.Equal[${itemToBuy}]}
 					/if (${i} > 1) /delay 10
-					| If the item is not stackable, need to press the buy button until we have numToBuy
+					|- If the item is not stackable, need to press the buy button until we have numToBuy
 					/if (!${Merchant.Item[=${itemToBuy}].Stackable}) {
 						/if (${Debug}) /echo Item is not stackable. Attempting to buy...
 						:buying
-						| Prevents loop from repeating if out of money or inventory space.
+						|- Prevents loop from repeating if out of money or inventory space.
 						/if (${Macro.Return.Equal[noMoney]} || ${Macro.Return.Equal[invFull]} || ${Bool[${Cursor}]}) {
 							/docommand ${ChatToggle} I am out of money, my inventory is full, or I have an item on my cursor! Exiting.
 							/goto :closeOut
@@ -72,15 +72,15 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 						/notify MerchantWnd MW_Buy_Button leftmouseup
 						/delay 20 ${FindItemCount[=${itemToBuy}]} != ${oldItemCount}
 						/delay 5
-						| Finds out how many you have bought and compares to numToBuy
+						|- Finds out how many you have bought and compares to numToBuy
 						/if (${Math.Calc[${FindItemCount[=${itemToBuy}]}-${oldItemCount}]} < ${numToBuy}) /goto :buying
 					} else {
-						| If numToBuy is more than one stack of itemToBuy, buy full stacks until the 
-						| amount remaining is less than one stack. Then, buy just the number remaining.
-						| This is currently broken if the /delay is any less than 2s. Yuck.
+						|- If numToBuy is more than one stack of itemToBuy, buy full stacks until the 
+						|- amount remaining is less than one stack. Then, buy just the number remaining.
+						|- This is currently broken if the /delay is any less than 2s. Yuck.
 						/varset numToBuyRemaining ${numToBuy}				
 						:stackBuyLoop
-						| Prevents loop from repeating if out of money or inventory space.
+						|- Prevents loop from repeating if out of money or inventory space.
 						/if (${Macro.Return.Equal[noMoney]} || ${Macro.Return.Equal[invFull]} || ${Bool[${Cursor}]}) {
 							/docommand ${ChatToggle} I am out of money, my inventory is full, or I have an item on my cursor! Exiting.
 							/goto :closeOut
@@ -91,7 +91,7 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 						/if (${numToBuyRemaining} > ${Merchant.Item[=${itemToBuy}].StackSize}) {
 							/if (${Debug}) /echo Buying ${itemToBuy} (x${Merchant.Item[=${itemToBuy}].StackSize}) (stack) 
 							/buyitem ${Merchant.Item[=${itemToBuy}].StackSize}
-							| wait for item to show up in inventory
+							|- wait for item to show up in inventory
 							/delay 20 ${FindItemCount[=${itemToBuy}]} > ${oldItemCount}
 							/if (${FindItemCount[=${itemToBuy}]} > ${oldItemCount}) {
 								/varset numToBuyRemaining ${Math.Calc[${numToBuyRemaining}-${Merchant.Item[=${itemToBuy}].StackSize}]}
@@ -103,7 +103,7 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 							/goto :stackBuyLoop
 						} else {
 							/doevents
-							| Prevents loop from repeating if out of money or inventory space.
+							|- Prevents loop from repeating if out of money or inventory space.
 							/if (${Macro.Return.Equal[noMoney]} || ${Macro.Return.Equal[invFull]} || ${Bool[${Cursor}]}) /goto :closeOut
 							/if (${Debug}) /echo Item is stackable and amount is less than or equal to stacksize. Attempting to buy...
 							/if (${Debug}) /echo Buying ${itemToBuy} (x${numToBuyRemaining})
@@ -119,23 +119,23 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 		}
 
 		:closeOut
-		| Close merchant window
+		|- Close merchant window
 		/if (${Window[MerchantWnd].Open}) /call closeMerchant
-		| Move back to starting location.	
+		|- Move back to starting location.	
 		/squelch /moveto loc ${startingLoc.Arg[1,,]} ${startingLoc.Arg[2,,]}
-		| Flush duplicate events
+		|- Flush duplicate events
 		/doevents flush
 }		
 /if (${Debug}) /echo <== EVENT_buyitem -|
-/return
+/RETURN
 
-Sub EVENT_noMoney
+SUB EVENT_noMoney
 /bc I do not have enough money for this purchase!
-/return noMoney
+/RETURN noMoney
 
-Sub EVENT_invFull
+SUB EVENT_invFull
 /bc My inventory is full!
-/return invFull
+/RETURN invFull
 
 SUB buy_Setup
 /if (${Debug}) /echo |- buy_Setup ==>
@@ -143,9 +143,9 @@ SUB buy_Setup
 /if (${Debug}) /echo <== buy_Setup -|
 /RETURN
 
-Sub Buy_Background_Events
+SUB Buy_Background_Events
 
-/return
+/RETURN
 
 SUB Buy_MacroSettings
 /if (${Debug}) /echo |- buy_MacroSettings ==>
@@ -159,10 +159,10 @@ SUB Buy_CharacterSettings
 /if (${Debug}) /echo <== buy_CharacterSettings -|
 /RETURN
 
-Sub Buy_Aliases
+SUB Buy_Aliases
 /if (${Debug}) /echo |- buy_Aliases ==>
 
 	/noparse /squelch /alias /autobuy /bc ${If[${Target.ID},[${Target.ID}],]} AutoBuy
 
 /if (${Debug}) /echo <== buy_Aliases -|
-/return
+/RETURN
