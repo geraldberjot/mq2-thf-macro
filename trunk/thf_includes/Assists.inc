@@ -1504,7 +1504,7 @@ SUB assist_MacroSettings
 
 
 
-SUB assistCharacterSettings
+SUB assist_CharacterSettings
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assistCharacterSettings ==>
 
 	|- Add Assist_Stick entries.

@@ -161,7 +161,7 @@ SUB EVENT_MakeMacroSettingsIni()
 
 	/call writeToIni "${iniGeneral},General,Channel" team
 	/call writeToIni "${iniGeneral},Debug,Debug Mode (On/Off)" Off
-	/call writeToIni "${iniGeneral},General,Includes" assist/background/basics
+	/call writeToIni "${iniGeneral},General,Includes" Assist/Background/Basics/buffCheck/Casting
 	
 	/call split "${iniGeneral},General,Includes" includes outer /
 	

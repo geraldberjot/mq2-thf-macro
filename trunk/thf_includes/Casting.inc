@@ -1050,11 +1050,11 @@ SUB casting_Setup
 |- Import Casting Settings.
 	
 	|- Default Spellset
-	/if (${Ini[${genSettings_Ini},Casting,Default Spell Set].Length}) /call iniToVar "${genSettings_Ini},Casting,Default Spell Set" Default_SpellSet string outer
+	/if (${Ini[${iniGeneral},Casting,Default Spell Set].Length}) /call iniToVar "${iniGeneral},Casting,Default Spell Set" Default_SpellSet string outer
 	
 	|- Default Gems
 	/declare DefaultGem int outer 9
-	/call iniToVar "${genSettings_Ini},Casting,Default Spell Gem" DefaultGem int outer
+	/call iniToVar "${iniGeneral},Casting,Default Spell Gem" DefaultGem int outer
 	/if (${DefaultGem}==9 && !${Me.AltAbility[Mnemonic Retention]}) /varset DefaultGem 8
 
 /if (${Debug} || ${Debug_Casting}) /echo <== casting_Setup -|
@@ -1074,9 +1074,9 @@ SUB casting_MacroSettings
 	/call writeToIni "${iniGeneral},Debug,Debug Casting (On/Off)"
 	/call writeToIni "${iniGeneral},AA-ID Overrides,Improved Familiar" 352,167,52
 
-	/call writeToIni "${genSettings_Ini},Casting,Default Spell Set" Default
-	/call writeToIni "${genSettings_Ini},Casting,Default Spell Gem" ${If[${Me.AltAbility[Mnemonic Retention]},9,8]}
-	/call writeToIni "${genSettings_Ini},Casting,Give Up Casting Time" 15
+	/call writeToIni "${iniGeneral},Casting,Default Spell Set" Default
+	/call writeToIni "${iniGeneral},Casting,Default Spell Gem" ${If[${Me.AltAbility[Mnemonic Retention]},9,8]}
+	/call writeToIni "${iniGeneral},Casting,Give Up Casting Time" 15
 
 /if (${Debug} || ${Debug_Casting}) /echo <== casting_MacroSettings -|
 /RETURN
