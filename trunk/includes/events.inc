@@ -1,4 +1,4 @@
-| v2.1
+|- v2.1
 
 SUB EVENT_Chat(string ChatType, string Sender, string ChatText)
 	/echo ${ChatType}, ${Sender}, ${ChatText}
@@ -690,7 +690,7 @@ SUB EVENT_Tell(line, string from, string Msg)
 	}
 /RETURN
 
-| "#1# tells Team:#2#, 'Follow #3#'"
+|- "#1# tells Team:#2#, 'Follow #3#'"
 SUB EVENT_Follow(String line, String from, String channelNumber, String who)
 	/declare toonName string local
 	/call cleanToonName ${from}
@@ -754,4 +754,4 @@ SUB EVENT_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
 		/varset args ${EQBCCommand.Replace[buy ,]}
 		/call Buy "${args.Arg[1,|]}" ${args.Arg[2,|]}
 	}
-/return
+/RETURN

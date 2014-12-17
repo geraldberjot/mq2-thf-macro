@@ -1,120 +1,120 @@
 |******************************************************************************************************************************
-| MQ2Cast_Spell_Routines.inc v3.01
+|- MQ2Cast_Spell_Routines.inc v3.01
 |
-| HISTORY
-| - Written by A_Enchanter_00
-| - Modified 2008811 by Kroak
-|   - Changed /casting line to use the pipe format to correct memorization issues.
-| - v3.00 2014-01-26 by woobs
-|   - Adjusted for new MQ2Cast v10.0, which no longer handles item swapping/bandoliers.
-|   - Add automatic Item-Swapping for items that are must-equip.
-|   - Add Bandolier processing. Will read Bandolier sets saved by MQ2Bandolier, but will do the 
-|     actual swapping in this macro. This is done to make sure swapping(s) are complete before casting,
-|     otherwise the macro will continue while the swap(s) are still going on. Since you can't swap
-|     items while casting, this doesn't work out very well. When casting is done, the item(s) are 
-|     swapped back.
-|   - Adjust logic after Exchange to wait for item swapping to complete.
-|   - Miscellaneous fixes for old coding (ie, reformat references to InvSlot)
-| - v3.01 2014-01-29 by woobs
-|   - Removed /while loop until this MQ2 feature is ready for prime-time.
-|   - Added detection of an integer as a valid gem type in case you forget "gem", ie. "8", "12" instead of "gem8" or "gem12"
-|     (thanks PeteSampras).
-|   - Added SRFindBookName to attempt auto detection of spells in your book so you don't need the Rk II/III in the name.
-|     Used a Subroutine to enable you to call it directly from your macro, if you wish, as follows:
-|         Usage:   /call SRFindBookName "Blezon's Mending"
-|         Returns: The Spell name found in your book in ${Macro.Return}.  Empty string if not found. 
+|- HISTORY
+|- - Written by A_Enchanter_00
+|- - Modified 2008811 by Kroak
+|-   - Changed /casting line to use the pipe format to correct memorization issues.
+|- - v3.00 2014-01-26 by woobs
+|-   - Adjusted for new MQ2Cast v10.0, which no longer handles item swapping/bandoliers.
+|-   - Add automatic Item-Swapping for items that are must-equip.
+|-   - Add Bandolier processing. Will read Bandolier sets saved by MQ2Bandolier, but will do the 
+|-     actual swapping in this macro. This is done to make sure swapping(s) are complete before casting,
+|-     otherwise the macro will continue while the swap(s) are still going on. Since you can't swap
+|-     items while casting, this doesn't work out very well. When casting is done, the item(s) are 
+|-     swapped back.
+|-   - Adjust logic after Exchange to wait for item swapping to complete.
+|-   - Miscellaneous fixes for old coding (ie, reformat references to InvSlot)
+|- - v3.01 2014-01-29 by woobs
+|-   - Removed /while loop until this MQ2 feature is ready for prime-time.
+|-   - Added detection of an integer as a valid gem type in case you forget "gem", ie. "8", "12" instead of "gem8" or "gem12"
+|-     (thanks PeteSampras).
+|-   - Added SRFindBookName to attempt auto detection of spells in your book so you don't need the Rk II/III in the name.
+|-     Used a Subroutine to enable you to call it directly from your macro, if you wish, as follows:
+|-         Usage:   /call SRFindBookName "Blezon's Mending"
+|-         Returns: The Spell name found in your book in ${Macro.Return}.  Empty string if not found. 
 |
-| This MQ2Cast_Spell_Routines.inc is much like the normal Spell_Routines.inc by Rusty. This uses the
-| MQ2Cast Plugin by s0rcier.
+|- This MQ2Cast_Spell_Routines.inc is much like the normal Spell_Routines.inc by Rusty. This uses the
+|- MQ2Cast Plugin by s0rcier.
 |
-| This macro also requires MQ2Exchange for bandolier sets and worn item swapping.
+|- This macro also requires MQ2Exchange for bandolier sets and worn item swapping.
 |
-| Most of the actual Casting logic is done in the MQ2Cast Plugin.
-| 
-| - Allows you to use items in bags that are must-equip. Equips item, normal cast, then returns it to its previous location.
-| - Allows you to use Bandolier sets for swapping in focus items, etc.
-| - Lets you set how long you want to keep trying to cast the spell (defaults to 0)
-| - Lets you call a custom subroutine while waiting for spell to finish casting
-| - This file also includes a sub named Interrupt. You can call this to interrupt any spell you're casting instantly.
-| - Note: if you don't want this to cast spells while you're invis, in your main macro have this at the top:
-|      /declare noInvis bool outer TRUE
-| - Note: if you don't want to stand up when Feigning do the following:
-|      /declare noFeigning bool outer TRUE
-|   This will make it return CAST_INVISIBLE if you're invis.
-| - Added: defaultGem so that spells can be casted using only /call MQ2Cast "Howl of Tashan"
-|      /declare defaultGem string outer gem1
+|- Most of the actual Casting logic is done in the MQ2Cast Plugin.
+|- 
+|- - Allows you to use items in bags that are must-equip. Equips item, normal cast, then returns it to its previous location.
+|- - Allows you to use Bandolier sets for swapping in focus items, etc.
+|- - Lets you set how long you want to keep trying to cast the spell (defaults to 0)
+|- - Lets you call a custom subroutine while waiting for spell to finish casting
+|- - This file also includes a SUB named Interrupt. You can call this to interrupt any spell you're casting instantly.
+|- - Note: if you don't want this to cast spells while you're invis, in your main macro have this at the top:
+|-      /declare noInvis bool outer TRUE
+|- - Note: if you don't want to stand up when Feigning do the following:
+|-      /declare noFeigning bool outer TRUE
+|-   This will make it return CAST_INVISIBLE if you're invis.
+|- - Added: defaultGem so that spells can be casted using only /call MQ2Cast "Howl of Tashan"
+|-      /declare defaultGem string outer gem1
 |	Note: If spell is not memed and and NOT seting /call MQ2Cast "Howl of Tashan" gem#
-|   Set /declare defaultGem string outer gem# to change default gem#
-| - Added: MQ2Cast Plugin features:
-|   - "-targetid|#####" - will find target and cast a MQ2Cast plugin feature.
-|   - "-kill" - will keep casting spell untill target is dead
-|   - "-recast|#" - recast spells # number of times
-|   - "-maxtries|#" - retry casting spell # number of times
-| - Added: -invis for single spell invis checks.
-| - Changed: -bandolier|setname OR -setin|setname to swap items using local code and MQ2Exchange.  You don't need MQ2Bandolier
-|   to be loaded, but the sets need to be in the standard MQ2Bandolier file/format.
+|-   Set /declare defaultGem string outer gem# to change default gem#
+|- - Added: MQ2Cast Plugin features:
+|-   - "-targetid|#####" - will find target and cast a MQ2Cast plugin feature.
+|-   - "-kill" - will keep casting spell untill target is dead
+|-   - "-recast|#" - recast spells # number of times
+|-   - "-maxtries|#" - retry casting spell # number of times
+|- - Added: -invis for single spell invis checks.
+|- - Changed: -bandolier|setname OR -setin|setname to swap items using local code and MQ2Exchange.  You don't need MQ2Bandolier
+|-   to be loaded, but the sets need to be in the standard MQ2Bandolier file/format.
 |*******************************************************************************************************************************
-|  MQ2Cast: the main subroutine that casts spells or items for you
-|     Usage:
-|        /call MQ2Cast ["spell name"|"item name"|"AA name"|"AA#"] [[item|slotname]|alt|gem#] [give up time][s|m] [custom subroutine name] [-targetid|###] [-maxtries|#] [-recast|#] [-setin|setname] [-bandolier|setname]
-|     Examples:
+|-  MQ2Cast: the main subroutine that casts spells or items for you
+|-     Usage:
+|-        /call MQ2Cast ["spell name"|"item name"|"AA name"|"AA#"] [[item|slotname]|alt|gem#] [give up time][s|m] [custom subroutine name] [-targetid|###] [-maxtries|#] [-recast|#] [-setin|setname] [-bandolier|setname]
+|-     Examples:
 |
-|     To cast Howl of Tashan and mem it in slot 3 if not memmed:
-|       /call MQ2Cast "Howl of Tashan" gem3
+|-     To cast Howl of Tashan and mem it in slot 3 if not memmed:
+|-       /call MQ2Cast "Howl of Tashan" gem3
 |
-|     To cast Arcane Rune and keep trying for 7 seconds, in case of interrupts.
-|       /call MQ2Cast "Arcane Rune" gem5 7s
+|-     To cast Arcane Rune and keep trying for 7 seconds, in case of interrupts.
+|-       /call MQ2Cast "Arcane Rune" gem5 7s
 |
-|     To click Grim Aura earring that's in a bag:
-|       /call MQ2Cast "Shrunken Goblin Skull Earring" item
+|-     To click Grim Aura earring that's in a bag:
+|-       /call MQ2Cast "Shrunken Goblin Skull Earring" item
 |
-|     To click Grim Aura earring that's in a bag:
-|       /call MQ2Cast "Shrunken Goblin Skull Earring" slotname
+|-     To click Grim Aura earring that's in a bag:
+|-       /call MQ2Cast "Shrunken Goblin Skull Earring" slotname
 |
-|     To use AA ability Eldritch Rune:
-|       /call MQ2Cast "Eldritch Rune" alt
-|         or
-|       /call MQ2Cast "173" alt
+|-     To use AA ability Eldritch Rune:
+|-       /call MQ2Cast "Eldritch Rune" alt
+|-         or
+|-       /call MQ2Cast "173" alt
 |
-|     To call a subroutine that interrupts CH if target gets healed before it lands:
-|       /call MQ2Cast "Complete Healing" gem1 0 CheckHP
-|     Then in your macro have somewhere:
-|       Sub CheckHP
-|          /if ( ${Target.PctHPs}>=80 ) /call Interrupt
-|       /return
+|-     To call a subroutine that interrupts CH if target gets healed before it lands:
+|-       /call MQ2Cast "Complete Healing" gem1 0 CheckHP
+|-     Then in your macro have somewhere:
+|-       SUB CheckHP
+|-          /if ( ${Target.PctHPs}>=80 ) /call Interrupt
+|-       /RETURN
 |
 |		3000 = 3 sec
-|		Sub CheckHP
+|		SUB CheckHP
 |		   /if ( ${Me.Casting.Name.Equal[Complete Healing]} && ${Target.PctHPs} < 40 && ${Cast.Timing} > 3000 ) ) /call Interrupt
-|		/return
+|		/RETURN
 |
-| Returns these values: ${Macro.Return} and ${Cast.Result} and ${castReturn}
+|- Returns these values: ${Macro.Return} and ${Cast.Result} and ${castReturn}
 |----------------------+----------------------------------------------------------------------+
-| CAST_CANCELLED       | Spell was cancelled by ducking (either manually or because mob died) |
-| CAST_CANNOTSEE       | You can't see your target                                            |
-| CAST_IMMUNE          | Target is immune to this spell                                       |
-| CAST_INTERRUPTED     | Casting was interrupted and exceeded the given time limit            |
-| CAST_INVIS           | You were invis, and noInvis is set to true                           |
-| CAST_NOTARGET        | You don't have a target selected for this spell                      |
-| CAST_NOTMEMMED       | Spell is not memmed and you gem to mem was not specified             |
-| CAST_NOTREADY        | AA ability or spell is not ready yet                                 |
-| CAST_OUTOFMANA       | You don't have enough mana for this spell!                           |
-| CAST_OUTOFRANGE      | Target is out of range                                               |
-| CAST_RESIST          | Your spell was resisted!                                             |
-| CAST_SUCCESS         | Your spell was cast successfully! (yay)                              |
-| CAST_UNKNOWN         | Spell/Item/Ability was not found                                     |
-| CAST_COLLAPSE        | Gate Colapsed                                                        |
-| CAST_TAKEHOLD        | Spell not hold                                                       |
-| CAST_FIZZLE          | Spell Fizzle                                                         |
-| CAST_INVISIBLE       | NOT Casting Invis                                                    |
-| CAST_RECOVER	       | Spell not Recovered yet!                                             |
-| CAST_STUNNED	       | Stunned                                                              |
-| CAST_STANDING	       | Not Standing                                                         |
-| CAST_DISTRACTED      | To Distracted ( spell book open )                                    |
+|- CAST_CANCELLED       |- Spell was cancelled by ducking (either manually or because mob died) |
+|- CAST_CANNOTSEE       |- You can't see your target                                            |
+|- CAST_IMMUNE          |- Target is immune to this spell                                       |
+|- CAST_INTERRUPTED     |- Casting was interrupted and exceeded the given time limit            |
+|- CAST_INVIS           |- You were invis, and noInvis is set to true                           |
+|- CAST_NOTARGET        |- You don't have a target selected for this spell                      |
+|- CAST_NOTMEMMED       |- Spell is not memmed and you gem to mem was not specified             |
+|- CAST_NOTREADY        |- AA ability or spell is not ready yet                                 |
+|- CAST_OUTOFMANA       |- You don't have enough mana for this spell!                           |
+|- CAST_OUTOFRANGE      |- Target is out of range                                               |
+|- CAST_RESIST          |- Your spell was resisted!                                             |
+|- CAST_SUCCESS         |- Your spell was cast successfully! (yay)                              |
+|- CAST_UNKNOWN         |- Spell/Item/Ability was not found                                     |
+|- CAST_COLLAPSE        |- Gate Colapsed                                                        |
+|- CAST_TAKEHOLD        |- Spell not hold                                                       |
+|- CAST_FIZZLE          |- Spell Fizzle                                                         |
+|- CAST_INVISIBLE       |- NOT Casting Invis                                                    |
+|- CAST_RECOVER	       |- Spell not Recovered yet!                                             |
+|- CAST_STUNNED	       |- Stunned                                                              |
+|- CAST_STANDING	       |- Not Standing                                                         |
+|- CAST_DISTRACTED      |- To Distracted ( spell book open )                                    |
 |----------------------+----------------------------------------------------------------------+
 **************************************************************************************************|
 
-Sub MQ2Cast(string spellName,string spellType,timer giveUpTimer,string mySub,string MQ2Feature1,string MQ2Feature2,string MQ2Feature3,string MQ2Feature4,string MQ2Feature5,string MQ2Feature6,string MQ2Feature7,string MQ2Feature8)
+SUB MQ2Cast(string spellName,string spellType,timer giveUpTimer,string mySub,string MQ2Feature1,string MQ2Feature2,string MQ2Feature3,string MQ2Feature4,string MQ2Feature5,string MQ2Feature6,string MQ2Feature7,string MQ2Feature8)
 	
     /if (!${Plugin[MQ2Cast].Name.Length}) {
         /squelch /plugin MQ2Cast noauto
@@ -300,14 +300,14 @@ Sub MQ2Cast(string spellName,string spellType,timer giveUpTimer,string mySub,str
     /if (${oldItem.Length}) {
         /call SREquipItem ${oldItem}
     }
-/return ${Cast.Result}
+/RETURN ${Cast.Result}
 
-Sub Interrupt
+SUB Interrupt
     /varset interruptFlag TRUE
     /interrupt
-/return
+/RETURN
 
-Sub SRBandIn(setName)
+SUB SRBandIn(setName)
     /if (!${Defined[bandIni]}) /declare bandIni string local ..\MQ2Bandolier_${Me.Name}.ini
     /declare equipSlots string local
     /declare itemSlot string local
@@ -336,18 +336,18 @@ Sub SRBandIn(setName)
             }
         /next i
     }
-/return
+/RETURN
 
-Sub SRBandOut
+SUB SRBandOut
     /declare i int local
     /for i 1 to 23
         /if (${equippedArray[${i}].Length} && !${equippedArray[${i}].Equal[${Me.Inventory[${Math.Calc[${i}-1]}].Name}]}) {
             /call SRSwapItem "${equippedArray[${i}]}" "${slotNames[${i}]}"
         }
     /next i 
-/return
+/RETURN
 
-Sub SRClearCursor
+SUB SRClearCursor
     /declare i int local
 :check_cursor
     /if (${Cursor.ID}) {
@@ -363,9 +363,9 @@ Sub SRClearCursor
         }
     }
     /goto :check_cursor
-/return
+/RETURN
 
-Sub SREquipItem(WhatWhere)
+SUB SREquipItem(WhatWhere)
     /declare destName string local
     /declare itemName string local ${WhatWhere.Arg[1,|]}
     /declare slotName string local ${WhatWhere.Arg[2,|]}
@@ -374,33 +374,33 @@ Sub SREquipItem(WhatWhere)
         /varset slotName ${FindItem[=${itemName}].WornSlot[1].Name}
     }
     /if (${FindItem[=${itemName}].itemSlot}<23 || !${FindItem[=${itemName}].WornSlot[${slotName}]}) {
-        /return
+        /RETURN
     }
     /if (${Me.Inventory[${slotName}].ID}) {
         /varset destName "${Me.Inventory[${slotName}].Name}|${slotName}"
     }
     /call SRSwapItem "${itemName}" "${slotName}"
-/return ${destName}
+/RETURN ${destName}
 
-Sub SRSwapItem(itemName,slotName)
+SUB SRSwapItem(itemName,slotName)
     /declare i int local
     /if (${Cursor.ID}) /call SRClearCursor
     /exchange "${itemName}" ${slotName}
     /delay 5s ${Me.Inventory[${slotName}].Name.Equal[${itemName}]}
     /delay 5s !${Cursor.ID}
     /if (${Cursor.ID}) /call SRClearCursor
-/return
+/RETURN
 
-Sub SRSwapItemNum(itemNum,slotNum)
+SUB SRSwapItemNum(itemNum,slotNum)
     /declare i int local
     /if (${Cursor.ID}) /call SRClearCursor
     /exchange ${itemNum} ${slotNum}
     /delay 5s ${Me.Inventory[${slotNum}].ID}==${itemNum}
     /delay 5s !${Cursor.ID}
     /if (${Cursor.ID}) /call SRClearCursor
-/return
+/RETURN
 
-Sub SRFindBookName(sName)
+SUB SRFindBookName(sName)
     /declare returnName string local
     /declare tName string local
 	/declare a[2] string local
@@ -447,4 +447,4 @@ Sub SRFindBookName(sName)
     /next i
         
 :found_book_name
-/return ${returnName}
+/RETURN ${returnName}

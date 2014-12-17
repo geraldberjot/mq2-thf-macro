@@ -10,20 +10,20 @@
 
 
 
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- autoCanni											-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Uses cannibalize spells and AAs when under 95% mana.	-|
 |- Spells must be memmed to be used automatically.		-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Canni
 /if (${outerDebug}) /echo |- autoCanni ==>
 
-	| Check if Auto-Canni is on
+	|- Check if Auto-Canni is on
 	/if (${AutoCanni}) {
 	
-		| AltAbility Cannibalization.
-		/if (${Me.PctHPs} > 65 && ${Me.PctMana} < 65 && ${Me.AltAbilityReady[Cannibalization]}) /call e3_Cast 0 "Cannibalization"
+		|- AltAbility Cannibalization.
+		/if (${Me.PctHPs} > 65 && ${Me.PctMana} < 65 && ${Me.AltAbilityReady[Cannibalization]}) /call thf_Casting 0 "Cannibalization"
 
 		/if (!${ActionTaken} && !${medBreak}) {
 		
@@ -35,7 +35,7 @@ SUB check_Canni
 			
 				/varset castName ${canniSpells[${i}].Arg[1,/]}
 				
-				| Get MinMana
+				|- Get MinMana
 				/if (${canniSpells[${i}].Find[/MinMana|]}) {
 					/call argueString MinMana "${canniSpells[${i}]}"
 					/varset minMana ${Macro.Return}
@@ -43,7 +43,7 @@ SUB check_Canni
 					/varset minMana 90
 				}
 				
-				/if (${Me.PctMana} < ${minMana} && ${Me.PctHPs} > 35) /call e3_Cast 0 "${canniSpells[${i}]}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
+				/if (${Me.PctMana} < ${minMana} && ${Me.PctHPs} > 35) /call thf_Casting 0 "${canniSpells[${i}]}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
 
 			/if (!${ActionTaken}) /next i
 		}
@@ -58,7 +58,7 @@ SUB SHM_Setup
 /if (${outerDebug}) /echo |- SHM_Setup ==>
 	
 	/call iniToVar "${iniToon},Shaman,Auto-Canni (On/Off)" AutoCanni bool outer
-	/call IniToArray "${iniToon},Shaman,Canni#" canniSpells
+	/call iniToArray "${iniToon},Shaman,Canni#" canniSpells
 	
 /if (${outerDebug}) /echo <== SHM_Setup -|
 /RETURN
@@ -73,7 +73,7 @@ SUB SHM_checkBackgroundEvents
 SUB SHM_MacroSettings
 /if (${outerDebug}) /echo |- SHM_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},SHM Functions,SHM Function#1" "check_Debuffs" 1
 	/call writeToIni "${iniTHF},SHM Functions,SHM Function#2" "check_Burns" 1
 	/call writeToIni "${iniTHF},SHM Functions,SHM Function#3" "check_Heals" 1

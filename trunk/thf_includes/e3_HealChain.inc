@@ -12,16 +12,16 @@ SUB EVENT_build_HealChain(line, ChatSender, eventParams)
 	/if (!${Raid.Members}) {
 		/if (${ChatSender.Equal[${Me.CleanName}]}) /echo You need to be in a raid to form a heal chain.
 	} else {
-		| -Verify the event
+		|- -Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-		|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|    |------------In Range------------|
+		|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-			| Setup variables for a heal chain moderator
+			|- Setup variables for a heal chain moderator
 			/if (${ChatSender.Equal[${Me.CleanName}]}) {
-				| Unload an existing chain
+				|- Unload an existing chain
 				/if (${Defined[Chain_Moderator]}) /call EVENT_unload_HealChain "PLACEHOLDER" "${Me.CleanName}"
-				| Declare chain variables.
+				|- Declare chain variables.
 				/declare Chain_Moderator string outer ${ChatSender}
 				/declare Chain_Count int outer
 				/declare Chain_MemberList string outer
@@ -35,7 +35,7 @@ SUB EVENT_build_HealChain(line, ChatSender, eventParams)
 				/declare Chain_TankList string outer
 				/declare Chain_Timing int outer
 			}
-			| If I'm set to join heal chains, wait a moment and say "add me"
+			|- If I'm set to join heal chains, wait a moment and say "add me"
 			/if (${join_HealChain}) {
 				/if (${ChatSender.Equal[${Me.CleanName}]}) {
 					/call EVENT_add_ChainMember "PLACEHOLDER" "${Me.CleanName}"
@@ -56,9 +56,9 @@ SUB EVENT_build_HealChain(line, ChatSender, eventParams)
 SUB EVENT_join_HealChain(line, tellTarget)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_join_HealChain ==>
 
-	| Unload an existing chain
+	|- Unload an existing chain
 	/if (${Defined[Chain_Moderator]}) /call EVENT_unload_HealChain "PLACEHOLDER" "${Me.CleanName}"
-	| Declare chain variables.
+	|- Declare chain variables.
 	/declare Chain_Moderator string outer ${tellTarget}
 	/declare Chain_Count int outer
 	/declare Chain_MemberList string outer
@@ -89,10 +89,10 @@ SUB EVENT_join_HealChain(line, tellTarget)
 SUB EVENT_unload_HealChain(line, ChatSender)
 /if (${Debug} || ${Debug_HealChain}) /echo |- unload_HealChain ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	| If I'm the ChatSender, or the ChatSender was the chain moderator
+	|- If I'm the ChatSender, or the ChatSender was the chain moderator
 	/if (${ChatSender.Equal[${Me.CleanName}]} || ${ChatSender.Equal[${Chain_Moderator}]}) { 
 		/if (${line.NotEqual[PLACEHOLDER]}) /echo Unloading heal chain.
 		/deletevar Chain_Moderator
@@ -119,18 +119,18 @@ SUB EVENT_add_ChainMember(line, ChatSender)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_add_ChainMember ==>
 
 	/if (${Defined[Chain_Moderator]}) {
-		| -Verify the event
+		|- -Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-		|    |-----------In Zone-------------|
+		|-    |-----------In Zone-------------|
 		/if (!${Bool[${Macro.Return.Arg[4,_]}]}) {
 			/rs [${ChatSender}] is not in ${Zone}.
 		} else {
-			| If the ChatSender is already part of the HealChain
+			|- If the ChatSender is already part of the HealChain
 			/if (${Select[${ChatSender},${Chain_MemberList}]}) {
 				/rs [${ChatSender}] is already part of the heal chain.
 			} else {
-				| Set Chain_MemberList, Chain_Count, and announce new counts to the Chain_Channel.
+				|- Set Chain_MemberList, Chain_Count, and announce new counts to the Chain_Channel.
 				/varcalc Chain_Count ${Chain_Count} + 1
 				/varset Chain_MemberList ${Chain_MemberList}${ChatSender},
 				/rs Added, ${ChatSender} ChainCount: [${Chain_Count}] - MinTiming [${If[${Math.Calc[10/${Chain_Count}]}>${Int[${Math.Calc[10/${Chain_Count}]}]},${Math.Calc[${Int[${Math.Calc[10/${Chain_Count}]}]}+1].Int},${Math.Calc[10/${Chain_Count}].Int}]}s].
@@ -149,15 +149,15 @@ SUB EVENT_remove_ChainMember(line, ChatSender)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_remove_ChainMember ==>
 
 	/if (${Defined[Chain_Moderator]}) {
-		| -Verify the event
+		|- -Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 		/if (${Chain_Moderator.Equal[${Me.CleanName}]}) {
-			| If the ChatSender is not part of the HealChain
+			|- If the ChatSender is not part of the HealChain
 			/if (!${Select[${ChatSender},${Chain_MemberList}]}) {
 				/rs [${ChatSender}] you're not part of the heal chain.
 			} else {
-				| Set Chain_MemberList, Chain_Count, and announce new counts to the Chain_Channel.
+				|- Set Chain_MemberList, Chain_Count, and announce new counts to the Chain_Channel.
 				/declare i int local 1
 				/declare new_Count int local
 				/declare new_MemberList string local
@@ -194,7 +194,7 @@ SUB EVENT_remove_ChainMember(line, ChatSender)
 SUB EVENT_set_TankList(line, ChatSender, tankList_Setting)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_set_TankList ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 
@@ -229,12 +229,12 @@ SUB EVENT_set_TankList(line, ChatSender, tankList_Setting)
 SUB EVENT_lock_TankList(line, ChatSender, tankList_Setting)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_TankList ==>
 	
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	/if (${ChatSender.Equal[${Chain_Moderator}]}) {
 		/varset Chain_TankList ${tankList_Setting}
-		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_TankList -| Setting Chain_TankList to [${Chain_TankList}].
+		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_TankList -|- Setting Chain_TankList to [${Chain_TankList}].
 	}
 
 /if (${Debug} || ${Debug_HealChain}) /echo <== EVENT_lock_TankList -|
@@ -246,7 +246,7 @@ SUB EVENT_lock_TankList(line, ChatSender, tankList_Setting)
 SUB EVENT_set_chainTiming(line, ChatSender, chainTimer_Setting)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_set_chainTiming ==>
 	
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	/varset chainTimer_Setting ${Int[${chainTimer_Setting}]}
@@ -268,12 +268,12 @@ SUB EVENT_set_chainTiming(line, ChatSender, chainTimer_Setting)
 SUB EVENT_lock_chainTiming(line, ChatSender, chainTimer_Setting)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_chainTiming ==>
 	
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	/if (${ChatSender.Equal[${Chain_Moderator}]}) {
 		/varset Chain_Timing ${chainTimer_Setting}
-		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_chainTiming -| Setting Chain_Timing to [${Chain_Timing}].
+		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_chainTiming -|- Setting Chain_Timing to [${Chain_Timing}].
 	}
 	
 /if (${Debug} || ${Debug_HealChain}) /echo <== EVENT_lock_chainTiming -|
@@ -286,7 +286,7 @@ SUB EVENT_lock_chainTiming(line, ChatSender, chainTimer_Setting)
 SUB EVENT_lock_MemberList(line, ChatSender, memberList)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_MemberList ==>
 	
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 
@@ -301,7 +301,7 @@ SUB EVENT_lock_MemberList(line, ChatSender, memberList)
 			/goto :nextHealer
 		}
 		/varset Chain_Count ${Math.Calc[${i}-1]}
-		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_MemberList -| Chain_MemberList= ${Chain_MemberList}
+		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_lock_MemberList -|- Chain_MemberList= ${Chain_MemberList}
 	}
 	
 /if (${Debug} || ${Debug_HealChain}) /echo <== EVENT_lock_MemberList -|
@@ -314,20 +314,20 @@ SUB EVENT_lock_MemberList(line, ChatSender, memberList)
 SUB EVENT_start_HealChain(line, ChatSender)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_start_HealChain ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	/if (${Chain_Moderator.Equal[${Me.CleanName}]}) {
-		| Check for Healers	
+		|- Check for Healers	
 		/if (!${Chain_MemberList.Length}) {	
 			/rs #*# ERROR #*# You don't have any healers for your heal chain!
 		} else {
-			| Check for a tank list
+			|- Check for a tank list
 			/if (!${Chain_TankList.Length}) {
 				/if (${Chain_Moderator.Equal[${Me.CleanName}]}) /rs #*# ERROR #*# You have not specified any tanks to heal!
 			} else {
 				/rs Set Chain Members to: [${Chain_MemberList.Left[${Math.Calc[${Chain_MemberList.Length} - 1]}]}].
-				| Check chain timing
+				|- Check chain timing
 				/if (!${Chain_Timing}) {
 					/if (${Chain_Moderator.Equal[${Me.CleanName}]}) /rs You have not specified a chain timing!  Defaulting to [${If[${Math.Calc[10/${Chain_Count}]}>${Int[${Math.Calc[10/${Chain_Count}]}]},${Math.Calc[${Int[${Math.Calc[10/${Chain_Count}]}]}+1].Int},${Math.Calc[10/${Chain_Count}].Int}]}s]
 					/varset Chain_Timing ${If[${Math.Calc[10/${Chain_Count}]}>${Int[${Math.Calc[10/${Chain_Count}]}]},${Math.Calc[${Int[${Math.Calc[10/${Chain_Count}]}]}+1].Int},${Math.Calc[10/${Chain_Count}].Int}]}
@@ -347,7 +347,7 @@ SUB EVENT_start_HealChain(line, ChatSender)
 SUB EVENT_engage_ChainHeal(ling, ChatSender, chainTiming_Setting, chainTank_Setting)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_engage_ChainHeal ==>
 
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	/if (${ChatSender.Equal[${Chain_Moderator}]}) {
@@ -372,7 +372,7 @@ SUB EVENT_engage_ChainHeal(ling, ChatSender, chainTiming_Setting, chainTank_Sett
 SUB EVENT_end_ChainHeal(line, ChatSender)
 /if (${Debug} || ${Debug_HealChain}) /echo |- EVET_end_ChainHeal ==>
 	
-	| -Verify the event
+	|- -Verify the event
 	/call verifyEvent "${ChatSender}" "${line}"
 	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 	
@@ -403,53 +403,53 @@ SUB chainHeal_Events
 
 
 
-| There is a place for the chain to break down in this script
+|- There is a place for the chain to break down in this script
 SUB check_healChain
 /if (${Debug} || ${Debug_HealChain}) /echo |- ChainHeal ==>
 
 	/call chainHeal_Events
 	/if (${Chain_Status.Equal[HEALING]}) {
 		/varset ActionTaken TRUE
-		| Wait until there is less than 1 second on the next heal timer
+		|- Wait until there is less than 1 second on the next heal timer
 		/echo /if (${Chain_NextHealTimer} < 10)
 		/if (${Chain_NextHealTimer} < 10) {
-			| Check for a valid tank.
+			|- Check for a valid tank.
 			/call set_ChainTarget
-			| If no tanks are found.
+			|- If no tanks are found.
 			/echo ${Macro.Return}
 			/if (${Chain_Target.Equal[NOT_FOUND]}) {
 				/rs No tanks were found!  Ending heal chain.
 				/varset Chain_Status END_CHAIN
 			} else {
-				| Check for a valid healer.
+				|- Check for a valid healer.
 				/call set_NextHealer
 				/echo ${Macro.Return}
 				/if (${Macro.Return.Equal[NOT_FOUND]}) {
 					/rs No healers were found!  Ending heal chain.
 					/varset Chain_Status END_CHAIN
 				} else {
-					| If I am the next healer, cast the nextCH.
+					|- If I am the next healer, cast the nextCH.
 					/echo /if (${Macro.Return.Equal[${Me.CleanName}]}) - ${Macro.Return}
 					/if (${Macro.Return.Equal[${Me.CleanName}]}) {
 						/call nextCH
 					} else {
-						| If I am NOT the next healer, wait to set next heal timing.
+						|- If I am NOT the next healer, wait to set next heal timing.
 						/declare TimingSet_Timer timer local 30
 						/varset Chain_NextTimingSet FALSE
-						| Call chainHeal_Events until next heal timing is set.
+						|- Call chainHeal_Events until next heal timing is set.
 						:check_healEvents
 						/call chainHeal_Events
-						| If the timing did not get set.
+						|- If the timing did not get set.
 						/if (!${Chain_NextTimingSet}) {
-							| If I still have time to wait for the event, goto :check_healEvents
+							|- If I still have time to wait for the event, goto :check_healEvents
 							/if (${TimingSet_Timer}) {
 								/goto :check_healEvents
 							} else {
 								/rs Well, shit. The chain seems to have broken down....
-								| the next healer has taken too long to respond
-								| Restart chain, and call patch heals
-								| users can set a Heal Chain Main Heal, and a Heal Chain Patch Heal
-								| the healer called by restart will ignore the patch command, but others will use theirs
+								|- the next healer has taken too long to respond
+								|- Restart chain, and call patch heals
+								|- users can set a Heal Chain Main Heal, and a Heal Chain Patch Heal
+								|- the healer called by restart will ignore the patch command, but others will use theirs
 							}
 						}
 					}
@@ -472,14 +472,14 @@ SUB set_ChainTarget
 	
 	:check_Chain_TankList
 	/if (${Chain_TankList.Arg[${i},,].Length}) {
-		| Check if the tank is in zone.
+		|- Check if the tank is in zone.
 		/if (${SpawnCount[pc ${Chain_TankList.Arg[${i},,]}]}) {
-			| Check tank range from the Chain_StartLoc.
+			|- Check tank range from the Chain_StartLoc.
 			/call Triangulate_Distance ${Spawn[pc ${Chain_TankList.Arg[${i},,]}].Loc.Replace[ ,]} ${Chain_StartLoc}
 			/if (${Macro.Return} < 100) {
-				| If the spawn is in zone, and in range, set Chain_Target.
+				|- If the spawn is in zone, and in range, set Chain_Target.
 				/varset Chain_Target ${Spawn[pc ${Chain_TankList.Arg[${i},,]}].CleanName}
-				/if (${Debug} || ${Debug_HealChain}) /echo |- set_ChainTarget -| Chain_Target= [${Chain_Target}].
+				/if (${Debug} || ${Debug_HealChain}) /echo |- set_ChainTarget -|- Chain_Target= [${Chain_Target}].
 			} else {
 				/varcalc i ${i} + 1
 				/goto :check_Chain_TankList
@@ -501,22 +501,22 @@ SUB set_NextHealer
 	/declare nextHealer string local NOT_FOUND
 	/declare i int local
 	
-	| Declare the counting variable, and set it to the position of the last chain member + 1
+	|- Declare the counting variable, and set it to the position of the last chain member + 1
 	/declare e int local ${Math.Calc[${Select[${Chain_LastHealer},${Chain_MemberList}]} + 1]}
 
 	/for i 1 to ${Chain_Count}
 	
-	| If e was set too high, reset to 1
+	|- If e was set too high, reset to 1
 	/if (!${Chain_MemberList.Arg[${e},,].Length}) /varset e 1
 	
-	| Check that the next healer is in zone
+	|- Check that the next healer is in zone
 	/if (${SpawnCount[pc ${Chain_MemberList.Arg[${e},,]}]}) {
 		
-		| Check the distance to the next healer
+		|- Check the distance to the next healer
 		/call Triangulate_Distance ${Spawn[pc ${Chain_Target}].Loc.Replace[ ,]} ${Spawn[pc ${Chain_MemberList.Arg[${e},,]}].Loc.Replace[ ,]}
 		/if (${Macro.Return} < 100) {
 			
-			| If the healer is in zone, and in range, set next healer
+			|- If the healer is in zone, and in range, set next healer
 			/varset nextHealer ${Chain_MemberList.Arg[${e},,]}
 		} else {
 			/echo ${Spawn[pc ${Chain_MemberList.Arg[${e},,]}].CleanName} is out of range, checking for another healer...
@@ -542,12 +542,12 @@ SUB nextCH
 
 	/rs -${TimeZone.GMT.Arg[2,:]}:${TimeZone.GMT.Arg[3,:]}- >>> [${Me.PctMana}m] <<< Casting [${If[${Me.Class.ShortName.Equal[clr]},Complete Heal,Karana's Renewal]}] next healer in [${Chain_Timing}s].
 	
-	| /echo /if (${Chain_TimingAdjustment}) /delay ${Chain_TimingAdjustment}
-	| /if (${Chain_TimingAdjustment}) /delay ${Chain_TimingAdjustment}
+	|- /echo /if (${Chain_TimingAdjustment}) /delay ${Chain_TimingAdjustment}
+	|- /if (${Chain_TimingAdjustment}) /delay ${Chain_TimingAdjustment}
 	
-	/call e3_Cast ${Spawn[pc ${Chain_Target}].ID} "${If[${Me.Class.ShortName.Equal[clr]},Complete Heal,Karana's Renewal]}/GiveUpTimer|10s"
+	/call thf_Casting ${Spawn[pc ${Chain_Target}].ID} "${If[${Me.Class.ShortName.Equal[clr]},Complete Heal,Karana's Renewal]}/GiveUpTimer|10s"
 	
-	| Check for timing adjustment on next cast
+	|- Check for timing adjustment on next cast
 	/if (${castReturn.Equal[SUCCESS]} && ${adjustment_Timer} > 0) /varset Chain_TimingAdjustment ${adjustment_Timer}
 	
 /if (${Debug} || ${Debug_HealChain}) /echo <== nextCH -|
@@ -562,7 +562,7 @@ SUB EVENT_set_LastHealer(line, ChatSender, time_Hour, time_Min, time_Sec)
 
 	/if (${Select[${Me.CleanName},${Chain_MemberList}]}) {
 		
-		| -Verify the event
+		|- -Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 		
@@ -570,13 +570,13 @@ SUB EVENT_set_LastHealer(line, ChatSender, time_Hour, time_Min, time_Sec)
 		
 		/varcalc next_Delay ${time_Sec} + ${Chain_Timing}
 
-		/if (${Debug} || ${Debug_HealChain}) /echo |- Chain_NextHealTimer -| set to: [${Math.Calc[${next_Delay} - ${TimeZone.GMT.Arg[3,:]}].Int}s]
+		/if (${Debug} || ${Debug_HealChain}) /echo |- Chain_NextHealTimer -|- set to: [${Math.Calc[${next_Delay} - ${TimeZone.GMT.Arg[3,:]}].Int}s]
 		/varset Chain_NextHealTimer ${Math.Calc[${next_Delay} - ${TimeZone.GMT.Arg[3,:]}].Int}s	
 
 		/varset Chain_LastHealer ${ChatSender}
 		/varset Chain_NextTimingSet TRUE
 		
-		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_set_LastHealer -| Chain_Timer= ${Chain_Timer} :: Chain_LastHealer= ${Chain_LastHealer}
+		/if (${Debug} || ${Debug_HealChain}) /echo |- EVENT_set_LastHealer -|- Chain_Timer= ${Chain_Timer} :: Chain_LastHealer= ${Chain_LastHealer}
 	}
 
 /if (${Debug} || ${Debug_HealChain}) /echo <== EVENT_set_LastHealer -|
@@ -584,35 +584,35 @@ SUB EVENT_set_LastHealer(line, ChatSender, time_Hour, time_Min, time_Sec)
 
 
 
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- healChain_Setup										-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Imports ini settings from Character Ini,[healChain].	-|
-|--------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB healChain_Setup
-/call INItoVar "${advSettings_Ini},Debug,Debug HealChain (On/Off)" Debug_HealChain bool outer
+/call iniToVar "${iniGeneral},Debug,Debug HealChain (On/Off)" Debug_HealChain bool outer
 /if (${Debug} || ${Debug_HealChain}) /echo |- healChain_Setup ==>
 
-	| Join Heal Chains (On/Off).
-	/if (${Ini[${Character_Ini},Heals,Join Heal Chains (On/Off)].Length}) /call IniToVar "${Character_Ini},Heals,Join Heal Chains (On/Off)" join_HealChain bool outer
+	|- Join Heal Chains (On/Off).
+	/if (${Ini[${iniToon},Heals,Join Heal Chains (On/Off)].Length}) /call iniToVar "${iniToon},Heals,Join Heal Chains (On/Off)" join_HealChain bool outer
 
 /if (${Debug} || ${Debug_HealChain}) /echo <== healChain_Setup -|
 /RETURN
 
 
 
-Sub healChain_Background_Events
+SUB healChain_Background_Events
 
 	/doevents join_HealChain
 
-/return
+/RETURN
 
 
 
 SUB healChain_MacroSettings
 /if (${Debug} || ${Debug_HealChain}) /echo |- healChain_MacroSettings ==>
 
-	/call WriteToIni "${advSettings_Ini},Debug,Debug HealChain (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug HealChain (On/Off)"
 
 /if (${Debug} || ${Debug_HealChain}) /echo <== healChain_MacroSettings -|
 /RETURN
@@ -622,14 +622,14 @@ SUB healChain_MacroSettings
 SUB healChain_CharacterSettings
 /if (${Debug} || ${Debug_HealChain}) /echo |- healChain_CharacterSettings ==>
 
-	/if (${Me.Class.ShortName.Equal[Clr]} || ${Me.Class.ShortName.Equal[Dru]}) /call WriteToIni "${Character_Ini},Heals,Join Heal Chains (On/Off)" ${If[${Me.Class.ShortName.Equal[Clr]} && ${Me.Book[Complete Heal]} || ${Me.Class.ShortName.Equal[Dru]} && ${Me.Book[Karana's Renewal]},On,Off]}
+	/if (${Me.Class.ShortName.Equal[Clr]} || ${Me.Class.ShortName.Equal[Dru]}) /call writeToIni "${iniToon},Heals,Join Heal Chains (On/Off)" ${If[${Me.Class.ShortName.Equal[Clr]} && ${Me.Book[Complete Heal]} || ${Me.Class.ShortName.Equal[Dru]} && ${Me.Book[Karana's Renewal]},On,Off]}
 
 /if (${Debug} || ${Debug_HealChain}) /echo <== healChain_CharacterSettings -|
 /RETURN
 
 
 
-Sub healChain_Aliases
+SUB healChain_Aliases
 /if (${Debug} || ${Debug_HealChain}) /echo |- healChain_Aliases ==>
 
 	/squelch /alias /BuildChain /bc Build Heal Chain
@@ -637,4 +637,4 @@ Sub healChain_Aliases
 	/noparse /squelch /alias /ChainTiming /rs Set Chain Timing
 
 /if (${Debug} || ${Debug_HealChain}) /echo <== healChain_Aliases -|
-/return
+/RETURN

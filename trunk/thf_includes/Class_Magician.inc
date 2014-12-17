@@ -21,7 +21,7 @@ SUB EVENT_petWeapons(string line, string from)
 			:allowAccess
 			
 			/if (!${SpawnCount[pc ${from}]}) {
-				/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| [${from}] is not in ${Zone}.
+				/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -|- [${from}] is not in ${Zone}.
 			} else {
 				
 				/if (${Spawn[pc ${from}].Distance} > 200) {
@@ -38,7 +38,7 @@ SUB EVENT_petWeapons(string line, string from)
 						
 							/if (${from.NotEqual[${Me}]}) /tell ${from} Incoming pet weapons.  Please stay still for a few moments.
 							
-							| Declare local variables
+							|- Declare local variables
 							/declare i int local
 							/declare x int local
 							/declare e int local
@@ -46,14 +46,14 @@ SUB EVENT_petWeapons(string line, string from)
 							/declare miscTimer timer local
 							/declare summonedItem string local
 							
-							| Target the pet, and move to it
+							|- Target the pet, and move to it
 							/call TrueTarget ${Spawn[pet ${Spawn[pc ${from}].Pet}].ID}
 							/call MoveTo -SpawnID|${Spawn[pet ${Spawn[pc ${from}].Pet}].ID}
 							
 							/for i 1 to ${petItems.Size}
 							
 							/if (${Target.Distance} < 20) {
-								/call e3_Cast 0 "${petItems[${i}]}/GiveUpTimer|${If[${Me.Gem[${petItems[${i}].Arg[1,/]}]},50,150]}"
+								/call thf_Casting 0 "${petItems[${i}]}/GiveUpTimer|${If[${Me.Gem[${petItems[${i}].Arg[1,/]}]},50,150]}"
 								/delay 20 ${Cursor.ID}
 
 								/if (${Cursor.ID}) {
@@ -92,9 +92,9 @@ SUB EVENT_petWeapons(string line, string from)
 								
 								/if (${FindItemCount[=${summonedItem}]}) {
 									
-									/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| Dropped [${summonedItem}] in my inventory.
+									/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -|- Dropped [${summonedItem}] in my inventory.
 								
-									| Open InventoryWindow.
+									|- Open InventoryWindow.
 									/varset miscTimer 3s
 									
 									:openInventory
@@ -102,22 +102,22 @@ SUB EVENT_petWeapons(string line, string from)
 									/delay 5 ${Window[InventoryWindow].Open}
 									/if (!${Window[InventoryWindow].Open} && ${miscTimer}) /goto :openInventory
 						
-									| Search packslots.
+									|- Search packslots.
 									/varset e 0
 									/for x 1 to 8  
 									
-										| If the item in the packslot is the summoned item, pick it up.
+										|- If the item in the packslot is the summoned item, pick it up.
 										/if (!${Me.Inventory[pack${x}].Container} && ${summonedItem.Equal[${Me.Inventory[pack${x}]}]}) {
-											/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| Picking up [${summonedItem}] form pack${x}
+											/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -|- Picking up [${summonedItem}] form pack${x}
 											/itemnotify pack${x} leftmouseup
 										} else {
 										
-											| If the item in the packslot is a container, search it.
+											|- If the item in the packslot is a container, search it.
 											/for e 1 to ${Me.Inventory[pack${x}].Container}
 												/if (${summonedItem.Equal[${Me.Inventory[pack${x}].Item[${e}]}]}) {
 													/if (!${Window[pack${x}].Open}) /itemnotify pack${x} rightmouseup
 													/delay 1s ${Window[pack${x}].Open}
-													/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| Picking up [${summonedItem}] form pack${x} slot${e}
+													/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -|- Picking up [${summonedItem}] form pack${x} slot${e}
 													/itemnotify in pack${x} ${e} leftmouseup
 												}
 											/next e
@@ -157,15 +157,15 @@ SUB EVENT_distributePetWeapons(line, ChatSender)
 		|- Verify the event
 		/call verifyEvent "${ChatSender}" "${line}"
 		/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-		|    |-----------Valid User----------|
+		|-    |-----------Valid User----------|
 		/if (!${Bool[${Macro.Return.Arg[2,_]}]}) {
 
 			/call iniToVar "${iniGeneral},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
 			
-			| If the user is not valid, check allow_BuffRequests
+			|- If the user is not valid, check allow_BuffRequests
 			/if (${Macro.Return}) {
 		
-				| If allow_BuffRequests=TRUE, check restricked PCs
+				|- If allow_BuffRequests=TRUE, check restricked PCs
 				/if (!${Select[${ChatSender},${Ini[${Macro_Ini},Buff Requests,Restricted PCs]}]}) /goto :allowAccess
 			}
 		} else {
@@ -173,7 +173,7 @@ SUB EVENT_distributePetWeapons(line, ChatSender)
 			:allowAccess
 			
 			/if (!${SpawnCount[pc ${ChatSender}]}) {
-				/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -| [${ChatSender}] is not in ${Zone}.
+				/if (${outerDebug} || ${outerDebug_MAG}) /echo |- EVENT_petWeapons -|- [${ChatSender}] is not in ${Zone}.
 			} else {
 				
 				/if (${Spawn[pc ${ChatSender}].Distance} > 200) {
@@ -197,23 +197,23 @@ SUB EVENT_distributePetWeapons(line, ChatSender)
 						/declare i int local
 						
 					
-						| Move to the starting point
+						|- Move to the starting point
 						/call MoveTo -Loc|${startingLoc}
 					
-						| Make a list of all the pets nearby
+						|- Make a list of all the pets nearby
 						/for i 1 to ${SpawnCount[radius 100]}
 						
 							/if (${NearestSpawn[${i}].Type.Equal[PC]} && ${Spawn[pc ${NearestSpawn[${i}]}].Pet.ID} && ${Spawn[id ${Spawn[pc ${NearestSpawn[${i}]}].Pet.ID}].LineOfSight}) /varset nearbyPetOwners ${nearbyPetOwners}${NearestSpawn[${i}]},
 				
 						/next i
 					
-						| Pass out weapons to each person on the nearbyPetOwners list
+						|- Pass out weapons to each person on the nearbyPetOwners list
 						
 						/varset i 1
 						
 						:next_PetOwner
 						
-						| set petOwner and petID, then send the owner a msg.
+						|- set petOwner and petID, then send the owner a msg.
 						/varset petOwner ${nearbyPetOwners.Arg[${i},,]}
 					
 						/call EVENT_petWeapons "${Line}" "${petOwner}"
@@ -221,7 +221,7 @@ SUB EVENT_distributePetWeapons(line, ChatSender)
 						/varcalc i ${i} + 1
 						/if (${Bool[${nearbyPetOwners.Arg[${i},,]}]}) /goto :next_PetOwner
 						
-						| Move to the starting point
+						|- Move to the starting point
 						/call MoveTo -Loc|${originalLoc}
 					}
 				}
@@ -248,10 +248,10 @@ SUB check_PetWeapons
 				/if (${NetBots[${NetBots.Client[${i}]}].Zone} && ${NetBots[${NetBots.Client[${i}]}].PetID}) {
 					
 					/if (${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName.Equal[${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}]}]}) {
-						/if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons -| I have already given weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}].
+						/if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons -|- I have already given weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}].
 					} else {
 
-						| /chat ${channelNumber} Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
+						|- /channel Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
 						/call EVENT_petWeapons PLACEHOLDER ${NetBots.Client[${i}]}
 						/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}" "${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}" 1
 					}
@@ -285,7 +285,7 @@ SUB MAG_Setup
 /if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Setup ==>
 	
 	/call iniToVar "${iniToon},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
-	/call IniToArray "${iniToon},Magician,Summoned Pet Item#" petItems
+	/call iniToArray "${iniToon},Magician,Summoned Pet Item#" petItems
 
 /if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Setup -|
 /RETURN
@@ -301,7 +301,7 @@ SUB MAG_checkBackgroundEvents
 SUB MAG_MacroSettings
 /if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#1" "check_CombatBuffs" 1
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#2" "check_petHeal" 1
 	/call writeToIni "${iniTHF},MAG Functions,MAG Function#3" "check_Burns" 1

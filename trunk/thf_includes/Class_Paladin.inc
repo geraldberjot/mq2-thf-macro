@@ -30,7 +30,7 @@ SUB PAL_checkBackgroundEvents
 SUB PAL_MacroSettings
 /if (${outerDebug}) /echo |- PAL_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},PAL Functions,PAL Function#1" "check_Yaulp" 1
 	/call writeToIni "${iniTHF},PAL Functions,PAL Function#2" "check_Heals" 1
 	/call writeToIni "${iniTHF},PAL Functions,PAL Function#3" "check_Burns" 1

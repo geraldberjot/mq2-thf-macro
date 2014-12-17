@@ -29,7 +29,7 @@ SUB instantBuff
 		/for i 1 to ${myInstantListCount}
 			/varset mySlot ${myInstantList.Token[${i},|]}
 			/varset myInstantLine ${Ini[${iniSetup},InstantBuff,${mySlot}]}
-			| en 1, l'item
+			|- en 1, l'item
 			/varset myInstant ${myInstantLine.Token[1,/]}
 			/varset myInstantSpell ${FindItem[=${myInstant}].Spell}
 			/if (${Spell[${myInstantSpell}].Stacks} && !${Me.Buff[${myInstantSpell}].ID}) {
@@ -56,14 +56,14 @@ SUB checkSpellBuff
 			/varset mySpellLine ${Ini[${iniSetup},SpellBuff,${myGem}]}
 			/varset mySpell ${mySpellLine.Token[1,/]}
 			/varset targetName ${mySpellLine.Token[2,/]}
-			| Si on a une target pour le spell, c'est que ce n'est pas un group spell
+			|- Si on a une target pour le spell, c'est que ce n'est pas un group spell
 			/if (${targetName.Length}) {
 				/varset targetID ${Spawn[pc ${targetName} los radius ${Spell[${mySpell}].MyRange}].ID}
 				/if (${Me.CurrentMana} > ${Spell[${mySpell}].Mana} && ${Me.SpellReady[${mySpell}]} && ${targetID} && !${Me.Moving}) {
 					/call checkTargetNeedBuff ${targetName} ${Spell[${mySpell}].ID}
 					/if (${Macro.Return}) {
 						/if (${targetID}) {
-							/chat ${channelNumber} casting "${mySpell}" on [${targetName}]
+							/channel casting "${mySpell}" on [${targetName}]
 							/casting "${mySpell}" ${myGem} -maxtries|3 -targetid|${Spawn[pc ${targetName}].ID}
 							/delay 3s
 						}
@@ -71,10 +71,10 @@ SUB checkSpellBuff
 				}
 			} else {
 				/if (${Spell[${mySpell}].Mana} > ${Me.CurrentMana} && ${Spell[${mySpell}].Stacks} && !${Me.Moving}) {
-					| Verifier la presence de tous les membres du groupe avant de caster le bazar
+					|- Verifier la presence de tous les membres du groupe avant de caster le bazar
 					/call checkGroupNeedBuff ${Spell[${mySpell}].ID}
 					/if (${Macro.Return}) {
-						/chat ${channelNumber} casting "${mySpell}"
+						/channel casting "${mySpell}"
 						/casting "${mySpell}" ${myGem} -maxtries|3
 					}
 				}
@@ -96,7 +96,7 @@ SUB checkTargetNeedBuff(string targetName, int spellID)
 		/varset targetBuff ${targetBuffs.Token[${i}, ]}
 		/if (${targetBuff.Length}) {
 			/if (!${Spell[${spellID}].WillStack[${Spell[${targetBuff}]}]}) {
-				/chat ${channelNumber} '${Spell[${spellID}].Name}' won't stack with '${Spell[${targetBuff}]}' !
+				/channel '${Spell[${spellID}].Name}' won't stack with '${Spell[${targetBuff}]}' !
 				/RETURN FALSE
 			}
 		}
@@ -133,8 +133,8 @@ SUB checkHolyShitBuff
 	/declare myHSBListCount int local ${myHSBList.Count[|]}
 	/varcalc myHSBListCount ${myHSBListCount}-1
 	/declare myHSBLine string local
-	/declare myHSB string local | HolyShitBuff
-	/declare myHSS string local | HolyShitSpell
+	/declare myHSB string local |- HolyShitBuff
+	/declare myHSS string local |- HolyShitSpell
 	/declare mySlot string local
 	/declare recastTime string local
 	/declare itemCleanName string local
@@ -145,11 +145,11 @@ SUB checkHolyShitBuff
 		/for i 1 to ${myHSBListCount}
 			/varset mySlot ${myHSBList.Token[${i},|]}
 			/varset myHSBLine ${Ini[${iniSetup},HolyShitBuff,${mySlot}]}
-			| en 1, l'item
+			|- en 1, l'item
 			/varset myHSB ${myHSBLine.Token[1,/]}
-			| en 2, le timer
+			|- en 2, le timer
 			/varset recastTime ${myHSBLine.Token[2,/]}
-			| en 3, la target
+			|- en 3, la target
 			/varset targetName ${myHSBLine.Token[3,/]}
 			/varset itemCleanName ${myHSB.Replace[ ,].Replace[',].Replace[.,]}
 			/if (${itemCleanName.Find[,]}) {
@@ -184,8 +184,8 @@ SUB checkDownShitBuff
 	/declare myDSBListCount int local ${myDSBList.Count[|]}
 	/varcalc myDSBListCount ${myDSBListCount}-1
 	/declare myDSBLine string local
-	/declare myDSB string local | DownShitBuff
-	/declare myDSS string local | DownShitSpell
+	/declare myDSB string local |- DownShitBuff
+	/declare myDSS string local |- DownShitSpell
 	/declare mySlot string local
 	/declare recastTime string local
 	/declare itemCleanName string local
@@ -195,11 +195,11 @@ SUB checkDownShitBuff
 		/for i 1 to ${myDSBListCount}
 			/varset mySlot ${myDSBList.Token[${i},|]}
 			/varset myDSBLine ${Ini[${iniSetup},DownShitBuff,${mySlot}]}
-			| en 1, l'item
+			|- en 1, l'item
 			/varset myDSB ${myDSBLine.Token[1,/]}
-			| en 2, le timer
+			|- en 2, le timer
 			/varset recastTime ${myDSBLine.Token[2,/]}
-			| en 3, la target
+			|- en 3, la target
 			/varset targetName ${myDSBLine.Token[3,/]}
 			/varset itemCleanName ${myDSB.Replace[ ,].Replace[',].Replace[.,]}
 			/if (!${Defined[${itemCleanName}Timer]}) /declare ${itemCleanName}Timer timer outer 0
@@ -259,7 +259,7 @@ SUB EVENT_Tell(Line, string From, string Msg)
 		}
 	} else {
 		/if (${Me.CleanName.NotEqual[${myMain}]}) {
-			/chat ${channelNumber} ${Line}
+			/channel ${Line}
 		}
 	}
 /RETURN
@@ -343,10 +343,10 @@ SUB sticking(String to)
     /face fast
     /delay 1s
     /stick ${stickCommand}
-    /chat ${channelNumber} Sticking to ${to}
+    /channel Sticking to ${to}
 /RETURN
 
-| Allow toon to gate to the Forest
+|- Allow toon to gate to the Forest
 SUB gate(String from, String who)
 	/echo gate
     /call amIconcerned ${from} ${who}
@@ -355,12 +355,12 @@ SUB gate(String from, String who)
         /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
         /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
             /casting "${CharmOfQueenAdrianne}" charm
-            /chat ${channelNumber} Gating to the Forest !
+            /channel Gating to the Forest !
         }
     }
 /RETURN
 
-| stick off, attack off, interrupt, twist off (if specify)
+|- stick off, attack off, interrupt, twist off (if specify)
 SUB stopCurrentAction(bool evenBard)
 	/echo stopCurrentAction ${evenBard}
     /if (${evenBard}) {
@@ -402,24 +402,24 @@ SUB amIconcerned(String from, String who)
 		}
 	}
 	/if (${who.Equal[caster]}) {
-		| Can cast spells, including Bard 
+		|- Can cast spells, including Bard 
 		/if (${Me.Class.CanCast}) {
 			/RETURN TRUE
 		}
 	}
 	/if (${who.Equal[melee]}) {
-		| Monk/Rogue/Bard/Ranger/Warrior/Paladin/ShadowKnight?
+		|- Monk/Rogue/Bard/Ranger/Warrior/Paladin/ShadowKnight?
 		/call amIMelee
 		/RETURN ${Macro.Return}
 	}
 	/if (${who.Equal[priest]}) {
-		| Cleric/Druid/Shaman? 
+		|- Cleric/Druid/Shaman? 
 		/if (${Me.Class.HealerType}) {
 			/RETURN TRUE
 		}
 	}
 	/if (${who.Equal[nuker]}) {
-		| Wizard/Magician/Necromancer/Enchanter?
+		|- Wizard/Magician/Necromancer/Enchanter?
 		/call amINuker
 		/RETURN ${Macro.Return}
 	}
@@ -472,7 +472,7 @@ SUB makeGroup
 
 SUB LPS
 	|- ---------------------------------------------------------------------
-	| Declare loops / second variables
+	|- Declare loops / second variables
 	|- ---------------------------------------------------------------------
 	/if (!${Defined[looptest]}) 	/declare looptest 	int outer 0
 	/if (!${Defined[loops]}) 		/declare loops 		int outer 0
@@ -496,7 +496,7 @@ SUB LPS
 	}
 /RETURN
 
-| Allow toon to the guild hall
+|- Allow toon to the guild hall
 SUB goToGuildHall(String from, String who)
 	/call gate ${from} ${who}
     /call amIconcerned ${from} ${who}
@@ -505,13 +505,13 @@ SUB goToGuildHall(String from, String who)
         /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
         /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
             /casting "${CharmOfQueenAdrianne}" charm
-            /chat ${channelNumber} Gating to the Forest !
+            /channel Gating to the Forest !
         }
     }
 /RETURN
 
 SUB test()
-	| Fermer toutes les fenetres ouvertes d'abord !
+	|- Fermer toutes les fenetres ouvertes d'abord !
 	/notify InventoryWindow InvSlot13 rightmouseheld
 	/delay 1
 	/keypress Enter

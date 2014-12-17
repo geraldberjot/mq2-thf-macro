@@ -27,7 +27,7 @@ SUB MNK_checkBackgroundEvents
 SUB MNK_MacroSettings
 /if (${outerDebug}) /echo |- MNK_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},MNK Functions,MNK Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},MNK Functions,MNK Function#2" "check_CombatBuffs" 1
 	/call writeToIni "${iniTHF},MNK Functions,MNK Function#3" "check_Buffs" 1

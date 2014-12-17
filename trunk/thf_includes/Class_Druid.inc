@@ -29,7 +29,7 @@ SUB DRU_checkBackgroundEvents
 SUB DRU_MacroSettings
 /if (${outerDebug}) /echo |- DRU_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},DRU Functions,DRU Function#1" "check_healChain" 1
 	/call writeToIni "${iniTHF},DRU Functions,DRU Function#2" "check_Heals" 1
 	/call writeToIni "${iniTHF},DRU Functions,DRU Function#3" "check_CombatBuffs" 1
@@ -48,7 +48,7 @@ SUB DRU_MacroSettings
 SUB DRU_CharacterSettings
 /if (${outerDebug}) /echo |- DRU_CharacterSettings ==>
 
-	| Bot Ini
+	|- Bot Ini
 	/call writeToIni "${iniToon},Druid,Evac Spell"
 
 /if (${outerDebug}) /echo <== DRU_CharacterSettings -|

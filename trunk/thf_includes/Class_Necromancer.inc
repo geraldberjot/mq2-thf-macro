@@ -22,14 +22,14 @@ SUB check_lifeTap
 		
 			/varset lifeTap_Spell ${lifeTaps[${i}].Arg[1,/]}
 			
-			| /HealPct check
+			|- /HealPct check
 			/if (${lifeTaps[${i}].Find[/HealPct|]}) {
 				/call argueString HealPct "${lifeTaps[${i}]}"	
 				/varset lifeTap_Pct ${Macro.Return}
 			}
 		
 			/if (${Me.PctHPs} < ${lifeTap_Pct}) {
-				/call e3_Cast ${outerAssistTarget} "${lifeTap_Spell}/${If[${Me.Gem[${lifeTap_Spell}]},0,${Math.Calc[${Spell[${lifeTap_Spell}].RecastTime} + 3]}]}s"
+				/call thf_Casting ${outerAssistTarget} "${lifeTap_Spell}/${If[${Me.Gem[${lifeTap_Spell}]},0,${Math.Calc[${Spell[${lifeTap_Spell}].RecastTime} + 3]}]}s"
 			}
 		
 		/if (!${ActionTaken}) /next i
@@ -45,8 +45,8 @@ SUB check_castLich
 
 	/if (${Defined[lichSpell]} && !${Me.Buff[${lichSpell}].ID} && ${Me.PctMana} < 90) {
 
-		| If I don't have lich on.
-		/if (${Spell[${lichSpell}].Stacks}) /call e3_Cast ${Me.ID} "${lichSpell}/GiveUpTimer|${If[${Me.Gem[${lichSpell.Arg[1,/]}]},0,7s]}"
+		|- If I don't have lich on.
+		/if (${Spell[${lichSpell}].Stacks}) /call thf_Casting ${Me.ID} "${lichSpell}/GiveUpTimer|${If[${Me.Gem[${lichSpell.Arg[1,/]}]},0,7s]}"
 	}
 
 /if (${outerDebug}) /echo <== check_castLich -|
@@ -76,19 +76,19 @@ SUB check_manaDump
 		
 		/for i 1 to ${NetBots.Counts}
 			
-			| If the netbot is me, skip it
+			|- If the netbot is me, skip it
 			/if (${NetBots.Client[${i}].NotEqual[${Me}]}) {
-				| Check that NetBots(i) is a perspective manaDump_Target
-				|    | 	Check								'group' tag								|	|       						Class									|	|								Class.ShortName									|		|												Caster Classes															|	|													Healer Classes														|	|												Priest Classes															|
+				|- Check that NetBots(i) is a perspective manaDump_Target
+				|-    |- 	Check								'group' tag								|	|-       						Class									|	|								Class.ShortName									|		|												Caster Classes															|	|													Healer Classes														|	|												Priest Classes															|
 				/if (${Select[group,${manaDump_Targets}]} && ${Group.Member[${NetBots.Client[${i}]}]} || ${Select[${NetBots[${NetBots.Client[${i}]}].Class},${manaDump_Targets}]} || ${Select[${NetBots[${NetBots.Client[${i}]}].Class.ShortName},${manaDump_Targets}]} || ${Select[casters,${manaDump_Targets}]} && ${Select[${NetBots[${NetBots.Client[${i}]}].Class.ShortName},${CasterClasses}]} || ${Select[healers,${manaDump_Targets}]} && ${Select[${NetBots[${NetBots.Client[${i}]}].Class.ShortName},${PriestClasses}]} || ${Select[priests,${manaDump_Targets}]} && ${Select[${NetBots[${NetBots.Client[${i}]}].Class.ShortName},${PriestClasses}]}) {
 					
-					| Check range to target
+					|- Check range to target
 					/if (${SpawnCount[pc ${NetBots.Client[${i}]}]} && ${Spawn[pc ${NetBots.Client[${i}]}].Distance} < 200) {
 						
-						| Find who has the lowest mana of all the potential targets
+						|- Find who has the lowest mana of all the potential targets
 						/if (${NetBots[${NetBots.Client[${i}]}].PctMana} < ${NetBots[${manaDump_Target}].PctMana} || !${Bool[${manaDump_Target}]}) {
 							/varset manaDump_Target ${NetBots.Client[${i}]}
-							/if (${outerDebug}) /echo |- manaDump -| manaDump_Target=${manaDump_Target}
+							/if (${outerDebug}) /echo |- manaDump -|- manaDump_Target=${manaDump_Target}
 						}
 						
 					}
@@ -101,11 +101,11 @@ SUB check_manaDump
 			/if (${NetBots[${manaDump_Target}].PctMana} < ${manaDump_Pct} && ${Me.PctMana} > 5) {
 			
 				/if (${Me.SpellReady[${manaDump_Spells[1].Arg[1,/]}]} || !${Me.Gem[${manaDump_Spells[1].Arg[1,/]}]}) {
-					/call e3_Cast ${NetBots[${manaDump_Target}].ID} "${manaDump_Spells[1]}/GiveUpTimer|${If[${Me.Gem[${manaDump_Spells[1].Arg[1,/]}]},0,5s]}"
+					/call thf_Casting ${NetBots[${manaDump_Target}].ID} "${manaDump_Spells[1]}/GiveUpTimer|${If[${Me.Gem[${manaDump_Spells[1].Arg[1,/]}]},0,5s]}"
 				} else /if (${Me.SpellReady[${manaDump_Spells[2].Arg[1,/]}]} || !${Me.Gem[${manaDump_Spells[2].Arg[1,/]}]}) {
-					/call e3_Cast ${NetBots[${manaDump_Target}].ID} "${manaDump_Spells[2]}/GiveUpTimer|${If[${Me.Gem[${manaDump_Spells[2].Arg[1,/]}]},0,5s]}"
+					/call thf_Casting ${NetBots[${manaDump_Target}].ID} "${manaDump_Spells[2]}/GiveUpTimer|${If[${Me.Gem[${manaDump_Spells[2].Arg[1,/]}]},0,5s]}"
 				} else /if (${Me.SpellReady[${manaDump_Spells[3].Arg[1,/]}]} || !${Me.Gem[${manaDump_Spells[3].Arg[1,/]}]}) {
-					/call e3_Cast ${NetBots[${manaDump_Target}].ID} "${manaDump_Spells[3]}/GiveUpTimer|${If[${Me.Gem[${manaDump_Spells[3].Arg[1,/]}]},0,5s]}"
+					/call thf_Casting ${NetBots[${manaDump_Target}].ID} "${manaDump_Spells[3]}/GiveUpTimer|${If[${Me.Gem[${manaDump_Spells[3].Arg[1,/]}]},0,5s]}"
 				}
 			}
 		}
@@ -123,27 +123,27 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 	|- Verify the event
 	/call amIConcerned ${from} ${Me.CleanName} TRUE
 	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
-	|    |-----------Valid User----------|    |--------Included Bot-----------|    |-----------In Zone-------------|
+	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 		
 		/if (${eventParams.Find[/]}) /varset eventParams ${eventParams.Arg[1,/ ]}
 		
-		| Turn off Mana Dump
+		|- Turn off Mana Dump
 		/if (${eventParams.Equal[end]} || ${eventParams.Equal[off]} || ${eventParams.Equal[stop]}) {
 			/if (${manaDump}) {
-				/chat ${channelNumber} Ending mana dump.
+				/channel Ending mana dump.
 				/varset manaDump FALSE
 			}
 			
-		| Turn on mana dump
+		|- Turn on mana dump
 		} else {
 		
-			| Are mana dump spells defined?
+			|- Are mana dump spells defined?
 			/if (!${Defined[manaDump_Spells]}) {
-				/chat ${channelNumber} You must define mana dump spells in my Bot Ini before engaging mana dump.
+				/channel You must define mana dump spells in my Bot Ini before engaging mana dump.
 			} else {
 
-			| *** Set mana dump variables *** |
+			|- *** Set mana dump variables *** |
 			
 				/declare EVENT_Targets string local
 				/declare EVENT_Pct int local NULL
@@ -152,12 +152,12 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 				:next_Arg
 				/if (${eventParams.Arg[${i}, ].Length}) {
 				
-					| If the argument is an integer, set EVENT_Pct
+					|- If the argument is an integer, set EVENT_Pct
 					/if (${Int[${eventParams.Arg[${i}, ]}]}) {
 						/varset EVENT_Pct ${eventParams.Arg[${i}, ]}
 						/if (${outerDebug}) /echo EVENT_Pct=${EVENT_Pct}
 						
-					| If the argument is NOT an integer, add it to the list of EVENT_Targets
+					|- If the argument is NOT an integer, add it to the list of EVENT_Targets
 					} else /if (!${eventParams.Arg[${i}, ].Equal[start]} && !${eventParams.Arg[${i}, ].Equal[On]})  {
 						/varset EVENT_Targets ${EVENT_Targets}${eventParams.Arg[${i}, ]},
 						/if (${outerDebug}) /echo EVENT_Targets=${EVENT_Targets}
@@ -167,23 +167,23 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 					/goto :next_Arg
 				}
 				
-				| Set manaDump_Targets
+				|- Set manaDump_Targets
 				/if (${Bool[${EVENT_Targets}]}) /varset manaDump_Targets ${EVENT_Targets}
 				/if (!${Bool[${manaDump_Targets}]}) /varset manaDump_Targets All
 				/if (${manaDump_Targets.Right[1].Equal[,]}) /varset manaDump_Targets ${manaDump_Targets.Left[${Math.Calc[${manaDump_Targets.Length} - 1]}]}
 				
-				| Set manaDump_Pct
+				|- Set manaDump_Pct
 				/if (${Bool[${EVENT_Pct}]}) /varset manaDump_Pct ${EVENT_Pct}
 				/if (!${Bool[${manaDump_Pct}]}) /varset manaDump_Pct 95
 				
-				| Set manaDump
+				|- Set manaDump
 				/if (${Defined[manaDump]}) {
 					/varset manaDump TRUE
 				} else {
 					/declare manaDump bool outer TRUE
 				}
 				
-				/chat ${channelNumber} Mana dumping [${manaDump_Targets}] who fall below [${manaDump_Pct}m].
+				/channel Mana dumping [${manaDump_Targets}] who fall below [${manaDump_Pct}m].
 			}
 		}
 	}
@@ -196,19 +196,19 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 SUB NEC_Setup
 /if (${outerDebug}) /echo |- NEC_Setup ==>
 	
-	| Lich
+	|- Lich
 	/if (${Ini[${iniToon},${Me.Class},Lich Spell].Length}) /call iniToVar "${iniToon},${Me.Class},Lich Spell" lichSpell string outer
 	
-	| LifeTap
-	/if (${Ini[${iniToon},${Me.Class},LifeTap#1].Length}) /call IniToArray "${iniToon},${Me.Class},LifeTap#" lifeTaps
+	|- LifeTap
+	/if (${Ini[${iniToon},${Me.Class},LifeTap#1].Length}) /call iniToArray "${iniToon},${Me.Class},LifeTap#" lifeTaps
 	
-	| Mana Dump
+	|- Mana Dump
 	/if (${Ini[${iniToon},${Me.Class},Mana Dump (On/Off)].Length}) /call iniToVar "${iniToon},${Me.Class},Mana Dump (On/Off)" manaDump bool outer
 	/declare manaDump_Pct int outer ${Ini[${iniToon},${Me.Class},Mana Dump Engage Pct]}
 	/declare manaDump_Targets string outer ${Ini[${iniToon},${Me.Class},Who to Mana Dump]}
-	/if (${Ini[${iniToon},${Me.Class},Mana Dump#1].Length}) /call IniToArray "${iniToon},${Me.Class},Mana Dump#" manaDump_Spells
+	/if (${Ini[${iniToon},${Me.Class},Mana Dump#1].Length}) /call iniToArray "${iniToon},${Me.Class},Mana Dump#" manaDump_Spells
 	
-	| Reset manaDump_Targets to replace spaces with commas
+	|- Reset manaDump_Targets to replace spaces with commas
 	/if (${manaDump_Targets.Find[ ]}) /varset manaDump_Targets ${manaDump_Targets.Replace[ ,]}
 
 /if (${outerDebug}) /echo <== NEC_Setup -|
@@ -227,7 +227,7 @@ SUB NEC_checkBackgroundEvents
 SUB NEC_MacroSettings
 /if (${outerDebug}) /echo |- NEC_MacroSettings ==>
 
-	| Adv Settings
+	|- Adv Settings
 	/call writeToIni "${iniTHF},NEC Functions,NEC Function#1" "check_Burns" 1
 	/call writeToIni "${iniTHF},NEC Functions,NEC Function#2" "check_castLich" 1
 	/call writeToIni "${iniTHF},NEC Functions,NEC Function#3" "check_manaDump" 1
@@ -248,19 +248,19 @@ SUB NEC_MacroSettings
 SUB NEC_CharacterSettings
 /if (${outerDebug}) /echo |- NEC_CharacterSettings ==>
 
-	| Lich
+	|- Lich
 	/call writeToIni "${iniToon},${Me.Class},Lich Spell"
 
-	| Life Taps
+	|- Life Taps
 	/call writeToIni "${iniToon},${Me.Class},LifeTap#1"
 
-	| Mana Dumps
+	|- Mana Dumps
 	/call writeToIni "${iniToon},${Me.Class},Mana Dump (On/Off)"
 	/call writeToIni "${iniToon},${Me.Class},Who to Mana Dump"
 	/call writeToIni "${iniToon},${Me.Class},Mana Dump Engage Pct"
 	/call writeToIni "${iniToon},${Me.Class},Mana Dump#1"
 
-	| Twitch
+	|- Twitch
 	
 
 /if (${outerDebug}) /echo <== NEC_CharacterSettings -|
@@ -320,7 +320,7 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 					} else {
 					
 					|----------------------------------------------------Okay...I guess I'll twitch you.
-						/if (${Verbosity}) /chat ${channelNumber} Twitching ${Spawn[${InFrom}].CleanName} ${TwitchNum} times.
+						/if (${Verbosity}) /channel Twitching ${Spawn[${InFrom}].CleanName} ${TwitchNum} times.
 						/tell ${ChatSender} Twitching you [${TwitchNum}] times.
 						
 						/declare twitchSpells[2] string local
@@ -335,10 +335,10 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 						/if (!${Me.Gem[Covetous Subversion]} || !${Me.Gem[Sedulous Subversion]}) {
 							
 							/declare spellsetMem_Timer timer local 100
-							/chat ${channelNumber} Loading twitch spells...
+							/channel Loading twitch spells...
 							/memspellset TwitchSpells
 							:Memloop
-							/if (${outerDebug}) /echo |- EVENT_twitchMe -| :Memloop
+							/if (${outerDebug}) /echo |- EVENT_twitchMe -|- :Memloop
 							
 							/call checkBackgroundEvents
 							/if (${outerDebug}) /echo spellsetMem_Timer = [${spellsetMem_Timer}]
@@ -351,11 +351,11 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 							/echo Twitching [${Spawn[pc ${ChatSender}].CleanName}] #[${i}] of [${TwitchNum}].
 							:tryagain
 							/if (${Me.SpellReady[Covetous Subversion]}) {
-								/call e3_Cast ${Spawn[pc ${ChatSender}].ID} "Covetous Subversion" gem${Me.Gem[Covetous Subversion]} 3s
+								/call thf_Casting ${Spawn[pc ${ChatSender}].ID} "Covetous Subversion" gem${Me.Gem[Covetous Subversion]} 3s
 							} else /if (${Me.SpellReady[Sedulous Subversion]}) {
-								/call e3_Cast ${Spawn[pc ${ChatSender}].ID} "Sedulous Subversion" gem${Me.Gem[Sedulous Subversion]} 3s
+								/call thf_Casting ${Spawn[pc ${ChatSender}].ID} "Sedulous Subversion" gem${Me.Gem[Sedulous Subversion]} 3s
 							} else /if (${Me.SpellReady[Rapacious Subvention]}) {
-								/call e3_Cast ${Spawn[pc ${ChatSender}].ID} "Rapacious Subvention" gem${Me.Gem[Rapacious Subvention]} 3s
+								/call thf_Casting ${Spawn[pc ${ChatSender}].ID} "Rapacious Subvention" gem${Me.Gem[Rapacious Subvention]} 3s
 							} else {
 								/goto :tryagain
 							}
