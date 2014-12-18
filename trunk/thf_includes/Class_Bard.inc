@@ -1,12 +1,12 @@
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- thf_Bard.inc v1.0													-|
-|- Written by Conradd of THF											-|
-|------------------------------------------------------------------------|
+|- Adapted for THF by Conradd (macro from Killians of PEQ)											-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains Bard specific functions related to,							-|
 |-		Setup and Ini entry information									-|
 |-		MainLoop, and AssistLoop hooks									-|
 |-		Over-all functionality / flow									-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #EVENT saveMelody "<#1#> SaveMelody #2# #3#"
 #EVENT saveMelody "<#1#> Save Melody #2# #3#"
@@ -161,7 +161,7 @@ SUB BRD_checkBackgroundEvents
 	/if (${playingMelody} && !${Twist.Twisting} && !${Bool[${Me.Casting}]}) /call restart_Melody
 	
 	|- Check Auto-Melody
-	|- The call for Auto-Melody is located in e3 Background.inc -> check_Zone.  This is so Auto-Melody will only be checked when you zone, or load the macro.
+	|- The call for Auto-Melody is located in Background.inc -> check_Zone.  This is so Auto-Melody will only be checked when you zone, or load the macro.
 
 /RETURN
 
@@ -171,9 +171,7 @@ SUB BRD_MacroSettings
 /if (${outerDebug}) /echo |- BRD_MacroSettings ==>
 
 	|- Adv Settings
-	/call writeToIni "${iniTHF},BRD Functions,BRD Function#1" "check_Burns" 1
-	/call writeToIni "${iniTHF},BRD Functions,BRD Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},BRD Functions,BRD Function#3" "check_Buffs" 1
+	/call writeToIni "${iniTHF},Bard,Functions" "check_Burns/check_CombatBuffs/check_Buffs"
 
 /if (${outerDebug}) /echo <== BRD_MacroSettings -|
 /RETURN

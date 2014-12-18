@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- BuffCheck.inc v1.0
-|- Written by Conradd of THF from Killians of PEQ
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains buffCheck functions for Spells, AAs, Items, and Discs.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -13,10 +13,10 @@
 SUB check_Buffs
 	/if (${Debug} || ${Debug_BuffCheck}) /echo |- buffCheck ==>
 
-	/if (${BuffCheck} && !${combatTimer} && !${activeTimer} && !${rebuffTimer}) {
+	/if (${BuffCheck} && !${outerCombatTimer} && !${outerActiveTimer} && !${outerRebuffTimer}) {
 
 		/if (${Cursor.ID} || ${Corpse.Open}) {
-			/varset rebuffTimer 100
+			/varset outerRebuffTimer 100
 		} else {
 		
 			/if (!${Me.Combat} && !${Assisting} && !${Me.Feigning} && !${Me.Moving} && ${Me.PctHPs} > ${min_BuffCheckHealth}) {
@@ -24,7 +24,7 @@ SUB check_Buffs
 				|- SelfBuffs.
 				/if (${SelfBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_BuffSelf
 
-				/if (!${ActionTaken}) {
+				/if (!${outerActionTaken}) {
 					|- BotBuffs.
 					/if (${Ini[${iniToon},Buffs,Bot Buff#1].Length}) /call check_BuffBots "BotBuffs"
 				}
@@ -41,7 +41,7 @@ SUB check_Buffs
 SUB check_CombatBuffs
 	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_CombatBuffs ==>
 
-	/if (${BuffCheck} && !${idle} && ${CombatBuffs.Size}) /call check_BuffBots "CombatBuffs"
+	/if (${BuffCheck} && !${globalIdle} && ${CombatBuffs.Size}) /call check_BuffBots "CombatBuffs"
 	
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_CombatBuffs -|
 /RETURN
@@ -109,7 +109,7 @@ SUB check_BuffInstants
 			}
 		}
 
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 	
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_BuffInstants -|
 /RETURN
@@ -165,7 +165,7 @@ SUB check_BuffSelf
 			}
 		}
 	
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 	
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_BuffSelf -|
 /RETURN
@@ -238,7 +238,7 @@ SUB check_BuffBots(arrayName)
 		}
 
 	:skipBuff
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 	
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_BuffBots -|
 /RETURN
@@ -295,7 +295,7 @@ SUB event_castGroupBuffs(line, ChatSender)
 					
 					/next i
 					
-					/docommand ${ChatToggle} Done buffing ${Spawn[id ${buffTarget}].CleanName}.
+					/channel Done buffing ${Spawn[id ${buffTarget}].CleanName}.
 				}
 			}
 		}

@@ -1,30 +1,30 @@
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- e3_Macro_Pets.inc v3.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ											-|
-|------------------------------------------------------------------------|
+|- Adapted for THF by Conradd (macro from Killians of PEQ)											-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains pet related functions for e3.mac							-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 |- Add verification to events
 |- /tell relays for suspend, return, and shrink pet commands
 
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Pets.incs Mainloop hook.													-|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Checks your pets status. Automatically, resummons, buffs, and shrinks.	-|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Pets
 /if (${Debug} || ${Debug_Pets}) /echo |- check_PetStatus ==>
 
-	/if (${Pets} && !${suspend_Pets} && !${combatTimer} && !${activeTimer}) {
+	/if (${Pets} && !${suspend_Pets} && !${outerCombatTimer} && !${outerActiveTimer}) {
 	
 		|- Check if you have a pet.
 		/if (!${Me.Pet.ID}) /call summonPet
-		/if (!${ActionTaken} && ${Me.Pet.ID}) {
+		/if (!${outerActionTaken} && ${Me.Pet.ID}) {
 		
 			|- Maintain pet buffs.
-			/if (${petBuffs.Size} && !${pet_rebuffTimer}) /call buffPet
-			/if (!${ActionTaken}) {
+			/if (${petBuffs.Size} && !${pet_outerRebuffTimer}) /call buffPet
+			/if (!${outerActionTaken}) {
 			
 				|- Check Auto_Shrink.
 				/if (${petAutoShrink}) /call check_AutoShrink
@@ -37,11 +37,11 @@ SUB check_Pets
 
 
 
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Summons a new pet.										-|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Looks for reagents, and checks mana, before summoning.	-|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB summonPet
 /if (${Debug} || ${Debug_Pets}) /echo |- summonPet ==>
 
@@ -69,7 +69,7 @@ SUB event_suspendMinion(live, ChatSender)
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 	
-		/if (${Me.Pet.ID}) /docommand ${ChatToggle} Suspending my pet...
+		/if (${Me.Pet.ID}) /channel Suspending my pet...
 		
 		/if (${Me.Casting.ID}) /call interrupt
 		
@@ -98,7 +98,7 @@ SUB event_returnMinion(line, ChatSender)
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 		
 		/if (${suspend_Pets}) {
-			/docommand ${ChatToggle} Returning my pet...
+			/channel Returning my pet...
 			/if (${currently_Suspended}) {
 				/call thf_Casting 0 "Suspended Minion"
 				/varset currently_Suspended FALSE
@@ -112,9 +112,9 @@ SUB event_returnMinion(line, ChatSender)
 
 
 
-|--------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-|
 |- Automatically shrinks pets.	-|
-|--------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-|
 SUB check_AutoShrink
 /if (${Debug} || ${Debug_Pets}) /echo |- check_AutoShrink ==>
 	
@@ -155,9 +155,9 @@ SUB event_shrinkPets(line, ChatSender)
 
 
 
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Checks pet health, and attempts to cast PetHeal spells.	-|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_petHeal
 /if (${Debug} || ${Debug_Pets}) /echo |- PetHeal ==>
 
@@ -194,11 +194,11 @@ SUB check_petHeal
 
 
 
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Rebuff pet.															-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Casts spells, items, and alternate abilities, from MyPetBuffs array.	-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB buffPet
 /if (${Debug} || ${Debug_Pets}) /echo |- buffPet ==>
 
@@ -228,7 +228,7 @@ SUB buffPet
 			/if (!${Me.PetBuff[${buffName}]}) /call thf_Casting ${Me.Pet.ID} "${petBuffs[${i}]}/GiveUpTimer|${If[${Me.Book[${castName}]} && !${Me.Gem[${castName}]},90,0]}"
 		}
 
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 
 /if (${Debug} || ${Debug_Pets}) /echo <== buffPet -|
 /RETURN
@@ -252,7 +252,7 @@ SUB pet_Setup
 			/if (${Ini[${iniToon},Pets,Pet Mend (Pct)].Length}) /call iniToVar "${iniToon},Pets,Pet Mend (Pct)" petMendPct int outer
 			/if (${Ini[${iniToon},Pets,Pet Buff#1].Length}) {
 				/call iniToArray "${iniToon},Pets,Pet Buff#" petBuffs
-				/declare pet_rebuffTimer timer outer
+				/declare pet_outerRebuffTimer timer outer
 			}
 		}
 	}

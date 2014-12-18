@@ -409,7 +409,7 @@ SUB check_healChain
 
 	/call chainHeal_Events
 	/if (${Chain_Status.Equal[HEALING]}) {
-		/varset ActionTaken TRUE
+		/varset outerActionTaken TRUE
 		|- Wait until there is less than 1 second on the next heal timer
 		/echo /if (${Chain_NextHealTimer} < 10)
 		/if (${Chain_NextHealTimer} < 10) {

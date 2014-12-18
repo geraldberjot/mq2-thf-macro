@@ -742,20 +742,20 @@ SUB halloween
 	}
 /RETURN
 
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Triangulates distance between to points using the Pythagoras theorem.	-|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param loc#1: Location 'A'												-|
 |- @param loc#2: Location 'B'												-|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB Triangulate_Distance(string loc#1, string loc#2)
 /RETURN ${Math.Sqrt[${Math.Calc[${loc#2.Arg[2,,]}-${loc#1.Arg[2,,]}]}*${Math.Calc[${loc#2.Arg[2,,]}-${loc#1.Arg[2,,]}]}+${Math.Calc[${loc#2.Arg[1,,]}-${loc#1.Arg[1,,]}]}*${Math.Calc[${loc#2.Arg[1,,]}-${loc#1.Arg[1,,]}]}]}
 
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- MoveTo																							-|
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Attempts to utilize MQ2MoveUtils /moveto function, to move to a given destination.				-|
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param1 destination: Destinations can be provided as an ID, or loc, using the globalFollowing syntax:	-|
 |-																									-|
 |- Move to a Spawn ID use, -SpawnID|#																-|
@@ -763,7 +763,7 @@ SUB Triangulate_Distance(string loc#1, string loc#2)
 |-																									-|
 |- Move to a Location use, -Loc|Y,X																	-|
 |-		Ex.  /call MoveTo -Loc|${Target.Y},${Target.X}												-|
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB MoveTo(destinationInfo, int distCheck)
 	/if (${outerDebug}) /echo |- MoveTo ==>
 
@@ -804,12 +804,12 @@ SUB MoveTo(destinationInfo, int distCheck)
 			:movingTo_Loop
 			
 			|- Debug Echo
-			/if (${outerDebug} && !${spamTimer_MTLoop}) {
+			/if (${outerDebug} && !${outerSpamTimer_MTLoop}) {
 				/echo |- MoveToSpawn -|- :MoveTo_Loop
-				/call createTimer spamTimer_MTLoop 50
+				/call createTimer outerSpamTimer_MTLoop 50
 			}
 
-			|/call checkBackgroundEvents
+			|/call check_BackgroundEvents
 			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${Y_Loc},${X_Loc}
 			
 			/if (${MoveTo.Moving}) {
@@ -817,9 +817,9 @@ SUB MoveTo(destinationInfo, int distCheck)
 					/goto :movingTo_Loop
 				} else {
 					/squelch /stick off
-					/if (${outerDebug} && !${spamTimer_MTFAIL}) {
+					/if (${outerDebug} && !${outerSpamTimer_MTFAIL}) {
 						/echo I have failed to move to the intended target.
-						/call createTimer spamTimer_MTFAIL 30
+						/call createTimer outerSpamTimer_MTFAIL 30
 					}
 				}
 			} else {
@@ -827,9 +827,9 @@ SUB MoveTo(destinationInfo, int distCheck)
 					/if (${retryTimer}) {
 						/goto :retry_MoveToLoc
 					} else {
-						/if (${outerDebug} && !${spamTimer_MTFAIL}) {
+						/if (${outerDebug} && !${outerSpamTimer_MTFAIL}) {
 							/echo I have failed to move to the intended target.
-							/call createTimer spamTimer_MTFAIL 30
+							/call createTimer outerSpamTimer_MTFAIL 30
 						}
 					}
 				} else {
@@ -844,11 +844,11 @@ SUB MoveTo(destinationInfo, int distCheck)
 	/if (${outerDebug}) /echo <== MoveTo -|
 /RETURN
 
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Reliably targets specified Target.IDs.					-|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param TargetID: The ID of the spawn you wish to target.	-|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB TrueTarget(TargetID)
 	/if (${outerDebug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
 

@@ -1,82 +1,70 @@
-|----------------------------------------------------------------------------|
-|- thf_Rogue.inc v1.0                                                       -|
-|- Written by Conradd of THF		 	 	 	 	 	 	 	 	 	 	 -|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Class_Rogue.inc v1.0
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
-|--------------------------------------------------------------------------------|
-|- rogueStrike	                                 	 	 	 	 	 	 	 	 -|
-|--------------------------------------------------------------------------------|
-|- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.	 -|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- rogueStrike
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_rogStrike()
 	/if (${outerDebug}) /echo |- rogueStrike ==>
 	
 	/if (${Me.AbilityReady[Hide]}) {
-	 	 |- Stop moving.
-	 	 /if (${Stick.Active}) {
-	 	 	/squelch /stick pause
-	 	 	/delay 2s !${Me.Moving}
-	 	 }
+		|- Stop moving.
+		/if (${Stick.Active}) {
+			/squelch /stick pause
+			/delay 2s !${Me.Moving}
+		}
 	 	 
-	 	 |- Turn off combat.
-	 	 /if (${Me.Combat}) {
-	 	 	/attack off
-	 	 	/delay 2s !${Me.Combat}
-	 	 }
+		|- Turn off combat.
+		/if (${Me.Combat}) {
+			/attack off
+			/delay 2s !${Me.Combat}
+		}
 	 	 
-	 	 |- Sneak
-	 	 /doability Sneak
-	 	 /delay 20 ${Me.Sneaking}
+		|- Sneak
+		/doability Sneak
+		/delay 20 ${Me.Sneaking}
 	 	 
-	 	 |- Hide.
-	 	 /doability Hide
-	 	 /delay 20 ${Me.Invis}
+		|- Hide.
+		/doability Hide
+		/delay 20 ${Me.Invis}
 	 	 
-	 	 |- Use 'Assassin's Strike' type disc.
-	/if (${Me.Invis}) {
-		/if (${Me.CombatAbilityReady[${strikeDiscipline}]) {
-			/disc  ${strikeDiscipline}
-		} else {
-			/if (!${Defined[strikeItem]}) /declare strikeItem item local
-			/varset strikeItem ${FindItem[=Frozen Whispering Tunic]}
-			/if (${strikeItem.ID}) {
-				/if (${timer-${strikeItem.ID}.Value} <= 0) {
-					/casting ${strikeItem.ID}|item
-					/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
-				}
+		|- Use 'Assassin's Strike' type disc.
+		/if (${Me.Invis}) {
+			/if (${Me.CombatAbilityReady[${strikeDiscipline}]) {
+				/disc ${strikeDiscipline}
 			} else {
-				/varset strikeItem ${FindItem[=Cloak of the Deceiver]}
-				/if (${strikeItem.ID}) {
-					/if (${timer-${strikeItem.ID}.Value} <= 0) {
-						/casting ${strikeItem.ID}|item
-						/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
-					}
-				} else {
-					/varset strikeItem ${FindItem[=Cloak of the Deceiver]}
+				/declare i int local
+				/for i 1 to ${strikeItems.size}
+					/varset strikeItem ${FindItem[=${strikeItems[i]}]}
 					/if (${strikeItem.ID}) {
+						|- Timers were already created in the sub routine "createStrikeItemsArray"
 						/if (${timer-${strikeItem.ID}.Value} <= 0) {
 							/casting ${strikeItem.ID}|item
 							/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
+							goto :strike
 						}
-					} else {
 					}
-				}
+				/next i
 			}
+
+			:strike
+			/attack on
+			/squelch /stick unpause
+			/delay 10
 		}
 
-		/attack on
-		/squelch /stick unpause
-		/delay 10
-	}
-
-	/﻿if (${outerDebug}) /echo <== rogueStrike -|
+	/if (${outerDebug}) /echo <== rogueStrike -|
 /RETURN
 
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- AutoHide	 	 	 	 	 	 	 	 	 	 	 	 	 -|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Automatically engages sneak and hide when not in combat.	 -|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB AutoHide
 	 /if (${outerDebug}) /echo |- AutoHide ==>
 
@@ -95,11 +83,11 @@ SUB AutoHide
 	 /if (${outerDebug}) /echo <== AutoHide -|
 /RETURN
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- AutoEvade	 	 	 	 	 	 	 	 	 -|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Automatically engages hide while in combat.	 -|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB AutoEvade
 	 /if (${outerDebug}) /echo |- AutoEvade ==>
 
@@ -125,9 +113,9 @@ SUB AutoEvade
 	 /if (${outerDebug}) /echo <== AutoEvade -|
 /RETURN
 
-|------------------------------------------------|
-|- 	 	 	 	 	 	 	 	 	 	 	 	 -|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB ROG_Setup
 	/if (${outerDebug}) /echo |- ROG_Setup ==>
 
@@ -137,17 +125,17 @@ SUB ROG_Setup
 	|- Auto-Evade
 	/call iniToVar "${iniToon},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
 	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
-﻿	
+
 	|- Pick up the lastest discipline
 	/call getLatestStrikeDiscipline
 	
-	/call createStrikeItemsTimer
-
-	 /if (${outerDebug}) /echo <== ROG_Setup -|
+	/call createStrikeItemsArray
+	
+	/if (${outerDebug}) /echo <== ROG_Setup -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Check every strike discipline to get the highest one -|
+|- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB getLatestStrikeDiscipline()
 	/if (${outerDebug}) /echo |- getLatestStrikeDiscipline ==>
@@ -156,21 +144,21 @@ SUB getLatestStrikeDiscipline()
 
 	/if (${Me.CombatAbility[Death Bringer Rk. III]}) {
 		/varset strikeDiscipline "Death Bringer Rk. III"
-	} else /if (${strikeDisc.Equal[Death Bringer Rk. II]}) {
+	} else /if (${Me.CombatAbility[Death Bringer Rk. II]}) {
 		/varset strikeDiscipline "Death Bringer Rk. II"
-	} else /if (${strikeDisc.Equal[Death Bringer Rk. I]}) {
+	} else /if (${Me.CombatAbility[Death Bringer Rk. I]}) {
 		/varset strikeDiscipline "Death Bringer Rk. I"
-	} else /if (${strikeDisc.Equal[Daggerfall]}) {
+	} else /if (${Me.CombatAbility[Daggerfall]}) {
 		/varset strikeDiscipline "Daggerfall"
-	} else /if (${strikeDisc.Equal[Ancient: Chaos Strike]}) {
+	} else /if (${Me.CombatAbility[Ancient: Chaos Strike]}) {
 		/varset strikeDiscipline "Ancient: Chaos Strike"
-	} else /if (${strikeDisc.Equal[Kyv Strike]}) {
+	} else /if (${Me.CombatAbility[Kyv Strike]}) {
 		/varset strikeDiscipline "Kyv Strike"
-	} else /if (${strikeDisc.Equal[Assassin's Strike]}) {
+	} else /if (${Me.CombatAbility[Assassin's Strike]}) {
 		/varset strikeDiscipline "Assassin's Strike"
-	} else /if (${strikeDisc.Equal[Thief's Vengeance]}) {
+	} else /if (${Me.CombatAbility[Thief's Vengeance]}) {
 		/varset strikeDiscipline "Thief's Vengeance"
-	} else /if (${strikeDisc.Equal[Sneak Attack]}) {
+	} else /if (${Me.CombatAbility[Sneak Attack]}) {
 		/varset strikeDiscipline "Sneak Attack"
 	}
 	
@@ -178,29 +166,41 @@ SUB getLatestStrikeDiscipline()
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Create the timers of the strike items available      -|
+|- Create the timers of the strike items available
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB createStrikeItemsTimer()
+SUB createStrikeItemsArray()
 	/if (${outerDebug}) /echo |- createStrikeItemsTimer ==>
 	
 	/if (!${Defined[strikeItem]}) /declare strikeItem item local
 	
 	/varset strikeItem ${FindItem[=Frozen Whispering Tunic]}
-	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 5m
+	/if (${strikeItem.ID}) {
+		/declare timer-${strikeItem.ID} timer outer 5m
+		/call BuildArray strikeItems ${strikeItem.Name} outer
+	}
 	
 	/varset strikeItem ${FindItem[=Cloak of the Deceiver]}
-	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 40s
+	/if (${strikeItem.ID}) {
+		/declare timer-${strikeItem.ID} timer outer 40s
+		/call BuildArray strikeItems ${strikeItem.Name} outer
+	}
 	
 	/varset strikeItem ${FindItem[=Shroud of the Deceiver]}
-	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 40s
+	/if (${strikeItem.ID}) {
+		/declare timer-${strikeItem.ID} timer outer 40s
+		/call BuildArray strikeItems ${strikeItem.Name} outer
+	}
 
 	/varset strikeItem ${FindItem[=Fizzlethorp's Cloak of Shadows]}
-	/if (${strikeItem.ID}) /declare timer-${strikeItem.ID} timer outer 40s
+	/if (${strikeItem.ID}) {
+		/declare timer-${strikeItem.ID} timer outer 40s
+		/call BuildArray strikeItems ${strikeItem.Name} outer
+	}
 
 	/if (${outerDebug}) /echo <== createStrikeItemsTimer -|
 /RETURN
 
-SUB ROG_checkBackgroundEvents
+SUB ROG_CheckBackgroundEvents
 
 	 /if (${AutoHide} && !${Me.Invis} && !${Me.Moving} && !${Me.Combat}) /call AutoHide
 

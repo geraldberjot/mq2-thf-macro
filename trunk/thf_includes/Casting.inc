@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Casting.inc v1.0
-|- Written by Conradd of THF from Killians of PEQ
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Various ideas taken from spell_routines.inc v2.4	by Rusty and A_Druid_00
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -232,7 +232,7 @@ SUB thf_Casting(int targetID, castParams)
 	}
 	
 	|- reacquire follow, return twist, and reset outer variables.
-	/if (${Following} && !${Assisting} && ${NetAdvPath.State} != 1) /call AcquireFollow
+	/if (${Following} && !${Assisting}) /call AcquireFollow
 	/if (${returnTwist}) /call unpauseTwist
 	
 	|- /if (${Defined[oldTarget]} && ${Target.ID} != ${oldTarget.Arg[2,-]} && ${SpawnCount[id ${oldTarget.Arg[2,-]}]} && ${oldTarget.Arg[1,-].Equal[${Spawn[id ${oldTarget.Arg[2,-]}].CleanName}]}) /call TrueTarget ${oldTarget.Arg[2,-]}
@@ -248,14 +248,14 @@ SUB thf_Casting(int targetID, castParams)
 
 
 
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- cast_Spell																	-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Memorizes and casts spells if they are available within the allotted time.	-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param targetID: The ID of the spawn you want to cast on.					-|
 |- @param castParams: The name of the spell, and additional casting parameters.	-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_Spell(int targetID, castParams)
 /if (${Debug} || ${Debug_Casting}) /echo |- cast_Spell [${pendingCast}] ==>
 
@@ -308,13 +308,13 @@ SUB cast_Spell(int targetID, castParams)
 		:cast_Spell
 		/cast "${pendingCast}"
 		
-		|- Check castTime and run castingChecks
+		|- Check castTime and run check_Castings
 		/if (!${Spell[${pendingCast}].MyCastTime}) /varset castReturn SUCCESS
 
 		/delay 5 ${Me.Casting.ID}
 		/varcalc castEndTime ${Me.Casting.MyCastTime}*10
 		
-		/call thf_CastingingChecks "${castParams}"
+		/call check_Castings "${castParams}"
 		
 		|- If the spell fizzled or was interrupted, and I still have time, try again.
 		/if (${Select[${castReturn},FIZZLE,INTERRUPTED,STUNNED]} && ${giveUpTimer}) {
@@ -333,14 +333,14 @@ SUB cast_Spell(int targetID, castParams)
 
 
 
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- cast_Item																	-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Equips and casts items if they are available within the allotted time.		-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param targetID: The ID of the spawn you want to cast on.					-|
 |- @param castParams: The name of the spell, and additional casting parameters.	-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_Item(int targetID, castParams)
 /if (${Debug} || ${Debug_Casting}) /echo |- cast_Item [${pendingCast}] ==>
 	
@@ -424,7 +424,7 @@ SUB cast_Item(int targetID, castParams)
 	/delay 5 ${Me.Casting.ID}
 	/varcalc castEndTime ${Me.Casting.MyCastTime}*10
 	
-	/call thf_CastingingChecks "${castParams}"
+	/call check_Castings "${castParams}"
 	
 	|- If the spell fizzled or was interrupted, and I still have time, try again.
 	/if (${Select[${castReturn},FIZZLE,INTERRUPTED,STUNNED]} && ${giveUpTimer}) {
@@ -441,7 +441,7 @@ SUB cast_Item(int targetID, castParams)
 	
 		|- Check for a user defined timer.
 		/if (!${Ini[${itemTimers_Ini},${pendingCast.Left[1]},${pendingCast}].Length}) {
-			/docommand ${ChatToggle} Cannot cast [${pendingCast}] there is an inconsistency with the itemTimer.  Please manually set an item recast timer, in seconds, in [${itemTimers_Ini}].
+			/channel Cannot cast [${pendingCast}] there is an inconsistency with the itemTimer.  Please manually set an item recast timer, in seconds, in [${itemTimers_Ini}].
 			/call writeToIni "${itemTimers_Ini},${pendingCast.Left[1]},${pendingCast}" 0s
 		} else {
 		
@@ -457,14 +457,14 @@ SUB cast_Item(int targetID, castParams)
 
 
 
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- cast_AltAbility																-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Casts Alternate Abilities if they are available within the allotted time.	-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param targetID: The ID of the spawn you want to cast on.					-|
 |- @param castParams: The name of the spell, and additional casting parameters.	-|
-|--------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_AltAbility(int targetID, castParams)
 /if (${Debug} || ${Debug_Casting}) /echo |- cast_AltAbility [${pendingCast}] ==>
 
@@ -503,7 +503,7 @@ SUB cast_AltAbility(int targetID, castParams)
 	
 	/varcalc castEndTime ${Me.Casting.MyCastTime}*10
 
-	/call thf_CastingingChecks "${castParams}"
+	/call check_Castings "${castParams}"
 	
 	|- If the spell fizzled or was interrupted, and I still have time, try again.
 	/if (${Select[${castReturn},FIZZLE,INTERRUPTED,STUNNED]} && ${giveUpTimer}) {
@@ -547,16 +547,16 @@ SUB useDisc(targetID, discToUse)
 
 
 
-|----------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Targets mobs, and pauses melodies	-|
-|----------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB prepCast(int targetID)
 /if (${Debug} || ${Debug_Casting}) /echo |- prepCast ==>
 
 	|- Target the spell target.
 	/if (${targetID} && ${Target.ID} != ${targetID}) /call TrueTarget ${targetID}
 	/if (${Twist.Twisting}) /call pauseTwist
-	/varset ActionTaken TRUE
+	/varset outerActionTaken TRUE
 
 /if (${Debug} || ${Debug_Casting}) /echo <== prepCast -|		
 /RETURN
@@ -602,13 +602,13 @@ SUB memSpell(int gemNumber)
 
 
 	
-|------------------------------------|
-|- thf_CastingingChecks					-|
-|------------------------------------|
-|- Checks to preform while casting.	-|
-|------------------------------------|
-SUB thf_CastingingChecks(castParams)
- /if (${Debug} || ${Debug_Casting}) /echo |- thf_CastingingChecks ==>
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- check_Castings
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks to perform while casting.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB check_Castings(castParams)
+	/if (${Debug} || ${Debug_Casting}) /echo |- check_Castings ==>
 
 	|- Declare variables.
 	/declare currentTarget int local ${Target.ID}
@@ -626,7 +626,7 @@ SUB thf_CastingingChecks(castParams)
 	|- wait_For_Cast loop, and debug spew
 	:wait_For_Cast
 	/if (${Debug} && !${DebugTimer_waitForCast}) {
-		/echo |- thf_CastingingChecks -|- :wait_For_Cast
+		/echo |- check_Castings -|- :wait_For_Cast
 		/call createTimer DebugTimer_waitForCast 30
 	}
 	
@@ -636,7 +636,7 @@ SUB thf_CastingingChecks(castParams)
 	/if (${Me.State.Equal[DUCK]} || !${Assisting} && ${Following} && ${SpawnCount[pc ${FollowTarget}]} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength} && ${Spawn[${FollowTarget}].Distance} < ${FollowBreakDistance} && !${Me.Moving} || ${Spell[${Me.Casting.ID}].MyRange} && ${Spell[${Me.Casting.ID}].TargetType.NotEqual[Self]} && ${Target.Distance}>${Spell[${Me.Casting.ID}].MyRange} || ${Spell[${Me.Casting.ID}].SpellType.Equal[Detrimental]} && !${Spawn[id ${Target.ID}].LineOfSight} || ${Spawn[id ${Target.ID}].Type.Equal[Corpse]} && !${Select[${Spell[${Me.Casting.ID}].TargetType},PB AE,Targeted AE,Corpse,Self]}) {
 		
 		|- /echo /if (${Me.State.Equal[DUCK]} || !${Assisting} && ${Following} && ${SpawnCount[pc ${FollowTarget}]} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength} && ${Spawn[${FollowTarget}].Distance} < ${FollowBreakDistance} && !${Me.Moving} || ${Spell[${Me.Casting.ID}].MyRange} && ${Spell[${Me.Casting.ID}].TargetType.NotEqual[Self]} && ${Target.Distance}>${Spell[${Me.Casting.ID}].MyRange} || ${Spell[${Me.Casting.ID}].SpellType.Equal[Detrimental]} && !${Spawn[id ${Target.ID}].LineOfSight} || ${Spawn[id ${Target.ID}].Type.Equal[Corpse]} && !${Select[${Spell[${Me.Casting.ID}].TargetType},PB AE,Targeted AE,Corpse]})
-		/if (${Debug} || ${Debug_Casting}) /echo |- thf_CastingingChecks -|- Cast cancelled.
+		/if (${Debug} || ${Debug_Casting}) /echo |- check_Castings -|- Cast cancelled.
 		
 		/if (${Me.Casting.ID}) /call interrupt
 		/varset castReturn CANCELLED
@@ -645,7 +645,7 @@ SUB thf_CastingingChecks(castParams)
 	} else /if (${cast_locX}!=${Me.X} || ${cast_locY}!=${Me.Y}) {
 		/call Triangulate_Distance ${cast_locY},${cast_locY} ${Me.Loc.Replace[ ,]}
 		/if (${Macro.Return}>5 && ${castEndTime}) {
-			/if (${Debug} || ${Debug_Casting}) /echo |- thf_CastingingChecks -|- Caster movement interrupt.
+			/if (${Debug} || ${Debug_Casting}) /echo |- check_Castings -|- Caster movement interrupt.
 			/if (${Me.Casting.ID}) /call interrupt
 			/varset castReturn INTERRUPTED
 		}
@@ -659,7 +659,7 @@ SUB thf_CastingingChecks(castParams)
 	
 	/call Casting_Events
 
-/if (${Debug} || ${Debug_Casting}) /echo <== thf_CastingingChecks -|
+/if (${Debug} || ${Debug_Casting}) /echo <== check_Castings -|
 /RETURN
 
 
@@ -706,7 +706,7 @@ SUB EVENT_set_ArrayElement
 	/if (!${Select[${arrayName},${Ini[${MacroData_Ini},PendingExchanges-PEQTGC].Replace[|,,]}]}) {
 
 		:echoLoop
-		/docommand ${ChatToggle} ${old_ArraySize}
+		/channel ${old_ArraySize}
 		/if (${arraySize}) /goto :echoLoop
 		
 		/bcaa //${old_ArrayElement}
@@ -716,9 +716,9 @@ SUB EVENT_set_ArrayElement
 
 
 
-|------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Pauses MQ2Twist while casting.	-|
-|------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB pauseTwist
 /if (${Debug} || ${Debug_Casting}) /echo |- pauseTwist ==>
 
@@ -732,9 +732,9 @@ SUB pauseTwist
 
 
 
-|------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Unpauses MQ2Twist after casting.	-|
-|------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB unpauseTwist
 /if (${Debug} || ${Debug_Casting}) /echo |- unpauseTwist ==>
 
@@ -746,9 +746,9 @@ SUB unpauseTwist
 
 
 
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Gives popup information about debuffs on connected NetBots screens.	-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT PopUp_Resist "#*#**Warning** #1# resisted #2#.#*#"
 SUB event_PopUp_Resist(line, Mob, Spell)
 /popup ${line}
@@ -780,9 +780,9 @@ SUB Interrupt
 
 
 
-|------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Events to check while casting.	-|
-|------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB Casting_Events
 /doevents BeginCast
 /doevents Recover
@@ -812,9 +812,9 @@ SUB Casting_Events
 
 
 
-|--------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- castReturn begins set as ${pendingCast}_SUCCESS, until changed by another casting event.	-|
-|--------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT BeginCast "You begin casting#*#"
 SUB Event_BeginCast
 /varset castReturn SUCCESS
@@ -822,9 +822,9 @@ SUB Event_BeginCast
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_COLLAPSE.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Collapse "Your gate is too unstable, and collapses.#*#"
 SUB Event_Collapse
 /varset castReturn COLLAPSE
@@ -833,9 +833,9 @@ SUB Event_Collapse
 
 
 
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_RESTART, after you feign death.	-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT FDFail "#1# has fallen to the ground.#*#"
 SUB Event_FDFail(line, name)
 /if (${name.Equal[${Me.Name}]} && ${Defined[castReturn]}) {
@@ -846,9 +846,9 @@ SUB Event_FDFail(line, name)
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_FIZZLE.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Fizzle "Your spell fizzles#*#"
 SUB Event_Fizzle
 /varset castReturn FIZZLE
@@ -856,9 +856,9 @@ SUB Event_Fizzle
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to IMMUNE.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Immune "Your target is immune to changes in its attack speed#*#"
 #EVENT Immune "Your target is immune to changes in its run speed#*#"
 #EVENT Immune "Your target cannot be mesmerized#*#"
@@ -879,9 +879,9 @@ SUB Event_Interrupt
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_CANNOTSEE.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT NoLOS "You cannot see your target.#*#"
 SUB Event_NoLOS
 /varset castReturn CANNOTSEE
@@ -889,9 +889,9 @@ SUB Event_NoLOS
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_NOTARGET.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT NoTarget "You must first select a target for this spell!#*#"
 SUB Event_NoTarget
 /varset castReturn NOTARGET
@@ -899,9 +899,9 @@ SUB Event_NoTarget
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_NOTREADY.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT NotReady "Spell recast time not yet met.#*#"
 #EVENT NotReady "You can use this ability again in #*#"
 SUB Event_NotReady
@@ -910,9 +910,9 @@ SUB Event_NotReady
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_OUTOFMANA.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT OutOfMana "Insufficient Mana to cast this spell!#*#"
 SUB Event_OutOfMana
 /varset castReturn OUTOFMANA
@@ -930,9 +930,9 @@ SUB Event_OutOfRange
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_RECOVER.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Recover "You haven't recovered yet...#*#"
 #EVENT Recover "Spell recovery time not yet met#*#"
 SUB Event_Recover
@@ -941,9 +941,9 @@ SUB Event_Recover
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_RESISTED.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Resisted "Your target resisted the #1# spell#*#"
 SUB Event_Resisted(line,  name)
 /varset castReturn RESISTED
@@ -951,9 +951,9 @@ SUB Event_Resisted(line,  name)
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_INTERRUPT.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Standing "You must be standing to cast a spell#*#"
 SUB Event_Standing
 /stand
@@ -962,9 +962,9 @@ SUB Event_Standing
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_STUNNED.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Stunned "You are stunned#*#"
 #EVENT Stunned "You can't cast spells while stunned!#*#"
 #EVENT Stunned "You *CANNOT* cast spells, you have been silenced!#*#"
@@ -981,9 +981,9 @@ SUB EVENT_Stunned
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_NOHOLD.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT outDoor "You can only cast this spell in the outdoors."
 SUB Event_outDoor
 /varset castReturn OUTDOORS
@@ -991,9 +991,9 @@ SUB Event_outDoor
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Sets castReturn to ${pendingCast}_NOHOLD.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT NoHold "Your spell did not take hold."
 #EVENT NoHold "Your spell would not have taken hold#*#"
 #EVENT NoHold "Your spell is too powerful for your intended target#*#"
@@ -1047,12 +1047,11 @@ SUB casting_Setup
 		/call Build_Alphabetized_Ini "${itemTimers_Ini}"
 	}
 
-|- Import Casting Settings.
-	
-	|- Default Spellset
+	|- Import Casting Settings.
+	|-- Default Spellset
 	/if (${Ini[${iniGeneral},Casting,Default Spell Set].Length}) /call iniToVar "${iniGeneral},Casting,Default Spell Set" Default_SpellSet string outer
 	
-	|- Default Gems
+	|-- Default Gems
 	/declare DefaultGem int outer 9
 	/call iniToVar "${iniGeneral},Casting,Default Spell Gem" DefaultGem int outer
 	/if (${DefaultGem}==9 && !${Me.AltAbility[Mnemonic Retention]}) /varset DefaultGem 8
@@ -1067,15 +1066,14 @@ SUB casting_Background_Events
 /RETURN
 
 
-
 SUB casting_MacroSettings
 /if (${Debug} || ${Debug_Casting}) /echo |- casting_MacroSettings ==>
 
 	/call writeToIni "${iniGeneral},Debug,Debug Casting (On/Off)"
 	/call writeToIni "${iniGeneral},AA-ID Overrides,Improved Familiar" 352,167,52
 
-	/call writeToIni "${iniGeneral},Casting,Default Spell Set" Default
-	/call writeToIni "${iniGeneral},Casting,Default Spell Gem" ${If[${Me.AltAbility[Mnemonic Retention]},9,8]}
+	/call writeToIni "${iniGeneral},Casting,Default Spell Set" Max
+	/call writeToIni "${iniGeneral},Casting,Default Spell Gem" 9
 	/call writeToIni "${iniGeneral},Casting,Give Up Casting Time" 15
 
 /if (${Debug} || ${Debug_Casting}) /echo <== casting_MacroSettings -|

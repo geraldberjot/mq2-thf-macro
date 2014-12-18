@@ -1,15 +1,15 @@
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- e3_Macro_Loot.inc v2.1 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ											-|
-|------------------------------------------------------------------------|
+|- Adapted for THF by Conradd (macro from Killians of PEQ)											-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Automatically loots corpses of mobs you have killed.					-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 
 
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Automatically engage looting functions when a mob dies.	-|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT YourKill "You have slain #*#!"
 #EVENT YourKill "You gain experience!!"
 #EVENT YourKill "You gain party experience!!"
@@ -54,11 +54,11 @@ SUB Event_YourKill
 
 
 
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Moves to corpse and begins looting, reads Loot_Ini for loot handles.	-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param corpseID: ID of the corpse you are trying to loot.			-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB loot_It(int corpseID)
 /if (${Debug} || ${Debug_Loot}) /echo |- loot_It ==>
 
@@ -74,7 +74,6 @@ SUB loot_It(int corpseID)
 	/if (${Spawn[id ${corpseID}].LineOfSight} && ${corpseName.Find[_]}) {
 	
 		|- Target the corpse, and move to it
-		/if (${NetAdvPath.Status}==1) /squelch /netfollow pause
 		/call TrueTarget ${corpseID}
 		/if (${Spawn[id ${corpseID}].Distance} > 15) /call MoveTo -SpawnID|${corpseID}
 		
@@ -118,7 +117,7 @@ SUB loot_It(int corpseID)
 						/next x
 						
 						/declare fullInventory_Alert bool outer TRUE
-						/docommand ${ChatToggle} My inventory is full!  I will continue to link items on corpses, but cannot loot anything else.
+						/channel My inventory is full!  I will continue to link items on corpses, but cannot loot anything else.
 					}
 				} else {
 
@@ -239,8 +238,8 @@ SUB get_lootSetting(invSlot, itemSlot)
 		/if (!${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}].Length}) {
 			/echo /call writeToIni "${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}" ${If[${InvSlot[${invSlot}].Item.Container},Container,${If[${InvSlot[${invSlot}].Item.NoDrop},Skip,Keep${If[${InvSlot[${invSlot}].Item.Stackable},|${InvSlot[${invSlot}].Item.StackSize},]}]}]}
 			/call writeToIni "${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}" ${If[${InvSlot[${invSlot}].Item.Container},Container,${If[${InvSlot[${invSlot}].Item.NoDrop},Skip,Keep${If[${InvSlot[${invSlot}].Item.Stackable},|${InvSlot[${invSlot}].Item.StackSize},]}]}]}
-			/echo /docommand ${ChatToggle} Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
-			/docommand ${ChatToggle} Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
+			/echo /channel Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
+			/channel Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
 			
 			|- Add scripts to import old loot settings from ninjaloot.ini, and old e3 loot inis
 		}
@@ -262,7 +261,7 @@ SUB get_lootSetting(invSlot, itemSlot)
 		|- Check for a Loot_Ini entry
 		/if (!${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}].Length}) {
 			/call writeToIni "${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}" ${If[${Me.Inventory[${invSlot}].Item[${itemSlot}].Container},Container,${If[${Me.Inventory[${invSlot}].Item[${itemSlot}].NoDrop},Skip,Keep${If[${Me.Inventory[${invSlot}].Item[${itemSlot}].Stackable},|${Me.Inventory[${invSlot}].Item[${itemSlot}].StackSize},]}]}]}
-			/docommand ${ChatToggle} Added: [${Me.Inventory[${invSlot}].Item[${itemSlot}].Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
+			/channel Added: [${Me.Inventory[${invSlot}].Item[${itemSlot}].Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
 			
 			|- Add scripts to import old loot settings from ninjaloot.ini, and old e3 loot inis
 		}
@@ -276,12 +275,12 @@ SUB get_lootSetting(invSlot, itemSlot)
 
 
 
-|--------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
 |- Loots items mobs you have killed, to destroy or autoinventory.	-|
-|--------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
 |- @param slotNum: The slot number you are looting from.			-|
 |- @param handle: What to do with the item once you loot it.		-|
-|--------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
 SUB loot_Handle(int slotNum, handle)
 /if (${Debug} || ${Debug_Loot}) /echo |- loot_Handle ==>
 
@@ -327,9 +326,9 @@ SUB loot_Handle(int slotNum, handle)
 
 
 
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 |- Adds corpses that are not yours to the looted corpse list.	-|
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 #EVENT NotYourKill "Someone is already looting that corpse."
 #EVENT NotYourKill "You may not loot this Corpse at this time."
 #EVENT NotYourKill "You must first target a corpse to loot!"
