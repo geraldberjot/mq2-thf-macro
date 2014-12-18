@@ -1,20 +1,18 @@
-|----------------------------------------------------------------------------|
-|- e3_Classes_Warrior.inc v3.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ												-|
-|----------------------------------------------------------------------------|
-|- Contains Warrior specific functions related to,							-|
-|-		Setup and Ini entry information										-|
-|-		MainLoop, and AssistLoop hooks										-|
-|-		Over-all functionality / flow										-|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Class_Warrior.inc v1.0
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Contains Warrior specific functions related to,
+|-		Setup and Ini entry information
+|-		MainLoop, and AssistLoop hooks
+|-		Over-all functionality / flow
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
-
-
-|--------------------|
-|- attemptProvoke	-|
-|--------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- attemptProvoke
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_warProvoke(provokeDisc)
-/if (${outerDebug}) /echo |- check_warProvoke ==>
+	/if (${outerDebug}) /echo |- check_warProvoke ==>
 
 	/if (!${Defined[MinBellowEndurance]}) {
 		/if (${provokeDisc.Equal[Ancient: Chaos Cry]}) {
@@ -49,55 +47,47 @@ SUB check_warProvoke(provokeDisc)
 		}
 	}
 
-/if (${outerDebug}) /echo <== check_warProvoke -|
+	/if (${outerDebug}) /echo <== check_warProvoke -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB WAR_Setup
-/if (${outerDebug}) /echo |- WAR_Setup ==>
+	/if (${outerDebug}) /echo |- WAR_Setup ==>
 
 	/call iniToVar "${iniTHF},Class Specific Info,Warrior Provoke Disciplines" warriorBellows string outer
 
-/if (${outerDebug}) /echo <== WAR_Setup -|
+	/if (${outerDebug}) /echo <== WAR_Setup -|
 /RETURN
 
-
-
-SUB WAR_checkBackgroundEvents
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB WAR_CheckBackgroundEvents
 
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB WAR_MacroSettings
-/if (${outerDebug}) /echo |- WAR_MacroSettings ==>
+	/if (${outerDebug}) /echo |- WAR_MacroSettings ==>
 
 	|- MacroData settings
 	/call writeToIni "${iniTHF},Class Specific Info,Warrior Provoke Disciplines" "Provoke,Bellow,Berate,Incite,Bellow of the Mastruq,Ancient: Chaos Cry" 0
 	
-	|- AdvSettings
-	/call writeToIni "${iniTHF},WAR Functions,WAR Function#1" "check_Burns" 1
-	/call writeToIni "${iniTHF},WAR Functions,WAR Function#2" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},WAR Functions,WAR Function#3" "check_Buffs" 1
+	/call writeToIni "${iniTHF},Warrior,Functions" "check_Burns/check_CombatBuffs/check_Buffs" FALSE
 	
-/if (${outerDebug}) /echo <== WAR_MacroSettings -|
+	/if (${outerDebug}) /echo <== WAR_MacroSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB WAR_CharacterSettings
-/if (${outerDebug}) /echo |- WAR_CharacterSettings ==>
+	/if (${outerDebug}) /echo |- WAR_CharacterSettings ==>
 
-/if (${outerDebug}) /echo <== WAR_CharacterSettings -|
+	/if (${outerDebug}) /echo <== WAR_CharacterSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB WAR_Aliases
-/if (${outerDebug}) /echo |- WAR_Aliases ==>
+	/if (${outerDebug}) /echo |- WAR_Aliases ==>
 
-/if (${outerDebug}) /echo <== WAR_Aliases -|
+	/if (${outerDebug}) /echo <== WAR_Aliases -|
 /RETURN
 
 

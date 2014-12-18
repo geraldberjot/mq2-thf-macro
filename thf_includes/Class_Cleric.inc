@@ -1,17 +1,15 @@
-|----------------------------------------------------------------------------|
-|- e3_Classes_Cleric.inc v3.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ												-|
-|----------------------------------------------------------------------------|
-|- Contains Cleric specific functions related to,							-|
-|-		Setup and Ini entry information										-|
-|-		MainLoop, and AssistLoop hooks										-|
-|-		Over-all functionality / flow										-|
-|----------------------------------------------------------------------------|
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Cleric.inc v1.0
+|- Adapted for THF by Conradd (from Killians of PEQ)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Contains Cleric specific functions related to,
+|-		Setup and Ini entry information
+|-		MainLoop, and AssistLoop hooks
+|-		Over-all functionality / flow
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 SUB check_Yaulp
-/if (${outerDebug}) /echo |- check_clrYaulp ==>
+	/if (${outerDebug}) /echo |- check_clrYaulp ==>
 	
 	/if (${AutoYaulp} && !${medBreak})  {	
 
@@ -26,13 +24,11 @@ SUB check_Yaulp
 		}
 	}
 	
-/if (${outerDebug}) /echo <== check_clrYaulp -|
+	/if (${outerDebug}) /echo <== check_clrYaulp -|
 /RETURN
 
-
-
 SUB check_DivineArb
-/if (${outerDebug}) /echo |- check_DivineArb ==>
+	/if (${outerDebug}) /echo |- check_DivineArb ==>
 
 	/if (${DivineArb_Pct} && ${Group}>1) {
 		/declare i int local
@@ -53,18 +49,16 @@ SUB check_DivineArb
 				}
 			}
 			
-		/if (!${ActionTaken}) /next i
+		/if (!${outerActionTaken}) /next i
 	}
 
-/if (${outerDebug}) /echo <== check_DivineArb -|
+	/if (${outerDebug}) /echo <== check_DivineArb -|
 /RETURN
 
-
-
 SUB check_celestialRegen
-/if (${outerDebug}) /echo |- check_celestialRegen ==>
+	/if (${outerDebug}) /echo |- check_celestialRegen ==>
 
-		/if (${celestialRegen_Pct} && ${Group}>2 && ${Me.AltAbilityReady[Celestial Regeneration]}) {
+	/if (${celestialRegen_Pct} && ${Group}>2 && ${Me.AltAbilityReady[Celestial Regeneration]}) {
 		/declare groupSize int local
 		/declare averageHP int local
 		/declare i int local
@@ -85,10 +79,8 @@ SUB check_celestialRegen
 		}
 	}
 
-/if (${outerDebug}) /echo <== check_celestialRegen -|
+	/if (${outerDebug}) /echo <== check_celestialRegen -|
 /RETURN
-
-
 
 #EVENT Rez "<#1#> Rez"
 #EVENT Rez "<#1#> Rezz"
@@ -96,174 +88,156 @@ SUB check_celestialRegen
 #EVENT Rez "<#1#> Rezz me"
 #EVENT Rez "<#*#> RezOn #1#"
 #EVENT Rez "<#*#> Rez On #1#"
-#EVENT Rez "#1# tells you, 'Rez'"
-#EVENT Rez "#1# tells you, 'Rezz'"
-#EVENT Rez "#1# tells you, 'Rez me'"
-#EVENT Rez "#1# tells you, 'Rezz me'"
-#EVENT Rez "#*# tells you, 'RezOn #1#'"
-#EVENT Rez "#*# tells you, 'Rez On #1#'"
-#EVENT Rez "#1# tells the group, 'Rez'"
-#EVENT Rez "#1# tells the group, 'Rezz'"
-#EVENT Rez "#1# tells the group, 'Rez me'"
-#EVENT Rez "#1# tells the group, 'Rezz me'"
-#EVENT Rez "#*# tells the group, 'RezOn #1#'"
-#EVENT Rez "#*# tells the group, 'Rez On #1#'"
 SUB EVENT_Rez(string line, string ChatSender)
-/if (${Me.Class.ShortName.Equal[CLR]}) {
-	
-	/if (${ChatSender.Left[1].Compare[ ]}<0) /varset ChatSender ${ChatSender.Right[-2].Left[-1]}
-	/if ( ${Me.Class.ShortName.Equal[CLR]} && ${Spawn[${ChatSender}'s].ID}) {
-		/tell ${ChatSender} Wait4Rez
-		/if (${Select[${Me.Race},High Elf]}) /em pops a toot!
+
+	/if (${Me.Class.ShortName.Equal[CLR]}) {
+		/if (${ChatSender.Left[1].Compare[ ]}<0) /varset ChatSender ${ChatSender.Right[-2].Left[-1]}
+		/if (${Me.Class.ShortName.Equal[CLR]} && ${Spawn[${ChatSender}'s].ID}) {
+			/tell ${ChatSender} Wait4Rez
+			/if (${Select[${Me.Race},High Elf]}) /em pops a toot!
 	 
-		/if (${FindItem[Water Sprinkler of Nem Ankh].ID}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Water Sprinkler of Nem Ankh"
-		} else /if (${Me.Book[Reviviscence]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reviviscence/giveuptimer|45s"
-		} else /if (${Me.Book[Ressurection]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Resurrection/giveuptimer|45s"
-		} else /if (${Me.Book[Restoration]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Restoration/giveuptimer|45s"
-		} else /if (${Me.Book[Resuscitate]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Resuscitate/giveuptimer|45s"
-		} else /if (${Me.Book[Renewal]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Renewal/giveuptimer|45s"
-		} else /if (${Me.Book[Revive]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Revive/giveuptimer|45s"
-		} else /if (${Me.Book[Reparation]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reparation/giveuptimer|45s"
-		} else /if (${Me.Book[Reconstitution]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reconstitution/giveuptimer|45s"
-		} else /if (${Me.Book[Reanimation]}) {
-			/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reanimation/giveuptimer|45s"
+			/if (${FindItem[Water Sprinkler of Nem Ankh].ID}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Water Sprinkler of Nem Ankh"
+			} else /if (${Me.Book[Reviviscence]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reviviscence/giveuptimer|45s"
+			} else /if (${Me.Book[Ressurection]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Resurrection/giveuptimer|45s"
+			} else /if (${Me.Book[Restoration]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Restoration/giveuptimer|45s"
+			} else /if (${Me.Book[Resuscitate]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Resuscitate/giveuptimer|45s"
+			} else /if (${Me.Book[Renewal]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Renewal/giveuptimer|45s"
+			} else /if (${Me.Book[Revive]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Revive/giveuptimer|45s"
+			} else /if (${Me.Book[Reparation]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reparation/giveuptimer|45s"
+			} else /if (${Me.Book[Reconstitution]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reconstitution/giveuptimer|45s"
+			} else /if (${Me.Book[Reanimation]}) {
+				/call thf_Casting ${Spawn[${ChatSender}'s].ID} "Reanimation/giveuptimer|45s"
+			}
+		} else /if (!${Spawn[${ChatSender}'s].ID}) {
+			/tell ${ChatSender} I don't see any of your corpses in ${Zone}.
 		}
-	} else /if (!${Spawn[${ChatSender}'s].ID}) {
-		/tell ${ChatSender} I don't see any of your corpses in ${Zone}.
 	}
-}
 /RETURN
-
-
 
 #EVENT AE_Rez "[MQ2] AE Rez"
 #EVENT AE_Rez "[MQ2] Rez all"
 SUB EVENT_AE_Rez
-/if (${Select[${Me.Class},Cleric,Paladin]}) {
-/if (${outerDebug} || ${outerDebug_Basics}) /echo |- EVENT_AE_Rez ==>
+	/if (${Select[${Me.Class},Cleric,Paladin]}) {
+		/if (${outerDebug} || ${outerDebug_Basics}) /echo |- EVENT_AE_Rez ==>
 	
-	/if (!${SpawnCount['s radius 100]}) {
-		/echo I couldn't summon any corpses to ressurect...
-	} else {
-	
-		/declare playerName string local
-		/declare corpseID int local
-		/declare miscTimer timer local
-		/declare lastChecked int outer
-		/declare rezzable string outer
-		/declare i int local
+		/if (!${SpawnCount['s radius 100]}) {
+			/echo I couldn't summon any corpses to ressurect...
+		} else {
 		
-		/for i 1 to ${SpawnCount['s radius 100]}
-		
-			/varset playerName ${NearestSpawn[${i},'s radius 100].CleanName}
-			/varset playerName ${playerName.Arg[1,']}
-			/varset corpseID ${NearestSpawn[${i},'s radius 100].ID}
-			/varset miscTimer 30
-			/varset rezzable UNKNOWN
+			/declare playerName string local
+			/declare corpseID int local
+			/declare miscTimer timer local
+			/declare lastChecked int outer
+			/declare rezzable string outer
+			/declare i int local
 			
-			/if (!${playerName.Find[_]}) {
+			/for i 1 to ${SpawnCount['s radius 100]}
 			
-				|- Check if the corpse is rezzable
-				/call TrueTarget ${corpseID}
-				/consider
+				/varset playerName ${NearestSpawn[${i},'s radius 100].CleanName}
+				/varset playerName ${playerName.Arg[1,']}
+				/varset corpseID ${NearestSpawn[${i},'s radius 100].ID}
+				/varset miscTimer 30
+				/varset rezzable UNKNOWN
 				
-				:waitforEvent
-				/delay 5
-				/doevents CorpseExpired
-				/if (${lastChecked} != ${corpseID} && ${miscTimer}) /goto :waitforEvent
+				/if (!${playerName.Find[_]}) {
 				
-				/if (!${Bool[${rezzable}]}) {
+					|- Check if the corpse is rezzable
+					/call TrueTarget ${corpseID}
+					/consider
 					
-					/if (${rezzable.Equal[UNKNOWN]}) {
-						/say I could not determine whether [${Spawn[id ${corpseID}].CleanName}] is rezzable.  Attempting to rez.
-						/goto :retry
-					} else {
-						/say I cannot ressurect [${Spawn[id ${corpseID}].CleanName}] at this time.
-					}
-				} else {
-				
-					:retry
-					/if (${Target.Distance} > 35) {
-						/if (${Select[${playerName},${consentTargets}]}) {
-							/if (${miscTimer}) {
-								/corpse 
-								/delay 10 ${Target.Distance} > 10
-								/goto :retry
-							} else {
-								/echo I failed to pull [${Spawn[id ${corpseID}].CleanName}],  skipping rez.
-							}
+					:waitforEvent
+					/delay 5
+					/doevents CorpseExpired
+					/if (${lastChecked} != ${corpseID} && ${miscTimer}) /goto :waitforEvent
+					
+					/if (!${Bool[${rezzable}]}) {
+						
+						/if (${rezzable.Equal[UNKNOWN]}) {
+							/say I could not determine whether [${Spawn[id ${corpseID}].CleanName}] is rezzable.  Attempting to rez.
+							/goto :retry
 						} else {
-							/tell ${playerName} You're too far away to rez, and I don't have concent to move your corpse.  Please consent me, then tell me 'rez'.
+							/say I cannot ressurect [${Spawn[id ${corpseID}].CleanName}] at this time.
 						}
 					} else {
+					
+						:retry
+						/if (${Target.Distance} > 35) {
+							/if (${Select[${playerName},${consentTargets}]}) {
+								/if (${miscTimer}) {
+									/corpse 
+									/delay 10 ${Target.Distance} > 10
+									/goto :retry
+								} else {
+									/echo I failed to pull [${Spawn[id ${corpseID}].CleanName}],  skipping rez.
+								}
+							} else {
+								/tell ${playerName} You're too far away to rez, and I don't have concent to move your corpse.  Please consent me, then tell me 'rez'.
+							}
+						} else {
 
-						/tell ${playerName} Wait4Rez
+							/tell ${playerName} Wait4Rez
 
-						/if (${FindItem[Water Sprinkler of Nem Ankh].ID}) {
-							/call thf_Casting ${corpseID} "Water Sprinkler of Nem Ankh" item
-						} else /if (${Me.Book[Reviviscence]}) {
-							/call thf_Casting ${corpseID} "Reviviscence" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Ressurection]}) {
-							/call thf_Casting ${corpseID} "Ressurection" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Restoration]}) {
-							/call thf_Casting ${corpseID} "Restoration" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Resuscitate]}) {
-							/call thf_Casting ${corpseID} "Resuscitate" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Renewal]}) {
-							/call thf_Casting ${corpseID} "Renewal" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Revive]}) {
-							/call thf_Casting ${corpseID} "Revive" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Reparation]}) {
-							/call thf_Casting ${corpseID} "Reparation" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Reconstitution]}) {
-							/call thf_Casting ${corpseID} "Reconstitution" Gem${DefaultGem} 45s
-						} else /if (${Me.Book[Reanimation]}) {
-							/call thf_Casting ${corpseID} "Reanimation" Gem${DefaultGem} 45s
+							/if (${FindItem[Water Sprinkler of Nem Ankh].ID}) {
+								/call thf_Casting ${corpseID} "Water Sprinkler of Nem Ankh" item
+							} else /if (${Me.Book[Reviviscence]}) {
+								/call thf_Casting ${corpseID} "Reviviscence" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Ressurection]}) {
+								/call thf_Casting ${corpseID} "Ressurection" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Restoration]}) {
+								/call thf_Casting ${corpseID} "Restoration" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Resuscitate]}) {
+								/call thf_Casting ${corpseID} "Resuscitate" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Renewal]}) {
+								/call thf_Casting ${corpseID} "Renewal" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Revive]}) {
+								/call thf_Casting ${corpseID} "Revive" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Reparation]}) {
+								/call thf_Casting ${corpseID} "Reparation" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Reconstitution]}) {
+								/call thf_Casting ${corpseID} "Reconstitution" Gem${DefaultGem} 45s
+							} else /if (${Me.Book[Reanimation]}) {
+								/call thf_Casting ${corpseID} "Reanimation" Gem${DefaultGem} 45s
+							}
 						}
 					}
 				}
-			}
-		
-		/next i
-		
-		/deletevar lastChecked
-		/deletevar rezzable
-		
-		/channel All viable corpses nearby, have been ressurected.
+			
+			/next i
+			
+			/deletevar lastChecked
+			/deletevar rezzable
+			
+			/channel All viable corpses nearby, have been ressurected.
+		}
+
+		/if (${outerDebug} || ${outerDebug_Basics}) /echo <== EVENT_AE_Rez -|
 	}
-
-/if (${outerDebug} || ${outerDebug_Basics}) /echo <== EVENT_AE_Rez -|
-}
 /RETURN
-
-
 
 #EVENT CorpseExpired "This corpse #1# be resurrected."
 SUB EVENT_CorpseExpired(line, corpseExpired)
-/if (${Defined[lastChecked]}) {
-	/if (${outerDebug}) /echo |- EVENT_CorpseExpired ==>
+	/if (${Defined[lastChecked]}) {
+		/if (${outerDebug}) /echo |- EVENT_CorpseExpired ==>
 
-		/varset lastChecked ${Target.ID}
-		/if (${corpseExpired.Equal[cannot]}) {
-			/varset rezzable FALSE
-		} else {
-			/varset rezzable TRUE
-		}
+			/varset lastChecked ${Target.ID}
+			/if (${corpseExpired.Equal[cannot]}) {
+				/varset rezzable FALSE
+			} else {
+				/varset rezzable TRUE
+			}
 
-	/if (${outerDebug}) /echo <== EVENT_CorpseExpire -|
-}
+		/if (${outerDebug}) /echo <== EVENT_CorpseExpire -|
+	}
 /RETURN
-
-
 
 SUB CLR_Setup
 	/if (${outerDebug}) /echo |- CLR_Setup ==>
@@ -282,27 +256,17 @@ SUB CLR_Setup
 	/if (${outerDebug}) /echo <== CLR_Setup -|
 /RETURN
 
-SUB CLR_checkBackgroundEvents
+SUB CLR_CheckBackgroundEvents
 /RETURN
 
 SUB CLR_MacroSettings
 	/if (${outerDebug}) /echo |- CLR_MacroSettings ==>
 	
-	|- Adv Settings
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#1" "check_DivineArb" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#2" "check_Yaulp" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#3" "check_celestialRegen" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#4" "check_healChain" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#5" "check_Heals" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#6" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#7" "check_Debuffs" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#8" "check_Nukes" 1
-	/call writeToIni "${iniTHF},CLR Functions,CLR Function#9" "check_Buffs" 1
+	|- Settings
+	/call writeToIni "${iniTHF},Cleric,Functions" "check_DivineArb/check_Yaulp/check_celestialRegen/check_healChain/check_Heals/check_CombatBuffs/check_Debuffs/check_Nukes/check_Buffs" FALSE
 
-/if (${outerDebug}) /echo <== CLR_MacroSettings -|
+	/if (${outerDebug}) /echo <== CLR_MacroSettings -|
 /RETURN
-
-
 
 SUB CLR_CharacterSettings
 	/if (${outerDebug}) /echo |- CLR_CharacterSettings ==>
@@ -315,13 +279,11 @@ SUB CLR_CharacterSettings
 	/if (${outerDebug}) /echo <== CLR_CharacterSettings -|
 /RETURN
 
-
-
 SUB CLR_Aliases
-/if (${outerDebug}) /echo |- CLR_Aliases ==>
+	/if (${outerDebug}) /echo |- CLR_Aliases ==>
 
 	/noparse /squelch /alias /RezIt /bc Rez on ${Target.CleanName.Arg[1,']}
 	/squelch /alias /AERez /echo AE Rez
 
-/if (${outerDebug}) /echo <== CLR_Aliases -|
+	/if (${outerDebug}) /echo <== CLR_Aliases -|
 /RETURN

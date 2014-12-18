@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- thf_Assists.inc
-|- Written by Conradd of THF
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains assisting related functions for thf.mac.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -30,13 +30,12 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 				/if (${globalFollowing} && ${Spawn[${globalFollowTarget}].Distance} > ${LeashLength} && ${Me.Moving}) {
 					/declare Assist_Moving_Timer timer local 100
 					:movetoAssist_Loop
-					/call checkBackgroundEvents
+					/call check_BackgroundEvents
 					/if (${Spawn[=${globalFollowTarget}].Distance} > ${LeashLength} && ${Assist_Moving_Timer}) /goto :movetoAssist_Loop
 				}
 
 				|- Disengage follow.
 				/if (${Stick.Active}) /squelch /stick off
-				/if (${NetAdvPath.State}) /squelch /netfollow pause
 				
 				|- Set Assist Variables.
 				/varset outerAssisting 		TRUE
@@ -80,7 +79,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 					}
 				}
 				
-				/varset combatTimer ${combatDelay}
+				/varset outerCombatTimer ${outerCombatDelay}
 				/if (${outerDebug} || ${outerDebug_Assists}) /echo Assist=${outerAssisting} || AssistTarget=${outerAssistTarget} || AllowControl=${outerAllowControl}
 			}
 		}
@@ -225,12 +224,12 @@ SUB stickToAssistTarget
 	
 	/declare miscTimer timer local 50
 	:waitToStop
-	/if (${outerDebug} && ${spamTimer_waitToStop}) {
+	/if (${outerDebug} && ${outerSpamTimer_waitToStop}) {
 		/echo |- stickToAssistTarget -|- :waitToStop
-		/call createTimer spamTimer_waitToStop 30
+		/call createTimer outerSpamTimer_waitToStop 30
 	}
 
-	/call checkBackgroundEvents
+	/call check_BackgroundEvents
 	
 	/if (${Me.Moving}) {
 		/if (${miscTimer}) /goto :waitToStop
@@ -318,20 +317,20 @@ SUB checkAssistStatus
 				}
 			}
 		}
-		/varset combatTimer ${combatDelay}
+		/varset outerCombatTimer ${outerCombatDelay}
 	}
 
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== checkAssistStatus -|
 /RETURN
 
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 |- Checks to see if the AssistTarget has died, calls Assistoff.	-|
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 SUB checkAssistTarget
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- checkAssistTarget ==>
 	
 	/if (${Spawn[${outerAssistTarget}].Type.Equal[Corpse]} || ${Select[${Spawn[${outerAssistTarget}].Type.Equal[Corpse]},NULL]}) /call AssistOff
-	/varset combatTimer ${combatDelay}
+	/varset outerCombatTimer ${outerCombatDelay}
 	
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== checkAssistTarget -|
 /RETURN
@@ -394,10 +393,10 @@ SUB EVENT_setEnrageAttack(String line, String npcName, String enrageSetting)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_setEnrageAttack -|
 /RETURN
 
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Turns off attack when a mob you're attacking enrages		-|
 |- if that mob is specified in Enrage Settings.ini.         -|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT EnrageOn "#1# has become ENRAGED."
 SUB EVENT_EnrageOn(String line, String RageOn)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_EnrageOn ==>
@@ -435,9 +434,9 @@ SUB EVENT_EnrageOn(String line, String RageOn)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_EnrageOn -|
 /RETURN
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Turns attack back on, after enrage is over.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT EnrageOff "#1# is no longer enraged."
 SUB EVENT_EnrageOff(String line, String RageOn)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo Enrage OFF, turning attack ON
@@ -474,9 +473,9 @@ SUB EVENT_getCloser
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_getCloser -|
 /RETURN
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Uses combat abilities, AAs, and disciplines.	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB CombatAbilities
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- CombatAbilities ==>
 
@@ -740,7 +739,7 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 			}
 		}
 
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== cast_longTermSpells - [${arrayName}] -|
 /RETURN
@@ -841,9 +840,9 @@ SUB EVENT_DebuffsOff(line, ChatSender, MobID)
 
 
 
-|--------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
 |- Casts Command_Debuffs on targets listed in DebuffTargets array.	-|
-|--------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------|
 SUB Debuffs_OnCommand
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- Debuffs_OnCommand ==>
 
@@ -870,18 +869,18 @@ SUB Debuffs_OnCommand
 			}
 		}
 		
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 	
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== Debuffs_OnCommand -|
 /RETURN
 
 
 
-|---------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
 |- Validates targets and adds them to a list of Debuff_Targets. Used for Debuffs_OnCommand.	 -|
-|---------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
 |- Use, '/DoTs' or 'DoTs on ${Target.ID}' in /tell, /group, or /bc.							 -|
-|---------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
 #EVENT DoTsOn "<#1#> DoTs on #2#"
 #EVENT DoTsOn "#1# tells you, 'DoTs on #2#'"
 #EVENT DoTsOn "#1# tells the group, 'DoTs on #2#'"
@@ -932,9 +931,9 @@ SUB EVENT_DoTsOn(line, ChatSender, MobID)
 
 
 
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Cancels debuffs on command on all targets. 	-|
-|------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT DoTsOff "<#1#> End DoTs"
 #EVENT DoTsOff "#1# tells you, 'End DoTs'"
 #EVENT DoTsOff "#1# tells the group, 'End DoTs'"
@@ -977,9 +976,9 @@ SUB EVENT_DoTsOff(line, ChatSender, MobID)
 
 
 
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 |- Casts Command_DoTs on targets listed in DoT_Targets array.	-|
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 SUB DoTs_OnCommand
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- DoTs_OnCommand ==>
 
@@ -1006,7 +1005,7 @@ SUB DoTs_OnCommand
 			}
 		}
 		
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 	
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== DoT_OnCommand -|
 /RETURN
@@ -1042,9 +1041,9 @@ SUB EVENT_RainOn(line, ChatSender)
 
 
 
-|--------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-|
 |- Turns rain functions off.	-|
-|--------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-|
 #EVENT RainOff "<#1#> Rain off"
 #EVENT RainOff "#1# tells you#*#RainOff'"
 #EVENT RainOff "#1# tells the group, 'Rain off"
@@ -1063,7 +1062,7 @@ SUB EVENT_RainOff(line, ChatSender)
 		/deletevar do_Rain
 		/channel Ending rain.
 		/doevents flush
-		/varset combatTimer 10s
+		/varset outerCombatTimer 10s
 	}
 }
 
@@ -1072,9 +1071,9 @@ SUB EVENT_RainOff(line, ChatSender)
 
 
 
-|------------------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
 |- Casts spells listed in the [Rain] section of the iniToon on mobs which wander into your outerAoeRadius.	-|
-|------------------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------|
 SUB check_Rain
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_Rain ==>
 
@@ -1097,18 +1096,18 @@ SUB check_Rain
 				}
 			}
 			
-		/if (!${ActionTaken}) /next i
+		/if (!${outerActionTaken}) /next i
 		
-		/varset combatTimer ${combatDelay}
+		/varset outerCombatTimer ${outerCombatDelay}
 	}
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Rain -|	
 /RETURN
 
 
 
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 |- Casts swarm pets from Mages, Necros, Shaman, and Wizards.	-|
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 #EVENT SwarmPets "<#1#> Swarm Pets on #2#"
 SUB EVENT_SwarmPets(line, ChatSender, int swarmTarget)
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_SwarmPets ==>
@@ -1159,7 +1158,7 @@ SUB EVENT_SwarmPets(line, ChatSender, int swarmTarget)
 		}
 	}
 	
-	/varset combatTimer ${combatDelay}
+	/varset outerCombatTimer ${outerCombatDelay}
 	
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_SwarmPets -|
 /RETURN
@@ -1240,9 +1239,9 @@ SUB EVENT_FullBurn(line, ChatSender)
 
 
 
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- FullBurn's MainLoop hook, calls FullBurns, and QuickBurns, in succession until your target dies.	-|
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB FullBurns
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- FullBurns ==>
 
@@ -1267,9 +1266,9 @@ SUB FullBurns
 			/call thf_Casting ${outerAssistTarget} "${QuickBurns[${i}]}/GiveUpTimer|${If[${Me.Gem[${castName}]},0,100]}"
 		}
 	
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 	
-	/varset combatTimer ${combatDelay}
+	/varset outerCombatTimer ${outerCombatDelay}
 
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== FullBurns -|
 /RETURN
@@ -1290,9 +1289,9 @@ SUB FullBurns
 		
 		/call thf_Casting ${burnTarget} "${${arrayName}[${i}]}/GiveUpTimer|${If[${Me.Gem[${castName}]},0,100]}"
 		
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 	
-	/varset combatTimer ${combatDelay}
+	/varset outerCombatTimer ${outerCombatDelay}
 
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== useBurns -|
 /RETURN

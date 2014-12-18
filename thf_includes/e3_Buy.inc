@@ -54,7 +54,7 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 				/varset listPosition ${Window[MerchantWnd].Child[ItemList].List[=${itemToBuy},2]}
 				|- Checks if the item has been found on the merchant's list.
 				/if (!${listPosition}) {
-					/docommand ${ChatToggle} This merchant doesn't have ${itemToBuy}!
+					/channel This merchant doesn't have ${itemToBuy}!
 				} else {
 					|- Selects item on merchant's list.
 					/notify MerchantWnd ItemList listselect ${listPosition}
@@ -66,7 +66,7 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 						:buying
 						|- Prevents loop from repeating if out of money or inventory space.
 						/if (${Macro.Return.Equal[noMoney]} || ${Macro.Return.Equal[invFull]} || ${Bool[${Cursor}]}) {
-							/docommand ${ChatToggle} I am out of money, my inventory is full, or I have an item on my cursor! Exiting.
+							/channel I am out of money, my inventory is full, or I have an item on my cursor! Exiting.
 							/goto :closeOut
 						}
 						/notify MerchantWnd MW_Buy_Button leftmouseup
@@ -82,7 +82,7 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 						:stackBuyLoop
 						|- Prevents loop from repeating if out of money or inventory space.
 						/if (${Macro.Return.Equal[noMoney]} || ${Macro.Return.Equal[invFull]} || ${Bool[${Cursor}]}) {
-							/docommand ${ChatToggle} I am out of money, my inventory is full, or I have an item on my cursor! Exiting.
+							/channel I am out of money, my inventory is full, or I have an item on my cursor! Exiting.
 							/goto :closeOut
 						}
 						/doevents flush
@@ -115,7 +115,7 @@ SUB EVENT_AutoBuy(line, ChatSender, merchantID, eventParams)
 				/varcalc i ${i}+1
 				/goto :lookForItems
 			}
-			/docommand ${ChatToggle} Done buying items.
+			/channel Done buying items.
 		}
 
 		:closeOut

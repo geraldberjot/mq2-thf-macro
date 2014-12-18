@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- thf_Background.inc
-|- Written by Conradd of THF from Killians of PEQ
+|- Background.inc
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains background functions that update e3 status and variables,
 |- along with many minimally invasive macro functions.
@@ -13,11 +13,11 @@ SUB check_Zone
 	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Zone ==>
 
 	|- Set current zone ID
-	/varset currentZone ${Zone.ID}
+	/varset outerCurrentZone ${Zone.ID}
 
 	|- Update macro timers
-	/varset idleTimer ${idleInterval}m
-	/varset rebuffTimer 0
+	/varset globalIdleTimer ${globalouterIdleInterval}m
+	/varset outerRebuffTimer 0
 	
 	|- Turn off assist / attack
 	/if (${outerAssisting} || ${Me.Combat}) /call AssistOff
@@ -28,14 +28,10 @@ SUB check_Zone
 	|- Reset badSpells list
 	/varset badSpells
 	
-	|- Check tribute settings for zone
-	/call check_ZoneType
-	/if (${Defined[tributeOverride]}) /deletevar tributeOverride
-	
 	|- Check Auto-Melody
 	/if (${Defined[autoMelody]} && !${songSet.Length}) /playmelody ${autoMelody} /only|Me
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Zone -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Zone -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -59,33 +55,34 @@ SUB check_Gems
 		:Memloop
 		/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Gems -|- :Memloop
 		
-		/call checkBackgroundEvents
+		/call check_BackgroundEvents
 		/if (${outerDebug} || ${outerDebug_Background}) /echo spellsetMem_Timer = [${spellsetMem_Timer}]
 		/if (${Window[SpellBookWnd].Open} && ${spellsetMem_Timer}) /goto :Memloop
 		/if (${Me.Sitting}) /stand	
+		/channel Spell set loaded !
 	}
 	
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Gems -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Gems -|
 /RETURN
 
-|--------------------------------------------------------------------------------------------|
-|- Reports bots who have fallen behind, and attempts to re-aquire follow when it breaks.	-|
-|--------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Reports bots who have fallen behind, and attempts to re-acquire follow when it breaks.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Follow
 	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Follow ==>
 
 	/if (${globalFollowTarget.Equal[${Me.CleanName}]}) {
-		/if (!${spamTimer}) {
+		/if (!${outerSpamTimer}) {
 			/declare i int local 1
 			:NextFollower
 			
-				/if (!${SpamTimer_${globalFollowers.Arg[${i},,]}}) {
-					/if (${SpawnCount[pc ${globalFollowers.Arg[${i},,]}]} && !${Spawn[pc ${globalFollowers.Arg[${i},,]} radius ${LeashLength}].ID}) {
-						/popup ${globalFollowers.Arg[${i},,]} has fallen behind.
-						/call createTimer SpamTimer_${globalFollowers.Arg[${i},,]} 100
-						/varset spamTimer 10
-					}
+			/if (!${outerSpamTimer_${globalFollowers.Arg[${i},,]}}) {
+				/if (${SpawnCount[pc ${globalFollowers.Arg[${i},,]}]} && !${Spawn[pc ${globalFollowers.Arg[${i},,]} radius ${LeashLength}].ID}) {
+					/popup ${globalFollowers.Arg[${i},,]} has fallen behind.
+					/call createTimer outerSpamTimer_${globalFollowers.Arg[${i},,]} 100
+					/varset outerSpamTimer 10
 				}
+			}
 
 			/varcalc i ${i} + 1
 			/if (${globalFollowers.Arg[${i},,].Length}) /goto :NextFollower
@@ -103,26 +100,26 @@ SUB check_Follow
 	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Follow -|
 /RETURN
 
-|--------------------------------------------------------------------------------------------------------------------|
-|- Checks to see if your character is idle.																			-|
-|--------------------------------------------------------------------------------------------------------------------|
-|- Updates idleTimer to the idleInterval set in your Macro_Ini, whenever you've recently been active, or in combat.	-|
-|- Sets idle=TRUE if you're in a safeZone, or when you have been inactive for longer than the idleInterval.			-|
-|--------------------------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks to see if your character is idle.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Updates globalIdleTimer to the outerIdleInterval set in your Macro_Ini, whenever you've recently been active, or in combat.
+|- Sets idle=TRUE if you're in a safeZone, or when you have been inactive for longer than the outerIdleInterval.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Idle
 	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Idle ==>
 	
-	|- Check to see if I have been active recently.  If so, set Idle false, and update the idleTimer	
-	/if (${activeTimer} || ${combatTimer}) {
-		/varset idleTimer ${idleInterval}m
-		/if (${idle}) /varset idle FALSE
+	|- Check to see if I have been active recently.  If so, set globalIdle false, and update the globalIdleTimer	
+	/if (${outerActiveTimer} || ${outerCombatTimer}) {
+		/varset globalIdleTimer ${globalouterIdleInterval}m
+		/if (${globalIdle}) /varset globalIdle FALSE
 	} else {
-		|- If I haven't been active, and the idleTimer is spent, set idle TRUE.
-		/if (!${idle} && !${idleTimer}) /varset idle TRUE
+		|- If I haven't been active, and the globalIdleTimer is spent, set globalIdle TRUE.
+		/if (!${globalIdle} && !${globalglobalIdleTimer}) /varset globalIdle TRUE
 	}
 	
 	/if (${outerDebug}) {
-		/echo idleTimer = [${idleTimer}] || idle = [${idle}]
+		/echo globalIdleTimer = [${globalglobalIdleTimer}] || globalIdle = [${globalIdle}]
 		/echo <== check_Idle -|
 	}
 /RETURN
@@ -143,41 +140,41 @@ SUB check_Active
 
 	|- Check Zoning
 	/if (!${SpawnCount[pc ${Me}]}) {
-		/varset activeTimer 15
-		/varset rebuffTimer 0
+		/varset outerActiveTimer 15
+		/varset outerRebuffTimer 0
 	}
 	
 	|- Check Movement
 	/if (${Me.Moving} || ${Corpse.Open}) {
-		/varset activeTimer 5
-		/varset rebuffTimer ${rebuffDelay}
+		/varset outerActiveTimer 5
+		/varset outerRebuffTimer ${outerRebuffDelay}
 	}
 
 	|- Check Cursor
 	/if (${Cursor.ID}) {
-		|-- Destroy badItems.
-		/if (${Defined[badItems]}) {
-			/if (${Select[${Cursor},${badItems}]} || ${Select[${Cursor.ID},${badItems}]}) {
+		|-- Destroy outerBadItems.
+		/if (${Defined[outerBadItems]}) {
+			/if (${Select[${Cursor},${outerBadItems}]} || ${Select[${Cursor.ID},${outerBadItems}]}) {
 				/echo Destroying ${Cursor}...
 				/destroy
 			}
 		}
 
 		|-- Check to see if I'm waiting to drop this item, or if I've picked up something new
-		/if (${Old_cursorID} != ${Cursor.ID}) {
-			/varset cursorTimer ${Math.Calc[${inventoryTimer} * 10].Int}
-			/varset Old_cursorID ${Cursor.ID}
+		/if (${outerOldCursorID} != ${Cursor.ID}) {
+			/varset outerCursorTimer ${Math.Calc[${outerInventoryTimer} * 10].Int}
+			/varset outerOldCursorID ${Cursor.ID}
 		} else {
-			/if (!${cursorTimer}) /call clearCursor
+			/if (!${outerCursorTimer}) /call clearCursor
 		}
 		
-		/varset activeTimer 5
-		/if (${rebuffTimer} < 30) /varset rebuffTimer 30
+		/varset outerActiveTimer 5
+		/if (${outerRebuffTimer} < 30) /varset outerRebuffTimer 30
 		
 	} else {
-		/if (${Old_cursorID}) {
-			/varset cursorTimer 0
-			/varset Old_cursorID 0
+		/if (${outerOldCursorID}) {
+			/varset outerCursorTimer 0
+			/varset outerOldCursorID 0
 		}
 	}
 	
@@ -188,14 +185,14 @@ SUB check_Active
 	
 	|- Check Casting
 	/if (${Me.Class.ShortName.NotEqual[BRD]} && ${Me.Casting.ID}) {
-		/call thf_CastingingChecks
-		/varset activeTimer 5
-		/varset rebuffTimer ${rebuffDelay}
+		/call check_Castings
+		/varset outerActiveTimer 5
+		/varset outerRebuffTimer ${outerRebuffDelay}
 	}
 	
 	/if (${Window[BigBankWnd].Open} || ${Window[MerchantWnd].Open} || ${Window[TradeWnd].Open} || ${Window[GuildBankWnd].Open} || ${Window[MerchantWnd].Open}) {
-		/varset activeTimer 30
-		/varset rebuffTimer ${rebuffDelay}
+		/varset outerActiveTimer 30
+		/varset outerRebuffTimer ${outerRebuffDelay}
 		/doevents flush
 	}
 	
@@ -204,14 +201,14 @@ SUB check_Active
 		/if (!${spellbook_Timer}) {
 			|-- if the timer isn't defined, make one.
 			/if (!${Defined[spellbook_Timer]}) {
-				/declare spellbook_Timer timer outer ${spellbookTimer}s
+				/declare spellbook_Timer timer outer ${outerSpellbookTimer}s
 			} else {
 				/if (${Window[SpellbookWnd].Open}) /stand
 			}
 		}
 		
-		/varset activeTimer 30
-		/varset rebuffTimer ${rebuffDelay}
+		/varset outerActiveTimer 30
+		/varset outerRebuffTimer ${outerRebuffDelay}
 		
 	} else {
 		/if (${Defined[spellbook_Timer]}) /deletevar spellbook_Timer
@@ -229,8 +226,8 @@ SUB check_Active
 			}
 		}
 		
-		/varset activeTimer 30
-		/varset rebuffTimer ${rebuffDelay}
+		/varset outerActiveTimer 30
+		/varset outerRebuffTimer ${outerRebuffDelay}
 		
 	} else {
 		/if (${Defined[feign_Timer]}) /deletevar feign_Timer
@@ -239,107 +236,120 @@ SUB check_Active
 	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Active -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Zoning
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Zoning ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Zoning ==>
 
-	/varset activeTimer 15
-	/varset rebuffTimer 0
+	/varset outerActiveTimer 15
+	/varset outerRebuffTimer 0
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Zoning -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Zoning -|
 /RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Movement
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Movement ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Movement ==>
 
-	/varset activeTimer 5
-	/varset rebuffTimer ${rebuffDelay}
+	/varset outerActiveTimer 5
+	/varset outerRebuffTimer ${outerRebuffDelay}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Movement -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Movement -|
 /RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_AutoAttack
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_AutoAttack ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_AutoAttack ==>
 
 	/if (!${Target.ID} || ${Target.Type.Equal[corpse]} && !${outerAssisting}|| ${Spawn[${Target.ID}].Type.Equal[PC]} && !${Toggle-PvP}) /attack off
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_AutoAttack -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_AutoAttack -|
 /RETURN	
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Casting
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Casting ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Casting ==>
 
-	/call thf_CastingingChecks
-	/varset activeTimer 5
-	/varset rebuffTimer ${rebuffDelay}
+	/call check_Castings
+	/varset outerActiveTimer 5
+	/varset outerRebuffTimer ${outerRebuffDelay}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Casting -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Casting -|
 /RETURN	
-SUB check_MerchantWnd
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_MerchantWnd ==>
 
-	/varset activeTimer 30
-	/varset rebuffTimer ${rebuffDelay}
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB check_MerchantWnd
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_MerchantWnd ==>
+
+	/varset outerActiveTimer 30
+	/varset outerRebuffTimer ${outerRebuffDelay}
 	/doevents flush
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_MerchantWnd -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_MerchantWnd -|
 /RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Cursor
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Cursor ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Cursor ==>
 
 	/if (${Cursor.ID}) {
 	
-		|- Destroy badItems.
-		/if (${Defined[badItems]}) {
-			/if (${Select[${Cursor},${badItems}]} || ${Select[${Cursor.ID},${badItems}]}) {
+		|- Destroy outerBadItems.
+		/if (${Defined[outerBadItems]}) {
+			/if (${Select[${Cursor},${outerBadItems}]} || ${Select[${Cursor.ID},${outerBadItems}]}) {
 				/echo Destroying ${Cursor}...
 				/destroy
 			}
 		}
 
 		|- Check to see if I'm waiting to drop this item, or if I've picked up something new
-		/if (${Old_cursorID} != ${Cursor.ID}) {
-			/varset cursorTimer ${Math.Calc[${inventoryTimer} * 10].Int}
-			/varset Old_cursorID ${Cursor.ID}
+		/if (${outerOldCursorID} != ${Cursor.ID}) {
+			/varset outerCursorTimer ${Math.Calc[${outerInventoryTimer} * 10].Int}
+			/varset outerOldCursorID ${Cursor.ID}
 		} else {
-			/if (!${cursorTimer}) /call clearCursor
+			/if (!${outerCursorTimer}) /call clearCursor
 		}
 		
-		/varset activeTimer 5
-		/if (${rebuffTimer} < 30) /varset rebuffTimer 30
+		/varset outerActiveTimer 5
+		/if (${outerRebuffTimer} < 30) /varset outerRebuffTimer 30
 		
 	} else {
-		/if (${Old_cursorID}) {
-			/varset cursorTimer 0
-			/varset Old_cursorID 0
+		/if (${outerOldCursorID}) {
+			/varset outerCursorTimer 0
+			/varset outerOldCursorID 0
 		}
 	}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Cursor -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Cursor -|
 /RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Spellbook
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Spellbook ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Spellbook ==>
 
 	/if (${Window[SpellbookWnd].Open}) {
 		/if (!${spellbook_Timer}) {
 		
 			|- if the timer isn't defined, make one.
 			/if (!${Defined[spellbook_Timer]}) {
-				/declare spellbook_Timer timer outer ${spellbookTimer}s
+				/declare spellbook_Timer timer outer ${outerSpellbookTimer}s
 			} else {
 				/if (${Window[SpellbookWnd].Open}) /stand
 			}
 		}
 		
-		/varset activeTimer 30
-		/varset rebuffTimer ${rebuffDelay}
+		/varset outerActiveTimer 30
+		/varset outerRebuffTimer ${outerRebuffDelay}
 		
 	} else {
 		/if (${Defined[spellbook_Timer]}) /deletevar spellbook_Timer
 	}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Spellbook -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Spellbook -|
 /RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Feigning
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Feigning ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Feigning ==>
 
 	/if (${Me.Feigning}) {
 		/if (!${Select[${Me.Class.ShortName},NEC,SHD,MNK]}) {
@@ -348,50 +358,48 @@ SUB check_Feigning
 		} else {
 		
 			/if (!${Defined[feign_Timer]}) {
-				/channel I AM FEIGNED.
+				/channel I AM FEIGNING !
 				/declare feign_Timer timer outer 15s
 			}
 		}
 		
-		/varset activeTimer 30
-		/varset rebuffTimer ${rebuffDelay}
+		/varset outerActiveTimer 30
+		/varset outerRebuffTimer ${outerRebuffDelay}
 		
 	} else {
 		/if (${Defined[feign_Timer]}) /deletevar feign_Timer
 	}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Feigning -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Feigning -|
 /RETURN
 
-
-
-|------------------------------------------------------------------------------------------------|
-|- Updates the combatTimer whenever you, or someone in your party, is Assisting, or in combat. 	-|
-|------------------------------------------------------------------------------------------------|
-|- Sets combatTimer to the combatDelay whenever combat is detected.								-|
-|------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Updates the outerCombatTimer whenever you, or someone in your party, is Assisting, or in combat.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Sets outerCombatTimer to the outerCombatDelay whenever combat is detected.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Combat
 
 	|- Check NetBots to see if anyone is in combat.
 	/declare i int local
+	/declare localNetBot string local
 	/for i 1 to ${NetBots.Counts}
-		/if (${SpawnCount[pc ${NetBots.Client.Arg[${i}, ]}]} && ${Spawn[pc ${NetBots.Client.Arg[${i}, ]}].Distance} < ${MaxResponseDist} && ${NetBots[${NetBots.Client.Arg[${i}, ]}].Attacking} || ${Me.Combat} || ${outerAssisting}) {
-			/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Combat -|- ${NetBots[${NetBots.Client.Arg[${i}, ]}]} is attacking, setting combatTimer
+		/varset localNetBot ${NetBots.Client.Arg[${i}, ]}
+		/if (${SpawnCount[pc ${localNetBot}]} && ${Spawn[pc ${localNetBot}].Distance} < ${MaxResponseDist} && ${NetBots[${localNetBot}].Attacking} || ${Me.Combat} || ${outerAssisting}) {
+			/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Combat -|- ${NetBots[${localNetBot}]} is attacking, setting outerCombatTimer
 
 			|- Update macro timers.
-			/varset combatTimer ${combatDelay}
+			/varset outerCombatTimer ${outerCombatDelay}
 		}
-	/if (!${combatTimer}) /next i
+	/if (!${outerCombatTimer}) /next i
 
 /RETURN
 
-
-
-|------------------------
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Completes item casting exchanges, after a sufficient time has passed.
-|------------------------
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB completePendingExchange
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- completePendingExchanges ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- completePendingExchanges ==>
 	
 	|- Check for the item needing to be swapped back.
 	/if (!${FindItemCount[${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Pending Exchange].Arg[1,/]}]}) {
@@ -423,265 +431,78 @@ SUB completePendingExchange
 		}
 	}
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== completePendingExchanges -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== completePendingExchanges -|
 /RETURN
 
-
-
-|----------------------------------------------------------------------------------------------------|
-|- Updates safeZones_Ini entries to 'safe' or 'raid' via /bc Set Raid Zone, or /bc Set Safe Zone.	-|
-|----------------------------------------------------------------------------------------------------|
-SUB check_autoTribute
-/if (${outerDebug}) {
-	/echo |- check_autoTribute ==>
-	/echo |- check_autoTribute -|- Idle = ${idle} -- SafeZone = ${safeZone}
-}
-
-	|- If idle is TRUE, and my remaining TributeTimer is < 10, turn off Tribute.
-	/if (!${tributeZone} || ${idle}) {
-		/if	(${Me.TributeActive} && ${Me.TributeTimer} <= 10) {
-			/if (!${idle}) {
-				/echo |- AutoTribute -|- Turning tribute off.
-			} else {
-				/echo |- AutoTribute -|- I'm idle.  Turning tribute off.
-			}
-			/call toggleTribute OFF
-		}
-	} else {
-		/if (!${Me.TributeActive} && ${Me.CurrentFavor} > 500) {
-			/echo |- AutoTribute -|- I've entered a tribute zone, turning tribute on.
-			/call toggleTribute ON
-		}
-	}
-	
-	/if (${Me.TributeActive} && !${HUD_tributeTimer}) /varset HUD_tributeTimer ${HUD_tributeTimerFlashInterval}
-
-/if (${outerDebug}) /echo <== check_autoTribute -|
-/RETURN
-
-
-
-SUB toggleTribute(tributeSetting)
-/if (${outerDebug}) /echo |- toggleTribute ==>
-
-	/declare miscTimer timer local 50
-
-	|- Open the tribute window.
-	/if (!${Window[TributeBenefitWnd].Open}) /keypress "alt u" release
-	
-	|- Click activate/deactivate button.
-	:toggle_Loop
-	/if (${outerDebug}) /echo |- toggleTribute -|- :toggle_Loop
-	/notify TributeBenefitWnd DowngradeButton leftmouseup
-	/if (${tributeToggle.Equal[ON]}) {
-		/delay 2 ${Me.TributeActive}
-		/if (${Me.TributeActive} && ${miscTimer}) /goto :toggle_Loop
-	} else /if (${tributeToggle.Equal[OFF]}) {
-		/delay 2 !${Me.TributeActive}
-		/if (!${Me.TributeActive} && ${miscTimer}) /goto :toggle_Loop
-	}
-
-	|- Close the tribute window.	
-	:closeWindow_Loop
-	/if (${outerDebug}) /echo |- toggleTribute -|- :closeWindow_Loop
-	/keypress "alt u" release
-	/delay 2 !${Window[TributeBenefitWnd].Open}
-	/if (${Window[TributeBenefitWnd].Open} && ${miscTimer}) /goto :closeWindow_Loop
-
-/if (${outerDebug}) /echo <== toggleTribute -|			
-/RETURN
-
-
-
-|--------------------|
-|- Turn Tribute on	-|
-|--------------------|
-#EVENT manualTributeSet "[#1#] Tribute #2#"
-#EVENT manualTributeSet "<#1#> Tribute #2#"
-#EVENT manualTributeSet "#1# tells you, 'Tribute #2#'"
-#EVENT manualTributeSet "#1# tells the group, 'Tribute #2#'"
-#EVENT manualTributeSet "#1# you tell your party, 'Tribute #2#'"
-SUB EVENT_manualTributeSet(line, ChatSender, eventParams)
-/if (${outerDebug}) /echo |- EVENT_manualTributeSet ==>
-
-	|- Verify the event
-	/call verifyEvent "${ChatSender}" "${line}"
-	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
-		/declare tributeToggle string local ${eventParams.Arg[1,|]}
-		/declare tributeTimerSetting timer local ${eventParams.Arg[2,|]}
-		/varset eventParams ${eventParams.Arg[1, ]}
-		|- set toggle based on keywords.  If param2 does not match any of the keywords, the command is skipped.
-		/if (${tributeToggle.Equal[on]} || ${tributeToggle.Equal[true]} || ${tributeToggle.Equal[start]} || ${tributeToggle.Equal[activate]}) {
-			/varset tributeZone TRUE
-			/if (!${tributeTimerSetting}) {
-				/echo Turning tribute [ON]
-			} else {
-				/echo Turning tribute [ON] for [${eventParams.Arg[2,|]}].
-				/docommand /timed ${tributeTimerSetting} /varset tributeZone FALSE
-				/docommand /timed ${tributeTimerSetting} /echo Tribute Timer is up.  Deactivating tribute on the next upkeep.
-			}
-		} else /if (${tributeToggle.Equal[off]} || ${tributeToggle.Equal[false]} || ${tributeToggle.Equal[end]} || ${tributeToggle.Equal[deactivate]}) {
-			/varset tributeZone FALSE
-			/if (!${tributeTimerSetting}) {
-				/echo Turning tribute [OFF]
-			} else {
-				/echo Turning tribute [OFF] for [${eventParams.Arg[2,|]}].
-				/docommand /timed ${tributeTimerSetting} /varset tributeZone FALSE
-				/docommand /timed ${tributeTimerSetting} /echo Tribute Timer is up.  Activating tribute on the next upkeep.
-			}
-		}
-	}
-
-/if (${outerDebug}) /echo <== EVENT_manualTributeSet -|
-/RETURN
-
-
-
-|----------------------------------------------------------------------------------------|
-|- Reads safeZones_Ini for zone settings and updates safeZones variable. 				-|
-|----------------------------------------------------------------------------------------|
-|- When new zones are entered, they are added to the safeZones_Ini, and set to 'safe'.	-|
-|----------------------------------------------------------------------------------------|
-SUB check_ZoneType
-	/if (${outerDebug}) /echo |- check_ZoneType ==>
-
-	|- If a safeZones_Ini entry for this zone does not exist, create one, and default to 'safe'.
-	/if (!${Ini[${safeZones_Ini},${Zone.ShortName.Left[1]},${Zone.ShortName}].Length}) {
-		/call writeToIni "${safeZones_Ini},${Zone.ShortName.Left[1]},${Zone.ShortName}" "Off"
-		/varset tributeZone FALSE
-	} else {
-		/call iniToVar "${safeZones_Ini},${Zone.ShortName.Left[1]},${Zone.ShortName}" UNDEFINED bool local
-		/if (${Bool[${Macro.Return}]}) {
-			/varset tributeZone TRUE
-		} else {
-			/varset tributeZone FALSE
-		}
-	}
-
-	/if (${outerDebug}) /echo <== check_ZoneType -|
-/RETURN
-
-
-
-|----------------------------------------------------------------------------------------------------|
-|- Updates safeZones_Ini entries to 'safe' or 'raid' via /bc Set Raid Zone, or /bc Set Safe Zone.	-|
-|----------------------------------------------------------------------------------------------------|
-|- @param line: <'Name'> Set 'Setting' Zone.														-|
-|- @param zoneSetting: Holds 'Raid' or 'Safe' zone settings.										-|
-|- @param charSender: The PC setting the zone type.													-|
-|----------------------------------------------------------------------------------------------------|
-#EVENT Set_zoneType "<#1#> Set tribute zone #2#"
-#EVENT Set_zoneType "[#1#] Set tribute zone #2#"
-SUB EVENT_Set_zoneType(line, chatSender, zoneSetting)
-/if (${SpawnCount[pc ${chatSender}]} || !${Defined[chatSender]}) {
-
-	/if (${zoneSetting.Equal[off]}  ) {
-		/echo ${Zone} has been set as a safe zone.
-		/call writeToIni "${safeZones_Ini},${Zone.ShortName.Left[1]},${Zone.ShortName}" Off 1
-	} else /if (${zoneSetting.Equal[on]}) {
-		/echo ${Zone} has been listed as a raid zone.
-		/call writeToIni "${safeZones_Ini},${Zone.ShortName.Left[1]},${Zone.ShortName}" On 1
-	}
-	/call check_Zone
-}
-/RETURN
-
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB background_Setup
 	/call iniToVar "${iniGeneral},Debug,Debug Background (On/Off)" outerDebug_Background bool outer
 	
 	/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_Setup ==>
 
 	|- Create outer variables.
-	/if (!${Defined[idle]}) /declare idle bool global
-	/if (!${Defined[idleTimer]}) /declare idleTimer timer global
+	/if (!${Defined[globalIdle]}) /declare globalIdle bool global
+	/if (!${Defined[globalIdleTimer]}) /declare globalIdleTimer timer global
 	
-	/declare ActionTaken bool outer FALSE
-	/declare spamTimer timer outer
+	/declare outerActionTaken bool outer FALSE
+	/declare outerSpamTimer timer outer
 	
-	/declare activeTimer timer outer
+	/declare outerActiveTimer timer outer
 	
-	/declare combatTimer timer outer
-	/declare combatDelay int outer 100
+	/declare outerCombatTimer timer outer
+	/declare outerCombatDelay int outer 100
 	
-	/declare cursorTimer timer outer
-	/declare Old_cursorID int outer 0
+	/declare outerCursorTimer timer outer
+	/declare outerOldCursorID int outer 0
 	
-	/declare rebuffTimer timer outer
-	/declare rebuffDelay int outer 100
+	/declare outerRebuffTimer timer outer
+	/declare outerRebuffDelay int outer 100
 	
-	/if (!${Defined[tributeZone]}) /declare tributeZone string global
-	/declare HUD_tributeTimer timer outer
-	/declare HUD_tributeTimerFlashInterval int outer 50
-	/declare currentZone int outer 0
-	
-	|- Add Tribute Settings File Path
-	/if (!${Ini[${iniTHF},Paths,Tribute Settings].Length}) /call writeToIni "${iniTHF},Paths,Tribute Settings" "thf_inis\Tribute Settings.ini"
-	
-	|- Import itemTimers_Ini.
-	/if (!${Ini[${iniTHF},Paths,Tribute Settings].Length}) {
-		/echo ERROR: Could not find designated file path for [Tribute Settings], please review [${iniTHF}] and restart.
-		/endmacro
-	} else {
-		/declare safeZones_Ini string outer ${Ini[${iniTHF},Paths,Tribute Settings]}
-	}
-	
-	|- Build a SafeZones.ini.
-	/if (!${Ini[${safeZones_Ini},A].Length}) {
-		/echo Creating Tribute Settings file...
-		/call Build_Alphabetized_Ini "${safeZones_Ini}"
-	}
+	/declare outerCurrentZone int outer 0
 	
 	|- Import Ini Variables.
 	
 	|- Clear Cursor Timer
 	/if (${Ini[${iniGeneral},Background,Auto-Inventory Timer (Sec)].Length}) {
-		/call iniToVar "${iniGeneral},Background,Auto-Inventory Timer (Sec)" inventoryTimer string outer
+		/call iniToVar "${iniGeneral},Background,Auto-Inventory Timer (Sec)" outerInventoryTimer string outer
 	} else {
 		/echo Warning: Could not find a setting for [Auto-Inventory Timer] in [${iniGeneral}].  [Auto-Inventory Timer] has been set to 30 seconds.
-		/declare inventoryTimer int outer 30
+		/declare outerInventoryTimer int outer 30
 	}
 	
 	|- Close Spellbook Timer
 	/if (${Ini[${iniGeneral},Background,Close Spellbook Timer (Sec)].Length}) {
-		/call iniToVar "${iniGeneral},Background,Close Spellbook Timer (Sec)" spellbookTimer string outer
+		/call iniToVar "${iniGeneral},Background,Close Spellbook Timer (Sec)" outerSpellbookTimer string outer
 	} else {
 		/echo Warning: Could not find a setting for [Close Spellbook Timer] in [${iniGeneral}].  [Close Spellbook Timer] has been set to 1 minute.
-		/declare spellbookTimer int outer 60
+		/declare outerSpellbookTimer int outer 60
 	}
 	
-	|- Idle Timer
+	|- globalIdle Timer
 	/if (${Ini[${iniGeneral},Background,Idle Time Out (Min)].Length}) {
-		/call iniToVar "${iniGeneral},Background,Idle Time Out (Min)" idleInterval int outer
+		/call iniToVar "${iniGeneral},Background,Idle Time Out (Min)" outerIdleInterval int outer
 	} else {
 		/echo Warning: Could not find a setting for [Idle Time Out] in [${iniGeneral}].  [Idel Time Out] has been set to 10 minutes.
-		/declare idleInterval int outer 10
+		/declare outerIdleInterval int outer 10
 	}
 
 	|- Auto-Destroy Items
-	/if (${Ini[${iniGeneral},Background,Auto-Destroy List].Length}) /call iniToVar "${iniGeneral},Background,Auto-Destroy List" badItems string outer
-	
-	|- Auto-Tribute
-	/call iniToVar "${iniGeneral},Auto-Tribute,Auto-Tribute (On/Off)" autoTribute bool outer
+	/if (${Ini[${iniGeneral},Background,Auto-Destroy List].Length}) /call iniToVar "${iniGeneral},Background,Auto-Destroy List" outerBadItems string outer
 	
 	|- Import NetBots HUD array
 	/call iniToArray "${iniGeneral},NetBots HUD,NetBot#" netBotsHUDArray
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_Setup -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_Setup -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB background_checkBackgroundEvents
+
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB background_MacroSettings
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_MacroSettings ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_MacroSettings ==>
 
 	/call writeToIni "${iniGeneral},Debug,Debug Background (On/Off)"
 
@@ -690,29 +511,22 @@ SUB background_MacroSettings
 	/call writeToIni "${iniGeneral},Background,Auto-Inventory Timer (Sec)" 30
 	/call writeToIni "${iniGeneral},Background,Close Spellbook Timer (Sec)" 30
 	
-	/call writeToIni "${iniGeneral},Auto-Tribute,Auto-Tribute (On/Off)" On
-
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_MacroSettings -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_MacroSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB background_CharacterSettings
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_CharacterSettings ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_CharacterSettings ==>
 
-	|	|
-
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_CharacterSettings -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_CharacterSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB background_Aliases
-/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_Aliases ==>
+	/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_Aliases ==>
 
 	/noparse /squelch /alias /AddAutoDestroy /echo Add Auto-Destro item ${Cursor.Name}
 	/noparse /squelch /alias /RemoveAutoDestroy /echo Remove Auto-Destro item ${Cursor.Name}
-	/squelch /alias /tributezone /bc Set Tribute Zone
 
-/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_Aliases -|
+	/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_Aliases -|
 /RETURN

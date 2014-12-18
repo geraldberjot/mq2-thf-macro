@@ -1,12 +1,12 @@
-|----------------------------------------------------------------------------|
-|- thf_Magician.inc v1.0													-|
-|- Written by Conradd of THF												-|
-|----------------------------------------------------------------------------|
-|- Contains Magician specific functions related to,							-|
-|-		Setup and Ini entry information										-|
-|-		MainLoop, and AssistLoop hooks										-|
-|-		Over-all functionality / flow										-|
-|----------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Class_Magician.inc v1.0
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Contains Magician specific functions related to,
+|-		Setup and Ini entry information
+|-		MainLoop, and AssistLoop hooks
+|-		Over-all functionality / flow
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 #EVENT petWeapons "<#1#> Pet Weapons"
 #EVENT petWeapons "<#1#> Pet Toys"
@@ -143,8 +143,6 @@ SUB EVENT_petWeapons(string line, string from)
 /if (${outerDebug} || ${outerDebug_MAG}) /echo <== EVENT_petWeapons -|
 /RETURN
 
-
-
 #EVENT distributePetWeapons "#1# tells you, 'Hand out Pet Weapons'"
 #EVENT distributePetWeapons "<#1#> Hand out Pet Weapons"
 #EVENT distributePetWeapons "#1# tells you, 'Distribute Pet Weapons'"
@@ -232,14 +230,13 @@ SUB EVENT_distributePetWeapons(line, ChatSender)
 /if (${outerDebug} || ${outerDebug_MAG}) /echo <== EVENT_distributePetWeapons -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_PetWeapons
 /if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons ==>
 
 	/if (${autoWeapons} && ${Zone.ID}) {
 		
-		/if (${BuffCheck} && !${Me.Moving} && !${combatTimer} && !${activeTimer} && !${rebuffTimer}) {
+		/if (${BuffCheck} && !${Me.Moving} && !${outerCombatTimer} && !${outerActiveTimer} && !${outerRebuffTimer}) {
 		
 			/declare i int local
 			
@@ -280,59 +277,46 @@ SUB EVENT_CoH_Group
 /RETURN
 **|
 
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB MAG_Setup
-/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Setup ==>
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Setup ==>
 	
 	/call iniToVar "${iniToon},Magician,Auto-Pet Weapons (On/Off)" autoWeapons bool outer
 	/call iniToArray "${iniToon},Magician,Summoned Pet Item#" petItems
 
-/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Setup -|
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Setup -|
 /RETURN
 
-
-
-SUB MAG_checkBackgroundEvents
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB MAG_CheckBackgroundEvents
 
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB MAG_MacroSettings
-/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_MacroSettings ==>
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_MacroSettings ==>
 
-	|- Adv Settings
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#1" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#2" "check_petHeal" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#3" "check_Burns" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#4" "check_Debuffs" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#5" "check_Rain" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#6" "check_Nukes" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#7" "check_Buffs" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#8" "check_Pets" 1
-	/call writeToIni "${iniTHF},MAG Functions,MAG Function#9" "check_PetWeapons" 1
+	/call writeToIni "${iniTHF},Magician,Functions" "check_CombatBuffs/check_petHeal/check_Burns/check_Debuffs/check_Rain/check_Nukes/check_Buffs/check_Pets/check_PetWeapons" FALSE
 
-/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_MacroSettings -|
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_MacroSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB MAG_CharacterSettings
-/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_CharacterSettings ==>
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_CharacterSettings ==>
 
 	/call writeToIni "${iniToon},Magician,Auto-Pet Weapons (On/Off)"
 	/call writeToIni "${iniToon},Magician,Summoned Pet Item#1"
 
-/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_CharacterSettings -|
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_CharacterSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB MAG_Aliases
-/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Aliases ==>
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo |- MAG_Aliases ==>
 
 	/squelch /alias /dpw /bc Distribute Pet Weapons
 	/squelch /alias /PetWeapons /bc Pet Weapons
 
-/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Aliases -|
+	/if (${outerDebug} || ${outerDebug_MAG}) /echo <== MAG_Aliases -|
 /RETURN

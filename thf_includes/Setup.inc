@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- thf_Setup.inc
-|- Written by Conradd of THF
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains setup functions for thf.mac
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -305,12 +305,8 @@ SUB checkPlugins()
 		/delay 3s !${Select[${Stick.Status},NULL]}
 		/if (${Select[${Stick.Status},NULL]}) {
 			/echo ***WARNING*** Could not load MQ2MoveUtils! Macro functionality may be limited.
-			/if (!${NetAdvPath}) {
-				/echo Follow and Assist stick DISABLED.
-			} else {
-				/echo Assist and NPC stick DISABLED.
-				/echo Follow restricted to NetBots.
-			}
+			/echo Assist and NPC stick DISABLED.
+			/echo Follow restricted to NetBots.
 		}
 	}	
 

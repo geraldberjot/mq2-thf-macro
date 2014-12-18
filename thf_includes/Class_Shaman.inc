@@ -1,23 +1,21 @@
-|----------------------------------------------------------------------------|
-|- e3_Classes_Shaman.inc v3.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ												-|
-|----------------------------------------------------------------------------|
-|- Contains Shaman specific functions related to,							-|
-|-		Setup and Ini entry information										-|
-|-		MainLoop, and AssistLoop hooks										-|
-|-		Over-all functionality / flow										-|
-|----------------------------------------------------------------------------|
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Class_Shaman.inc v1.0
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Contains Shaman specific functions related to,
+|-		Setup and Ini entry information
+|-		MainLoop, and AssistLoop hooks
+|-		Over-all functionality / flow
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- autoCanni											-|
+|- autoCanni
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Uses cannibalize spells and AAs when under 95% mana.	-|
-|- Spells must be memmed to be used automatically.		-|
+|- Uses cannibalize spells and AAs when under 95% mana.
+|- Spells must be memmed to be used automatically.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Canni
-/if (${outerDebug}) /echo |- autoCanni ==>
+	/if (${outerDebug}) /echo |- autoCanni ==>
 
 	|- Check if Auto-Canni is on
 	/if (${AutoCanni}) {
@@ -25,7 +23,7 @@ SUB check_Canni
 		|- AltAbility Cannibalization.
 		/if (${Me.PctHPs} > 65 && ${Me.PctMana} < 65 && ${Me.AltAbilityReady[Cannibalization]}) /call thf_Casting 0 "Cannibalization"
 
-		/if (!${ActionTaken} && !${medBreak}) {
+		/if (!${outerActionTaken} && !${medBreak}) {
 		
 			/declare castName string local
 			/declare minMana int local
@@ -45,15 +43,14 @@ SUB check_Canni
 				
 				/if (${Me.PctMana} < ${minMana} && ${Me.PctHPs} > 35) /call thf_Casting 0 "${canniSpells[${i}]}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
 
-			/if (!${ActionTaken}) /next i
+			/if (!${outerActionTaken}) /next i
 		}
 	}
 	
-/if (${outerDebug}) /echo <== autoCanni -|
+	/if (${outerDebug}) /echo <== autoCanni -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB SHM_Setup
 /if (${outerDebug}) /echo |- SHM_Setup ==>
 	
@@ -63,47 +60,33 @@ SUB SHM_Setup
 /if (${outerDebug}) /echo <== SHM_Setup -|
 /RETURN
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB SHM_CheckBackgroundEvents
 
-
-SUB SHM_checkBackgroundEvents
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB SHM_MacroSettings
-/if (${outerDebug}) /echo |- SHM_MacroSettings ==>
+	/if (${outerDebug}) /echo |- SHM_MacroSettings ==>
 
-	|- Adv Settings
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#1" "check_Debuffs" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#2" "check_Burns" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#3" "check_Heals" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#4" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#5" "check_DoTs" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#6" "check_petHeal" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#7" "check_Rain" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#8" "check_Nukes" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#9" "check_Buffs" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#10" "check_Pets" 1
-	/call writeToIni "${iniTHF},SHM Functions,SHM Function#11" "check_Canni" 1
+	/call writeToIni "${iniTHF},Shaman,Functions" "check_Debuffs/check_Burns/check_Heals/check_CombatBuffs/check_DoTs/check_petHeal/check_Rain/check_Nukes/check_Buffs/check_Pets/check_Canni" FALSE
 
-/if (${outerDebug}) /echo <== SHM_MacroSettings -|
+	/if (${outerDebug}) /echo <== SHM_MacroSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB SHM_CharacterSettings
-/if (${outerDebug}) /echo |- SHM_CharacterSettings ==>
+	/if (${outerDebug}) /echo |- SHM_CharacterSettings ==>
 
 	/call writeToIni "${iniToon},Shaman,Auto-Canni (On/Off)"
-	/call writeToIni "${iniToon},Shaman,Canni#1"
+	/call writeToIni "${iniToon},Shaman,Canni spells"
 
-/if (${outerDebug}) /echo <== SHM_CharacterSettings -|
+	/if (${outerDebug}) /echo <== SHM_CharacterSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB SHM_Aliases
-/if (${outerDebug}) /echo |- SHM_Aliases ==>
+	/if (${outerDebug}) /echo |- SHM_Aliases ==>
 
-/if (${outerDebug}) /echo <== SHM_Aliases -|
+	/if (${outerDebug}) /echo <== SHM_Aliases -|
 /RETURN

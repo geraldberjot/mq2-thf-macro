@@ -30,7 +30,7 @@ SUB EVENT_Combine
 			|- Flush old events.
 			/doevents flush
 			
-			/docommand ${ChatToggle} Combining tradeskill ingredients...
+			/channel Combining tradeskill ingredients...
 			
 			:combineLoop
 				
@@ -40,7 +40,7 @@ SUB EVENT_Combine
 				|- Check for items on your cursor
 				:waiting_Cursor
 				/if (${Cursor.ID}) {
-					/if (${Select[${Cursor},${badItems}]} || ${Select[${Cursor.ID},${badItems}]}) {
+					/if (${Select[${Cursor},${outerBadItems}]} || ${Select[${Cursor.ID},${outerBadItems}]}) {
 						/echo Destroying [${Cursor}].
 						/destroy
 					}
@@ -63,9 +63,9 @@ SUB EVENT_Combine
 				/varset miscTimer 100
 	
 				:waiting_CombinePending
-				/if (${Debug} && ${spamTimer_CombineLoop}) {
+				/if (${Debug} && ${outerSpamTimer_CombineLoop}) {
 					/echo |- EVENT_Combine -|- Waiting for combine to finish.
-					/call CreateTimer spamTimer_CombineLoop 30
+					/call CreateTimer outerSpamTimer_CombineLoop 30
 				}
 				
 				/call CombineEvents
@@ -75,7 +75,7 @@ SUB EVENT_Combine
 					
 					|- If I'm out of time, alert the user that the combine script has failed.
 					/if (!${miscTimer}) {
-						/docommand ${ChatToggle}  ERROR: |- AutoCombine -|- Combine has failed, due to an unknown error.  Ending the macro for safety.
+						/channel  ERROR: |- AutoCombine -|- Combine has failed, due to an unknown error.  Ending the macro for safety.
 						/beep
 						/delay 2
 						/beep
@@ -122,7 +122,7 @@ SUB EVENT_Combine
 				
 				/doevents flush
 				
-				/docommand ${ChatToggle} AutoCombine: I have finished combining tradeskill ingredients.
+				/channel AutoCombine: I have finished combining tradeskill ingredients.
 			   
 			}
 		}

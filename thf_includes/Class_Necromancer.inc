@@ -1,17 +1,15 @@
-|--------------------------------------------------------------------------------|
-|- e3_Classes_Necromancer.inc v4.0 ( originally designed to work with e3.mac )	-|
-|- Written by Killians of PEQ													-|
-|--------------------------------------------------------------------------------|
-|- Contains Necromancer specific functions related to,							-|
-|-		Setup and Ini entry information											-|
-|-		MainLoop, and AssistLoop hooks											-|
-|-		Over-all functionality / flow											-|
-|--------------------------------------------------------------------------------|
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Class_Necromancer.inc v1.0
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Contains Necromancer specific functions related to,
+|-		Setup and Ini entry information
+|-		MainLoop, and AssistLoop hooks
+|-		Over-all functionality / flow
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 SUB check_lifeTap
-/if (${outerDebug}) /echo |- check_LifeTap ==>
+	/if (${outerDebug}) /echo |- check_LifeTap ==>
 	
 	/if (${outerAssisting}) {
 		/declare lifeTap_Spell string local
@@ -32,16 +30,15 @@ SUB check_lifeTap
 				/call thf_Casting ${outerAssistTarget} "${lifeTap_Spell}/${If[${Me.Gem[${lifeTap_Spell}]},0,${Math.Calc[${Spell[${lifeTap_Spell}].RecastTime} + 3]}]}s"
 			}
 		
-		/if (!${ActionTaken}) /next i
+		/if (!${outerActionTaken}) /next i
 	}
 
-/if (${outerDebug}) /echo <== check_LifeTap -|
+	/if (${outerDebug}) /echo <== check_LifeTap -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_castLich
-/if (${outerDebug}) /echo |- check_castLich ==>
+	/if (${outerDebug}) /echo |- check_castLich ==>
 
 	/if (${Defined[lichSpell]} && !${Me.Buff[${lichSpell}].ID} && ${Me.PctMana} < 90) {
 
@@ -49,25 +46,23 @@ SUB check_castLich
 		/if (${Spell[${lichSpell}].Stacks}) /call thf_Casting ${Me.ID} "${lichSpell}/GiveUpTimer|${If[${Me.Gem[${lichSpell.Arg[1,/]}]},0,7s]}"
 	}
 
-/if (${outerDebug}) /echo <== check_castLich -|
+	/if (${outerDebug}) /echo <== check_castLich -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_removeLich
-/if (${outerDebug}) /echo |- check_removeLich ==>
+	/if (${outerDebug}) /echo |- check_removeLich ==>
 
 	/if (${Me.Buff[${lichSpell}].ID}) {
-		/if (${Me.PctHPs} < 20 || ${Me.PctMana} == 100 && !${combatTimer}) /nomodkey /notify BuffWindow Buff${Math.Calc[${Me.Buff[${lichSpell}].ID}-1].Int} leftmouseup
+		/if (${Me.PctHPs} < 20 || ${Me.PctMana} == 100 && !${outerCombatTimer}) /nomodkey /notify BuffWindow Buff${Math.Calc[${Me.Buff[${lichSpell}].ID}-1].Int} leftmouseup
 	}
 
-/if (${outerDebug}) /echo <== check_removeLich -|
+	/if (${outerDebug}) /echo <== check_removeLich -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_manaDump
-/if (${outerDebug}) /echo |- check_manaDump ==>
+	/if (${outerDebug}) /echo |- check_manaDump ==>
 
 	/if (${manaDump} && !${medBreak}) {
 		/declare placeholder bool local true
@@ -111,11 +106,10 @@ SUB check_manaDump
 		}
 	}
 
-/if (${outerDebug}) /echo <== check_manaDump -|
+	/if (${outerDebug}) /echo <== check_manaDump -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT toggle_manaDump "<#1#> Mana Dump #2#"
 SUB EVENT_toggle_manaDump(line, from, eventParams)
 	/if (${outerDebug}) /echo |- EVENT_toggle_manaDump ==>
@@ -191,93 +185,77 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 	/if (${outerDebug}) /echo <== EVENT_toggle_manaDump -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB NEC_Setup
-/if (${outerDebug}) /echo |- NEC_Setup ==>
+	/if (${outerDebug}) /echo |- NEC_Setup ==>
 	
 	|- Lich
 	/if (${Ini[${iniToon},${Me.Class},Lich Spell].Length}) /call iniToVar "${iniToon},${Me.Class},Lich Spell" lichSpell string outer
 	
 	|- LifeTap
-	/if (${Ini[${iniToon},${Me.Class},LifeTap#1].Length}) /call iniToArray "${iniToon},${Me.Class},LifeTap#" lifeTaps
+	/if (${Ini[${iniToon},${Me.Class},LifeTaps].Length}) /call split "${iniToon},${Me.Class},LifeTaps" lifeTaps outer /
 	
 	|- Mana Dump
 	/if (${Ini[${iniToon},${Me.Class},Mana Dump (On/Off)].Length}) /call iniToVar "${iniToon},${Me.Class},Mana Dump (On/Off)" manaDump bool outer
 	/declare manaDump_Pct int outer ${Ini[${iniToon},${Me.Class},Mana Dump Engage Pct]}
 	/declare manaDump_Targets string outer ${Ini[${iniToon},${Me.Class},Who to Mana Dump]}
-	/if (${Ini[${iniToon},${Me.Class},Mana Dump#1].Length}) /call iniToArray "${iniToon},${Me.Class},Mana Dump#" manaDump_Spells
+	/if (${Ini[${iniToon},${Me.Class},Mana Dumps].Length}) /call split "${iniToon},${Me.Class},Mana Dumps" manaDump_Spells outer /
 	
 	|- Reset manaDump_Targets to replace spaces with commas
 	/if (${manaDump_Targets.Find[ ]}) /varset manaDump_Targets ${manaDump_Targets.Replace[ ,]}
 
-/if (${outerDebug}) /echo <== NEC_Setup -|
+	/if (${outerDebug}) /echo <== NEC_Setup -|
 /RETURN
 
-
-
-SUB NEC_checkBackgroundEvents
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB NEC_CheckBackgroundEvents
 
 	/call check_removeLich
 
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB NEC_MacroSettings
-/if (${outerDebug}) /echo |- NEC_MacroSettings ==>
+	/if (${outerDebug}) /echo |- NEC_MacroSettings ==>
 
-	|- Adv Settings
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#1" "check_Burns" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#2" "check_castLich" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#3" "check_manaDump" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#4" "check_Debuffs" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#5" "check_DoTs" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#6" "check_CombatBuffs" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#7" "check_lifeTap" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#8" "check_Nukes" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#9" "check_petHeal" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#10" "check_Buffs" 1
-	/call writeToIni "${iniTHF},NEC Functions,NEC Function#11" "check_Pets" 1
+	/call writeToIni "${iniTHF},Necromancer,Functions" "check_Burns/check_castLich/check_manaDump/check_Debuffs/check_DoTs/check_CombatBuffs/check_lifeTap/check_Nukes/check_petHeal/check_Buffs/check_Pets" FALSE
 
-/if (${outerDebug}) /echo <== NEC_MacroSettings -|
+	/if (${outerDebug}) /echo <== NEC_MacroSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB NEC_CharacterSettings
-/if (${outerDebug}) /echo |- NEC_CharacterSettings ==>
+	/if (${outerDebug}) /echo |- NEC_CharacterSettings ==>
 
 	|- Lich
 	/call writeToIni "${iniToon},${Me.Class},Lich Spell"
 
 	|- Life Taps
-	/call writeToIni "${iniToon},${Me.Class},LifeTap#1"
+	/call writeToIni "${iniToon},${Me.Class},LifeTaps"
 
 	|- Mana Dumps
 	/call writeToIni "${iniToon},${Me.Class},Mana Dump (On/Off)"
 	/call writeToIni "${iniToon},${Me.Class},Who to Mana Dump"
 	/call writeToIni "${iniToon},${Me.Class},Mana Dump Engage Pct"
-	/call writeToIni "${iniToon},${Me.Class},Mana Dump#1"
+	/call writeToIni "${iniToon},${Me.Class},Mana Dumps"
 
 	|- Twitch
 	
 
-/if (${outerDebug}) /echo <== NEC_CharacterSettings -|
+	/if (${outerDebug}) /echo <== NEC_CharacterSettings -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB NEC_Aliases
-/if (${outerDebug}) /echo |- NEC_Aliases ==>
+	/if (${outerDebug}) /echo |- NEC_Aliases ==>
 
 	/noparse /squelch /alias /manadump /bc Mana dump
 
-/if (${outerDebug}) /echo <== NEC_Aliases -|
+	/if (${outerDebug}) /echo <== NEC_Aliases -|
 /RETURN
 
 
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |**
 	/if (${Ini[${iniToon},Necromancer,Allow Twitch requests (On/Off)].Length}) /call iniToVar "${iniToon},Necromancer,Allow Twitch requests (On/Off)" allowTwitch bool outer
 	/if (${Ini[${iniToon},Necromancer,Min Mana to Allow Twitch Requests (Pct)].Length}) /call iniToVar "${iniToon},Necromancer,Min Mana to Allow Twitch Requests (Pct)" minTwitchMana int outer
@@ -294,32 +272,32 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 
 	/if (${ChatSender.Left[1].Compare[ ]}<0) /varset ChatSender ${ChatSender.Right[-2].Left[-1]}
 
-|------------------------------------------------------------------------------Check for PC in zone.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------Check for PC in zone.
 	/if (!${SpawnCount[pc ${ChatSender}]}) {
 		/tell ${ChatSender} We're not in the same zone, dumbass!
 	} else {
 	
-	|--------------------------------------------------------------------------------Check range.
+	|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------------------------Check range.
 		/if (${Spawn[pc ${ChatSender}].Distance} > 200) {
 			/tell ${ChatSender} You're too far away to twitch
 		} else {
 	
-		|--------------------------------------------------------------If I'm not allowed to twitch
+		|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------------If I'm not allowed to twitch
 			/if (!${allowTwitch}) {
 				/tell ${ChatSender} I'm not currently mana dumping others.  Try talking to my master, sucka!
 			} else {
 			
-			|------------------------------------------------------------If I don't have enough mana to twitch
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------If I don't have enough mana to twitch
 				/if (${Me.PctMana} < ${minTwitchMana} || ${Me.PctMana} <= 5) {
 					/tell ${ChatSender} I do not have enough mana to twitch right now.  Try again later, sucka!
 				} else {
 				
-				|--------------------------------------------------------If they ask for too much.
+				|---------------------------------------------------------------------------------------------------------------------------------------------------|-------------------------If they ask for too much.
 					/if (${TwitchNum} > 20 && !${NetBots[${ChatSender}].ID}) {
 						/tell ${ChatSender} Whoa whoa whoa, hang on just a minute.  You want a mana battery, make your own necro.  You can requet twitches a maximum of [20] at a time.  Try again, sucka!
 					} else {
 					
-					|----------------------------------------------------Okay...I guess I'll twitch you.
+					|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------Okay...I guess I'll twitch you.
 						/if (${Verbosity}) /channel Twitching ${Spawn[${InFrom}].CleanName} ${TwitchNum} times.
 						/tell ${ChatSender} Twitching you [${TwitchNum}] times.
 						
@@ -331,7 +309,7 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 						
 						/call TrueTarget ${Spawn[pc ${InFrom}].ID}
 						
-					|-----------------------------------------------------Check for spells to be memmed
+					|---------------------------------------------------------------------------------------------------------------------------------------------------|----------------------Check for spells to be memmed
 						/if (!${Me.Gem[Covetous Subversion]} || !${Me.Gem[Sedulous Subversion]}) {
 							
 							/declare spellsetMem_Timer timer local 100
@@ -340,7 +318,7 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 							:Memloop
 							/if (${outerDebug}) /echo |- EVENT_twitchMe -|- :Memloop
 							
-							/call checkBackgroundEvents
+							/call check_BackgroundEvents
 							/if (${outerDebug}) /echo spellsetMem_Timer = [${spellsetMem_Timer}]
 							/if (${Window[SpellBookWnd].Open} && ${spellsetMem_Timer}) /goto :Memloop
 							/if (${Me.Sitting}) /stand

@@ -1,9 +1,9 @@
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- e3_Macro_BegForBuffs.inc	v2.0 ( originally designed to work with e3.mac )						-|
-|- Written by Killians of PEQ																		-|
-|----------------------------------------------------------------------------------------------------|
+|- Adapted for THF by Conradd (macro from Killians of PEQ)																		-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Allows chat senders to request buffs by their full name, or alias listed in the BuffAliases_Ini.	-|
-|----------------------------------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 |- Make an event to change buff request toggle
 |- Adding restricted spells
@@ -15,13 +15,13 @@
 #chat group
 #chat tell
 
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Request spells by name or alias.										-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param ChatChannel: The channel a chat command was given through.	-|
 |- @param ChatSender: The PC who sent the chat message.					-|
 |- @param ChatText: The message that was sent.							-|
-|------------------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB event_Chat(ChatChannel, ChatSender, ChatText)
 /if (${Debug} || ${Debug_BegForBuffs}) /echo |- Event_Chat ==>
 
@@ -55,8 +55,7 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 				|- Disable follow before porting.
 				/if (${ChatText.Find[Port]}) {
 					/if (${Stick.Active}) /squelch /stick off
-					/if (${NetAdvPath.State}) /squelch /netfollow off
-					/delay 30 !${Stick.Active} && !${NetAdvPath.State}
+					/delay 30 !${Stick.Active}
 				}
 
 				|- Reset variables using data from SpellAliases_Ini
@@ -459,7 +458,7 @@ SUB EVENT_createSpellAlias(line, ChatSender, newAlias, spellName)
 /if (${Debug} || ${Debug_BegForBuffs}) /echo |- EVENT_createSpellAlias ==>
 
 	/if (${ChatSender.Equal[${Me.CleanName}]} || ${ChatSender.Equal[MQ2]}) {
-		/docommand ${ChatToggle} Adding spell alias [${newAlias}] to cast [${spellName}] for [${Me.Class}s].
+		/channel Adding spell alias [${newAlias}] to cast [${spellName}] for [${Me.Class}s].
 		/call writeToIni "${SpellAliases_Ini},${Me.Class},${newAlias}" "${spellName}" 1
 	}
 	
@@ -468,9 +467,9 @@ SUB EVENT_createSpellAlias(line, ChatSender, newAlias, spellName)
 
 
 
-|--------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-|
 |- Setup BegForBuff variables.	-|
-|--------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|-|
 SUB begForBuffs_Setup
 /call iniToVar "${iniGeneral},Debug,Debug BegForBuffs (On/Off)" Debug_BegForBuffs bool outer
 /if (${Debug} || ${Debug_BegForBuffs}) /echo |- setup_BegForBuffs ==>

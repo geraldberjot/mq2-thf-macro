@@ -1,7 +1,7 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #TURBO 40
 
-#DEFINE /channel /chat ${channelNumber}
+#DEFINE /channel /channel
 
 #EVENT	NoHold					"Your spell did not take hold."
 #EVENT	Tell					"#1# tells you, '#2#'"
@@ -30,8 +30,9 @@ SUB Main
 	
 	/call setupAdvLootVars "thf_inis\Loot.ini"
 	
-	/chat ${channelNumber} THF Macro started for ${Me.CleanName} [${Me.Class}]
+	/channel THF Macro started for ${Me.CleanName} [${Me.Class}]
 	
+	:MainLoop	
 	/if (${outerDebug}) /echo |- MainLoop ==>
 
 	| If my class is not set, I must not be in game, end the macro.
@@ -44,7 +45,7 @@ SUB Main
 		|***********************************************************************************|
 		|******************************* Background Functions ******************************|
 		|***********************************************************************************|
-		/if (${ActionTaken}) /varset ActionTaken FALSE
+		/if (${outerActionTaken}) /varset outerActionTaken FALSE
 		
 		/if (${globalFollowing} && !${outerAssisting}) /call check_Follow
 		/call check_Active
@@ -61,14 +62,14 @@ SUB Main
 				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_BuffInstants
 			}
 		} else {
-			/chat ${channelNumber} I have something on cursor !
+			/channel I have something on cursor !
 		}
 		
-		/call checkBackgroundEvents
+		/call check_BackgroundEvents
 		/doevents
 	
 		| If I'm not active, call mainFunctions
-		/if (!${activeTimer}) {
+		/if (!${outerActiveTimer}) {
 		
 			| check for a pending item exchange
 			/if (${swapItemBack} && !${itemExchange_Timer}) /call completePendingExchange
@@ -79,7 +80,7 @@ SUB Main
 			/declare i int local
 			/for i 1 to ${functions.Size}
 				/if (${Bool[${functions[${i}]}]}) /call ${functions[${i}]}
-			/if (!${ActionTaken}) /next i
+			/if (!${outerActionTaken}) /next i
 	
 |	**********************************************************************************	|
 |   ******************************* Tertiary Functions *******************************	|
@@ -106,7 +107,7 @@ SUB Main
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- This function is checked constantly, included events and functions should have minimal character interaction.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB checkBackgroundEvents
+SUB check_BackgroundEvents
 	/declare i int local
 
 	/for i 1 to ${macroSetups.Size}

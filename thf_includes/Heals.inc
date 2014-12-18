@@ -1,6 +1,6 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Heals.inc v1.0
-|- Written by Conradd of THF from Killians of PEQ
+|- Adapted for THF by Conradd (macro from Killians of PEQ)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains heal related functions for thf.mac
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -20,20 +20,20 @@ SUB check_Heals
 
 	|- Check Group Heal array
 	/if (${do_GroupHeals}) /call check_groupHeals
-	/if (!${ActionTaken}) {
+	/if (!${outerActionTaken}) {
 		
 		|- Check healFunctions array.
 		/if (${do_Heals}) /call check_healSpells
-		/if (!${ActionTaken}) {
+		/if (!${outerActionTaken}) {
 		
 			|- Check HoT.
 			/if (${do_HoTs}) /call check_HoTs
 		}
 	}
 	
-	|- If I've healed someone in the last few seconds, set ActionTaken TRUE.  
+	|- If I've healed someone in the last few seconds, set outerActionTaken TRUE.  
 	|- This creates a stopping point in the mainLoop which prioritizes heals, and all higher functions, for a brief time.
-	/if (${recentHeal_Timer}) /varset ActionTaken TRUE
+	/if (${recentHeal_Timer}) /varset outerActionTaken TRUE
 
 	/if (${Debug} || ${Debug_Heals}) /echo <== healLoop -|
 /RETURN
@@ -275,14 +275,14 @@ SUB check_healSpells
 					|- If I have a heal to cast, cast it
 					/if (${Bool[${healToUse}]}) {
 						/if (${Debug} || ${Debug_Heals}) /echo Attempting to cast [${healToUse}] on [${healTarget} ${NetBots[${healTarget}].PctHPs}]
-						/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|Heal_CastingChecks"
+						/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|Heal_check_Castings"
 						/varset recentHeal_Timer 20
 					}
 				}
 			}
 		}
 	
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 
 	/if (${Debug} || ${Debug_Heals}) /echo <== check_healSpells -|
 /RETURN
@@ -355,12 +355,12 @@ SUB check_NetBots
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Checks to make while casting heals.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB Heal_CastingChecks
-	/if (${Debug} || ${Debug_Heals}) /echo |- Heal_CastingChecks ==>
+SUB Heal_check_Castings
+	/if (${Debug} || ${Debug_Heals}) /echo |- Heal_check_Castings ==>
 
-	/if (${Debug} && !${debugTimer_Heal_CastingChecks}) {
+	/if (${Debug} && !${debugTimer_Heal_check_Castings}) {
 		/echo [${Target.CleanName}|${NetBots[${Target.CleanName}].PctHPs} >=90]
-		/call createTimer debugTimer_Heal_CastingChecks 15
+		/call createTimer debugTimer_Heal_check_Castings 15
 	}
 	
 	/if (${castEndTime}<5 && ${NetBots[${Target.CleanName}].PctHPs}>=90) {
@@ -368,7 +368,7 @@ SUB Heal_CastingChecks
 		/varset castReturn CANCELLED
 	}
 
-	/if (${Debug} || ${Debug_Heals}) /echo <== Heal_CastingChecks -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== Heal_check_Castings -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -509,7 +509,7 @@ SUB check_HoTs
 						} else {
 						
 							|- Cast the HoT
-							/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_CastingChecks"
+							/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_check_Castings"
 							/varset recentHeal_Timer 30
 						}
 					}
@@ -517,7 +517,7 @@ SUB check_HoTs
 			}
 		}
 
-	/if (!${ActionTaken}) /next x
+	/if (!${outerActionTaken}) /next x
 
 	/if (${Debug} || ${Debug_Heals}) /echo <== check_HoTs -|
 /RETURN
@@ -525,8 +525,8 @@ SUB check_HoTs
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Checks to make while casting HoT spells.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB HoT_CastingChecks
-	/if (${Debug} || ${Debug_Heals}) /echo |- HoT_CastingChecks ==>
+SUB HoT_check_Castings
+	/if (${Debug} || ${Debug_Heals}) /echo |- HoT_check_Castings ==>
 	
 	/if (${Select[${Me.Casting.ID},${NetBots[${Target.CleanName}].ShortBuff.Replace[ ,,]}]} || ${Select[${Me.Casting.ID},${NetBots[${Target.CleanName}].Buff.Replace[ ,,]}]} || ${Select[${Spell[${dontOverwrite}].ID},${NetBots[${Target.CleanName}].ShortBuff.Replace[ ,,]}]} || ${Select[${Spell[${dontOverwrite}].ID},${NetBots[${Target.CleanName}].Buff.Replace[ ,,]}]}) {
 		/if (${Debug} || ${Debug_Heals}) /echo [${Target.CleanName}] already has a HoT, canceling
@@ -534,7 +534,7 @@ SUB HoT_CastingChecks
 		/varset castReturn CANCELLED
 	}
 	
-	/if (${Debug} || ${Debug_Heals}) /echo <== HoT_CastingChecks -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== HoT_check_Castings -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -829,7 +829,7 @@ SUB check_Pets
 	/if (${NetBots[${NetBots.Client[${i}]}].PetHP} < ${PetHeal_Pct} && ${Spawn[${NetBots[${NetBots.Client[${i}]}].PetID}].Distance} < ${Spell[${PetHeal_Spell}].MyRange}) {
 		/if (${Target.ID} != ${NetBots[${NetBots.Client[${i}]}].PetID}) /call TrueTarget ${NetBots[${NetBots.Client[${i}]}].PetID}
 		/call thf_Casting ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${PetHeal_Spell}].ID}" Gem${PetHeal_Gem} 3s
-		/varset ActionTaken TRUE
+		/varset outerActionTaken TRUE
 	}
 }
 /next i

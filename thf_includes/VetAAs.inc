@@ -1,6 +1,6 @@
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Uses 'Lessons of the Devoted', on all bots who are able.	-|
-|------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Lessons "[#1#] Lesson of the Devoted"
 #EVENT Lessons "<#1#> Lesson of the Devoted"
 #EVENT Lessons "#1# tells you, 'Lesson of the Devoted'"
@@ -20,15 +20,15 @@ SUB EVENT_Lessons(line, ChatSender)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Lesson of the Devoted]}) {
-			/docommand ${ChatToggle} Lesson of the Devoted is not ready.
+			/channel Lesson of the Devoted is not ready.
 		} else {
 
-			|----------------------------------------------------------If I'm a Bard, pause twist
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 			/if (${Twist.Twisting}) {
 				/declare returnTwist bool local TRUE
 				/squelch /twist stop
 				
-			|----------------------------------------------------------If I'm a rogue, stop hiding.
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 			} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 				/doability Hide
 			}
@@ -47,9 +47,9 @@ SUB EVENT_Lessons(line, ChatSender)
 
 
 
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 |- Uses 'Infusion of the Faithful', on all bots who are able.	-|
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 #EVENT Infusion "[#1#] Infusion of the Faithful"
 #EVENT Infusion "<#1#> Infusion of the Faithful"
 #EVENT Infusion "#1# tells you, 'Infusion of the Faithful'"
@@ -69,15 +69,15 @@ SUB EVENT_Infusion(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Infusion of the Faithful]}) {
-			/docommand ${ChatToggle} Infusion of the Faithful is not ready.
+			/channel Infusion of the Faithful is not ready.
 		} else {
 
-			|----------------------------------------------------------If I'm a Bard, pause twist
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 			/if (${Twist.Twisting}) {
 				/declare returnTwist bool local TRUE
 				/squelch /twist stop
 				
-			|----------------------------------------------------------If I'm a rogue, stop hiding.
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 			} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 				/doability Hide
 			}
@@ -118,15 +118,15 @@ SUB EVENT_Staunch(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Staunch Recovery]}) {
-			/docommand ${ChatToggle} Staunch Recovery is not ready.
+			/channel Staunch Recovery is not ready.
 		} else {
 
-			|----------------------------------------------------------If I'm a Bard, pause twist
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 			/if (${Twist.Twisting}) {
 				/declare returnTwist bool local TRUE
 				/squelch /twist stop
 				
-			|----------------------------------------------------------If I'm a rogue, stop hiding.
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 			} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 				/doability Hide
 			}
@@ -167,15 +167,15 @@ SUB EVENT_Servant(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Steadfast Servant]}) {
-			/docommand ${ChatToggle} Steadfast Servant is not ready.
+			/channel Steadfast Servant is not ready.
 		} else {
 
-			|----------------------------------------------------------If I'm a Bard, pause twist
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 			/if (${Twist.Twisting}) {
 				/declare returnTwist bool local TRUE
 				/squelch /twist stop
 				
-			|----------------------------------------------------------If I'm a rogue, stop hiding.
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 			} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 				/doability Hide
 			}
@@ -194,9 +194,9 @@ SUB EVENT_Servant(line, ChatSender, eventParams)
 
 
 
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 |- Uses 'Intensity of the Resolute', on all bots who are able.	-|
-|----------------------------------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
 #EVENT Intensity "[#1#] Intensity of the Resolute"
 #EVENT Intensity "<#1#> Intensity of the Resolute"
 #EVENT Intensity "#1# tells you, 'Intensity of the Resolute'"
@@ -216,15 +216,15 @@ SUB EVENT_Intensity(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Intensity of the Resolute]}) {
-			/docommand ${ChatToggle} Intensity of the Resolute is not ready.
+			/channel Intensity of the Resolute is not ready.
 		} else {
 
-			|----------------------------------------------------------If I'm a Bard, pause twist
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 			/if (${Twist.Twisting}) {
 				/declare returnTwist bool local TRUE
 				/squelch /twist stop
 				
-			|----------------------------------------------------------If I'm a rogue, stop hiding.
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 			} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 				/doability Hide
 			}
@@ -265,15 +265,15 @@ SUB EVENT_RecoverCorpses(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Expedient Recovery]}) {
-			/docommand ${ChatToggle} Expedient Recovery is not ready.
+			/channel Expedient Recovery is not ready.
 		} else {
 
-			|----------------------------------------------------------If I'm a Bard, pause twist
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 			/if (${Twist.Twisting}) {
 				/declare returnTwist bool local TRUE
 				/squelch /twist stop
 				
-			|----------------------------------------------------------If I'm a rogue, stop hiding.
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 			} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 				/doability Hide
 			}
@@ -292,11 +292,11 @@ SUB EVENT_RecoverCorpses(line, ChatSender, eventParams)
 
 
 
-|----------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Arms MGB on all bots who are able.	-|
-|----------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Use, /bc MGB, or /tell 'Name' [MGB]	-|
-|----------------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT MGB "[#1#] Mass Group Buff"
 #EVENT MGB "<#1#> Mass Group Buff"
 #EVENT MGB "#1# tells you, 'Mass Group Buff'"
@@ -317,15 +317,15 @@ SUB EVENT_MGB(line, ChatSender, eventParams)
 		|- -Check AA is ready.
 		/if (${Me.AltAbility[Mass Group Buff]}) {
 			/if (!${Me.AltAbilityReady[Mass Group Buff]}) {
-				/docommand ${ChatToggle} Mass Group Buff is not ready.
+				/channel Mass Group Buff is not ready.
 			} else {
 
-				|----------------------------------------------------------If I'm a Bard, pause twist
+				|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 				/if (${Twist.Twisting}) {
 					/declare returnTwist bool local TRUE
 					/squelch /twist stop
 					
-				|----------------------------------------------------------If I'm a rogue, stop hiding.
+				|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 				} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 					/doability Hide
 				}
@@ -367,15 +367,15 @@ SUB EVENT_GateToLobby(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Throne of Heroes]}) {
-			/docommand ${ChatToggle} Throne of Heroes is not ready.
+			/channel Throne of Heroes is not ready.
 		} else {
 
-			|----------------------------------------------------------If I'm a Bard, pause twist
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
 			/if (${Twist.Twisting}) {
 				/declare restartTwist bool local TRUE
 				/squelch /twist stop
 				
-			|----------------------------------------------------------If I'm a rogue, stop hiding.
+			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a rogue, stop hiding.
 			} else /if (${Me.Class.ShortName.Equal[ROG]} && ${Me.Invis} && !${Me.AbilityReady[Hide]}) {
 				/doability Hide
 			}
