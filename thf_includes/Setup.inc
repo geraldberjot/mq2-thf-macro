@@ -1,5 +1,5 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- thf_Setup.inc
+|- Setup.inc
 |- Adapted for THF by Conradd (macro from Killians of PEQ)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Contains setup functions for thf.mac
@@ -78,7 +78,7 @@ SUB thfSetup(bool debug)
 	|- Create/Read Ini files
 	|-- Macro Setting Inis
 	/if (${Bool[${Ini[${iniGeneral}]}]}) {
-		/call ReadMacroSettings
+		/call readMacroSettings
 	} else {
 		/call EVENT_MakeMacroSettingsIni
 	}
@@ -173,8 +173,8 @@ SUB EVENT_MakeMacroSettingsIni()
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Read the general Macro Settings file
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB ReadMacroSettings()
-	/if (${outerDebug}) /echo |- ReadMacroSettings ==>
+SUB readMacroSettings()
+	/if (${outerDebug}) /echo |- readMacroSettings ==>
 
 	|-- Chat Channel
 	/if (!${Defined[channelNumber]}) /declare channelNumber int outer 0
@@ -186,7 +186,7 @@ SUB ReadMacroSettings()
 	/call split "${iniGeneral},General,Includes" includes outer /
 	/call loadAll includes Setup
 	
-	/if (${outerDebug}) /echo <== ReadMacroSettings -|
+	/if (${outerDebug}) /echo <== readMacroSettings -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|

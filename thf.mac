@@ -1,7 +1,7 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #TURBO 40
 
-#DEFINE /channel /channel
+#DEFINE /channel /chat ${channelNumber}
 
 #EVENT	NoHold					"Your spell did not take hold."
 #EVENT	Tell					"#1# tells you, '#2#'"
@@ -47,6 +47,7 @@ SUB Main
 		|***********************************************************************************|
 		/if (${outerActionTaken}) /varset outerActionTaken FALSE
 		
+		/if (${outerCurrentZone} != ${Zone.ID}) /call check_Zone
 		/if (${globalFollowing} && !${outerAssisting}) /call check_Follow
 		/call check_Active
 		/call check_Combat
@@ -59,7 +60,7 @@ SUB Main
 				| Check LifeSupport
 				/if (${lifeSupport.Size} && ${Me.PctHPs} < 100) /call check_lifeSupport
 				| Check Instant buffs
-				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_BuffInstants
+				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_InstantBuffs
 			}
 		} else {
 			/channel I have something on cursor !
@@ -74,17 +75,17 @@ SUB Main
 			| check for a pending item exchange
 			/if (${swapItemBack} && !${itemExchange_Timer}) /call completePendingExchange
 
-|	******************************************************************************	|
-|   ******************************* Main Functions *******************************	|
-|	******************************************************************************	|
+			|******************************************************************************|
+			|******************************* Main Functions *******************************|
+			|******************************************************************************|
 			/declare i int local
 			/for i 1 to ${functions.Size}
 				/if (${Bool[${functions[${i}]}]}) /call ${functions[${i}]}
 			/if (!${outerActionTaken}) /next i
 	
-|	**********************************************************************************	|
-|   ******************************* Tertiary Functions *******************************	|
-|	**********************************************************************************	|
+			|**********************************************************************************|
+			|******************************* Tertiary Functions *******************************|
+			|**********************************************************************************|
 			
 			| MedBreak
 			/if (${medBreak}) /call check_MedBreak

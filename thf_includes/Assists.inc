@@ -119,7 +119,7 @@ SUB EVENT_BackOff(String line, String from)
 |- Turns off Assist_Functions, and resets assisting variables.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB AssistOff
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- AssistOff -|- ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- AssistOff ==>
 	
 	|- Interrupt spells, turn off attack.
 	/if (${outerAllowControl}) {
@@ -146,7 +146,7 @@ SUB AssistOff
 	
 	/if (${outerDebug}) {
 		/echo Assisting: [${outerAssisting}] || AssistTarget: [${outerAssistTarget}]
-		/echo |- AssistOff -|- <==
+		/echo <== AssistOff -|
 	}
 /RETURN
 

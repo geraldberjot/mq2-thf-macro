@@ -1,8 +1,4 @@
 
-SUB loadCustomVars
-	/declare stickCommand string outer ${Ini[${iniGlobal},Global,stickCommand]}
-/RETURN
-
 SUB isHolyShit
 	/if (${Me.Combat} && !${Me.Casting.ID} && !${Cursor.ID}) {
 		/RETURN TRUE

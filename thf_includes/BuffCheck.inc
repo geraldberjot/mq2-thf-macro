@@ -11,7 +11,7 @@
 |- Calls buff functions, returning to the mainloop whenever a spell is cast.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Buffs
-	/if (${Debug} || ${Debug_BuffCheck}) /echo |- buffCheck ==>
+	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_Buffs ==>
 
 	/if (${BuffCheck} && !${outerCombatTimer} && !${outerActiveTimer} && !${outerRebuffTimer}) {
 
@@ -22,7 +22,7 @@ SUB check_Buffs
 			/if (!${Me.Combat} && !${Assisting} && !${Me.Feigning} && !${Me.Moving} && ${Me.PctHPs} > ${min_BuffCheckHealth}) {
 
 				|- SelfBuffs.
-				/if (${SelfBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_BuffSelf
+				/if (${SelfBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_SelfBuffs
 
 				/if (!${outerActionTaken}) {
 					|- BotBuffs.
@@ -32,95 +32,16 @@ SUB check_Buffs
 		}
 	}
 
-	/if (${Debug} || ${Debug_BuffCheck}) /echo <== buffCheck -|
-/RETURN
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Maintain buffs that have instant cast times.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB check_CombatBuffs
-	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_CombatBuffs ==>
-
-	/if (${BuffCheck} && !${globalIdle} && ${CombatBuffs.Size}) /call check_BuffBots "CombatBuffs"
-	
-	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_CombatBuffs -|
-/RETURN
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Maintain buffs that have instant cast times.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB check_BuffInstants
-	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_BuffInstants ==>
-
-	|- -Declare local variables.
-	/declare castName string local
-	/declare buffName string local
-	/declare gemNumber string local ${DefaultGem}
-	/declare castTime float local
-	
-	/declare i int local
-	
-	/for i 1 to ${InstantBuffs.Size}
-	
-		/varset castName ${InstantBuffs[${i}].Arg[1,/]}
-		/varset buffName ${If[${Me.Book[${castName}]} || ${Me.AltAbility[${castName}]},${castName},${FindItem[${castName}].Spell}]}
-		/varset castTime ${If[${Me.Book[${castName}]} || ${Me.AltAbility[${castName}]},${Spell[${castName}].CastTime},${FindItem[${castName}].CastTime}]}
-		
-		/if (${Debug} || ${Debug_BuffCheck}) /echo castName=${castName} || buffName=${buffName} || castTime=${castTime}
-		
-		|- /BuffName Check.
-		/if (${InstantBuffs[${i}].Find[/buffname|]}) {
-			/call argueString buffname "${InstantBuffs[${i}]}"
-			/varset buffName ${Macro.Return}
-		}
-		
-		|- /BuffName Check.
-		/if (${InstantBuffs[${i}].Find[/CheckFor|]}) {
-			/call argueString buffname "${InstantBuffs[${i}]}"
-			/varset buffName ${Macro.Return}
-		}
-		
-		|- Check badSpells list
-		/if (${Select[${buffName},${badSpells}]}) {
-			/if (${Debug} || ${Debug_BuffCheck}) /echo [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
-		} else {
-		
-			|- Check if the buff stacks
-			/if (!${Spell[${buffName}].Stacks}) {
-				/if (${Debug} || ${Debug_BuffCheck}) /echo [${castName}] will not stack, skipping.
-			} else {
-			
-				|- Check buff duration
-				/if (${Me.Buff[${buffName}].Duration} > 10) {
-					/if (${Debug} || ${Debug_BuffCheck}) /echo [${Me.Buff[${buffName}].Duration}] ticks left on [${buffName}(${castName})].
-				} else {
-					
-					|- Check spell castTime
-					/if (${castTime} > .5) {
-						/channel Instant Buffs must have a cast time of .5 or less.  Removing [${InstantBuffs[${i}]}] from my Instant Buff list.  Please review this entry in [${iniToon}].
-						/call RemoveArrayElement InstantBuffs "${InstantBuffs[${i}]}"
-						/beep
-					} else {
-					
-						|- Attempt to cast the buff
-						/call thf_Casting ${If[${Spell[${buffName}].TargetType.Equal[self]},0,${Me.ID}]} "${InstantBuffs[${i}]}/Instant"
-					}
-				}
-			}
-		}
-
-	/if (!${outerActionTaken}) /next i
-	
-	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_BuffInstants -|
+	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_Buffs -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Cast and maintain buffs on this character.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB check_BuffSelf
-	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_BuffSelf ==>
+SUB check_SelfBuffs
+	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_SelfBuffs ==>
 
-	|- -Declare local variables.
+	|- Declare local variables.
 	/declare castName string local
 	/declare buffName string local
 	/declare gemNumber int local ${DefaultGem}
@@ -132,13 +53,13 @@ SUB check_BuffSelf
 		/varset castName ${SelfBuffs[${i}].Arg[1,/]}
 		/varset buffName ${If[${Me.Book[${castName}]} || ${Me.AltAbility[${castName}]},${castName},${FindItem[${castName}].Spell}]}
 		
-		|-  /BuffName Check.
+		|- /BuffName Check.
 		/if (${SelfBuffs[${i}].Find[/buffname|]}) {
 			/call argueString buffname "${SelfBuffs[${i}]}"
 			/varset buffName ${Macro.Return}
 		}
 		
-		|-  /BuffName Check.
+		|- /BuffName Check.
 		/if (${SelfBuffs[${i}].Find[/CheckFor|]}) {
 			/call argueString CheckFor "${SelfBuffs[${i}]}"
 			/varset buffName ${Macro.Return}
@@ -146,7 +67,10 @@ SUB check_BuffSelf
 	
 		|- Check badSpells list
 		/if (${Select[${buffName},${badSpells}]}) {
-			/if (${Debug} || ${Debug_BuffCheck}) /echo [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
+			/if (${Debug} || ${Debug_BuffCheck}) {
+				/echo [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
+				/channel [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
+			}
 		} else {
 		
 			|- Check if the buff stacks
@@ -167,7 +91,7 @@ SUB check_BuffSelf
 	
 	/if (!${outerActionTaken}) /next i
 	
-	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_BuffSelf -|
+	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_SelfBuffs -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -241,6 +165,85 @@ SUB check_BuffBots(arrayName)
 	/if (!${outerActionTaken}) /next i
 	
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_BuffBots -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Maintain buffs that have instant cast times.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB check_CombatBuffs
+	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_CombatBuffs ==>
+
+	/if (${BuffCheck} && !${globalIdle} && ${CombatBuffs.Size}) /call check_BuffBots "CombatBuffs"
+	
+	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_CombatBuffs -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Maintain buffs that have instant cast times.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB check_InstantBuffs
+	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_InstantBuffs ==>
+
+	|- -Declare local variables.
+	/declare castName string local
+	/declare buffName string local
+	/declare gemNumber string local ${DefaultGem}
+	/declare castTime float local
+	
+	/declare i int local
+	
+	/for i 1 to ${InstantBuffs.Size}
+	
+		/varset castName ${InstantBuffs[${i}].Arg[1,/]}
+		/varset buffName ${If[${Me.Book[${castName}]} || ${Me.AltAbility[${castName}]},${castName},${FindItem[${castName}].Spell}]}
+		/varset castTime ${If[${Me.Book[${castName}]} || ${Me.AltAbility[${castName}]},${Spell[${castName}].CastTime},${FindItem[${castName}].CastTime}]}
+		
+		/if (${Debug} || ${Debug_BuffCheck}) /echo castName=${castName} || buffName=${buffName} || castTime=${castTime}
+		
+		|- /BuffName Check.
+		/if (${InstantBuffs[${i}].Find[/buffname|]}) {
+			/call argueString buffname "${InstantBuffs[${i}]}"
+			/varset buffName ${Macro.Return}
+		}
+		
+		|- /BuffName Check.
+		/if (${InstantBuffs[${i}].Find[/CheckFor|]}) {
+			/call argueString buffname "${InstantBuffs[${i}]}"
+			/varset buffName ${Macro.Return}
+		}
+		
+		|- Check badSpells list
+		/if (${Select[${buffName},${badSpells}]}) {
+			/if (${Debug} || ${Debug_BuffCheck}) /echo [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
+		} else {
+		
+			|- Check if the buff stacks
+			/if (!${Spell[${buffName}].Stacks}) {
+				/if (${Debug} || ${Debug_BuffCheck}) /echo [${castName}] will not stack, skipping.
+			} else {
+			
+				|- Check buff duration
+				/if (${Me.Buff[${buffName}].Duration} > 10) {
+					/if (${Debug} || ${Debug_BuffCheck}) /echo [${Me.Buff[${buffName}].Duration}] ticks left on [${buffName}(${castName})].
+				} else {
+					
+					|- Check spell castTime
+					/if (${castTime} > .5) {
+						/channel Instant Buffs must have a cast time of .5 or less.  Removing [${InstantBuffs[${i}]}] from my Instant Buff list.  Please review this entry in [${iniToon}].
+						/call RemoveArrayElement InstantBuffs "${InstantBuffs[${i}]}"
+						/beep
+					} else {
+					
+						|- Attempt to cast the buff
+						/call thf_Casting ${If[${Spell[${buffName}].TargetType.Equal[self]},0,${Me.ID}]} "${InstantBuffs[${i}]}/Instant"
+					}
+				}
+			}
+		}
+
+	/if (!${outerActionTaken}) /next i
+	
+	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_InstantBuffs -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
