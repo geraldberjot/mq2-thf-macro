@@ -36,7 +36,6 @@ SUB WIZ_Setup
 	
 	/declare i int local
 	
-	/call iniToVar "${iniToon},Wizard,Evac Spell" Evac_Spell string outer
 	/call iniToVar "${iniToon},Wizard,Auto-Harvest (On/Off)" autoHarvest bool outer
 	/call split "${iniToon},Wizard,Harvest spells" harvestSpells outer /
 	
@@ -54,8 +53,6 @@ SUB WIZ_Setup
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB WIZ_CheckBackgroundEvents
 
-	/if (${Me.Pet.ID} && ${Me.Pet.CleanName.Find[${Me.CleanName}`s Familiar]} && ${MacroQuest.Server.Equal[PEQTGC]}) /pet get lost
-
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -71,7 +68,6 @@ SUB WIZ_MacroSettings
 SUB WIZ_CharacterSettings
 	/if (${outerDebug}) /echo |- WIZ_CharacterSettings ==>
 
-	/call writeToIni "${iniToon},Wizard,Evac Spell"
 	/call writeToIni "${iniToon},Wizard,Auto-Harvest (On/Off)"
 	/call writeToIni "${iniToon},Wizard,Harvest spells"
 
