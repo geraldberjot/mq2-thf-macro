@@ -303,22 +303,18 @@ SUB TrueTarget(TargetID)
 
 	|- Check if the target is in zone.
 	/if (${SpawnCount[id ${TargetID}]}) {
-		|- Check server for range restrictions.
-		/if (${MacroQuest.Server.Equal[PEQTGC]} && ${SpawnCount[id ${TargetID} radius 200]} || ${MacroQuest.Server.NotEqual[PEQTGC]}) {
+		/declare retryTimer timer local 30
 		
-			/declare retryTimer timer local 30
-			
-			:Target_Loop
-			/squelch /target id ${TargetID}
-			/delay 2 ${Target.ID} == ${TargetID}
-			
-			|- Check that I have the correct target ID.
-			/if (${Target.ID} != ${TargetID} && ${SpawnCount[id ${TargetID}]}) {
-				/if (${retryTimer}) {
-					/goto :Target_Loop
-				} else {
-					/echo Failed to target [${Spawn[id ${TargetID}].CleanName} - ${TargetID}]
-				}
+		:Target_Loop
+		/squelch /target id ${TargetID}
+		/delay 2 ${Target.ID} == ${TargetID}
+		
+		|- Check that I have the correct target ID.
+		/if (${Target.ID} != ${TargetID} && ${SpawnCount[id ${TargetID}]}) {
+			/if (${retryTimer}) {
+				/goto :Target_Loop
+			} else {
+				/echo Failed to target [${Spawn[id ${TargetID}].CleanName} - ${TargetID}]
 			}
 		}
 	}

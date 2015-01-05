@@ -11,8 +11,6 @@
 SUB DRU_Setup
 	/if (${outerDebug}) /echo |- DRU_Setup ==>
 	
-	/call iniToVar "${iniToon},Druid,Evac Spell" Evac_Spell string outer
-	
 	/if (${outerDebug}) /echo <== DRU_Setup -|
 /RETURN
 
