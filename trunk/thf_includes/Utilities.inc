@@ -444,17 +444,17 @@ SUB Triangulate_Distance(string loc#1, string loc#2)
 /RETURN ${Math.Sqrt[${Math.Calc[${loc#2.Arg[2,,]}-${loc#1.Arg[2,,]}]}*${Math.Calc[${loc#2.Arg[2,,]}-${loc#1.Arg[2,,]}]}+${Math.Calc[${loc#2.Arg[1,,]}-${loc#1.Arg[1,,]}]}*${Math.Calc[${loc#2.Arg[1,,]}-${loc#1.Arg[1,,]}]}]}
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- MoveTo																							-|
+|- MoveTo
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Attempts to utilize MQ2MoveUtils /moveto function, to move to a given destination.				-|
+|- Attempts to utilize MQ2MoveUtils /moveto function, to move to a given destination.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param1 destination: Destinations can be provided as an ID, or loc, using the globalFollowing syntax:	-|
-|-																									-|
-|- Move to a Spawn ID use, -SpawnID|#																-|
-|-		Ex.  /call MoveTo -SpawnID|${Target.ID}														-|
-|-																									-|
-|- Move to a Location use, -Loc|Y,X																	-|
-|-		Ex.  /call MoveTo -Loc|${Target.Y},${Target.X}												-|
+|- @param1 destination: Destinations can be provided as an ID, or loc, using the globalFollowing syntax:
+|-
+|- Move to a Spawn ID use, -SpawnID|#
+|-		Ex.  /call MoveTo -SpawnID|${Target.ID}
+|-
+|- Move to a Location use, -Loc|Y,X
+|-		Ex.  /call MoveTo -Loc|${Target.Y},${Target.X}
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB MoveTo(destinationInfo, int distCheck)
 	/if (${outerDebug}) /echo |- MoveTo ==>

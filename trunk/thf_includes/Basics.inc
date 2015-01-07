@@ -16,7 +16,7 @@
 |- @param paramSender: The PC who sent the command
 |- @param paramArgs: Who to follow
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT Follow "[#1#] Follow #2#"
+#EVENT Follow "[#1#] #2# follow"
 SUB EVENT_Follow(String paramLine, String paramSender, String paramArgs)
 	/if (${outerDebug} || ${Debug_Basics}) {
 		/echo |- EVENT_Follow ==>
@@ -74,8 +74,6 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramArgs)
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Follow -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Engages follow plugins on specified follow targets.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -118,16 +116,14 @@ SUB AcquireFollow
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== AcquireFollow -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Disengages follow on bots who are in the same zone as the paramSender.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Use, /stop, or, 'stop' in /bc.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT Stop	"[#1#] Stop #2#"
-#EVENT Stop	"<#1#> Stop #2#"
-SUB EVENT_Stop(paramLine, paramSender, paramArgs)
+#EVENT Stop	"[#1#] #2# stop"
+#EVENT Stop	"<#1#> #2# stop"
+SUB EVENT_Stop(String paramLine, String paramSender, String paramArgs)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Stop ==>
 
 	|- Check if I'm globalFollowing.
@@ -150,18 +146,17 @@ SUB EVENT_Stop(paramLine, paramSender, paramArgs)
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Stop -|
 /RETURN STOP
 
-
-
-#EVENT MoveHere "<#1#> Move to #2#"
-SUB EVENT_MoveHere(paramLine, paramSender, paramArgs)
-/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_MoveHere ==>
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Ask the bot to move to a PC, pet or NPC
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT MoveHere "<#1#> #2# move to #3#"
+SUB EVENT_MoveHere(String paramLine, String paramSender, String paramArgs, String paramWhere)
+	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_MoveHere ==>
 
 	|- Verify the event
-	/if (${Defined[paramSender]}) /call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|-    |------------In Range------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-	
+	/call amIConcerned ${paramSender} ${paramArgs} TRUE
+	/if (${Macro.Return}) {
+
 		|- Check if the paramSender is me.
 		/if (${paramSender.Equal[${Me}]}) {
 			/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_MoveHere -|- I am the paramSender, skipping.
@@ -211,154 +206,23 @@ SUB EVENT_MoveHere(paramLine, paramSender, paramArgs)
 				/if (${moveTo_Name.Equal[${globalFollowTarget}]}) {
 					/call AcquireFollow
 				} else {
-					/call EVENT_Stop "<${Me.CleanName}> Stop" ${Me.CleanName}
+					/call EVENT_Stop "", ${Me.CleanName}, ${Me.CleanName}
 				}
 			}
 		}
 	}
 
-/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_MoveHere -|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_MoveHere -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Commands bots to bark a message at a target.															-|
-|- Targets can be designated by name, or ID, using -ID|- or -Name|
+|- Moves to a given location, and clicks the nearest object.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramLine: '<Name> Bark at MobName BarkMsg'														-|
-|- @param msgTarget: The NPC you wish to bark at.														-|
-|- @param barkIt: What to bark at the NPC.																-|
-|- @param paramSender: The command sender that requested bark.											-|
-|- @param selectedBots: Bots specified to bark at npc.													-|
+|- @param paramSender: The command sender.
+|- @param locToStart: Where to stand when attempting to click the object.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Targets must be within the MaxResponseDist (default 250units).										-|
-|- Use, '/bark MESSAGE', or, the command 'Bark at NAME MESSAGE' can be given in /bc, /g, or /tell.		-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT bark "<#1#> Bark at #2# #3#"
-#EVENT bark "#1# tells you, 'Bark at #2# #3#'"
-#EVENT bark "#1# tells the group, 'Bark at #2# #3#'"
-#EVENT bark "#1# you tell your party, 'Bark at #2# #3#'"
-SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
-/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Bark ==>
-
-	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-		
-		|- If msgTarget is not an ID, find TargetID.
-		/if (!${Int[${msgTarget}]}) {
-			/if (${SpawnCount[npc =${msgTarget}]}) {
-				/varset msgTarget ${Spawn[npc =${msgTarget}].ID}
-			} else /if (${SpawnCount[pc =${msgTarget}]}) {
-				/varset msgTarget ${Spawn[npc =${msgTarget}].ID}
-			} else /if (${SpawnCount[pet =${msgTarget}]}) {
-				/varset msgTarget ${Spawn[npc =${msgTarget}].ID}
-			} else {
-				/echo Could not find a SpawnID for [${msgTarget}].
-				/varset msgTarget NULL
-			}
-		}
-		
-		/declare barkTarget string outer ${Spawn[id ${msgTarget}].CleanName}
-		/declare barkReturned bool outer FALSE
-		/declare retryTimer timer local 150
-		/declare startingLoc string local
-		
-		/if (${Stick.Active}) /squelch /stick off
-		/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /delay 300 !${Me.Casting.ID}
-		
-		:retry_Bark
-		/if (${outerDebug} && !${outerSpamTimer_retryBark}) {
-			/echo |- EVENT_bark -|- :retry_Bark loop
-			/call createTimer outerSpamTimer_retryBark 20
-		}
-		
-		|- Target the msgTarget
-		/call TrueTarget ${msgTarget}
-		/if (${Target.Distance} > 10) {
-			/call MoveTo -Loc|${Target.Y},${Target.X}
-			/if (${retryTimer}) {
-				/goto :retry_Bark
-			} else {
-				/echo |- EVENT_Bark -|- Failed to move to the intended target.
-			}
-		} else {
-		
-			|- Wait a moment, then bark the message.
-			/delay ${Math.Rand[30]}
-			
-			/varset startingLoc ${Me.Loc.Replace[ ,]}
-			
-			|- Reset barkMsg
-			/if (${barkMsg.Find[-]} && ${barkMsg.Find[|]}) {
-				/varset barkMsg ${barkMsg.Arg[1,-]}
-				/varset barkMsg ${barkMsg.Left[${Math.Calc[${barkMsg.Length} - 1].Int}]}
-			}
-			
-			/say ${barkMsg}
-			
-			|- Wait up to 3 seconds for something to happen.
-			/delay 30 ${Zone.ID} != ${outerCurrentZone} || ${Me.Loc.Replace[ ,].NotEqual[${startingLoc}]} || ${Window[ConfirmationDialogBox].Open} || ${Window[LargeDialogWindow].Open}
-
-			|- Click Yes to a confirmation box.
-			/if (${Window[ConfirmationDialogBox].Open}) {
-				/notify ConfirmationDialogBox Yes_Button leftmouseup
-				/delay 10
-			} else /if (${Window[LargeDialogWindow].Open}) {
-				/notify LargeDialogWindow LDW_YesButton leftmouseup
-				/delay 10
-			}
-			
-			|- Check to see if the bark was successful.
-			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${startingLoc}
-			
-			/doevents barkReturn
-
-			/if (${Zone.ID} == ${outerCurrentZone} && ${Macro.Return} < 50 && !${barkReturned}) {
-				/if (${retryTimer}) {
-					/goto :retry_Bark
-				} else {
-					/channel Nothing seems to have happened...
-				}
-			}
-		}
-		/deletevar barkTarget
-		/deletevar barkReturned
-	}
-
-/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Bark -|
-/RETURN
-
-
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Attempts to detected NPC responses to PC hails in /say.	-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramLine: '|BarkTarget|- says, 'Something''			-|
-|- @param returnBark: What the NPC replied.					-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT barkReturn "|${barkTarget}|- #*#"
-SUB EVENT_barkReturn(paramLine, returnBark)
-/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_barkReturn ==>
-	
-	/varset barkReturned TRUE
-	
-/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_barkReturn -|
-/RETURN
-
-
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Moves to a given location, and clicks the nearest object.				-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramSender: The command sender.									-|
-|- @param locToStart: Where to stand when attempting to click the object.	-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT clickIt "[#1#] Click object #2# at #3#"
-#EVENT clickIt "<#1#> Click object #2# at #3#"
+#EVENT clickIt "[#1#] #2# click object at #3#"
+#EVENT clickIt "<#1#> #2# click object at #3#"
 SUB EVENT_clickIt(paramLine, paramSender, paramArgs, locToStart)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_clickIt ==>
 
@@ -395,7 +259,7 @@ SUB EVENT_clickIt(paramLine, paramSender, paramArgs, locToStart)
 						/call MoveTo -Loc|${locToStart}
 						/goto :retryClick
 					} else {
-						/channel I failed to move to the inteded object
+						/channel I failed to move to the intended object
 					}
 				} else {
 				
@@ -413,7 +277,7 @@ SUB EVENT_clickIt(paramLine, paramSender, paramArgs, locToStart)
 					|- Shifts look angle up and down while attempting to click.
 					/look ${If[${Me.Look} < 75,${Math.Calc[${Me.Look} + 5]},-75]}
 					/if (${Target.ID}) /squelch /target clear
-					/keypress U | numpad 9 and numpad 3 or Page-Up and Page-Down -> up and down
+					/keypress Num_9
 					/delay 2
 					
 					|- Check if I have zoned, or moved.
@@ -449,17 +313,15 @@ SUB EVENT_clickIt(paramLine, paramSender, paramArgs, locToStart)
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_clickIt -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Points faces bots to your current heading, and runs through a zone paramLine.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param paramSender: The command sender.
-|- @param locToStart: Where to stand when trying to click the door.
-|- @param snapHeading: The direction to face when trying to click the door.
+|- @param paramArgs: Where to stand when trying to click the door.
+|- @param locToStart: Where to stand when attempting to zone.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT runThruZone "[#1#] Run through zone #2# at #3#"
-#EVENT runThruZone "<#1#> Run through zone #2# at #3#"
+#EVENT runThruZone "[#1#] #2# run through zone at #3#"
+#EVENT runThruZone "<#1#> #2# run through zone at #3#"
 SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_runThruZone ==>
 
@@ -474,13 +336,13 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
 	
 		|- Check that you can see the location to start from.
 		/if (!${paramLineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
-			/channel I cannot see the starting location.
+			/channel I cannot see the starting location !
 		} else {
 		
 			|- Check range to object.
 			/call Triangulate_Distance ${locToStart} ${Me.Loc.Replace[ ,]}
 			/if (${Macro.Return} > ${Math.Calc[${MaxResponseDist}*3].Int}) {
-				/channel I am to far away from that zone paramLine.
+				/channel I am too far away from that zone paramLine !
 			} else {
 			
 				/if (${Stick.Active}) /squelch /stick off
@@ -495,7 +357,7 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
 						/call MoveTo -Loc|${locToStart}
 						/goto :retryRTZ
 					} else {
-						/channel I failed to move to the inteded zone paramLine.
+						/channel I failed to move to the intended zone !
 					}
 				} else {
 				
@@ -513,7 +375,7 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
 						/if (${retryTimer}) {
 							/goto :retryRTZ
 						} else {
-							/channel I failed to run through the zoneparamLine in [${Zone}].
+							/channel I failed to run through the zone in [${Zone}] !
 							/call MoveTo -Loc|${locToStart}
 						}
 					}
@@ -525,13 +387,13 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_runThruZone -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Drops invis on connected NetBots.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT dropInvis "[#1#] Drop Invis #2#"
-#EVENT dropInvis "[#1#] Drop Invisibility #2#"
+#EVENT dropInvis "[#1#] #2# drop invis"
+#EVENT dropInvis "<#1#> #2# drop invis"
+#EVENT dropInvis "[#1#] #2# drop invisibility"
+#EVENT dropInvis "<#1#> #2# drop invisibility"
 SUB EVENT_dropInvis(paramLine, paramSender, paramArgs)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_dropInvis ==>
 
@@ -552,17 +414,15 @@ SUB EVENT_dropInvis(paramLine, paramSender, paramArgs)
 		}
 	}
 
-/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_dropInvis -|
+	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_dropInvis -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Uses /exit on all bots, except the paramSender.	-|
+|- Uses /exit on all bots, except the paramSender.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /bc Exit, or, -[Exit]- in any channel.		-|
+|- Use /bc Exit.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT Exit "<#1#> Exit #2#"
+#EVENT Exit "<#1#> #2# exit"
 SUB EVENT_Exit(paramLine, paramSender, paramArgs)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Exit ==>
 
@@ -574,21 +434,19 @@ SUB EVENT_Exit(paramLine, paramSender, paramArgs)
 		/deletevar * global
 		/disband
 		/raiddisband
-		/camp desktop
+		/exit
 		/end
 	}
 
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Exit -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Attempts to load the spellset listed in e3_Settings.ini.	-|
+|- Attempts to load the spellset listed in Settings.ini.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT LoadSpells "[#1#] Load Spells #2#"
-#EVENT LoadSpells "<#1#> Load Spells #2#"
-SUB EVENT_LoadSpells(paramLine, paramSender)
+#EVENT LoadSpells "[#1#] #2# load spells"
+#EVENT LoadSpells "<#1#> #2# load spells"
+SUB EVENT_LoadSpells(paramLine, paramSender, paramArgs)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_LoadSpells ==>
 
 	|- Verify the event
@@ -613,16 +471,14 @@ SUB EVENT_LoadSpells(paramLine, paramSender)
 
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_LoadSpells -|
 /RETURN
-
-
 	
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Attempts to remove specified buffs on NetBots.	-|
+|- Attempts to remove specified buffs on NetBots.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /bc Remove [Name], or /bc Remove 'Name'.	-|
+|- Use /bc [All/Group/Caster/Priest/...] remove buff [BuffName].
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT RemoveBuff "[#1#] Remove buff #2# (#3#)"
-#EVENT RemoveBuff "<#1#> Remove buff #2# (#3#)"
+#EVENT RemoveBuff "[#1#] #2# remove buff #3#"
+#EVENT RemoveBuff "<#1#> #2# remove buff #3#"
 SUB EVENT_RemoveBuff(paramLine, paramSender, paramArgs, buffToRemove)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_RemoveBuff ==>
 
@@ -648,15 +504,13 @@ SUB EVENT_RemoveBuff(paramLine, paramSender, paramArgs, buffToRemove)
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_RemoveBuff -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Checks for specified buffs and debuffs on NetBots.		-|
+|- Checks for specified buffs and debuffs on NetBots.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /bc Check Buff [Name], or /bc Check buff 'Name'.	-|
+|- Use /bc [All/Group/Caster/Priest/...] check buff [BuffName].
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT check_Buffs "[#1#] Check buff #2# (#3#)"
-#EVENT check_Buffs "<#1#> Check buff #2# (#3#)"
+#EVENT check_Buffs "[#1#] #2# check buff #3#"
+#EVENT check_Buffs "<#1#> #2# check buff #3#"
 SUB EVENT_check_Buffs(paramLine, paramSender, paramArgs, buffToCheck)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_check_Buffs ==>
 
@@ -682,15 +536,13 @@ SUB EVENT_check_Buffs(paramLine, paramSender, paramArgs, buffToCheck)
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_check_Buffs -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Searches inventory, and banks, for indicated items.	-|
+|- Searches inventory, and banks, for indicated items.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /bc Find 'Name', or, /echo Find 'Name'.			-|
+|- Use /bc [All/Group/Caster/Priest/...] find item [ItemName].
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT FindItems "[#1#] Find Item #2# (#3#)"
-#EVENT FindItems "<#1#> Find Item #2# (#3#)"
+#EVENT FindItems "[#1#] #2# find item [#3#]"
+#EVENT FindItems "<#1#> #2# find item [#3#]"
 SUB EVENT_FindItems(paramLine, paramSender, paramArgs, itemToFind)
 	/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_FindItems ==>
 
@@ -753,8 +605,6 @@ SUB EVENT_FindItems(paramLine, paramSender, paramArgs, itemToFind)
 
 	/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_FindItems -|
 /RETURN
-
-
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Checks for bots who are out of range, or out of zone.	-|
@@ -2135,3 +1985,133 @@ SUB EVENT_remove_AutoDestroyItem(paramLine, WhatToAdd)
 
 /if (${outerDebug} || ${Debug_Basics}) /echo <== remove_AutoDestroyItem -|
 /RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Commands bots to bark a message at a target.															-|
+|- Targets can be designated by name, or ID, using -ID|- or -Name|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- @param paramLine: '<Name> Bark at MobName BarkMsg'														-|
+|- @param msgTarget: The NPC you wish to bark at.														-|
+|- @param barkIt: What to bark at the NPC.																-|
+|- @param paramSender: The command sender that requested bark.											-|
+|- @param selectedBots: Bots specified to bark at npc.													-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Targets must be within the MaxResponseDist (default 250units).										-|
+|- Use, '/bark MESSAGE', or, the command 'Bark at NAME MESSAGE' can be given in /bc, /g, or /tell.		-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT bark "<#1#> Bark at #2# #3#"
+#EVENT bark "#1# tells you, 'Bark at #2# #3#'"
+#EVENT bark "#1# tells the group, 'Bark at #2# #3#'"
+#EVENT bark "#1# you tell your party, 'Bark at #2# #3#'"
+SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_Bark ==>
+
+	|- Verify the event
+	/call verifyEvent "${paramSender}" "${paramLine}"
+	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
+	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
+		
+		|- If msgTarget is not an ID, find TargetID.
+		/if (!${Int[${msgTarget}]}) {
+			/if (${SpawnCount[npc =${msgTarget}]}) {
+				/varset msgTarget ${Spawn[npc =${msgTarget}].ID}
+			} else /if (${SpawnCount[pc =${msgTarget}]}) {
+				/varset msgTarget ${Spawn[npc =${msgTarget}].ID}
+			} else /if (${SpawnCount[pet =${msgTarget}]}) {
+				/varset msgTarget ${Spawn[npc =${msgTarget}].ID}
+			} else {
+				/echo Could not find a SpawnID for [${msgTarget}].
+				/varset msgTarget NULL
+			}
+		}
+		
+		/declare barkTarget string outer ${Spawn[id ${msgTarget}].CleanName}
+		/declare barkReturned bool outer FALSE
+		/declare retryTimer timer local 150
+		/declare startingLoc string local
+		
+		/if (${Stick.Active}) /squelch /stick off
+		/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /delay 300 !${Me.Casting.ID}
+		
+		:retry_Bark
+		/if (${outerDebug} && !${outerSpamTimer_retryBark}) {
+			/echo |- EVENT_bark -|- :retry_Bark loop
+			/call createTimer outerSpamTimer_retryBark 20
+		}
+		
+		|- Target the msgTarget
+		/call TrueTarget ${msgTarget}
+		/if (${Target.Distance} > 10) {
+			/call MoveTo -Loc|${Target.Y},${Target.X}
+			/if (${retryTimer}) {
+				/goto :retry_Bark
+			} else {
+				/echo |- EVENT_Bark -|- Failed to move to the intended target.
+			}
+		} else {
+		
+			|- Wait a moment, then bark the message.
+			/delay ${Math.Rand[30]}
+			
+			/varset startingLoc ${Me.Loc.Replace[ ,]}
+			
+			|- Reset barkMsg
+			/if (${barkMsg.Find[-]} && ${barkMsg.Find[|]}) {
+				/varset barkMsg ${barkMsg.Arg[1,-]}
+				/varset barkMsg ${barkMsg.Left[${Math.Calc[${barkMsg.Length} - 1].Int}]}
+			}
+			
+			/say ${barkMsg}
+			
+			|- Wait up to 3 seconds for something to happen.
+			/delay 30 ${Zone.ID} != ${outerCurrentZone} || ${Me.Loc.Replace[ ,].NotEqual[${startingLoc}]} || ${Window[ConfirmationDialogBox].Open} || ${Window[LargeDialogWindow].Open}
+
+			|- Click Yes to a confirmation box.
+			/if (${Window[ConfirmationDialogBox].Open}) {
+				/notify ConfirmationDialogBox Yes_Button leftmouseup
+				/delay 10
+			} else /if (${Window[LargeDialogWindow].Open}) {
+				/notify LargeDialogWindow LDW_YesButton leftmouseup
+				/delay 10
+			}
+			
+			|- Check to see if the bark was successful.
+			/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${startingLoc}
+			
+			/doevents barkReturn
+
+			/if (${Zone.ID} == ${outerCurrentZone} && ${Macro.Return} < 50 && !${barkReturned}) {
+				/if (${retryTimer}) {
+					/goto :retry_Bark
+				} else {
+					/channel Nothing seems to have happened...
+				}
+			}
+		}
+		/deletevar barkTarget
+		/deletevar barkReturned
+	}
+
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_Bark -|
+/RETURN
+
+
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Attempts to detected NPC responses to PC hails in /say.	-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- @param paramLine: '|BarkTarget|- says, 'Something''			-|
+|- @param returnBark: What the NPC replied.					-|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT barkReturn "|${barkTarget}|- #*#"
+SUB EVENT_barkReturn(paramLine, returnBark)
+/if (${outerDebug} || ${Debug_Basics}) /echo |- EVENT_barkReturn ==>
+	
+	/varset barkReturned TRUE
+	
+/if (${outerDebug} || ${Debug_Basics}) /echo <== EVENT_barkReturn -|
+/RETURN
+
+
+
