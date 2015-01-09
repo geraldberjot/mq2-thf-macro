@@ -4,6 +4,99 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Uses ROGUE combat abilities, AAs, and disciplines.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB ROG_CombatAbilities
+	/if (${outerDebug}) /echo |- ROG_CombatAbilities ==>
+
+	|- Check Target distance.
+	/if (${Target.Distance} > ${Spawn[${Target.ID}].MaxRangeTo}) {
+		/if (${outerDebug}) {
+			/echo I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
+			/channel I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
+		}
+	} else {
+		/declare abilityName string local
+		/declare minEnd int local
+		/declare i int local
+	
+		|- Use Backstab.
+		/call Attempt_Backstab
+
+		|- For 1 to the size of MyAbilities array, use each ability.
+		/for i 1 to ${MyAbilities.Size}
+			/varset abilityName ${MyAbilities[${i}].Arg[1,/]}
+			|- Check for MinEnd
+			/if (${MyAbilities[${i}].Find[/MinEnd|]}) {
+				/call argueString MinEnd "${MyAbilities[${i}]}"
+				/varset minEnd ${Macro.Return}
+			} else {
+				/varset minEnd 0
+			}
+	
+			/if (${Me.PctEndurance} < ${minEnd}) {
+				/if (${outerDebug}) {
+					/echo I don't have enough endurance to use [${abilityName}].
+					/channel I don't have enough endurance to use [${abilityName}].
+				}
+			} else {
+				|- Use alternate ability
+				/if (${Me.AltAbility[${abilityName}]}) {
+					/if (!${Me.AltAbilityReady[${abilityName}]} || ${altTimer_${Me.AltAbility[${abilityName}].ID}}) {
+						/if (${outerDebug}) {
+							/echo Alternate Ability [${abilityName}] is not ready.
+							/channel Alternate Ability [${abilityName}] is not ready.
+						}
+					} else {
+						/call thf_Casting ${outerAssistTarget} "${abilityName}"
+					}
+				|- Use combat ability (discipline)
+				} else /if (${Me.CombatAbility[${abilityName}]}) {
+					/if (!${Me.CombatAbilityReady[${abilityName}]}) {
+						/if (${outerDebug}) {
+							/echo Discipline [${abilityName}] is not ready.
+							/channel Discipline [${abilityName}] is not ready.
+						}
+					} else {
+						} else {
+							/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
+						}
+					}
+				|- Use rogue evade as a combat ability 
+				} else /if (${abilityName.Equal[Evade]}) {
+					/call AutoEvade
+				}
+			}
+		/next i
+	}
+
+	/if (${outerDebug}) /echo <== CombatAbilities -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Attempt_Backstab
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB Attempt_Backstab
+/if (${outerDebug}) /echo |- Attempt_Backstab ==>
+
+	|- Check that I have a piercer in my main hand
+	/if (${Me.Inventory[Mainhand].Type.NotEqual[Piercing]}) {
+		/if (${outerDebug}) {
+			/echo I need a piercing weapon in my main hand to backstab...
+			/channel I need a piercing weapon in my main hand to backstab...
+		}
+	} else {
+		/call check_rogStrike
+		|- If backstab is ready, use it.
+		/if (${Me.AbilityReady[Backstab]}) /doability Backstab
+	}
+
+/if (${outerDebug}) /echo <== Attempt_Backstab -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- rogueStrike
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.
@@ -34,8 +127,8 @@ SUB check_rogStrike()
 	 	 
 		|- Use 'Assassin's Strike' type disc.
 		/if (${Me.Invis}) {
-			/if (${Me.CombatAbilityReady[${strikeDiscipline}]) {
-				/disc ${strikeDiscipline}
+			/if (${Me.CombatAbilityReady[${outerStrikeDiscipline}]) {
+				/disc ${outerStrikeDiscipline}
 			} else {
 				/declare i int local
 				/for i 1 to ${strikeItems.size}
@@ -127,7 +220,7 @@ SUB ROG_Setup
 	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
 
 	|- Pick up the lastest discipline
-	/call getLatestStrikeDiscipline
+	/call getLatestouterStrikeDiscipline
 	
 	/call createStrikeItemsArray
 	
@@ -137,32 +230,32 @@ SUB ROG_Setup
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestStrikeDiscipline()
-	/if (${outerDebug}) /echo |- getLatestStrikeDiscipline ==>
+SUB getLatestouterStrikeDiscipline()
+	/if (${outerDebug}) /echo |- getLatestouterStrikeDiscipline ==>
 	
-	/if (!${Defined[strikeDiscipline]}) /declare strikeDiscipline string outer
+	/if (!${Defined[outerStrikeDiscipline]}) /declare outerStrikeDiscipline string outer
 
 	/if (${Me.CombatAbility[Death Bringer Rk. III]}) {
-		/varset strikeDiscipline "Death Bringer Rk. III"
+		/varset outerStrikeDiscipline "Death Bringer Rk. III"
 	} else /if (${Me.CombatAbility[Death Bringer Rk. II]}) {
-		/varset strikeDiscipline "Death Bringer Rk. II"
+		/varset outerStrikeDiscipline "Death Bringer Rk. II"
 	} else /if (${Me.CombatAbility[Death Bringer Rk. I]}) {
-		/varset strikeDiscipline "Death Bringer Rk. I"
+		/varset outerStrikeDiscipline "Death Bringer Rk. I"
 	} else /if (${Me.CombatAbility[Daggerfall]}) {
-		/varset strikeDiscipline "Daggerfall"
+		/varset outerStrikeDiscipline "Daggerfall"
 	} else /if (${Me.CombatAbility[Ancient: Chaos Strike]}) {
-		/varset strikeDiscipline "Ancient: Chaos Strike"
+		/varset outerStrikeDiscipline "Ancient: Chaos Strike"
 	} else /if (${Me.CombatAbility[Kyv Strike]}) {
-		/varset strikeDiscipline "Kyv Strike"
+		/varset outerStrikeDiscipline "Kyv Strike"
 	} else /if (${Me.CombatAbility[Assassin's Strike]}) {
-		/varset strikeDiscipline "Assassin's Strike"
+		/varset outerStrikeDiscipline "Assassin's Strike"
 	} else /if (${Me.CombatAbility[Thief's Vengeance]}) {
-		/varset strikeDiscipline "Thief's Vengeance"
+		/varset outerStrikeDiscipline "Thief's Vengeance"
 	} else /if (${Me.CombatAbility[Sneak Attack]}) {
-		/varset strikeDiscipline "Sneak Attack"
+		/varset outerStrikeDiscipline "Sneak Attack"
 	}
 	
-	/if (${outerDebug}) /echo <== getLatestStrikeDiscipline -|
+	/if (${outerDebug}) /echo <== getLatestouterStrikeDiscipline -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -216,9 +309,7 @@ SUB ROG_MacroSettings
    /call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
 
 	 |- Adv Settings
-	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#1" "check_Burns" 1
-	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#2" "check_CombatBuffs" 1
-	 /call writeToIni "${iniTHF},ROG Functions,ROG Function#3" "check_Buffs" 1
+	 /call writeToIni "${iniTHF},Rogue,Functions" "check_Burns/check_CombatBuffs/check_Buffs" 0
 
 	/if (${outerDebug}) /echo <== ROG_MacroSettings -|
 /RETURN
