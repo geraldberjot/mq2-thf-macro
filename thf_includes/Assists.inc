@@ -72,10 +72,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 						/if (${outerDebug} || ${outerDebug_Assists}) /channel Pet Check: Sending pet on - ${outerAssistTarget} - ${Spawn[${outerAssistTarget}].CleanName}
 						/pet attack
 					} else {
-						/call amIPetClass
-						/if (${Macro.Return}) {
-							/channel NO pet to send !
-						}
+						/channel NO pet to send !
 					}
 				}
 				
@@ -481,7 +478,10 @@ SUB CombatAbilities
 
 	|- Check Target distance.
 	/if (${Target.Distance} > ${Spawn[${Target.ID}].MaxRangeTo}) {
-		/if (${outerDebug} || ${outerDebug_Assists}) /echo I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
+		/if (${outerDebug}) {
+			/echo I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
+			/channel I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
+		}
 	} else {
 		/declare abilityName string local
 		/declare minEnd int local
@@ -499,12 +499,15 @@ SUB CombatAbilities
 			}
 	
 			/if (${Me.PctEndurance} < ${minEnd}) {
-				/if (${outerDebug} || ${outerDebug_Assists}) /echo I don't have enough endurance to use [${abilityName}].
+				/if (${outerDebug}) {
+					/echo I don't have enough endurance to use [${abilityName}].
+					/channel I don't have enough endurance to use [${abilityName}].
+				}
 			} else {
 				|- Use ability. 
 				/if (${Me.Ability[${abilityName}]}) {
 					/if (!${Me.AbilityReady[${abilityName}]}) {
-						/if (${outerDebug} || ${outerDebug_Assists}) /echo Ability [${abilityName}] is not ready.
+						/if (${outerDebug}) /echo Ability [${abilityName}] is not ready.
 					} else {
 						|- Use Backstab.
 						/if (${abilityName.Equal[Backstab]}) {
@@ -527,14 +530,14 @@ SUB CombatAbilities
 				|- Use alternate ability
 				} else /if (${Me.AltAbility[${abilityName}]}) {
 					/if (!${Me.AltAbilityReady[${abilityName}]} || ${altTimer_${Me.AltAbility[${abilityName}].ID}}) {
-						/if (${outerDebug} || ${outerDebug_Assists}) /echo Alternate Ability [${abilityName}] is not ready.
+						/if (${outerDebug}) /echo Alternate Ability [${abilityName}] is not ready.
 					} else {
 						/call thf_Casting ${outerAssistTarget} "${abilityName}"
 					}
 				|- Use combat ability (discipline)
 				} else /if (${Me.CombatAbility[${abilityName}]}) {
 					/if (!${Me.CombatAbilityReady[${abilityName}]}) {
-						/if (${outerDebug} || ${outerDebug_Assists}) /echo Discipline [${abilityName}] is not ready.
+						/if (${outerDebug}) /echo Discipline [${abilityName}] is not ready.
 					} else {
 						|- Rogue Assassin's Strike.
 						/if (${Select[${abilityName},${rogueStrikes}]}) {
@@ -555,7 +558,7 @@ SUB CombatAbilities
 		/next i
 	}
 
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== CombatAbilities -|
+	/if (${outerDebug}) /echo <== CombatAbilities -|
 /RETURN
 
 
@@ -589,26 +592,6 @@ SUB Attempt_Taunt
 /RETURN
 
 
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Attempt_Backstab
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB Attempt_Backstab
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- Attempt_Backstab ==>
-
-	|- Check that I have a piercer in my main hand
-	/if (${Me.Inventory[Mainhand].Type.NotEqual[Piercing]}) {
-		/if (${outerDebug} || ${outerDebug_Assists}) /echo I need a piercing weapon in my main hand to backstab...
-	} else {
-		
-		|- If backstab is ready, use it.
-		/if (${Me.AbilityReady[Backstab]}) /doability Backstab
-	}
-
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== Attempt_Backstab -|
-/RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Casts direct damage spells on a specified target.
@@ -1416,35 +1399,34 @@ SUB assist_Setup
 	}
 	
 	|- [Melee Abilities].
-	/if (${Ini[${iniToon},Melee Abilities,Ability#1].Length}) /call iniToArray "${iniToon},Melee Abilities,Ability#" MyAbilities
+	/if (${Ini[${iniToon},Melee,Abilities].Length}) /call split "${iniToon},Melee,Abilities" MyAbilities /
 
-	|- [Nukes].
-	/if (${Ini[${iniToon},Nukes,Nuke#1].Length}) /call iniToArray "${iniToon},Nukes,Nuke#" MyNukes
+	|- Spells
+	|-- [Nukes].
+	/if (${Ini[${iniToon},Spells,Nukes].Length}) /call split "${iniToon},Spells,Nukes" MyNukes /
 	
-	|- [DoTs].
+	|-- [Rain].
+	/if (${Ini[${iniToon},Spells,Rains].Length}) /call split "${iniToon},Spells,Rains" Rain_Spells /
+
+	|-- [QuickBurns].
+	/if (${Ini[${iniToon},Spells,Quick Burns].Length}) /call split "${iniToon},Spells,Quick Burns" QuickBurns /
 	
+	|-- [FullBurns].	
+	/if (${Ini[${iniToon},Spells,Full Burns].Length}) /call split "${iniToon},Spells,Full Burns" FullBurns /
+
 	|- On Assist
-	/if (${Ini[${iniToon},DoTs,DoT on Assist#1].Length}) /call iniToArray "${iniToon},DoTs,DoT on Assist#" Assist_DoTs
+	|-- [Debuffs].
+	/if (${Ini[${iniToon},On Assist,Debuffs].Length}) /call split "${iniToon},On Assist,Debuffs" Assist_Debuffs /
+
+	|-- [DoTs].
+	/if (${Ini[${iniToon},On Assist,DoTs].Length}) /call split "${iniToon},On Assist,DoTs" Assist_DoTs /
 
 	|- On Command
-	/if (${Ini[${iniToon},DoTs,DoT on Command#1].Length}) /call iniToArray "${iniToon},DoTs,DoT on Command#" Command_DoTs
+	|-- [DoTs].
+	/if (${Ini[${iniToon},On Command,DoTs].Length}) /call split "${iniToon},On Command,DoTs" Command_DoTs /
 
-	|- [Debuffs].
-
-	|- On Assist
-	/if (${Ini[${iniToon},Debuffs,Debuff on Assist#1].Length}) /call iniToArray "${iniToon},Debuffs,Debuff on Assist#" Assist_Debuffs
-
-	|- On Command
-	/if (${Ini[${iniToon},Debuffs,Debuff on Command#1].Length}) /call iniToArray "${iniToon},Debuffs,Debuff on Command#" Command_Debuffs
-	
-	|- [Rain].
-	/if (${Ini[${iniToon},Rain,Rain#1].Length}) /call iniToArray "${iniToon},Rain,Rain#" Rain_Spells
-
-	|- [QuickBurns].
-	/if (${Ini[${iniToon},Burn,Quick Burn#1].Length}) /call iniToArray "${iniToon},Burn,Quick Burn#" QuickBurns
-	
-	|- [FullBurns].	
-	/if (${Ini[${iniToon},Burn,Full Burn#1].Length}) /call iniToArray "${iniToon},Burn,Full Burn#" FullBurns
+	|-- [Debuffs].
+	/if (${Ini[${iniToon},On Command,Debuffs].Length}) /call split "${iniToon},On Command,Debuffs" Command_Debuffs /
 	
 	|- If Assisting variables are defined, turn assists on.
 	/if (${Defined[outerAssistType]} || ${Defined[MyAbilities]} || ${Defined[${arrayName}]} || ${Defined[Assist_DoTs]} || ${Defined[Command_DoTs]} || ${Defined[Assist_Debuffs]} || ${Defined[Command_Debuffs]} || ${Defined[Rain_Spells]} || ${Defined[QuickBurns]} || ${Defined[FullBurns]}) /declare AssistsOn bool outer TRUE
@@ -1514,40 +1496,37 @@ SUB assist_CharacterSettings
 	/call writeToIni "${iniToon},Assist Settings,Ranged Distance" 100
 
 	|- If I'm a melee class, add Melee Abilities entries.
-	/if (${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]}) {
-		/if (!${Ini[${iniToon},Melee Abilities].Length}) /call writeToIni "${iniToon},Melee Abilities,Ability#1"
+	/call amIMelee
+	/if (${Macro.Return}) {
+		/if (!${Ini[${iniToon},Melee].Length}) /call writeToIni "${iniToon},Melee,Abilities"
 	}
 
 	|- If I'm a casting class, add Nuke entries.
-	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,MAG,PAL,NEC,RNG,SHD,SHM,WIZ]}) {
-		/if (!${Ini[${iniToon},Nukes].Length}) /call writeToIni "${iniToon},Nukes,Nuke#1"
+	/if (${Me.Class.CanCast}) {
+		/if (!${Ini[${iniToon},Spells].Length}) {
+			/call writeToIni "${iniToon},Spells,Nukes"
+			/call writeToIni "${iniToon},Spells,Quick Burns"
+			/call writeToIni "${iniToon},Spells,Full Burns"
+			/if (${Select[${Me.Class.ShortName},DRU,MAG,SHM,WIZ]}) {
+				/call writeToIni "${iniToon},Spells,Rains"
+			}
+		}
 	}
 
 	|- If I'm a casting class, add DoT entries.
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,NEC,RNG,SHD,SHM]}) {
 		/if (!${Ini[${iniToon},DoTs].Length}) {
-			/call writeToIni "${iniToon},DoTs,DoT on Assist#1"
-			/call writeToIni "${iniToon},DoTs,DoT on Command#1"
+			/call writeToIni "${iniToon},On Assist,DoTs"
+			/call writeToIni "${iniToon},On Command,DoTs"
 		}
 	}
 
 	|- If I'm a casting class, add Debuff entries.
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,MAG,NEC,SHM]}) {
 		/if (!${Ini[${iniToon},Debuffs].Length}) {
-			/call writeToIni "${iniToon},Debuffs,Debuff on Assist#1"
-			/call writeToIni "${iniToon},Debuffs,Debuff on Command#1"
+			/call writeToIni "${iniToon},On Assist,Debuffs"
+			/call writeToIni "${iniToon},On Command,Debuffs"
 		}
-	}
-
-	|- If I'm a casting class, add Rain entries.
-	/if (${Select[${Me.Class.ShortName},DRU,MAG,SHM,WIZ]}) {
-		/if (!${Ini[${iniToon},Rain].Length}) /call writeToIni "${iniToon},Rain,Rain#1"
-	}
-
-	|- Burn entries.
-	/if (!${Ini[${iniToon},Burn].Length}) {
-		/call writeToIni "${iniToon},Burn,Quick Burn#1"
-		/call writeToIni "${iniToon},Burn,Full Burn#1"
 	}
 
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assistCharacterSettings -|
