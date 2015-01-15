@@ -16,10 +16,39 @@ SUB ROG_CombatAbilities
 			/channel I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
 		}
 	} else {
+		/declare combatItem item local
 		/declare abilityName string local
 		/declare minEnd int local
 		/declare i int local
 	
+		/if (outerDamageLevel > 0) {
+			/for i 1 to ${combatItemsBoost.Size}
+				/varset combatItem ${FindItem[=${combatItemsBoost[i]}]}
+				/if (${combatItemsBoost.ID}) {
+					|- Timers were already created in the sub routine "createCombatItemsArray"
+					/if (${timer-${combatItemsBoost.ID}.Value} <= 0) {
+						/casting ${combatItemsBoost.ID}|item
+						/varset ${timer-${combatItemsBoost.ID}} ${timer-${combatItemsBoost.ID}.OriginalValue}
+						/delay 1
+					}
+				}
+			/next i
+		}
+		
+		/if (outerDamageLevel > 1) {
+			/for i 1 to ${combatItemsBurn.Size}
+				/varset combatItem ${FindItem[=${combatItemsBurn[i]}]}
+				/if (${combatItemsBurn.ID}) {
+					|- Timers were already created in the sub routine "createCombatItemsArray"
+					/if (${timer-${combatItemsBurn.ID}.Value} <= 0) {
+						/casting ${combatItemsBurn.ID}|item
+						/varset ${timer-${combatItemsBurn.ID}} ${timer-${combatItemsBurn.ID}.OriginalValue}
+						/delay 1
+					}
+				}
+			/next i
+		}
+		
 		|- Use Backstab.
 		/call Attempt_Backstab
 
@@ -58,9 +87,7 @@ SUB ROG_CombatAbilities
 							/channel Discipline [${abilityName}] is not ready.
 						}
 					} else {
-						} else {
-							/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
-						}
+						/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
 					}
 				|- Use rogue evade as a combat ability 
 				} else /if (${abilityName.Equal[Evade]}) {
@@ -79,7 +106,7 @@ SUB ROG_CombatAbilities
 |- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB Attempt_Backstab
-/if (${outerDebug}) /echo |- Attempt_Backstab ==>
+	/if (${outerDebug}) /echo |- Attempt_Backstab ==>
 
 	|- Check that I have a piercer in my main hand
 	/if (${Me.Inventory[Mainhand].Type.NotEqual[Piercing]}) {
@@ -93,7 +120,7 @@ SUB Attempt_Backstab
 		/if (${Me.AbilityReady[Backstab]}) /doability Backstab
 	}
 
-/if (${outerDebug}) /echo <== Attempt_Backstab -|
+	/if (${outerDebug}) /echo <== Attempt_Backstab -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -149,6 +176,7 @@ SUB check_rogStrike()
 			/squelch /stick unpause
 			/delay 10
 		}
+	}
 
 	/if (${outerDebug}) /echo <== rogueStrike -|
 /RETURN
@@ -224,6 +252,8 @@ SUB ROG_Setup
 	
 	/call createStrikeItemsArray
 	
+	/call createCombatItemsArray
+	
 	/if (${outerDebug}) /echo <== ROG_Setup -|
 /RETURN
 
@@ -291,6 +321,41 @@ SUB createStrikeItemsArray()
 	}
 
 	/if (${outerDebug}) /echo <== createStrikeItemsTimer -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Create the timers of the items used in combat
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB createCombatItemsArray()
+	/if (${outerDebug}) /echo |- createcombatItemsBoostArray ==>
+	
+	/if (!${Defined[combatItem]}) /declare combatItem item local
+	
+	/varset combatItem ${FindItem[=Ancient Frozen Razor of Entropy]}
+	/if (${combatItem.ID}) {
+		/declare timer-${combatItem.ID} timer outer 3m
+		/call BuildArray combatItemsBoost ${combatItem.Name} outer
+	}
+	
+	/varset combatItem ${FindItem[=Razor of the Rogue]}
+	/if (${combatItem.ID}) {
+		/declare timer-${combatItem.ID} timer outer 2m
+		/call BuildArray combatItemsBoost ${combatItem.Name} outer
+	}
+	
+	/varset combatItem ${FindItem[=Flahran, The Dragon's Bane]}
+	/if (${combatItem.ID}) {
+		/declare timer-${combatItem.ID} timer outer 6m
+		/call BuildArray combatItemsBoost ${combatItem.Name} outer
+	}
+	
+	/varset combatItem ${FindItem[=TriXzin, Guard of the King]}
+	/if (${combatItem.ID}) {
+		/declare timer-${combatItem.ID} timer outer 3,5m
+		/call BuildArray combatItemsBurn ${combatItem.Name} outer
+	}
+	
+	/if (${outerDebug}) /echo <== createcombatItemsBoostArray -|
 /RETURN
 
 SUB ROG_CheckBackgroundEvents
