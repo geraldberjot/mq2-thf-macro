@@ -160,8 +160,9 @@ SUB EVENT_MakeMacroSettingsIni()
 	/echo Creating macro settings files...
 
 	/call writeToIni "${iniGeneral},General,Channel" team
-	/call writeToIni "${iniGeneral},Debug,Debug Mode (On/Off)" Off
+	/call writeToIni "${iniGeneral},Debug,Debug Mode (On/Off)" Off TRUE
 	/call writeToIni "${iniGeneral},General,Includes" Assist/Background/Basics/buffCheck/Casting
+	/call writeToIni "${iniGeneral},General,StickCommand" "5 hold behindonce uw"
 	
 	/call split "${iniGeneral},General,Includes" includes outer /
 	

@@ -178,11 +178,11 @@ SUB checkHolyShitBuff
 				/casting "${myHSB}" ${mySlot}
 				/varset ${itemCleanName}Timer ${recastTime}
 			} else {
-				/if (${${itemCleanName}Timer} <= 0 && !${Me.Moving} && ${itemCleanName.Lower.Equal[artoriastheabysswalker]}) {
-					/echo Casting "${myHSB}" ${mySlot}
-					/casting "${myHSB}" ${mySlot}
-					/varset ${itemCleanName}Timer ${recastTime}
-				}
+				|/if (${${itemCleanName}Timer} <= 0 && !${Me.Moving} && ${itemCleanName.Lower.Equal[artoriastheabysswalker]}) {
+				|	/echo Casting "${myHSB}" ${mySlot}
+				|	/casting "${myHSB}" ${mySlot}
+				|	/varset ${itemCleanName}Timer ${recastTime}
+				|}
 			}
 		/next i
 	}
@@ -433,40 +433,40 @@ SUB amINuker
 
 SUB amIconcerned(String from, String who)
 	/echo amIconcerned ${from} ${who}
-	/if (${who.Equal[all]}) {
+	/if (${who.Lower.Equal[all]}) {
 		/RETURN TRUE
 	}
-	/if (${who.Equal[group]}) {
+	/if (${who.Lower.Equal[group]}) {
 		/if (${Me.Grouped} && ${Group.Member[${from}]}) {
 			/RETURN TRUE
 		}
 	}
-	/if (${who.Equal[caster]}) {
+	/if (${who.Lower.Equal[caster]}) {
 		|- Can cast spells, including Bard 
 		/if (${Me.Class.CanCast}) {
 			/RETURN TRUE
 		}
 	}
-	/if (${who.Equal[melee]}) {
+	/if (${who.Lower.Equal[melee]}) {
 		|- Monk/Rogue/Bard/Ranger/Warrior/Paladin/ShadowKnight?
 		/call amIMelee
 		/RETURN ${Macro.Return}
 	}
-	/if (${who.Equal[priest]}) {
+	/if (${who.Lower.Equal[priest]}) {
 		|- Cleric/Druid/Shaman? 
 		/if (${Me.Class.HealerType}) {
 			/RETURN TRUE
 		}
 	}
-	/if (${who.Equal[nuker]}) {
+	/if (${who.Lower.Equal[nuker]}) {
 		|- Wizard/Magician/Necromancer/Enchanter?
 		/call amINuker
 		/RETURN ${Macro.Return}
 	}
-	/if (${who.Equal[${Me.Class.Name}]} || ${who.Equal[${Me.Class.ShortName}]}) {
+	/if (${who.Lower.Equal[${Me.Class.Name.Lower}]} || ${who.Lower.Equal[${Me.Class.ShortName.Lower}]}) {
 		/RETURN TRUE
 	}
-	/if (${who.Equal[${Me.CleanName}]}) {
+	/if (${who.Lower.Equal[${Me.CleanName.Lower}]}) {
 		/RETURN TRUE
 	}
 /RETURN FALSE
