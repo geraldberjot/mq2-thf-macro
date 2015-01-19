@@ -440,13 +440,13 @@ SUB cast_Item(int targetID, castParams)
 	} else /if (${castReturn.Equal[NOTREADY]} && !${FindItem[=${pendingCast}].Timer}) {
 	
 		|- Check for a user defined timer.
-		/if (!${Ini[${itemTimers_Ini},${pendingCast.Left[1]},${pendingCast}].Length}) {
-			/channel Cannot cast [${pendingCast}] there is an inconsistency with the itemTimer.  Please manually set an item recast timer, in seconds, in [${itemTimers_Ini}].
-			/call writeToIni "${itemTimers_Ini},${pendingCast.Left[1]},${pendingCast}" 0s
+		/if (!${Ini[${iniTimers},${pendingCast.Left[1]},${pendingCast}].Length}) {
+			/channel Cannot cast [${pendingCast}] there is an inconsistency with the itemTimer.  Please manually set an item recast timer, in seconds, in [${iniTimers}].
+			/call writeToIni "${iniTimers},${pendingCast.Left[1]},${pendingCast}" 0s
 		} else {
 		
 			|- Create a timer from the imported user setting.
-			/if (${Int[${Ini[${itemTimers_Ini},${pendingCast.Left[1]},${pendingCast}]}]}) /call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Ini[${itemTimers_Ini},${pendingCast.Left[1]},${pendingCast}]}]} * 10]}"
+			/if (${Int[${Ini[${iniTimers},${pendingCast.Left[1]},${pendingCast}]}]}) /call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Ini[${iniTimers},${pendingCast.Left[1]},${pendingCast}]}]} * 10]}"
 		}
 	}
 
@@ -784,30 +784,30 @@ SUB Interrupt
 |- Events to check while casting.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB Casting_Events
-/doevents BeginCast
-/doevents Recover
-/doevents Fizzle
-/doevents Interrupt
-/doevents Standing
-/doevents FDFail
-/doevents OutOfRange
-/doevents OutOfMana
-/doevents NoLOS
-/doevents Resisted2
-/doevents Resisted
-/doevents Immune
-/doevents Stunned
-/doevents Collapse
-/doevents NoTarget
-/doevents NotReady
-/doevents NoHold
-/doevents outDoor
-/doevents PopUp_Resist
-/doevents PopUp_Immune
-/doevents PopUp_Oom
-/doevents PopUp_Range
-/doevents PopUp_LoS
-/doevents PopUp_Landed
+	/doevents BeginCast
+	/doevents Recover
+	/doevents Fizzle
+	/doevents Interrupt
+	/doevents Standing
+	/doevents FDFail
+	/doevents OutOfRange
+	/doevents OutOfMana
+	/doevents NoLOS
+	/doevents Resisted2
+	/doevents Resisted
+	/doevents Immune
+	/doevents Stunned
+	/doevents Collapse
+	/doevents NoTarget
+	/doevents NotReady
+	/doevents NoHold
+	/doevents outDoor
+	/doevents PopUp_Resist
+	/doevents PopUp_Immune
+	/doevents PopUp_Oom
+	/doevents PopUp_Range
+	/doevents PopUp_LoS
+	/doevents PopUp_Landed
 /RETURN
 
 
@@ -1015,8 +1015,8 @@ SUB event_Missing_Components(line, missingComponent)
 
 
 SUB casting_Setup
-/call iniToVar "${iniGeneral},Debug,Debug Casting (On/Off)" Debug_Casting bool outer
-/if (${Debug} || ${Debug_Casting}) /echo |- casting_Setup ==>
+	/call iniToVar "${iniGeneral},Debug,Debug Casting (On/Off)" Debug_Casting bool outer
+	/if (${Debug} || ${Debug_Casting}) /echo |- casting_Setup ==>
 	
 	/declare pendingCast string outer
 	/declare pendingSpell string outer
@@ -1030,21 +1030,18 @@ SUB casting_Setup
 	/declare no_Cast bool outer FALSE
 	/declare badSpells string outer
 	
-	|- Add Casting File Paths
-	/if (!${Ini[${MacroData_Ini},File Paths,Item Timer Settings].Length}) /call writeToIni "${MacroData_Ini},File Paths,Item Timer Settings" "e3 Macro Inis\Item Timers.ini"
-	
-	|- Import itemTimers_Ini.
-	/if (!${Ini[${MacroData_Ini},File Paths,Item Timer Settings].Length}) {
-		/echo ERROR: Could not find designated file path for [Item Timer Settings], please review [${MacroData_Ini}] and restart.
+	|- Import iniTimers.
+	/if (!${Ini[${iniTHF},Paths,Item Timer Settings].Length}) {
+		/echo ERROR: Could not find designated file path for [Item Timer Settings], please review [${iniTHF}] and restart.
 		/endmacro
 	} else {
-		/declare itemTimers_Ini string outer ${Ini[${MacroData_Ini},File Paths,Item Timer Settings]}
+		/declare iniTimers string outer ${Ini[${iniTHF},Paths,Item Timer Settings]}
 	}
 	
-	|- Generate an itemTimers_Ini.
-	/if (!${Ini[${itemTimers_Ini},A].Length}) {
+	|- Generate an iniTimers.
+	/if (!${Ini[${iniTimers},A].Length}) {
 		/echo Creating item timer settings file...
-		/call Build_Alphabetized_Ini "${itemTimers_Ini}"
+		/call Build_Alphabetized_Ini "${iniTimers}"
 	}
 
 	|- Import Casting Settings.
@@ -1067,16 +1064,18 @@ SUB casting_Background_Events
 
 
 SUB casting_MacroSettings
-/if (${Debug} || ${Debug_Casting}) /echo |- casting_MacroSettings ==>
+	/if (${Debug}) /echo |- casting_MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug Casting (On/Off)"
+	/call writeToIni "${iniTHF},Paths,Item Timer Settings" "thf_inis\Timers.ini"
+	
+	/call writeToIni "${iniGeneral},Debug,Debug Casting (On/Off)" Off 1
 	/call writeToIni "${iniGeneral},AA-ID Overrides,Improved Familiar" 352,167,52
+	
+	/call writeToIni "${iniGeneral},Casting,Default Spell Set" Max 1
+	/call writeToIni "${iniGeneral},Casting,Default Spell Gem" 9 1
+	/call writeToIni "${iniGeneral},Casting,Give Up Casting Time" 15 1
 
-	/call writeToIni "${iniGeneral},Casting,Default Spell Set" Max
-	/call writeToIni "${iniGeneral},Casting,Default Spell Gem" 9
-	/call writeToIni "${iniGeneral},Casting,Give Up Casting Time" 15
-
-/if (${Debug} || ${Debug_Casting}) /echo <== casting_MacroSettings -|
+	/if (${Debug}) /echo <== casting_MacroSettings -|
 /RETURN
 
 

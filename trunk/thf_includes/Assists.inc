@@ -20,7 +20,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 	
 		|- Check that you're not assisting on a corpse, pet or pc
 		/if (${Spawn[id ${mobID}].Type.Equal[Corpse]} || !${Select[${Spawn[id ${mobID}].Type},${outerAcceptableTargetTypes}]}) {
-			/if (${outerDebug} || ${outerDebug_Assists}) /echo [${Spawn[id ${MobID}].CleanName}] is not an acceptable TargetType.
+			/if (${outerDebug} || ${outerDebug_Assists}) /echo [${Spawn[id ${mobID}].CleanName}] is not an acceptable TargetType.
 		} else {
 			|- Check target distance.
 			/if (${Spawn[${mobID}].Distance} > ${outerMaxAssistDistance}) {
@@ -1471,16 +1471,16 @@ SUB checkAssistBackgroundEvents
 
 
 SUB assist_MacroSettings
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assist_MacroSettings ==>
+	/if (${outerDebug}) /echo |- assist_MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug Assists (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Assists (On/Off)" Off TRUE
 
 	/call writeToIni "${iniGeneral},Assists,Auto-Assist (On/Off)" On
 	/call writeToIni "${iniGeneral},Assists,Max Engage Distance" 250
 	/call writeToIni "${iniGeneral},Assists,AE Threat Range" 100
 	/call writeToIni "${iniGeneral},Assists,Acceptable Target Types" NPC,Pet
 	
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assist_MacroSettings -|
+	/if (${outerDebug}) /echo <== assist_MacroSettings -|
 /RETURN
 
 

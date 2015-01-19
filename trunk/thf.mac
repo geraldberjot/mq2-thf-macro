@@ -32,6 +32,7 @@ SUB Main
 	
 	/channel THF Macro started for ${Me.CleanName} [${Me.Class}]
 	
+	/declare i int local
 	:MainLoop	
 	/if (${outerDebug}) /echo |- MainLoop ==>
 
@@ -78,7 +79,6 @@ SUB Main
 			|******************************************************************************|
 			|******************************* Main Functions *******************************|
 			|******************************************************************************|
-			/declare i int local
 			/for i 1 to ${functions.Size}
 				/if (${Bool[${functions[${i}]}]}) /call ${functions[${i}]}
 			/if (!${outerActionTaken}) /next i
