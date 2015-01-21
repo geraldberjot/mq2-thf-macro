@@ -5,6 +5,13 @@
 |- Contains assisting related functions for thf.mac.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 
+#EVENT Attack "<#1#> #2# attack #3#"
+SUB EVENT_Attack(String line, String from, String who, Int mobID)
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_Assist ==>
+	
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_Assist -|
+/RETURN
+
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Engages assist functions on ChatSender, and bots who are in the same zone.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
