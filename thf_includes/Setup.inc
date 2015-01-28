@@ -163,6 +163,7 @@ SUB EVENT_MakeMacroSettingsIni()
 	/call writeToIni "${iniGeneral},Debug,Debug Mode (On/Off)" Off TRUE
 	/call writeToIni "${iniGeneral},General,Includes" Assist/Background/Basics/buffCheck/Casting
 	/call writeToIni "${iniGeneral},General,StickCommand" "5 hold behindonce uw"
+	/call writeToIni "${iniGeneral},General,Main Tank" "[your tank name here]"
 	
 	/call split "${iniGeneral},General,Includes" includes outer /
 	
