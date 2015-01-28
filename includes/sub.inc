@@ -1,6 +1,6 @@
 
 SUB loadCustomVars
-	/declare stickCommand string outer ${Ini[${iniGlobal},Global,stickCommand]}
+	/declare outerStickCommand string outer ${Ini[${iniGlobal},Global,stickCommand]}
 /RETURN
 
 SUB joinChannel

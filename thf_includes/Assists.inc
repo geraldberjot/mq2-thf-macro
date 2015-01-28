@@ -5,9 +5,21 @@
 |- Contains assisting related functions for thf.mac.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 
-#EVENT Attack "<#1#> #2# attack #3#"
-SUB EVENT_Attack(String line, String from, String who, Int mobID)
+#EVENT Attack "<#1#> #2# attack #3# (#4#)"
+SUB EVENT_Attack(String line, String from, String who, Int mobID, Int dmg)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_Assist ==>
+	
+	/call amIConcerned ${from} ${who} TRUE
+	/if (${Macro.Return}) {
+		|- Move tank on target
+		/if (${Me.CleanName.Equal[${outerMainTank}]}) {
+			/stick id ${mobID} 7 uw hold front
+			/attack on
+			/channel Attacking ${Target.CleanName} (${Target.ID})
+			/varset outerDamageLevel ${dmg}
+			/bc ${who} assist on ${mobID}
+		}
+	}
 	
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_Assist -|
 /RETURN

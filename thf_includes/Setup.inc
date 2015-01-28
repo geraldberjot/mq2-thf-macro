@@ -7,8 +7,8 @@
 
 #INCLUDE thf_includes\ninjadvloot.inc
 #INCLUDE thf_includes\wait4Rez.inc
-#INCLUDE thf_includes\sub.inc
-#INCLUDE thf_includes\events.inc
+|- #INCLUDE thf_includes\sub.inc
+|- #INCLUDE thf_includes\events.inc
 #INCLUDE thf_includes\MQ2Cast_Spell_Routines.inc
 
 #INCLUDE thf_includes\Alerts.inc
@@ -182,7 +182,9 @@ SUB readMacroSettings()
 	/call iniToVar "${iniGeneral},General,Channel" channel string outer
 	/call joinChannel
 
-	/call iniToVar "${iniGeneral},General,StickCommand" stickCommand string outer
+	/call iniToVar "${iniGeneral},General,StickCommand" outerStickCommand string outer
+	
+	/call iniToVar "${iniGeneral},General,Main Tank" outerMainTank string outer
 	
 	/call split "${iniGeneral},General,Includes" includes outer /
 	/call loadAll includes Setup
