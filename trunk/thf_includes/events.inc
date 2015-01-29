@@ -650,11 +650,11 @@ SUB EVENT_Hail(String line, String Cible)
 	/RETURN
 
 SUB EVENT_Task(String line, String Tache)
-	/channel ${myMain} ${line}
+	/chat ${channelNumber} ${myMain} ${line}
 /RETURN
 
 SUB EVENT_Assign(String line, String Tache)
-	/channel ${myMain} ${line}
+	/chat ${channelNumber} ${myMain} ${line}
 /RETURN
 
 SUB EVENT_Tell(line, string from, string Msg)
@@ -671,7 +671,7 @@ SUB EVENT_Tell(line, string from, string Msg)
 		}
 	} else {
 		/if (${Me.CleanName.NotEqual[${myMain}]}) {
-			/channel ${line}
+			/chat ${channelNumber} ${line}
 		}
 	}
 /RETURN

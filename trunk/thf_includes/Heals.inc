@@ -54,7 +54,7 @@ SUB check_lifeSupport
 		|- get healPct
 		/if (!${lifeSupport[${i}].Find[/healpct|]}) {
 			/echo There is no HealPct listed with, [Life Support#${i}=${lifeSupport[${i}]}]; removing it from my Life Support list. Please review this entry, and restart the macro
-			/channel There is no HealPct listed with, [Life Support#${i}=${lifeSupport[${i}]}]; removing it from my Life Support list. Please review this entry, and restart the macro
+			/chat ${channelNumber} There is no HealPct listed with, [Life Support#${i}=${lifeSupport[${i}]}]; removing it from my Life Support list. Please review this entry, and restart the macro
 		} else {
 			/call argueString HealPct "${lifeSupport[${i}]}"
 			/varset healPct ${Macro.Return}
@@ -119,7 +119,7 @@ SUB check_healSpells
 							|- /HealPct Check
 							/if (!${tankHeals[${x}].Find[/HealPct|]}) {
 								/echo There is no /HealPct associated with [${tankHeals[${x}]}].  Please check this entry, and restart the macro.
-								/channel There is no /HealPct associated with [${tankHeals[${x}]}].  Please check this entry, and restart the macro.
+								/chat ${channelNumber} There is no /HealPct associated with [${tankHeals[${x}]}].  Please check this entry, and restart the macro.
 								/call RemoveArrayElement tankHeals "${tankHeals[${x}]}"
 							} else {
 								/call argueString HealPct "${tankHeals[${x}]}"
@@ -199,7 +199,7 @@ SUB check_healSpells
 							|- /HealPct Check
 							/if (!${patchHeals[${x}].Find[/HealPct|]}) {
 								/echo There is no /HealPct associated with [${patchHeals[${x}]}].  Please check this entry, and restart the macro.
-								/channel There is no /HealPct associated with [${patchHeals[${x}]}].  Please check this entry, and restart the macro.
+								/chat ${channelNumber} There is no /HealPct associated with [${patchHeals[${x}]}].  Please check this entry, and restart the macro.
 								/call RemoveArrayElement patchHeals "${patchHeals[${x}]}"
 							} else {
 								/call argueString HealPct "${patchHeals[${x}]}"
@@ -410,7 +410,7 @@ SUB check_HoTs
 					|- /HealPct Check
 					/if (!${hotSpells[${i}].Find[/HealPct|]}) {
 						/echo There is no /HealPct associated with [${hotSpells[${i}]}].  Please check this entry, and restart the macro.
-						/channel There is no /HealPct associated with [${hotSpells[${i}]}].  Please check this entry, and restart the macro.
+						/chat ${channelNumber} There is no /HealPct associated with [${hotSpells[${i}]}].  Please check this entry, and restart the macro.
 						/call RemoveArrayElement hotSpells "${hotSpells[${i}]}"
 					} else {
 						/call argueString HealPct "${hotSpells[${i}]}"
@@ -583,7 +583,7 @@ SUB check_groupHeals
 				|- /HealPct Check
 				/if (!${groupHeals[${i}].Find[/HealPct|]}) {
 					/echo There is no /HealPct associated with [${groupHeals[${i}]}].  Please check this entry, and restart the macro.
-					/channel There is no /HealPct associated with [${groupHeals[${i}]}].  Please check this entry, and restart the macro.
+					/chat ${channelNumber} There is no /HealPct associated with [${groupHeals[${i}]}].  Please check this entry, and restart the macro.
 					/call RemoveArrayElement groupHeals "${groupHeals[${i}]}"
 				} else {
 					/call argueString HealPct "${groupHeals[${i}]}"

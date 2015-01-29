@@ -69,7 +69,7 @@ SUB event_UseCoprseSummoner(line, ChatSender)
 						/if (${Math.Calc[${Me.CashBank} / 1000].Int} > ${SoulStoneCost}) {
 							/call withdraw_Plat
 						} else {
-							/channel I don't have enough money to buy a soulstone.
+							/chat ${channelNumber} I don't have enough money to buy a soulstone.
 							/goto :skip
 						}
 					}
@@ -170,7 +170,7 @@ SUB withdraw_Plat
 		/call MoveTo -SpawnID|${Spawn[npc A Shrewd Banker].ID}
 		
 		/if (${Target.Distance} > 15) {
-			/channel I failed to move to the banker
+			/chat ${channelNumber} I failed to move to the banker
 		} else {
 			
 			|- Create a retryTimer and set it for 30 seconds.
@@ -196,7 +196,7 @@ SUB withdraw_Plat
 				
 				|- Else, announce to user.
 				} else {
-					/channel ERROR: Failed to open the bank window.
+					/chat ${channelNumber} ERROR: Failed to open the bank window.
 				}
 				
 			|- Else, if the bank window is open.
@@ -215,7 +215,7 @@ SUB withdraw_Plat
 					
 					|- Else, announce to user.
 					} else {
-						/channel ERROR: Failed to open the platinum withdraw box.
+						/chat ${channelNumber} ERROR: Failed to open the platinum withdraw box.
 					}
 					
 				|- Else, if the platinum QuantityWnd did open.
@@ -248,7 +248,7 @@ SUB withdraw_Plat
 						/if (${retryTimer}) {
 							/goto :withdraw_Loop
 						} else {
-							/channel  ERROR: Failed to withdraw platinum from the bank.
+							/chat ${channelNumber}  ERROR: Failed to withdraw platinum from the bank.
 						}
 					} else  {
 						/notify BigBankWnd BIGB_DoneButton leftmouseup

@@ -248,7 +248,7 @@ SUB check_PetWeapons
 						/if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons -|- I have already given weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}].
 					} else {
 
-						|- /channel Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
+						|- /chat ${channelNumber} Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
 						/call EVENT_petWeapons PLACEHOLDER ${NetBots.Client[${i}]}
 						/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}" "${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}" 1
 					}

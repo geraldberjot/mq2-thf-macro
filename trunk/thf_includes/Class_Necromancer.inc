@@ -125,7 +125,7 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 		|- Turn off Mana Dump
 		/if (${eventParams.Equal[end]} || ${eventParams.Equal[off]} || ${eventParams.Equal[stop]}) {
 			/if (${manaDump}) {
-				/channel Ending mana dump.
+				/chat ${channelNumber} Ending mana dump.
 				/varset manaDump FALSE
 			}
 			
@@ -134,7 +134,7 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 		
 			|- Are mana dump spells defined?
 			/if (!${Defined[manaDump_Spells]}) {
-				/channel You must define mana dump spells in my Bot Ini before engaging mana dump.
+				/chat ${channelNumber} You must define mana dump spells in my Bot Ini before engaging mana dump.
 			} else {
 
 			|- *** Set mana dump variables *** |
@@ -177,7 +177,7 @@ SUB EVENT_toggle_manaDump(line, from, eventParams)
 					/declare manaDump bool outer TRUE
 				}
 				
-				/channel Mana dumping [${manaDump_Targets}] who fall below [${manaDump_Pct}m].
+				/chat ${channelNumber} Mana dumping [${manaDump_Targets}] who fall below [${manaDump_Pct}m].
 			}
 		}
 	}
@@ -298,7 +298,7 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 					} else {
 					
 					|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------Okay...I guess I'll twitch you.
-						/if (${Verbosity}) /channel Twitching ${Spawn[${InFrom}].CleanName} ${TwitchNum} times.
+						/if (${Verbosity}) /chat ${channelNumber} Twitching ${Spawn[${InFrom}].CleanName} ${TwitchNum} times.
 						/tell ${ChatSender} Twitching you [${TwitchNum}] times.
 						
 						/declare twitchSpells[2] string local
@@ -313,7 +313,7 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 						/if (!${Me.Gem[Covetous Subversion]} || !${Me.Gem[Sedulous Subversion]}) {
 							
 							/declare spellsetMem_Timer timer local 100
-							/channel Loading twitch spells...
+							/chat ${channelNumber} Loading twitch spells...
 							/memspellset TwitchSpells
 							:Memloop
 							/if (${outerDebug}) /echo |- EVENT_twitchMe -|- :Memloop

@@ -468,7 +468,7 @@ SUB event_run_Route(line, ChatSender, route_Name)
 				
 				|- Check for a starting point.
 				/if (!${startpointFound}) {
-					/channel I could not find a starting point for [${route_Name}].
+					/chat ${channelNumber} I could not find a starting point for [${route_Name}].
 				} else {
 				
 					|- For the closest waypoint to the end of the route.
@@ -532,7 +532,7 @@ SUB event_run_Route(line, ChatSender, route_Name)
 					/next i
 					
 					|- Announce to user.
-					/if (${Verbosity}) /channel I have arrived at my destination.
+					/if (${Verbosity}) /chat ${channelNumber} I have arrived at my destination.
 				}
 			}
 		}

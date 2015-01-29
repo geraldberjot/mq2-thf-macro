@@ -69,10 +69,10 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 			/if (${Select[${melodyName},Stop,End,Pause]}) {
 				/varset playingMelody FALSE
 				/varset songSet
-				/channel Ending melody.
+				/chat ${channelNumber} Ending melody.
 				/twist end
 			} else {
-				/channel [${melodyName}] is not a known melody.
+				/chat ${channelNumber} [${melodyName}] is not a known melody.
 			}
 		} else {
 		
@@ -113,7 +113,7 @@ SUB EVENT_startMelody(String line, String from, melodyName)
 				|- Twist the newly built songList.
 				/varset playingMelody TRUE
 				/varset songSet ${songList}
-				/channel Playing [${melodyName}] melody...
+				/chat ${channelNumber} Playing [${melodyName}] melody...
 				/twist ${songSet}
 			}
 		}

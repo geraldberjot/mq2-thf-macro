@@ -400,7 +400,7 @@ SUB ClearCursor
 			
 		|-Else, if I'm out of free inventory space, alert the user, and end the macro.
 		} else {
-			/channel I have run out of inventory space and I have an item on my cursor!!!
+			/chat ${channelNumber} I have run out of inventory space and I have an item on my cursor!!!
 			/for i 1 to 5
 				/beep
 			/next i
@@ -416,7 +416,7 @@ SUB ClearCursor
 			
 			|-If I have no free pack slots, alert the user, and end the macro.
 			/if (${InvSlot[pack8].Item.Container}) {
-				/channel I have run out of inventory space and I have a bag on my cursor!!!
+				/chat ${channelNumber} I have run out of inventory space and I have a bag on my cursor!!!
 				/for i 1 to 7
 					/beep
 				/next i
@@ -712,27 +712,6 @@ SUB checkToons()
 	/varset toonsInZone ${count}
 /RETURN
 
-#EVENT Follow "[#1#] Follow #2#"
-#EVENT Follow "<#1#> Follow #2#"
-SUB EVENT_Follow(String line, String from, String who)
-	/if (${outerDebug}) /echo |- EVENT_Follow ==>
-
-	/call amIConcerned ${from} ${who} TRUE
-		/if (${Macro.Return}) {
-			/if (${Spawn[${from}].ID} == ${Me.ID}) {
-				/RETURN
-			}
-		/call stopCurrentAction FALSE
-		/target ${from}
-		/face fast
-		/delay 1s
-		/stick ${stickCommand}
-		/channel Sticking to ${from}
-	}
-	
-	/if (${outerDebug}) /echo <== EVENT_Follow -|
-/RETURN
-
 |**
 
 e3 event template
@@ -857,7 +836,7 @@ SUB MoveToLoc(float y_loc, float x_loc)
 	/echo Moving to location [${y_loc},${x_loc}]
 }
 	/if (!${LineOfSight[${Me.Y},${Me.X}:${y_loc},${x_loc}]}) {
-		/channel I do not have line of sight on my destination.
+		/chat ${channelNumber} I do not have line of sight on my destination.
 	} else {
 		
 		/declare retryTimer timer local 150
@@ -885,7 +864,7 @@ SUB MoveToLoc(float y_loc, float x_loc)
 
 	|---------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------------------------------------------Calulate distance to desired location.
 		/call Triangulate_Distance ${Me.Loc.Replace[ ,]} ${y_loc},${x_loc}
-		/if (${Macro.Return} > 15) /channel I did not arrive at the desired location.
+		/if (${Macro.Return} > 15) /chat ${channelNumber} I did not arrive at the desired location.
 	}
 	
 /if (${outerDebug}) /echo <== MoveToLoc -|

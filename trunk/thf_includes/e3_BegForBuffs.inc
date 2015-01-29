@@ -458,7 +458,7 @@ SUB EVENT_createSpellAlias(line, ChatSender, newAlias, spellName)
 /if (${Debug} || ${Debug_BegForBuffs}) /echo |- EVENT_createSpellAlias ==>
 
 	/if (${ChatSender.Equal[${Me.CleanName}]} || ${ChatSender.Equal[MQ2]}) {
-		/channel Adding spell alias [${newAlias}] to cast [${spellName}] for [${Me.Class}s].
+		/chat ${channelNumber} Adding spell alias [${newAlias}] to cast [${spellName}] for [${Me.Class}s].
 		/call writeToIni "${SpellAliases_Ini},${Me.Class},${newAlias}" "${spellName}" 1
 	}
 	
