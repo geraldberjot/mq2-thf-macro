@@ -20,7 +20,7 @@ SUB EVENT_Lessons(line, ChatSender)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Lesson of the Devoted]}) {
-			/channel Lesson of the Devoted is not ready.
+			/chat ${channelNumber} Lesson of the Devoted is not ready.
 		} else {
 
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
@@ -69,7 +69,7 @@ SUB EVENT_Infusion(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Infusion of the Faithful]}) {
-			/channel Infusion of the Faithful is not ready.
+			/chat ${channelNumber} Infusion of the Faithful is not ready.
 		} else {
 
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
@@ -118,7 +118,7 @@ SUB EVENT_Staunch(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Staunch Recovery]}) {
-			/channel Staunch Recovery is not ready.
+			/chat ${channelNumber} Staunch Recovery is not ready.
 		} else {
 
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
@@ -167,7 +167,7 @@ SUB EVENT_Servant(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Steadfast Servant]}) {
-			/channel Steadfast Servant is not ready.
+			/chat ${channelNumber} Steadfast Servant is not ready.
 		} else {
 
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
@@ -216,7 +216,7 @@ SUB EVENT_Intensity(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Intensity of the Resolute]}) {
-			/channel Intensity of the Resolute is not ready.
+			/chat ${channelNumber} Intensity of the Resolute is not ready.
 		} else {
 
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
@@ -265,7 +265,7 @@ SUB EVENT_RecoverCorpses(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Expedient Recovery]}) {
-			/channel Expedient Recovery is not ready.
+			/chat ${channelNumber} Expedient Recovery is not ready.
 		} else {
 
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
@@ -317,7 +317,7 @@ SUB EVENT_MGB(line, ChatSender, eventParams)
 		|- -Check AA is ready.
 		/if (${Me.AltAbility[Mass Group Buff]}) {
 			/if (!${Me.AltAbilityReady[Mass Group Buff]}) {
-				/channel Mass Group Buff is not ready.
+				/chat ${channelNumber} Mass Group Buff is not ready.
 			} else {
 
 				|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist
@@ -367,7 +367,7 @@ SUB EVENT_GateToLobby(line, ChatSender, eventParams)
 	
 		|- -Check AA is ready.
 		/if (!${Me.AltAbilityReady[Throne of Heroes]}) {
-			/channel Throne of Heroes is not ready.
+			/chat ${channelNumber} Throne of Heroes is not ready.
 		} else {
 
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------If I'm a Bard, pause twist

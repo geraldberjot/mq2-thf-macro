@@ -50,7 +50,7 @@ SUB check_Gems
 	|- If more than 3 are empty
 	/if (${spellCount} > 3) {
 		/declare spellsetMem_Timer timer local 300
-		/channel Loading spells...
+		/chat ${channelNumber} Loading spells...
 		/ssm ${Default_SpellSet}
 		:Memloop
 		/if (${outerDebug} || ${outerDebug_Background}) /echo |- check_Gems -|- :Memloop
@@ -59,7 +59,7 @@ SUB check_Gems
 		/if (${outerDebug} || ${outerDebug_Background}) /echo spellsetMem_Timer = [${spellsetMem_Timer}]
 		/if (${Window[SpellBookWnd].Open} && ${spellsetMem_Timer}) /goto :Memloop
 		/if (${Me.Sitting}) /stand	
-		/channel Spell set loaded !
+		/chat ${channelNumber} Spell set loaded !
 	}
 	
 	/if (${outerDebug} || ${outerDebug_Background}) /echo <== check_Gems -|
@@ -221,7 +221,7 @@ SUB check_Active
 			/if (${outerAssisting} && ${StickOn}) /attack on
 		} else {
 			/if (!${Defined[feign_Timer]}) {
-				/channel CURRENTLY IN 'FEIGN DEATH' !
+				/chat ${channelNumber} CURRENTLY IN 'FEIGN DEATH' !
 				/declare feign_Timer timer outer 15s
 			}
 		}
@@ -358,7 +358,7 @@ SUB check_Feigning
 		} else {
 		
 			/if (!${Defined[feign_Timer]}) {
-				/channel I AM FEIGNING !
+				/chat ${channelNumber} I AM FEIGNING !
 				/declare feign_Timer timer outer 15s
 			}
 		}

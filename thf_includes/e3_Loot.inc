@@ -117,7 +117,7 @@ SUB loot_It(int corpseID)
 						/next x
 						
 						/declare fullInventory_Alert bool outer TRUE
-						/channel My inventory is full!  I will continue to link items on corpses, but cannot loot anything else.
+						/chat ${channelNumber} My inventory is full!  I will continue to link items on corpses, but cannot loot anything else.
 					}
 				} else {
 
@@ -238,8 +238,8 @@ SUB get_lootSetting(invSlot, itemSlot)
 		/if (!${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}].Length}) {
 			/echo /call writeToIni "${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}" ${If[${InvSlot[${invSlot}].Item.Container},Container,${If[${InvSlot[${invSlot}].Item.NoDrop},Skip,Keep${If[${InvSlot[${invSlot}].Item.Stackable},|${InvSlot[${invSlot}].Item.StackSize},]}]}]}
 			/call writeToIni "${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}" ${If[${InvSlot[${invSlot}].Item.Container},Container,${If[${InvSlot[${invSlot}].Item.NoDrop},Skip,Keep${If[${InvSlot[${invSlot}].Item.Stackable},|${InvSlot[${invSlot}].Item.StackSize},]}]}]}
-			/echo /channel Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
-			/channel Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
+			/echo /chat ${channelNumber} Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
+			/chat ${channelNumber} Added: [${InvSlot[${invSlot}].Item.Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
 			
 			|- Add scripts to import old loot settings from ninjaloot.ini, and old e3 loot inis
 		}
@@ -261,7 +261,7 @@ SUB get_lootSetting(invSlot, itemSlot)
 		|- Check for a Loot_Ini entry
 		/if (!${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}].Length}) {
 			/call writeToIni "${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}" ${If[${Me.Inventory[${invSlot}].Item[${itemSlot}].Container},Container,${If[${Me.Inventory[${invSlot}].Item[${itemSlot}].NoDrop},Skip,Keep${If[${Me.Inventory[${invSlot}].Item[${itemSlot}].Stackable},|${Me.Inventory[${invSlot}].Item[${itemSlot}].StackSize},]}]}]}
-			/channel Added: [${Me.Inventory[${invSlot}].Item[${itemSlot}].Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
+			/chat ${channelNumber} Added: [${Me.Inventory[${invSlot}].Item[${itemSlot}].Name}(${Ini[${Loot_Ini},${itemName.Left[1]},${itemName} ${itemValue}${iniEntryVariables}]})] to [${Loot_Ini}].
 			
 			|- Add scripts to import old loot settings from ninjaloot.ini, and old e3 loot inis
 		}

@@ -127,7 +127,7 @@ SUB EVENT_Rez(string line, string ChatSender)
 #EVENT AE_Rez "[MQ2] Rez all"
 SUB EVENT_AE_Rez
 	/if (${Select[${Me.Class},Cleric,Paladin]}) {
-		/if (${outerDebug} || ${outerDebug_Basics}) /echo |- EVENT_AE_Rez ==>
+		/if (${outerDebug} || ${outerouterDebugBasics}) /echo |- EVENT_AE_Rez ==>
 	
 		/if (!${SpawnCount['s radius 100]}) {
 			/echo I couldn't summon any corpses to ressurect...
@@ -216,10 +216,10 @@ SUB EVENT_AE_Rez
 			/deletevar lastChecked
 			/deletevar rezzable
 			
-			/channel All viable corpses nearby, have been ressurected.
+			/chat ${channelNumber} All viable corpses nearby, have been ressurected.
 		}
 
-		/if (${outerDebug} || ${outerDebug_Basics}) /echo <== EVENT_AE_Rez -|
+		/if (${outerDebug} || ${outerouterDebugBasics}) /echo <== EVENT_AE_Rez -|
 	}
 /RETURN
 

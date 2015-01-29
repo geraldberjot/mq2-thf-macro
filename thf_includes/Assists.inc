@@ -13,10 +13,14 @@ SUB EVENT_Attack(String line, String from, String who, Int mobID, Int dmg)
 	/if (${Macro.Return}) {
 		|- Move tank on target
 		/if (${Me.CleanName.Equal[${outerMainTank}]}) {
-			/channel I'm the MT, engaging target !
-			/stick id ${mobID} 7 uw hold front
+			/chat ${channelNumber} I'm the MT, engaging target !
+			/target clear
+			/target id ${mobID}
+			/stick 7 uw hold front
+
 			/attack on
-			/channel Attacking ${Target.CleanName} (${Target.ID})
+			/chat ${channelNumber} Attacking -= ${Target.CleanName} =- (id = ${Target.ID})
+			/if (!${Defined[outerDamageLevel]}) /declare outerDamageLevel int outer
 			/varset outerDamageLevel ${dmg}
 			/bc ${who} assist on ${mobID}
 		}
@@ -44,7 +48,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 		} else {
 			|- Check target distance.
 			/if (${Spawn[${mobID}].Distance} > ${outerMaxAssistDistance}) {
-				/channel ${Spawn[${mobID}].CleanName} is too far away.
+				/chat ${channelNumber} ${Spawn[${mobID}].CleanName} is too far away.
 			} else {
 				|- Wait to catch up to group, before engage.
 				/if (${globalFollowing} && ${Spawn[${globalFollowTarget}].Distance} > ${LeashLength} && ${Me.Moving}) {
@@ -71,7 +75,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 				
 				|- If the macro is controlling me, engage.
 				/if (${outerAllowControl}) {
-					/channel Attacking - ${outerAssistTarget} - ${Spawn[${outerAssistTarget}].CleanName}
+					/chat ${channelNumber} Attacking - ${outerAssistTarget} - ${Spawn[${outerAssistTarget}].CleanName}
 					|- Target AssistTarget.
 					/if (${Target.ID} != ${outerAssistTarget}) /call TrueTarget ${outerAssistTarget}
 					/call amIMelee
@@ -89,10 +93,10 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 					/if (${Me.Pet.ID}) {
 						/if (${Target.ID} != ${outerAssistTarget}) /call TrueTarget ${outerAssistTarget}
 						/delay 3
-						/if (${outerDebug} || ${outerDebug_Assists}) /channel Pet Check: Sending pet on - ${outerAssistTarget} - ${Spawn[${outerAssistTarget}].CleanName}
+						/if (${outerDebug} || ${outerDebug_Assists}) /chat ${channelNumber} Pet Check: Sending pet on - ${outerAssistTarget} - ${Spawn[${outerAssistTarget}].CleanName}
 						/pet attack
 					} else {
-						/channel NO pet to send !
+						/chat ${channelNumber} NO pet to send !
 					}
 				}
 				
@@ -118,7 +122,7 @@ SUB EVENT_BackOff(String line, String from)
 	|- Verify the event
 	/call amIConcerned ${from} ${Me.CleanName} TRUE
 	/if (${Macro.Return}) {
-		/if (${outerAssisting} && ${outerAllowControl}) /channel Backing off.
+		/if (${outerAssisting} && ${outerAllowControl}) /chat ${channelNumber} Backing off.
 		/if (!${Defined[PauseTarget]}) /declare PauseTarget int outer ${outerAssistTarget}
 		/if (${Me.Pet.ID}) /pet back off
 		/if (${Me.Combat}) /attack off
@@ -500,7 +504,7 @@ SUB CombatAbilities
 	/if (${Target.Distance} > ${Spawn[${Target.ID}].MaxRangeTo}) {
 		/if (${outerDebug}) {
 			/echo I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
-			/channel I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
+			/chat ${channelNumber} I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
 		}
 	} else {
 		/declare abilityName string local
@@ -521,7 +525,7 @@ SUB CombatAbilities
 			/if (${Me.PctEndurance} < ${minEnd}) {
 				/if (${outerDebug}) {
 					/echo I don't have enough endurance to use [${abilityName}].
-					/channel I don't have enough endurance to use [${abilityName}].
+					/chat ${channelNumber} I don't have enough endurance to use [${abilityName}].
 				}
 			} else {
 				|- Use ability. 
@@ -713,7 +717,7 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 			
 			|- If the spell was resisted.
 			/if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[RESISTED]}) {
-				/if (${Target.ID}) /channel **Warning** ${Spawn[id ${spellTarget}].CleanName} resisted ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]}.
+				/if (${Target.ID}) /chat ${channelNumber} **Warning** ${Spawn[id ${spellTarget}].CleanName} resisted ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]}.
 
 			|- If the spell did not take hold.
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[NOHOLD]}) {
@@ -721,12 +725,12 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 				
 			|- If the target was immune.
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[IMMUNE]}) {
-				/if (${Target.ID}) /channel **Warning** ${Spawn[id ${spellTarget}].CleanName} is IMMUNE to ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]}.
+				/if (${Target.ID}) /chat ${channelNumber} **Warning** ${Spawn[id ${spellTarget}].CleanName} is IMMUNE to ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]}.
 				/call createTimer "${spellTimer}" "30m"
 				
 			|- If the cast was successful.
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[SUCCESS]}) {
-				/if (${Verbosity} && ${Target.ID}) /channel Landed ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]} on ${Spawn[id ${spellTarget}].CleanName}!!.
+				/if (${Verbosity} && ${Target.ID}) /chat ${channelNumber} Landed ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]} on ${Spawn[id ${spellTarget}].CleanName}!!.
 				/if (${outerDebug} || ${outerDebug_Assists}) /echo |- longTermSpells - [${arrayName}] -|- Creating timer [${spellTimer}] -- [${newTimerSetting}]
 				/if (${longTerm_recastBuffer}) /varcalc newTimerSetting ${newTimerSetting} - ${longTerm_recastBuffer}
 				/call createTimer "${spellTimer}" "${newTimerSetting}"
@@ -772,7 +776,7 @@ SUB EVENT_DebuffsOn(line, ChatSender, MobID)
 			
 				|- Check range to the debuff target.
 				/if (${Spawn[id ${MobID}].Distance} > ${outerMaxAssistDistance}) {
-					/channel ${Spawn[${MobID}].CleanName} is too far away.
+					/chat ${channelNumber} ${Spawn[${MobID}].CleanName} is too far away.
 				} else {
 				
 					|- Check if the Debuff_Targets array is already defined
@@ -780,7 +784,7 @@ SUB EVENT_DebuffsOn(line, ChatSender, MobID)
 						/declare i int local
 						/for i 1 to ${Debuff_Targets.Size}
 							/if (${Debuff_Targets[${i}].Arg[1,_]} == ${MobID}) {
-								/channel I am already debuffing ${Spawn[id ${MobID}].CleanName}.
+								/chat ${channelNumber} I am already debuffing ${Spawn[id ${MobID}].CleanName}.
 								/goto :Skip
 							}
 						/next i
@@ -829,10 +833,10 @@ SUB EVENT_DebuffsOff(line, ChatSender, MobID)
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 		
 			/if (${Defined[${MobID}]}) {
-				/channel Ending Debuffs on ${Spawn[id ${MobID}].CleanName}.
+				/chat ${channelNumber} Ending Debuffs on ${Spawn[id ${MobID}].CleanName}.
 				/call RemoveArrayElement Debuff_Targets ${MobID}_${Zone.ID}
 			} else {
-				/channel Ending Debuffs on all targets.
+				/chat ${channelNumber} Ending Debuffs on all targets.
 				/deletevar Debuff_Targets
 			}
 		}
@@ -906,7 +910,7 @@ SUB EVENT_DoTsOn(line, ChatSender, MobID)
 			
 				|- Check range to the DoTs target.
 				/if (${Spawn[id ${MobID}].Distance} > ${outerMaxAssistDistance}) {
-					/channel ${Spawn[${MobID}].CleanName} is too far away.
+					/chat ${channelNumber} ${Spawn[${MobID}].CleanName} is too far away.
 				} else {
 				
 					|- Check if the DoT_Targets array is already defined
@@ -914,7 +918,7 @@ SUB EVENT_DoTsOn(line, ChatSender, MobID)
 						/declare i int local
 						/for i 1 to ${DoT_Targets.Size}
 							/if (${DoT_Targets[${i}].Arg[1,_]} == ${MobID}) {
-								/channel I am already debuffing ${Spawn[id ${MobID}].CleanName}.
+								/chat ${channelNumber} I am already debuffing ${Spawn[id ${MobID}].CleanName}.
 								/goto :Skip
 							}
 						/next i
@@ -965,10 +969,10 @@ SUB EVENT_DoTsOff(line, ChatSender, MobID)
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 		
 			/if (${Defined[${MobID}]}) {
-				/channel Ending DoTs on ${Spawn[id ${MobID}].CleanName}.
+				/chat ${channelNumber} Ending DoTs on ${Spawn[id ${MobID}].CleanName}.
 				/call RemoveArrayElement DoT_Targets ${MobID}_${Zone.ID}
 			} else {
-				/channel Ending DoTs on all targets.
+				/chat ${channelNumber} Ending DoTs on all targets.
 				/deletevar DoT_Targets
 			}
 		}
@@ -1035,7 +1039,7 @@ SUB EVENT_RainOn(line, ChatSender)
 		|- If I'm already casting rain spells
 		/if (!${Defined[do_Rain]}) {
 			/declare do_Rain bool outer TRUE
-			/channel Casting rain spells...
+			/chat ${channelNumber} Casting rain spells...
 		}
 	}
 }	
@@ -1063,7 +1067,7 @@ SUB EVENT_RainOff(line, ChatSender)
 		
 		/if (${Me.Casting.ID}) /interrupt 
 		/deletevar do_Rain
-		/channel Ending rain.
+		/chat ${channelNumber} Ending rain.
 		/doevents flush
 		/varset outerCombatTimer 10s
 	}
@@ -1199,7 +1203,7 @@ SUB EVENT_QuickBurn(line, ChatSender)
 			/if (${Defined[ChatSender]}) /if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 			|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
 			/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-				/channel Using Quick Burns...
+				/chat ${channelNumber} Using Quick Burns...
 				/if (!${Defined[use_QuickBurns]}) /declare use_QuickBurns bool outer TRUE
 			}
 		}
@@ -1230,7 +1234,7 @@ SUB EVENT_FullBurn(line, ChatSender)
 			/if (${Defined[ChatSender]}) /if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
 			|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
 			/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-				/channel Using Full Burns...
+				/chat ${channelNumber} Using Full Burns...
 				/if (!${Defined[use_FullBurns]}) /declare use_FullBurns bool outer TRUE
 				/if (!${Defined[use_QuickBurns]}) /declare use_QuickBurns bool outer TRUE
 			}

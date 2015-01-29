@@ -69,7 +69,7 @@ SUB check_SelfBuffs
 		/if (${Select[${buffName},${badSpells}]}) {
 			/if (${Debug} || ${Debug_BuffCheck}) {
 				/echo [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
-				/channel [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
+				/chat ${channelNumber} [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
 			}
 		} else {
 		
@@ -229,7 +229,7 @@ SUB check_InstantBuffs
 					
 					|- Check spell castTime
 					/if (${castTime} > .5) {
-						/channel Instant Buffs must have a cast time of .5 or less.  Removing [${InstantBuffs[${i}]}] from my Instant Buff list.  Please review this entry in [${iniToon}].
+						/chat ${channelNumber} Instant Buffs must have a cast time of .5 or less.  Removing [${InstantBuffs[${i}]}] from my Instant Buff list.  Please review this entry in [${iniToon}].
 						/call RemoveArrayElement InstantBuffs "${InstantBuffs[${i}]}"
 						/beep
 					} else {
@@ -289,7 +289,7 @@ SUB event_castGroupBuffs(line, ChatSender)
 			} else {
 		
 				/if (!${SpawnCount[id ${buffTarget} radius 200]}) {
-					/channel [${Spawn[id ${buffTarget}].CleanName}] is not in range.
+					/chat ${channelNumber} [${Spawn[id ${buffTarget}].CleanName}] is not in range.
 				} else {
 					
 					/for i 1 to ${GroupBuffs.Size}
@@ -298,7 +298,7 @@ SUB event_castGroupBuffs(line, ChatSender)
 					
 					/next i
 					
-					/channel Done buffing ${Spawn[id ${buffTarget}].CleanName}.
+					/chat ${channelNumber} Done buffing ${Spawn[id ${buffTarget}].CleanName}.
 				}
 			}
 		}
@@ -335,7 +335,7 @@ SUB EVENT_toggleBuffs(line, ChatSender, buffSetting)
 	
 	/varset BuffCheck ${buffSetting}
 	
-	/channel BuffCheck [${If[${BuffCheck},ON,OFF]}]
+	/chat ${channelNumber} BuffCheck [${If[${BuffCheck},ON,OFF]}]
 
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== EVENT_toggleBuffs -|
 /RETURN

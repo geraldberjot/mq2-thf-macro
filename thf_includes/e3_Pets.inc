@@ -69,7 +69,7 @@ SUB event_suspendMinion(live, ChatSender)
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 	
-		/if (${Me.Pet.ID}) /channel Suspending my pet...
+		/if (${Me.Pet.ID}) /chat ${channelNumber} Suspending my pet...
 		
 		/if (${Me.Casting.ID}) /call interrupt
 		
@@ -98,7 +98,7 @@ SUB event_returnMinion(line, ChatSender)
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 		
 		/if (${suspend_Pets}) {
-			/channel Returning my pet...
+			/chat ${channelNumber} Returning my pet...
 			/if (${currently_Suspended}) {
 				/call thf_Casting 0 "Suspended Minion"
 				/varset currently_Suspended FALSE

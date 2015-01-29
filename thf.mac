@@ -1,36 +1,16 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #TURBO 40
 
-#DEFINE /channel /chat ${channelNumber}
-
-#EVENT	NoHold					"Your spell did not take hold."
-#EVENT	Tell					"#1# tells you, '#2#'"
-#EVENT	Dead    				"#*#Returning to #*#"
-#EVENT	Camp					"It will take #*# seconds to prepare your camp."
-#EVENT	Hail					"You say, 'Hail, #1#'"
-#EVENT	Task					"Your task #1# has been updated."
-#EVENT	Assign					"You have been assigned the task #1#."
-#EVENT	Group					"#1# invites you to join a group."
-#EVENT 	DraekonVoice 			"You hear the voice of #1# calling to you, 'Come to me young one, we must combine our might to destroy him!'"
-#EVENT 	DraekonVoiceEnd	 		"You join your powers with #1#, preventing Draekon from attacking!"
-#EVENT 	DraekonNoGrass 			"The world begins to spin as Draekon starts to chant an evil spell pulling you towards him."
-#EVENT 	DraekonGrass 			"You escape the power of Draekon's spell"
-#EVENT 	DraekonBelly 			"The world begins to spin as Draekon starts to chant a powerful spell pushing you away from him."
-#EVENT	EQBC 					"<#1#> #2#"
-#EVENT	EQBC 					"[#1#(msg)] #2#"
-#EVENT	Follow					"#1# tells Team:#2#, 'Follow #3#'"
-#EVENT	Zone					"You have entered #*#"
-
 #INCLUDE thf_includes\Setup.inc
 
 SUB Main
 	/declare iniHail 	string 	outer "thf_inis\Hail.ini"
 	
-	/call thfSetup TRUE
+	/call thfSetup FALSE
 	
 	/call setupAdvLootVars "thf_inis\Loot.ini"
 	
-	/channel THF Macro started for ${Me.CleanName} [${Me.Class}]
+	/chat ${channelNumber} THF Macro started for ${Me.CleanName} [${Me.Class}]
 	
 	/declare i int local
 	:MainLoop	
@@ -64,7 +44,7 @@ SUB Main
 				/if (${BuffCheck} && ${InstantBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_InstantBuffs
 			}
 		} else {
-			/channel I have something on cursor !
+			/chat ${channelNumber} I have something on cursor !
 		}
 		
 		/call check_BackgroundEvents

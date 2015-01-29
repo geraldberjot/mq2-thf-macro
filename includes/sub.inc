@@ -352,7 +352,7 @@ SUB sticking(String to)
     /target ${to}
     /face fast
     /delay 1s
-    /stick ${stickCommand}
+    /stick ${outerStickCommand}
     /chat ${channel} Sticking to ${to}
 /RETURN
 

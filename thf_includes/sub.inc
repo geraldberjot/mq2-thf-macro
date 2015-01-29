@@ -59,7 +59,7 @@ SUB checkSpellBuff
 					/call checkTargetNeedBuff ${targetName} ${Spell[${mySpell}].ID}
 					/if (${Macro.Return}) {
 						/if (${targetID}) {
-							/channel casting "${mySpell}" on [${targetName}]
+							/chat ${channelNumber} casting "${mySpell}" on [${targetName}]
 							/casting "${mySpell}" ${myGem} -maxtries|3 -targetid|${Spawn[pc ${targetName}].ID}
 							/delay 3s
 						}
@@ -70,7 +70,7 @@ SUB checkSpellBuff
 					|- Verifier la presence de tous les membres du groupe avant de caster le bazar
 					/call checkGroupNeedBuff ${Spell[${mySpell}].ID}
 					/if (${Macro.Return}) {
-						/channel casting "${mySpell}"
+						/chat ${channelNumber} casting "${mySpell}"
 						/casting "${mySpell}" ${myGem} -maxtries|3
 					}
 				}
@@ -92,7 +92,7 @@ SUB checkTargetNeedBuff(string targetName, int spellID)
 		/varset targetBuff ${targetBuffs.Token[${i}, ]}
 		/if (${targetBuff.Length}) {
 			/if (!${Spell[${spellID}].WillStack[${Spell[${targetBuff}]}]}) {
-				/channel '${Spell[${spellID}].Name}' won't stack with '${Spell[${targetBuff}]}' !
+				/chat ${channelNumber} '${Spell[${spellID}].Name}' won't stack with '${Spell[${targetBuff}]}' !
 				/RETURN FALSE
 			}
 		}
@@ -255,7 +255,7 @@ SUB EVENT_Tell(Line, string From, string Msg)
 		}
 	} else {
 		/if (${Me.CleanName.NotEqual[${myMain}]}) {
-			/channel ${Line}
+			/chat ${channelNumber} ${Line}
 		}
 	}
 /RETURN
@@ -338,8 +338,8 @@ SUB sticking(String to)
     /target ${to}
     /face fast
     /delay 1s
-    /stick ${stickCommand}
-    /channel Sticking to ${to}
+    /stick ${outerStickCommand}
+    /chat ${channelNumber} Sticking to ${to}
 /RETURN
 
 |- Allow toon to gate to the Forest
@@ -351,7 +351,7 @@ SUB gate(String from, String who)
         /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
         /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
             /casting "${CharmOfQueenAdrianne}" charm
-            /channel Gating to the Forest !
+            /chat ${channelNumber} Gating to the Forest !
         }
     }
 /RETURN
@@ -501,7 +501,7 @@ SUB goToGuildHall(String from, String who)
         /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
         /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
             /casting "${CharmOfQueenAdrianne}" charm
-            /channel Gating to the Forest !
+            /chat ${channelNumber} Gating to the Forest !
         }
     }
 /RETURN

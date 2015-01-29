@@ -441,7 +441,7 @@ SUB cast_Item(int targetID, castParams)
 	
 		|- Check for a user defined timer.
 		/if (!${Ini[${iniTimers},${pendingCast.Left[1]},${pendingCast}].Length}) {
-			/channel Cannot cast [${pendingCast}] there is an inconsistency with the itemTimer.  Please manually set an item recast timer, in seconds, in [${iniTimers}].
+			/chat ${channelNumber} Cannot cast [${pendingCast}] there is an inconsistency with the itemTimer.  Please manually set an item recast timer, in seconds, in [${iniTimers}].
 			/call writeToIni "${iniTimers},${pendingCast.Left[1]},${pendingCast}" 0s
 		} else {
 		
@@ -706,7 +706,7 @@ SUB EVENT_set_ArrayElement
 	/if (!${Select[${arrayName},${Ini[${MacroData_Ini},PendingExchanges-PEQTGC].Replace[|,,]}]}) {
 
 		:echoLoop
-		/channel ${old_ArraySize}
+		/chat ${channelNumber} ${old_ArraySize}
 		/if (${arraySize}) /goto :echoLoop
 		
 		/bcaa //${old_ArrayElement}

@@ -13,7 +13,7 @@ SUB ROG_CombatAbilities
 	/if (${Target.Distance} > ${Spawn[${Target.ID}].MaxRangeTo}) {
 		/if (${outerDebug}) {
 			/echo I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
-			/channel I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
+			/chat ${channelNumber} I am too far away from [${Spawn[id ${outerAssistTarget}].CleanName}] to use abilities.
 		}
 	} else {
 		/declare combatItem item local
@@ -66,7 +66,7 @@ SUB ROG_CombatAbilities
 			/if (${Me.PctEndurance} < ${minEnd}) {
 				/if (${outerDebug}) {
 					/echo I don't have enough endurance to use [${abilityName}].
-					/channel I don't have enough endurance to use [${abilityName}].
+					/chat ${channelNumber} I don't have enough endurance to use [${abilityName}].
 				}
 			} else {
 				|- Use alternate ability
@@ -74,7 +74,7 @@ SUB ROG_CombatAbilities
 					/if (!${Me.AltAbilityReady[${abilityName}]} || ${altTimer_${Me.AltAbility[${abilityName}].ID}}) {
 						/if (${outerDebug}) {
 							/echo Alternate Ability [${abilityName}] is not ready.
-							/channel Alternate Ability [${abilityName}] is not ready.
+							/chat ${channelNumber} Alternate Ability [${abilityName}] is not ready.
 						}
 					} else {
 						/call thf_Casting ${outerAssistTarget} "${abilityName}"
@@ -84,7 +84,7 @@ SUB ROG_CombatAbilities
 					/if (!${Me.CombatAbilityReady[${abilityName}]}) {
 						/if (${outerDebug}) {
 							/echo Discipline [${abilityName}] is not ready.
-							/channel Discipline [${abilityName}] is not ready.
+							/chat ${channelNumber} Discipline [${abilityName}] is not ready.
 						}
 					} else {
 						/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
@@ -112,7 +112,7 @@ SUB Attempt_Backstab
 	/if (${Me.Inventory[Mainhand].Type.NotEqual[Piercing]}) {
 		/if (${outerDebug}) {
 			/echo I need a piercing weapon in my main hand to backstab...
-			/channel I need a piercing weapon in my main hand to backstab...
+			/chat ${channelNumber} I need a piercing weapon in my main hand to backstab...
 		}
 	} else {
 		/call check_rogStrike

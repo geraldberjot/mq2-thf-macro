@@ -30,7 +30,7 @@ SUB EVENT_Combine
 			|- Flush old events.
 			/doevents flush
 			
-			/channel Combining tradeskill ingredients...
+			/chat ${channelNumber} Combining tradeskill ingredients...
 			
 			:combineLoop
 				
@@ -75,7 +75,7 @@ SUB EVENT_Combine
 					
 					|- If I'm out of time, alert the user that the combine script has failed.
 					/if (!${miscTimer}) {
-						/channel  ERROR: |- AutoCombine -|- Combine has failed, due to an unknown error.  Ending the macro for safety.
+						/chat ${channelNumber}  ERROR: |- AutoCombine -|- Combine has failed, due to an unknown error.  Ending the macro for safety.
 						/beep
 						/delay 2
 						/beep
@@ -122,7 +122,7 @@ SUB EVENT_Combine
 				
 				/doevents flush
 				
-				/channel AutoCombine: I have finished combining tradeskill ingredients.
+				/chat ${channelNumber} AutoCombine: I have finished combining tradeskill ingredients.
 			   
 			}
 		}
