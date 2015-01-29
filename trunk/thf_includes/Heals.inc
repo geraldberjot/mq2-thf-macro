@@ -766,11 +766,11 @@ SUB heal_Background_Events
 |- 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB heal_MacroSettings
-	/if (${Debug} || ${Debug_Heals}) /echo |- assist_MacroSettings ==>
+	/if (${Debug}) /echo |- assist_MacroSettings ==>
 
 	/call writeToIni "${iniGeneral},Debug,Debug Heals (On/Off)"
 
-	/if (${Debug} || ${Debug_Heals}) /echo <== heal_MacroSettings -|
+	/if (${Debug}) /echo <== heal_MacroSettings -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|

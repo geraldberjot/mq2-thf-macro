@@ -13,6 +13,7 @@ SUB EVENT_Attack(String line, String from, String who, Int mobID, Int dmg)
 	/if (${Macro.Return}) {
 		|- Move tank on target
 		/if (${Me.CleanName.Equal[${outerMainTank}]}) {
+			/channel I'm the MT, engaging target !
 			/stick id ${mobID} 7 uw hold front
 			/attack on
 			/channel Attacking ${Target.CleanName} (${Target.ID})

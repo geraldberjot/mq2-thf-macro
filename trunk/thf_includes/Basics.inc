@@ -1698,15 +1698,15 @@ SUB basics_Background_Events
 
 
 SUB basics_MacroSettings
-	/if (${outerDebug} || ${Debug_Basics}) /echo |- basics_MacroSettings ==>
+	/if (${outerDebug}) /echo |- basics_MacroSettings ==>
 	
-	/call writeToIni "${iniGeneral},Debug,Debug Basics (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Basics (On/Off)" Off
 
 	/call writeToIni "${iniGeneral},General,Max Response Distance" 500
 	/call writeToIni "${iniGeneral},General,Leash Length" 250
 	/call writeToIni "${iniGeneral},General,End MedBreak in Combat(On/Off)" On
 
-	/if (${outerDebug} || ${Debug_Basics}) /echo <== basics_MacroSettings -|
+	/if (${outerDebug}) /echo <== basics_MacroSettings -|
 /RETURN
 
 

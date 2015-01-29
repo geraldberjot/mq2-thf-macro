@@ -80,8 +80,8 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 				|- Check zone
 				/if (!${SpawnCount[pc ${ChatSender}]}) {
 					/if (${ChatChannel.Equal[TELL]}) {
-						/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Zone].Length}) {
-							/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Zone]}
+						/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Zone].Length}) {
+							/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Zone]}
 						} else {
 							/tell ${ChatSender} We're not in the same zone, fool!
 						}
@@ -91,14 +91,14 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 					|- Check the request was a beneficial spell
 					/if (${Spell[${ChatText}].SpellType.Left[10].NotEqual[Beneficial]}) {
 						/if (${ChatChannel.Equal[TELL]}) {
-							/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Not Beneficial].Length}) {
-								/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Not Beneficial]}
+							/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Not Beneficial].Length}) {
+								/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Not Beneficial]}
 							} else {
 								/tell ${ChatSender} You're only allowed to request happy spells, fool!
 							}
 						} else {
-							/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Not Beneficial].Length}) {
-								/g ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Not Beneficial]}
+							/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Not Beneficial].Length}) {
+								/g ${Ini[${iniGeneral},User Defined Responses,Buff Request-Not Beneficial]}
 							} else {
 								/g You're only allowed to request happy spells, fool!
 							}
@@ -111,14 +111,14 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 								/goto :castRestricted
 							} else {
 								/if (${ChatChannel.Equal[TELL]}) {
-									/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted Spell].Length}) {
-										/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted Spell]}
+									/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted Spell].Length}) {
+										/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted Spell]}
 									} else {
 										/tell ${ChatSender} You're only allowed to request happy spells, fool!
 									}
 								} else {
-									/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted Spell].Length}) {
-										/g ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted Spell]}
+									/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted Spell].Length}) {
+										/g ${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted Spell]}
 									} else {
 										/g You're only allowed to request happy spells, fool!
 									}
@@ -131,14 +131,14 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 							|- Check for self only spells
 							/if (${Spell[${spellBeingCast}].TargetType.Find[self]}) {
 								/if (${ChatChannel.Equal[TELL]}) {
-									/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Self Buff].Length}) {
-										/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Self Buff]}
+									/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Self Buff].Length}) {
+										/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Self Buff]}
 									} else {
 										/tell ${ChatSender} That's a self only buff, fool!
 									}
 								} else {
-									/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Self Buff].Length}) {
-										/g ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Self Buff]}
+									/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Self Buff].Length}) {
+										/g ${Ini[${iniGeneral},User Defined Responses,Buff Request-Self Buff]}
 									} else {
 										/g That's a self only buff, fool!
 									}
@@ -148,14 +148,14 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 								|- Check range.
 								/if (${Spell[${spellBeingCast}].MyRange} && ${Spawn[pc ${ChatSender}].Distance} > ${Spell[${spellBeingCast}].MyRange}) {
 									/if (${ChatChannel.Equal[TELL]}) {
-										/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Range].Length}) {
-											/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Range]}
+										/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Range].Length}) {
+											/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Range]}
 										} else {
 											/tell ${ChatSender} You're out of range, fool!
 										}
 									} else {
-										/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Range].Length}) {
-											/g ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Range]}
+										/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Range].Length}) {
+											/g ${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Range]}
 										} else {
 											/g You're out of range, fool!
 										}
@@ -165,14 +165,14 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 									|- Check mana.
 									/if (${whatToCast.Arg[1,/].Equal[${spellBeingCast}]} && ${Spell[${spellBeingCast}].Mana} > ${Me.CurrentMana}) {
 										/if (${ChatChannel.Equal[TELL]}) {
-											/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Mana].Length}) {
-												/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Mana]}
+											/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Mana].Length}) {
+												/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Mana]}
 											} else {
 												/tell ${ChatSender} I don't have enough mana to cast ${spellBeingCast}, Try again later.
 											}
 										} else {
-											/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Mana].Length}) {
-												/g ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Mana]}
+											/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Mana].Length}) {
+												/g ${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Mana]}
 											} else {
 												/g I don't have enough mana to cast ${spellBeingCast}, Try again later.
 											}
@@ -182,14 +182,14 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 										|- Cast the requested spell, on the ChatSender.
 										/if (${Target.ID}) /declare oldTarget int local ${Target.ID}
 										/if (${ChatChannel.Equal[TELL]}) {
-											/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Casting Buff].Length}) {
-												/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Casting Buff]}
+											/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Casting Buff].Length}) {
+												/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Casting Buff]}
 											} else {
 												/tell ${ChatSender} ${spellBeingCast} inc...
 											}
 										} else {
-											/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Casting Buff].Length}) {
-												/g ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Casting Buff]}
+											/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Casting Buff].Length}) {
+												/g ${Ini[${iniGeneral},User Defined Responses,Buff Request-Casting Buff]}
 											} else {
 												/g ${spellBeingCast} inc...
 											}
@@ -212,27 +212,27 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 			} else {
 		
 				|- Check Restricted PCs
-				/if (${Select[${ChatSender},${Ini[${genSettings_Ini},Buff Requests,Restricted PCs (When Requests [On])]}]}) {
-					/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted PC].Length}) {
-						/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted PC]}
+				/if (${Select[${ChatSender},${Ini[${iniGeneral},Buff Requests,Restricted PCs (When Requests [On])]}]}) {
+					/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted PC].Length}) {
+						/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted PC]}
 					} else {
 						/tell ${ChatSender} You are an asshole.  I will not buff you, because you are an asshole.
 					}
 				} else {
 				
-					|- Check genSettings_Ini > [Buff Requests] > Allow Buff Requests (On/Off)
-					/call iniToVar "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
+					|- Check iniGeneral > [Buff Requests] > Allow Buff Requests (On/Off)
+					/call iniToVar "${iniGeneral},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
 					/if (${Bool[${Macro.Return}]}) {
 						/goto :allowAccess
 					} else {
 						
-						|- Check genSettings_Ini > [Buff Requests] > Allowed PCs (When Requests [Off])
-						/if (${Select[${ChatSender},${Ini[${genSettings_Ini},Buff Requests,Allowed PCs (When Requests [Off])]}]} || ${Select[Guild,${Ini[${genSettings_Ini},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Spawn[pc ${ChatSender}].Guild.Equal[${Me.Guild}]} || ${Select[Raid,${Ini[${genSettings_Ini},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Raid.Member[${ChatSender}].Level}) {
+						|- Check iniGeneral > [Buff Requests] > Allowed PCs (When Requests [Off])
+						/if (${Select[${ChatSender},${Ini[${iniGeneral},Buff Requests,Allowed PCs (When Requests [Off])]}]} || ${Select[Guild,${Ini[${iniGeneral},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Spawn[pc ${ChatSender}].Guild.Equal[${Me.Guild}]} || ${Select[Raid,${Ini[${iniGeneral},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Raid.Member[${ChatSender}].Level}) {
 							/goto :allowAccess
 						} else {
 							/if (${ChatChannel.Equal[TELL]}) {
-								/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Requests Off].Length}) {
-									/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Requests Off]}
+								/if (${Ini[${iniGeneral},User Defined Responses,Buff Requests Off].Length}) {
+									/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Requests Off]}
 								} else {
 									/tell ${ChatSender} Sorry, I'm not buffing right now.
 								}
@@ -271,8 +271,8 @@ SUB event_buffRequestRelay(line, ChatSender, eventParams)
 
 		|- Check zone
 		/if (!${SpawnCount[pc ${ChatSender}]}) {
-			/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Zone].Length}) {
-				/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Zone]}
+			/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Zone].Length}) {
+				/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Zone]}
 			} else {
 				/tell ${ChatSender} We're not in the same zone, fool!
 			}
@@ -280,8 +280,8 @@ SUB event_buffRequestRelay(line, ChatSender, eventParams)
 		
 			|- Check range.
 			/if (${Spawn[pc ${ChatSender}].Distance} > 200) {
-				/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Range].Length}) {
-					/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Out of Range]}
+				/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Range].Length}) {
+					/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Out of Range]}
 				} else {
 					/tell ${ChatSender} You're out of range, fool!
 				}
@@ -329,26 +329,26 @@ SUB event_buffRequestRelay(line, ChatSender, eventParams)
 	} else {
 	
 		|- Check Restricted PCs
-		/if (${Select[${ChatSender},${Ini[${genSettings_Ini},Buff Requests,Restricted PCs (When Requests [On])]}]}) {
-			/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted PC].Length}) {
-				/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Request-Restricted PC]}
+		/if (${Select[${ChatSender},${Ini[${iniGeneral},Buff Requests,Restricted PCs (When Requests [On])]}]}) {
+			/if (${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted PC].Length}) {
+				/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Request-Restricted PC]}
 			} else {
 				/tell ${ChatSender} You are a giant ass.  I will not buff you, because you are an ass.
 			}
 		} else {
 			
 			|- If user is not valid, check Allow Buff Requests
-			/call iniToVar "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
+			/call iniToVar "${iniGeneral},Buff Requests,Allow Buff Requests (On/Off)" allow_BuffRequests bool local
 			
 			/if (${Bool[${Macro.Return}]}) {
 				/goto :allowAccess
 			} else {
 			
-				/if (${Select[${ChatSender},${Ini[${genSettings_Ini},Buff Requests,Allowed PCs (When Requests [Off])]}]} || ${Select[Guild,${Ini[${genSettings_Ini},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Spawn[pc ${ChatSender}].Guild.Equal[${Me.Guild}]} || ${Select[Raid,${Ini[${genSettings_Ini},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Raid.Member[${ChatSender}].Level}) {
+				/if (${Select[${ChatSender},${Ini[${iniGeneral},Buff Requests,Allowed PCs (When Requests [Off])]}]} || ${Select[Guild,${Ini[${iniGeneral},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Spawn[pc ${ChatSender}].Guild.Equal[${Me.Guild}]} || ${Select[Raid,${Ini[${iniGeneral},Buff Requests,Allowed PCs (When Requests [Off])]}]} && ${Raid.Member[${ChatSender}].Level}) {
 					/goto :allowAccess
 				} else {
-					/if (${Ini[${genSettings_Ini},User Defined Responses,Buff Requests Off].Length}) {
-						/tell ${ChatSender} ${Ini[${genSettings_Ini},User Defined Responses,Buff Requests Off]}
+					/if (${Ini[${iniGeneral},User Defined Responses,Buff Requests Off].Length}) {
+						/tell ${ChatSender} ${Ini[${iniGeneral},User Defined Responses,Buff Requests Off]}
 					} else {
 						/tell ${ChatSender} Sorry, I'm not buffing right now.
 					}	
@@ -511,26 +511,26 @@ SUB begForBuffs_Background_Events
 
 
 SUB begForBuffs_MacroSettings
-/if (${Debug} || ${Debug_BegForBuffs}) /echo |- _MacroSettings ==>
+/if (${Debug}) /echo |- _MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug BegForBuffs (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug BegForBuffs (On/Off)" Off
 
-	/call writeToIni "${genSettings_Ini},Buff Requests,Allow Buff Requests (On/Off)" On
-	/call writeToIni "${genSettings_Ini},Buff Requests,Restricted PCs (When Requests [On])"
-	/call writeToIni "${genSettings_Ini},Buff Requests,Allowed PCs (When Requests [Off])" "Guild,Raid"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Out of Zone"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Out of Range"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Out of Mana"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Self Buff"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Not Beneficial"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Restricted Spell"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Casting Buff"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Request-Restricted PC"
-	/call writeToIni "${genSettings_Ini},User Defined Responses,Buff Requests Off"
+	/call writeToIni "${iniGeneral},Buff Requests,Allow Buff Requests (On/Off)" On
+	/call writeToIni "${iniGeneral},Buff Requests,Restricted PCs (When Requests [On])"
+	/call writeToIni "${iniGeneral},Buff Requests,Allowed PCs (When Requests [Off])" "Guild,Raid"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Out of Zone"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Out of Range"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Out of Mana"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Self Buff"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Not Beneficial"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Restricted Spell"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Casting Buff"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Request-Restricted PC"
+	/call writeToIni "${iniGeneral},User Defined Responses,Buff Requests Off"
 	
 	/call writeToIni "${iniToon},Buffs,Restricted Spells"
 
-/if (${Debug} || ${Debug_BegForBuffs}) /echo <== _MacroSettings -|
+/if (${Debug}) /echo <== _MacroSettings -|
 /RETURN
 
 

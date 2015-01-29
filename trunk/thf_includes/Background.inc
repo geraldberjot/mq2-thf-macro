@@ -502,16 +502,16 @@ SUB background_checkBackgroundEvents
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB background_MacroSettings
-	/if (${outerDebug} || ${outerDebug_Background}) /echo |- background_MacroSettings ==>
+	/if (${outerDebug}) /echo |- background_MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug Background (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Background (On/Off)" Off
 
 	/call writeToIni "${iniGeneral},Background,Auto-Destroy List"
 	/call writeToIni "${iniGeneral},Background,Idle Time Out (Min)" 10
 	/call writeToIni "${iniGeneral},Background,Auto-Inventory Timer (Sec)" 30
 	/call writeToIni "${iniGeneral},Background,Close Spellbook Timer (Sec)" 30
 	
-	/if (${outerDebug} || ${outerDebug_Background}) /echo <== background_MacroSettings -|
+	/if (${outerDebug}) /echo <== background_MacroSettings -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|

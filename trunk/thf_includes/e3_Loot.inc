@@ -432,10 +432,10 @@ SUB loot_Setup
 	/if (!${Ini[${Loot_Ini}].Length}) /call Build_Alphabetized_Ini "${Loot_Ini}"
 	
 	|- Import macro settings
-	/call iniToVar "${genSettings_Ini},Loot,Auto-Loot Mode (Auto/Manual)" loot_Mode string outer
-	/call iniToVar "${genSettings_Ini},Loot,Use MQ2LinkDB (On/Off)" use_linkDB bool outer
-	/call iniToVar "${genSettings_Ini},Loot,Loot Link Channel (Requires MQ2LinkDB)" linkChannel string outer
-	/call iniToVar "${genSettings_Ini},Loot,Corpse Seek Radius" seek_Radius int outer
+	/call iniToVar "${iniGeneral},Loot,Auto-Loot Mode (Auto/Manual)" loot_Mode string outer
+	/call iniToVar "${iniGeneral},Loot,Use MQ2LinkDB (On/Off)" use_linkDB bool outer
+	/call iniToVar "${iniGeneral},Loot,Loot Link Channel (Requires MQ2LinkDB)" linkChannel string outer
+	/call iniToVar "${iniGeneral},Loot,Corpse Seek Radius" seek_Radius int outer
 
 	|- Import character settings
 	/if (${Bool[${Ini[${iniToon},Misc,Auto-Loot (On/Off)]}]}) /call iniToVar "${iniToon},Misc,Auto-Loot (On/Off)" Auto_Loot bool outer
@@ -465,16 +465,16 @@ SUB loot_Background_Events
 
 
 SUB loot_MacroSettings
-/if (${Debug} || ${Debug_Loot}) /echo |- _MacroSettings ==>
+	/if (${Debug}) /echo |- _MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug Loot (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Loot (On/Off)" Off
 
-	/call writeToIni "${genSettings_Ini},Loot,Auto-Loot Mode (Auto/Manual)" Auto
-	/call writeToIni "${genSettings_Ini},Loot,Use MQ2LinkDB (On/Off)" On
-	/call writeToIni "${genSettings_Ini},Loot,Loot Link Channel (Requires MQ2LinkDB)" /say
-	/call writeToIni "${genSettings_Ini},Loot,Corpse Seek Radius" 50
+	/call writeToIni "${iniGeneral},Loot,Auto-Loot Mode (Auto/Manual)" Auto
+	/call writeToIni "${iniGeneral},Loot,Use MQ2LinkDB (On/Off)" On
+	/call writeToIni "${iniGeneral},Loot,Loot Link Channel (Requires MQ2LinkDB)" /say
+	/call writeToIni "${iniGeneral},Loot,Corpse Seek Radius" 50
 
-/if (${Debug} || ${Debug_Loot}) /echo <== _MacroSettings -|
+	/if (${Debug}) /echo <== _MacroSettings -|
 /RETURN
 
 
