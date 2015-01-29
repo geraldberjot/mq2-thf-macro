@@ -539,7 +539,7 @@ SUB sell_Setup
 /call iniToVar "${iniGeneral},Debug,Debug Sell (On/Off)" Debug_Sell bool outer
 /if (${Debug} || ${Debug_Sell}) /echo |- sell_Setup ==>
 
-	/call iniToVar "${genSettings_Ini},Sell,Destroy Unsold Items(On/Off)" destroyUnsold bool outer
+	/call iniToVar "${iniGeneral},Sell,Destroy Unsold Items(On/Off)" destroyUnsold bool outer
 
 /if (${Debug} || ${Debug_Sell}) /echo <== sell_Setup -|
 /RETURN
@@ -553,13 +553,13 @@ SUB sell_Background_Events
 
 
 SUB sell_MacroSettings
-/if (${Debug} || ${Debug_Sell}) /echo |- _MacroSettings ==>
+	/if (${Debug}) /echo |- _MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug Sell (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Sell (On/Off)" Off
 	
-	/call writeToIni "${genSettings_Ini},Sell,Destroy Unsold Items(On/Off)" Off
+	/call writeToIni "${iniGeneral},Sell,Destroy Unsold Items(On/Off)" Off
 
-/if (${Debug} || ${Debug_Sell}) /echo <== _MacroSettings -|
+	/if (${Debug}) /echo <== _MacroSettings -|
 /RETURN
 
 

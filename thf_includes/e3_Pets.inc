@@ -271,11 +271,11 @@ SUB pet_Background_Events
 
 
 SUB pet_MacroSettings
-/if (${Debug} || ${Debug_Pets}) /echo |- pet_MacroSettings ==>
+	/if (${Debug}) /echo |- pet_MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug Pets (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug Pets (On/Off)" Off
 
-/if (${Debug} || ${Debug_Pets}) /echo <== pet_MacroSettings -|
+	/if (${Debug}) /echo <== pet_MacroSettings -|
 /RETURN
 
 

@@ -377,11 +377,11 @@ SUB buffCheck_Background_Events
 |-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB buffCheck_MacroSettings
-	/if (${Debug} || ${Debug_BuffCheck}) /echo |- buffCheck_MacroSettings ==>
+	/if (${Debug}) /echo |- buffCheck_MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug BuffCheck (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug BuffCheck (On/Off)" Off
 
-	/if (${Debug} || ${Debug_BuffCheck}) /echo <== buffCheck_MacroSettings -|
+	/if (${Debug}) /echo <== buffCheck_MacroSettings -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|

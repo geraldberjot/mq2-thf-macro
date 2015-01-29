@@ -832,11 +832,11 @@ SUB SmoothMoves_Background_Events
 
 
 SUB SmoothMoves_MacroSettings
-/if (${Debug} || ${Debug_SmoothMoves}) /echo |- SmoothMoves_MacroSettings ==>
+	/if (${Debug}) /echo |- SmoothMoves_MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug SmoothMoves (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug SmoothMoves (On/Off)" Off
 
-/if (${Debug} || ${Debug_SmoothMoves}) /echo <== SmoothMoves_MacroSettings -|
+	/if (${Debug}) /echo <== SmoothMoves_MacroSettings -|
 /RETURN
 
 

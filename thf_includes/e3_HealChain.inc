@@ -610,11 +610,11 @@ SUB healChain_Background_Events
 
 
 SUB healChain_MacroSettings
-/if (${Debug} || ${Debug_HealChain}) /echo |- healChain_MacroSettings ==>
+/if (${Debug}) /echo |- healChain_MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug HealChain (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug HealChain (On/Off)" Off
 
-/if (${Debug} || ${Debug_HealChain}) /echo <== healChain_MacroSettings -|
+/if (${Debug}) /echo <== healChain_MacroSettings -|
 /RETURN
 
 

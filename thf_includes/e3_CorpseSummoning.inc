@@ -82,7 +82,7 @@ SUB event_UseCoprseSummoner(line, ChatSender)
 				/if (${FindItemCount[=${SoulStoneToUse}]}) /call summon_Corpse "${SoulStoneToUse}" 
 				
 				|- Loot the corpse
-				/call iniToVar "${genSettings_Ini},Corpse Summoning,Loot After Summoning (On/Off)" PLACEHOLDER bool local
+				/call iniToVar "${iniGeneral},Corpse Summoning,Loot After Summoning (On/Off)" PLACEHOLDER bool local
 				:lootNow
 				/if (${Bool[${Macro.Return}]} && ${Spawn[${Me}'s].ID}) /call event_LootNow "PLACEHOLDER" "${Me.CleanName}"
 
@@ -507,12 +507,12 @@ SUB corpseSummon_Background_Events
 
 
 SUB corpseSummon_MacroSettings
-/if (${Debug} || ${Debug_CorpseSummoning}) /echo |- _MacroSettings ==>
+/if (${Debug}) /echo |- _MacroSettings ==>
 
-	/call writeToIni "${iniGeneral},Debug,Debug CorpseSummoning (On/Off)"
-	/call writeToIni "${genSettings_Ini},Corpse Summoning,Loot After Summoning (On/Off)"
+	/call writeToIni "${iniGeneral},Debug,Debug CorpseSummoning (On/Off)" Off
+	/call writeToIni "${iniGeneral},Corpse Summoning,Loot After Summoning (On/Off)"
 
-/if (${Debug} || ${Debug_CorpseSummoning}) /echo <== _MacroSettings -|
+/if (${Debug}) /echo <== _MacroSettings -|
 /RETURN
 
 
