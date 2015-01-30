@@ -678,18 +678,18 @@ SUB heal_Setup
 	/declare recentHeal_Timer timer outer
 
 	|- Import settings from iniToon > [Life Support]
-	|- /call split "${iniTHF},${Me.Class},Functions" functions outer /
-	/if (${Ini[${iniToon},Heals,Life Support].Length}) /call split "${iniToon},Heals,Life Support" lifeSupport outer /
+	|- /call splitFromIni "${iniTHF},${Me.Class},Functions" functions outer /
+	/if (${Ini[${iniToon},Heals,Life Support].Length}) /call splitFromIni "${iniToon},Heals,Life Support" lifeSupport outer /
 
 	|- Import settings from iniToon > [Heals]
 	/if (${Bool[${Ini[${iniToon},Heals]}]}) {
-		/if (${Ini[${iniToon},Heals,Tanks].Length})  /call split "${iniToon},Heals,Tanks" tanks outer /
-		/if (${Ini[${iniToon},Heals,Important Bots].Length})  /call split "${iniToon},Heals,Important Bots" importantBots outer /
+		/if (${Ini[${iniToon},Heals,Tanks].Length})  /call splitFromIni "${iniToon},Heals,Tanks" tanks outer /
+		/if (${Ini[${iniToon},Heals,Important Bots].Length})  /call splitFromIni "${iniToon},Heals,Important Bots" importantBots outer /
 		
-		/if (${Ini[${iniToon},Heals,Tank Heals].Length})  /call split "${iniToon},Heals,Tank Heals" tankHeals outer /
-		/if (${Ini[${iniToon},Heals,Patch Heals].Length})  /call split "${iniToon},Heals,Patch Heals" patchHeals outer /
-		/if (${Ini[${iniToon},Heals,Heal Over Time Spells].Length})  /call split "${iniToon},Heals,Heal Over Time Spells" hotSpells outer /
-		/if (${Ini[${iniToon},Heals,Group Heals].Length})  /call split "${iniToon},Heals,Group Heals" groupHeals outer /
+		/if (${Ini[${iniToon},Heals,Tank Heals].Length})  /call splitFromIni "${iniToon},Heals,Tank Heals" tankHeals outer /
+		/if (${Ini[${iniToon},Heals,Patch Heals].Length})  /call splitFromIni "${iniToon},Heals,Patch Heals" patchHeals outer /
+		/if (${Ini[${iniToon},Heals,Heal Over Time Spells].Length})  /call splitFromIni "${iniToon},Heals,Heal Over Time Spells" hotSpells outer /
+		/if (${Ini[${iniToon},Heals,Group Heals].Length})  /call splitFromIni "${iniToon},Heals,Group Heals" groupHeals outer /
 
 		/if (${Ini[${iniToon},Heals,Who to Heal].Length})  /call iniToVar "${iniToon},Heals,Who to Heal" WhoToHeal string outer
 		/if (${Ini[${iniToon},Heals,Who to HoT].Length})  /call iniToVar "${iniToon},Heals,Who to HoT" WhoToHoT string outer

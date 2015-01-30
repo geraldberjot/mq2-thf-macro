@@ -88,7 +88,7 @@ SUB thfSetup(bool debug)
 	
 	|- Initializing functions
 	/if (${Bool[${Ini[${iniTHF},${Me.Class},Functions]}]}) {
-		/call split "${iniTHF},${Me.Class},Functions" functions outer /
+		/call splitFromIni "${iniTHF},${Me.Class},Functions" functions outer /
 	} else {
 		/call MakeFunctionsSettings
 	}
@@ -165,7 +165,7 @@ SUB EVENT_MakeMacroSettingsIni()
 	/call writeToIni "${iniGeneral},General,StickCommand" "5 hold behindonce uw"
 	/call writeToIni "${iniGeneral},General,Main Tank" "[your tank name here]"
 	
-	/call split "${iniGeneral},General,Includes" includes outer /
+	/call splitFromIni "${iniGeneral},General,Includes" includes outer /
 	
 	/call loadAll includes MacroSettings
 	
@@ -187,7 +187,7 @@ SUB readMacroSettings()
 	
 	/call iniToVar "${iniGeneral},General,Main Tank" outerMainTank string outer
 	
-	/call split "${iniGeneral},General,Includes" includes outer /
+	/call splitFromIni "${iniGeneral},General,Includes" includes outer /
 	/call loadAll includes Setup
 	
 	/if (${outerDebug}) /echo <== readMacroSettings -|

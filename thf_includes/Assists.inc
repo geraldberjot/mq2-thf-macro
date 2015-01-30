@@ -5,12 +5,42 @@
 |- Contains assisting related functions for thf.mac.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 
-#EVENT Attack "<#1#> #2# attack #3# (#4#)"
-SUB EVENT_Attack(String line, String from, String who, Int mobID, Int dmg)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Call an attack on the target
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT Attack "<#1#> #2# attack #3#"
+SUB EVENT_Attack(String line, String from, String who, String params)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_Assist ==>
 	
 	/call amIConcerned ${from} ${who} TRUE
 	/if (${Macro.Return}) {
+		/declare i int local
+		/declare targetID int local
+		/if (!${Defined[outerDamageLevel]}) /declare outerDamageLevel int outer
+		/if (!${Defined[outerAoeAggro]}) /declare outerAoeAggro bool outer FALSE
+		
+		/call split ${params} outerAttackParams outer " "
+		/for i 1 to ${outerAttackParams.Size}
+			/if (${outerAttackParams[i].Lower.Find[-targetID|]}) {
+				/varset targetID ${outerAttackParams[i].Replace[-targetID|]}
+			} else /if (${outerAttackParams[i].Lower.Find[-aoeAggro|]}) {
+				/varset outerAoeAggro ${outerAttackParams[i].Replace[-aoeAggro|]}
+			} else /if (${outerAttackParams[i].Lower.Find[-dmg|]}) {
+				/varset outerDamageLevel ${outerAttackParams[i].Replace[-dmg|]}
+			}
+		/next i
+		
+		/if (!${Bool[${Int[${targetID}]}]}) {
+			/chat ${channelNumber} No target to engage !
+		}
+		/if (!${Bool[${outerAoeAggro}]}) {
+			/varset outerAoeAggro FALSE
+		}
+		/if (!${Bool[${outerDamageLevel}]}) {
+			/varset outerDamageLevel 0
+		}
+		
+		
 		|- Move tank on target
 		/if (${Me.CleanName.Equal[${outerMainTank}]}) {
 			/chat ${channelNumber} I'm the MT, engaging target !
@@ -20,7 +50,6 @@ SUB EVENT_Attack(String line, String from, String who, Int mobID, Int dmg)
 
 			/attack on
 			/chat ${channelNumber} Attacking -= ${Target.CleanName} =- (id = ${Target.ID})
-			/if (!${Defined[outerDamageLevel]}) /declare outerDamageLevel int outer
 			/varset outerDamageLevel ${dmg}
 			/bc ${who} assist on ${mobID}
 		}
@@ -1423,34 +1452,34 @@ SUB assist_Setup
 	}
 	
 	|- [Melee Abilities].
-	/if (${Ini[${iniToon},Melee,Abilities].Length}) /call split "${iniToon},Melee,Abilities" MyAbilities /
+	/if (${Ini[${iniToon},Melee,Abilities].Length}) /call splitFromIni "${iniToon},Melee,Abilities" MyAbilities /
 
 	|- Spells
 	|-- [Nukes].
-	/if (${Ini[${iniToon},Spells,Nukes].Length}) /call split "${iniToon},Spells,Nukes" MyNukes /
+	/if (${Ini[${iniToon},Spells,Nukes].Length}) /call splitFromIni "${iniToon},Spells,Nukes" MyNukes /
 	
 	|-- [Rain].
-	/if (${Ini[${iniToon},Spells,Rains].Length}) /call split "${iniToon},Spells,Rains" Rain_Spells /
+	/if (${Ini[${iniToon},Spells,Rains].Length}) /call splitFromIni "${iniToon},Spells,Rains" Rain_Spells /
 
 	|-- [QuickBurns].
-	/if (${Ini[${iniToon},Spells,Quick Burns].Length}) /call split "${iniToon},Spells,Quick Burns" QuickBurns /
+	/if (${Ini[${iniToon},Spells,Quick Burns].Length}) /call splitFromIni "${iniToon},Spells,Quick Burns" QuickBurns /
 	
 	|-- [FullBurns].	
-	/if (${Ini[${iniToon},Spells,Full Burns].Length}) /call split "${iniToon},Spells,Full Burns" FullBurns /
+	/if (${Ini[${iniToon},Spells,Full Burns].Length}) /call splitFromIni "${iniToon},Spells,Full Burns" FullBurns /
 
 	|- On Assist
 	|-- [Debuffs].
-	/if (${Ini[${iniToon},On Assist,Debuffs].Length}) /call split "${iniToon},On Assist,Debuffs" Assist_Debuffs /
+	/if (${Ini[${iniToon},On Assist,Debuffs].Length}) /call splitFromIni "${iniToon},On Assist,Debuffs" Assist_Debuffs /
 
 	|-- [DoTs].
-	/if (${Ini[${iniToon},On Assist,DoTs].Length}) /call split "${iniToon},On Assist,DoTs" Assist_DoTs /
+	/if (${Ini[${iniToon},On Assist,DoTs].Length}) /call splitFromIni "${iniToon},On Assist,DoTs" Assist_DoTs /
 
 	|- On Command
 	|-- [DoTs].
-	/if (${Ini[${iniToon},On Command,DoTs].Length}) /call split "${iniToon},On Command,DoTs" Command_DoTs /
+	/if (${Ini[${iniToon},On Command,DoTs].Length}) /call splitFromIni "${iniToon},On Command,DoTs" Command_DoTs /
 
 	|-- [Debuffs].
-	/if (${Ini[${iniToon},On Command,Debuffs].Length}) /call split "${iniToon},On Command,Debuffs" Command_Debuffs /
+	/if (${Ini[${iniToon},On Command,Debuffs].Length}) /call splitFromIni "${iniToon},On Command,Debuffs" Command_Debuffs /
 	
 	|- If Assisting variables are defined, turn assists on.
 	/if (${Defined[outerAssistType]} || ${Defined[MyAbilities]} || ${Defined[${arrayName}]} || ${Defined[Assist_DoTs]} || ${Defined[Command_DoTs]} || ${Defined[Assist_Debuffs]} || ${Defined[Command_Debuffs]} || ${Defined[Rain_Spells]} || ${Defined[QuickBurns]} || ${Defined[FullBurns]}) /declare AssistsOn bool outer TRUE

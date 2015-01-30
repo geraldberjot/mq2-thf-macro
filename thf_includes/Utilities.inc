@@ -111,19 +111,19 @@ SUB iniToArray(Ini_Key, ArrayName, ArrayScope)
 /RETURN ${ArrayName}
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Split a string with the specified separator and return the specified array		-|
+|- Split a ini key with the specified separator and return the specified array
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param Ini_Key : The string to split											-|
-|- @param ArrayName : The name of the array you want to declare						-|
-|- @param ArrayScope : The scope of the array to be declared						-|
-|- @param separator : The char to split with										-|
+|- @param Ini_Key : the ini value to split
+|- @param ArrayName : The name of the array you want to declare
+|- @param ArrayScope : The scope of the array to be declared
+|- @param separator : The char to split with
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Syntax: /call iniToArray IniKey ArrayName VariableScope							-|
-|-	Ex: /call iniToArray "Settings.ini,General,Debug Mode" Debug outer		-|
-|-		/call iniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local			-|
+|- Syntax: /call splitFromIni IniKey ArrayName VariableScope
+|-	Ex: /call splitFromIni "Settings.ini,General,Debug Mode" Debug outer
+|-		/call splitFromIni Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB split(String Ini_Key, String ArrayName, String ArrayScope, String separator)
-	/if (${outerDebug}) /echo |- split [(${Ini_Key})'s value with ${separator}] ==>
+SUB splitFromIni(String Ini_Key, String ArrayName, String ArrayScope, String separator)
+	/if (${outerDebug}) /echo |- splitFromIni [(${Ini_Key})'s value with ${separator}] ==>
 
 	/declare value String local
 	/varset value ${Ini[${Ini_Key}]}
@@ -156,11 +156,59 @@ SUB split(String Ini_Key, String ArrayName, String ArrayScope, String separator)
 					/echo ${ArrayName}[${i}] - ${${ArrayName}[${i}]}
 				/next i
 			}
-			/echo <== split -|
+			/echo <== splitFromIni -|
 		}
 	}
 /RETURN ${ArrayName}
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Split a string with the specified separator and return the specified array
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- @param Ini_Key : The string to split
+|- @param ArrayName : The name of the array you want to declare
+|- @param ArrayScope : The scope of the array to be declared
+|- @param separator : The char to split with
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Syntax: /call iniToArray IniKey ArrayName VariableScope
+|-	Ex: /call iniToArray "Settings.ini,General,Debug Mode" Debug outer
+|-		/call iniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB split(String value, String ArrayName, String ArrayScope, String separator)
+	/if (${outerDebug}) /echo |- split [(${value})'s value with ${separator}] ==>
+
+	|- Check for the specified ini key.
+	/if (!${value.Length}) {
+		/if (${outerDebug}) /echo Value is empty !
+	} else {
+		|- Check if the separator is in the string.
+		/if (!${value.Find[${separator}]}) {
+			/if (${outerDebug}) /echo [${separator}] not found in ${value}.
+		} else {
+			|- Count separator
+			/declare i int local 1
+			/declare count int local
+			/varcalc count ${value.Count[${separator}]}+1
+
+			|- Declare the array and copy elements
+			/if (${Defined[${ArrayName}]}) /deletevar ${ArrayName}
+			/declare ${ArrayName}[${count}] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
+			
+			/for i 1 to ${${ArrayName}.Size}
+				/varset ${ArrayName}[${i}] ${value.Token[${i},${separator}]}
+			/next i
+		}
+
+		/if (${outerDebug}) {
+			/if (${${ArrayName}.Size}) {
+				/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
+				/for i 1 to ${${ArrayName}.Size}
+					/echo ${ArrayName}[${i}] - ${${ArrayName}[${i}]}
+				/next i
+			}
+			/echo <== split -|
+		}
+	}
+/RETURN ${ArrayName}
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Creates ini entries from supplied ini keys.														-|
