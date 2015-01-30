@@ -193,13 +193,13 @@ SUB NEC_Setup
 	/if (${Ini[${iniToon},${Me.Class},Lich Spell].Length}) /call iniToVar "${iniToon},${Me.Class},Lich Spell" lichSpell string outer
 	
 	|- LifeTap
-	/if (${Ini[${iniToon},${Me.Class},LifeTaps].Length}) /call split "${iniToon},${Me.Class},LifeTaps" lifeTaps outer /
+	/if (${Ini[${iniToon},${Me.Class},LifeTaps].Length}) /call splitFromIni "${iniToon},${Me.Class},LifeTaps" lifeTaps outer /
 	
 	|- Mana Dump
 	/if (${Ini[${iniToon},${Me.Class},Mana Dump (On/Off)].Length}) /call iniToVar "${iniToon},${Me.Class},Mana Dump (On/Off)" manaDump bool outer
 	/declare manaDump_Pct int outer ${Ini[${iniToon},${Me.Class},Mana Dump Engage Pct]}
 	/declare manaDump_Targets string outer ${Ini[${iniToon},${Me.Class},Who to Mana Dump]}
-	/if (${Ini[${iniToon},${Me.Class},Mana Dumps].Length}) /call split "${iniToon},${Me.Class},Mana Dumps" manaDump_Spells outer /
+	/if (${Ini[${iniToon},${Me.Class},Mana Dumps].Length}) /call splitFromIni "${iniToon},${Me.Class},Mana Dumps" manaDump_Spells outer /
 	
 	|- Reset manaDump_Targets to replace spaces with commas
 	/if (${manaDump_Targets.Find[ ]}) /varset manaDump_Targets ${manaDump_Targets.Replace[ ,]}

@@ -355,11 +355,11 @@ SUB buffCheck_Setup
 	/declare min_BuffCheckHealth int outer 70
 	/declare buffRecheck_Delay int outer 100
 
-	/if (${Ini[${iniToon},Buffs,Instant Buffs].Length}) /call split "${iniToon},Buffs,Instant Buffs" InstantBuffs outer /
-	/if (${Ini[${iniToon},Buffs,Self Buffs].Length}) /call split "${iniToon},Buffs,Self Buffs" SelfBuffs outer /
-	/if (${Ini[${iniToon},Buffs,Group Buffs].Length}) /call split "${iniToon},Buffs,Group Buffs" GroupBuffs outer /
-	/if (${Ini[${iniToon},Buffs,Bot Buffs].Length}) /call split "${iniToon},Buffs,Bot Buffs" BotBuffs outer /
-	/if (${Ini[${iniToon},Buffs,Combat Buffs].Length}) /call split "${iniToon},Buffs,Combat Buffs" CombatBuffs outer /
+	/if (${Ini[${iniToon},Buffs,Instant Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Instant Buffs" InstantBuffs outer /
+	/if (${Ini[${iniToon},Buffs,Self Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Self Buffs" SelfBuffs outer /
+	/if (${Ini[${iniToon},Buffs,Group Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Group Buffs" GroupBuffs outer /
+	/if (${Ini[${iniToon},Buffs,Bot Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Bot Buffs" BotBuffs outer /
+	/if (${Ini[${iniToon},Buffs,Combat Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Combat Buffs" CombatBuffs outer /
 	
 	/if (${InstantBuffs.Size} || ${SelfBuffs.Size} || ${BotBuffs.Size} || ${CombatBuffs.Size}) /varset BuffCheck TRUE
 	

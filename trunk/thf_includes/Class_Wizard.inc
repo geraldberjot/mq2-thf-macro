@@ -37,7 +37,7 @@ SUB WIZ_Setup
 	/declare i int local
 	
 	/call iniToVar "${iniToon},Wizard,Auto-Harvest (On/Off)" autoHarvest bool outer
-	/call split "${iniToon},Wizard,Harvest spells" harvestSpells outer /
+	/call splitFromIni "${iniToon},Wizard,Harvest spells" harvestSpells outer /
 	
 	|- Look for a familiar to cast
 	/if (${Defined[SelfBuffs]}) {
