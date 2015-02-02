@@ -92,7 +92,7 @@ SUB check_BackgroundEvents
 	/declare i int local
 
 	/for i 1 to ${macroSetups.Size}
-		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_checkBackgroundEvents
+		/if (${Bool[${macroSetups[${i}]}]}) /call ${macroSetups[${i}]}_BackgroundEvents
 	/next i
 
 /RETURN

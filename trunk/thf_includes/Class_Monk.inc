@@ -14,7 +14,7 @@ SUB MNK_Setup
 	/if (${outerDebug}) /echo <== MNK_Setup -|
 /RETURN
 
-SUB MNK_CheckBackgroundEvents
+SUB MNK_BackgroundEvents
 
 /RETURN
 

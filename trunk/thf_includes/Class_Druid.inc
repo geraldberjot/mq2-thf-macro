@@ -14,7 +14,7 @@ SUB DRU_Setup
 	/if (${outerDebug}) /echo <== DRU_Setup -|
 /RETURN
 
-SUB DRU_CheckBackgroundEvents
+SUB DRU_BackgroundEvents
 
 /RETURN
 

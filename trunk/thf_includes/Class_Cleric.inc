@@ -256,7 +256,7 @@ SUB CLR_Setup
 	/if (${outerDebug}) /echo <== CLR_Setup -|
 /RETURN
 
-SUB CLR_CheckBackgroundEvents
+SUB CLR_BackgroundEvents
 /RETURN
 
 SUB CLR_MacroSettings

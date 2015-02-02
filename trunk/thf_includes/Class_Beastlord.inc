@@ -18,7 +18,7 @@ SUB BST_Setup
 
 
 
-SUB BST_CheckBackgroundEvents
+SUB BST_BackgroundEvents
 
 /RETURN
 

@@ -152,7 +152,7 @@ SUB BRD_Setup
 
 
 
-SUB BRD_checkBackgroundEvents
+SUB BRD_BackgroundEvents
 	
 	/doevents saveMelody
 	/doevents startMelody
