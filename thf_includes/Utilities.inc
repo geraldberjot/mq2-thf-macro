@@ -781,7 +781,7 @@ SUB _Setup
 
 
  
-SUB _CheckBackgroundEvents
+SUB _BackgroundEvents
 
 /RETURN
 

@@ -208,7 +208,7 @@ SUB NEC_Setup
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB NEC_CheckBackgroundEvents
+SUB NEC_BackgroundEvents
 
 	/call check_removeLich
 

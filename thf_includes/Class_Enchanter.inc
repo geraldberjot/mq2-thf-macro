@@ -119,7 +119,7 @@ SUB ENC_Setup
 	/if (${outerDebug}) /echo <== ENC_Setup -|
 /RETURN
 
-SUB ENC_CheckBackgroundEvents
+SUB ENC_BackgroundEvents
 
 	/doevents add_RuneTarget
 	/doevents remove_RuneTarget

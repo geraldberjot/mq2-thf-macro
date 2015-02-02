@@ -110,7 +110,7 @@ SUB BER_Setup
 	/if (${outerDebug}) /echo <== BER_Setup -|
 /RETURN
 
-SUB BER_CheckBackgroundEvents
+SUB BER_BackgroundEvents
 
 /RETURN
 

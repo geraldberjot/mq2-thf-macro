@@ -358,7 +358,7 @@ SUB createCombatItemsArray()
 	/if (${outerDebug}) /echo <== createcombatItemsBoostArray -|
 /RETURN
 
-SUB ROG_CheckBackgroundEvents
+SUB ROG_BackgroundEvents
 
 	 /if (${AutoHide} && !${Me.Invis} && !${Me.Moving} && !${Me.Combat}) /call AutoHide
 

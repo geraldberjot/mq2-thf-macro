@@ -8,6 +8,8 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Call an attack on the target
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Use, '[All/Melee/Caster/...] attack -targetID|${Target.ID} -aoeAggro|[true/false] -dmg|[0,1,2] -tank|[tank.cleanName]' in /bc.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Attack "<#1#> #2# attack #3#"
 SUB EVENT_Attack(String line, String from, String who, String params)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_Assist ==>
@@ -16,17 +18,20 @@ SUB EVENT_Attack(String line, String from, String who, String params)
 	/if (${Macro.Return}) {
 		/declare i int local
 		/declare targetID int local
+		/declare tankID int local
 		/if (!${Defined[outerDamageLevel]}) /declare outerDamageLevel int outer
 		/if (!${Defined[outerAoeAggro]}) /declare outerAoeAggro bool outer FALSE
 		
 		/call split ${params} outerAttackParams outer " "
 		/for i 1 to ${outerAttackParams.Size}
 			/if (${outerAttackParams[i].Lower.Find[-targetID|]}) {
-				/varset targetID ${outerAttackParams[i].Replace[-targetID|]}
+				/varset targetID ${outerAttackParams[i].Replace[-targetID|,]}
 			} else /if (${outerAttackParams[i].Lower.Find[-aoeAggro|]}) {
-				/varset outerAoeAggro ${outerAttackParams[i].Replace[-aoeAggro|]}
+				/varset outerAoeAggro ${outerAttackParams[i].Replace[-aoeAggro|,]}
 			} else /if (${outerAttackParams[i].Lower.Find[-dmg|]}) {
-				/varset outerDamageLevel ${outerAttackParams[i].Replace[-dmg|]}
+				/varset outerDamageLevel ${outerAttackParams[i].Replace[-dmg|,]}
+			} else /if (${outerAttackParams[i].Lower.Find[-tank|]}) {
+				/varset tankID ${Spawn[pc=${outerAttackParams[i].Lower.Replace[-tank|,]}].ID}
 			}
 		/next i
 		
@@ -39,18 +44,23 @@ SUB EVENT_Attack(String line, String from, String who, String params)
 		/if (!${Bool[${outerDamageLevel}]}) {
 			/varset outerDamageLevel 0
 		}
-		
+		/if (!${Bool[${tankID}]}) {
+			/if (!${Bool[${outerMainTankID}]}) {
+				/chat ${channelNumber} No tank specified ! Can't attack !
+				/RETURN
+			}
+			/varset tankID ${outerMainTankID}
+		}
 		
 		|- Move tank on target
-		/if (${Me.CleanName.Equal[${outerMainTank}]}) {
-			/chat ${channelNumber} I'm the MT, engaging target !
+		/if (${Me.ID} == ${tankID}) {
 			/target clear
 			/target id ${mobID}
-			/stick 7 uw hold front
+			/stick 50% uw hold front
+			/delay 10s ${Target.Distance} < 10
 
 			/attack on
 			/chat ${channelNumber} Attacking -= ${Target.CleanName} =- (id = ${Target.ID})
-			/varset outerDamageLevel ${dmg}
 			/bc ${who} assist on ${mobID}
 		}
 	}
@@ -91,8 +101,8 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 				/if (${Stick.Active}) /squelch /stick off
 				
 				|- Set Assist Variables.
-				/varset outerAssisting 		TRUE
-				/varset outerAssistTarget 	${mobID}
+				/varset outerAssisting 			TRUE
+				/varset outerAssistTarget 		${mobID}
 				/varset outerHasTanked 		FALSE
 				
 				|- If I am the assist caller, or I am feigning, don't allow macro control.
@@ -230,7 +240,8 @@ SUB stickToAssistTarget
 			/if (${outerDebug} || ${outerDebug_Assists}) /echo Attempting to stick behind [${outerAssistStickDistance}].
 			/squelch /stick moveback snaproll 15 uw
 			/delay 10 !${Me.Moving} || ${Target.Distance} < 15
-			/squelch /stick hold moveback behind ${outerAssistStickDistance} uw	
+			|/squelch /stick hold moveback behind ${outerAssistStickDistance} uw	
+			/squelch /stick hold moveback behind 100% uw	
 			/delay 10 ${Me.Moving}
 			
 		} else /if (${outerAssistStickPoint.Equal[behindonce]}) {
@@ -238,7 +249,8 @@ SUB stickToAssistTarget
 			/if (${outerDebug} || ${outerDebug_Assists}) /echo Attempting to stick behindonce [${outerAssistStickDistance}].
 			/squelch /stick moveback snaproll 15 uw
 			/delay 10 !${Me.Moving} || ${Target.Distance} < 20
-			/squelch /stick hold moveback behindonce ${outerAssistStickDistance} uw
+			|/squelch /stick hold moveback behindonce ${outerAssistStickDistance} uw
+			/squelch /stick hold moveback behindonce 100% uw
 			/delay 10 ${Me.Moving}
 			
 		} else /if (${outerAssistStickPoint.Equal[pin]}) {
@@ -246,13 +258,15 @@ SUB stickToAssistTarget
 			/if (${outerDebug} || ${outerDebug_Assists}) /echo Attempting to stick pin [${outerAssistStickDistance}].
 			/squelch /stick moveback snaproll 15 uw
 			/delay 10 !${Me.Moving} || ${Target.Distance} < 20
-			/squelch /stick hold moveback pin ${outerAssistStickDistance} uw
+			|/squelch /stick hold moveback pin ${outerAssistStickDistance} uw
+			/squelch /stick hold moveback pin 100% uw
 			/delay 10 ${Me.Moving}
 			
 		} else /if (${outerAssistStickPoint.Equal[front]}) {
 		
 			/if (${outerDebug} || ${outerDebug_Assists}) /echo Attempting to stick front [${outerAssistStickDistance}].
-			/squelch /stick hold front ${outerAssistStickDistance} uw
+			|/squelch /stick hold front ${outerAssistStickDistance} uw
+			/squelch /stick hold front 100% uw
 			/delay 10 ${Me.Moving}
 			
 		} else /if (${outerAssistStickPoint.Equal[!front]}) {
@@ -260,14 +274,16 @@ SUB stickToAssistTarget
 			/if (${outerDebug} || ${outerDebug_Assists}) /echo Attempting to stick !front [${outerAssistStickDistance}].
 			/squelch /stick moveback snaproll 15 uw
 			/delay 10 !${Me.Moving} || ${Target.Distance} < 20
-			/squelch stick hold moveback !front ${outerAssistStickDistance} uw
+			|/squelch stick hold moveback !front ${outerAssistStickDistance} uw
+			/squelch stick hold moveback !front 100% uw
 			/delay 10 ${Me.Moving}
 		} else {
 
 			/if (${outerDebug} || ${outerDebug_Assists}) /echo [${outerAssistStickPoint}] is not a valid stick point.  Defaulting to stick behind.
 			/squelch /stick moveback snaproll 15 uw
 			/delay 10 !${Me.Moving} || ${Target.Distance} < 15
-			/squelch /stick hold moveback behind ${outerAssistStickDistance} uw	
+			|/squelch /stick hold moveback behind ${outerAssistStickDistance} uw	
+			/squelch /stick hold moveback behind 100% uw	
 			/delay 10 ${Me.Moving}
 		}
 	}
@@ -1310,9 +1326,10 @@ SUB FullBurns
 /RETURN
 
 
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|| Casts spells, abilities, and burns through disciplines on a given targetID.	-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|SUB useBurns(int burnTarget, arrayName)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Casts spells, abilities, and burns through disciplines on a given targetID.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB useBurns(int burnTarget, arrayName)
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- useBurns Target=${burnTarget}- Array=${arrayName} ==>
 
 	/declare castName string local
@@ -1491,7 +1508,7 @@ SUB assist_Setup
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB checkAssistBackgroundEvents
+SUB Assist_BackgroundEvents
 	
 	/if (${outerAssisting}) {
 		/doevents Assist

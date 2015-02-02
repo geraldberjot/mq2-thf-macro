@@ -496,7 +496,7 @@ SUB background_Setup
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB background_checkBackgroundEvents
+SUB background_BackgroundEvents
 
 /RETURN
 

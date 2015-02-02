@@ -185,7 +185,11 @@ SUB readMacroSettings()
 
 	/call iniToVar "${iniGeneral},General,StickCommand" outerStickCommand string outer
 	
-	/call iniToVar "${iniGeneral},General,Main Tank" outerMainTank string outer
+	/call iniToVar "${iniGeneral},General,Main Tank" mainTank string local
+	/if (!${Defined[outerMainTankID]}) /declare outerMainTankID int outer 0
+	/if (${Me.CleanName.Equal[${mainTank}]) {
+		/varset outerMainTankID ${Me.ID}
+	}
 	
 	/call splitFromIni "${iniGeneral},General,Includes" includes outer /
 	/call loadAll includes Setup
