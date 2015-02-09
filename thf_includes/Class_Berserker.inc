@@ -25,12 +25,12 @@ SUB BER_CombatAbilities
 	
 		/if (outerDamageLevel > 0) {
 			/for i 1 to ${combatItemsBoost.Size}
-				/varset combatItem ${FindItem[=${combatItemsBoost[i]}]}
-				/if (${combatItemsBoost.ID}) {
+				/varset combatItem ${FindItem[=${combatItemsBoost[${i}]}]}
+				/if (${combatItem.ID}) {
 					|- Timers were already created in the sub routine "createCombatItemsArray"
-					/if (${timer-${combatItemsBoost.ID}.Value} <= 0) {
-						/casting ${combatItemsBoost.ID}|item
-						/varset ${timer-${combatItemsBoost.ID}} ${timer-${combatItemsBoost.ID}.OriginalValue}
+					/if (${timer-${combatItem.ID}.Value} <= 0) {
+						/casting ${combatItem.ID}|item
+						/varset ${timer-${combatItem.ID}} ${timer-${combatItem.ID}.OriginalValue}
 						/delay 1
 					}
 				}
@@ -39,64 +39,30 @@ SUB BER_CombatAbilities
 		
 		/if (outerDamageLevel > 1) {
 			/for i 1 to ${combatItemsBurn.Size}
-				/varset combatItem ${FindItem[=${combatItemsBurn[i]}]}
-				/if (${combatItemsBurn.ID}) {
+				/varset combatItem ${FindItem[=${combatItemsBurn[${i}]}]}
+				/if (${combatItem.ID}) {
 					|- Timers were already created in the sub routine "createCombatItemsArray"
-					/if (${timer-${combatItemsBurn.ID}.Value} <= 0) {
-						/casting ${combatItemsBurn.ID}|item
-						/varset ${timer-${combatItemsBurn.ID}} ${timer-${combatItemsBurn.ID}.OriginalValue}
+					/if (${timer-${combatItem.ID}.Value} <= 0) {
+						/casting ${combatItem.ID}|item
+						/varset ${timer-${combatItem.ID}} ${timer-${combatItem.ID}.OriginalValue}
 						/delay 1
 					}
 				}
 			/next i
 		}
 		
-		|- Use Backstab.
-		/call Attempt_Backstab
-
-		|- For 1 to the size of MyAbilities array, use each ability.
-		/for i 1 to ${MyAbilities.Size}
-			/varset abilityName ${MyAbilities[${i}].Arg[1,/]}
-			|- Check for MinEnd
-			/if (${MyAbilities[${i}].Find[/MinEnd|]}) {
-				/call argueString MinEnd "${MyAbilities[${i}]}"
-				/varset minEnd ${Macro.Return}
-			} else {
-				/varset minEnd 0
-			}
-	
-			/if (${Me.PctEndurance} < ${minEnd}) {
-				/if (${outerDebug}) {
-					/echo I don't have enough endurance to use [${abilityName}].
-					/chat ${channelNumber} I don't have enough endurance to use [${abilityName}].
-				}
-			} else {
-				|- Use alternate ability
-				/if (${Me.AltAbility[${abilityName}]}) {
-					/if (!${Me.AltAbilityReady[${abilityName}]} || ${altTimer_${Me.AltAbility[${abilityName}].ID}}) {
-						/if (${outerDebug}) {
-							/echo Alternate Ability [${abilityName}] is not ready.
-							/chat ${channelNumber} Alternate Ability [${abilityName}] is not ready.
-						}
-					} else {
-						/call thf_Casting ${outerAssistTarget} "${abilityName}"
-					}
-				|- Use combat ability (discipline)
-				} else /if (${Me.CombatAbility[${abilityName}]}) {
-					/if (!${Me.CombatAbilityReady[${abilityName}]}) {
-						/if (${outerDebug}) {
-							/echo Discipline [${abilityName}] is not ready.
-							/chat ${channelNumber} Discipline [${abilityName}] is not ready.
-						}
-					} else {
-						/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
-					}
-				|- Use rogue evade as a combat ability 
-				} else /if (${abilityName.Equal[Evade]}) {
-					/call AutoEvade
-				}
-			}
-		/next i
+		|- Use combat ability (discipline)
+		/if (!${Me.CombatAbilityReady[${outerVolleyDiscipline}]}) {
+			/if (${outerDebug}) /echo Discipline [${outerVolleyDiscipline}] is not ready.
+		} else {
+			/call thf_Casting ${outerAssistTarget} "${outerVolleyDiscipline}/Instant"
+		}
+		/if (!${Me.CombatAbilityReady[${outerEchoingWhispersDiscipline}]}) {
+			/if (${outerDebug}) /echo Discipline [${outerEchoingWhispersDiscipline}] is not ready.
+		} else {
+			/call thf_Casting ${outerAssistTarget} "${outerEchoingWhispersDiscipline}/Instant"
+		}
+		
 	}
 	
 	/if (${outerDebug}) /echo <== BER_CombatAbilities -|
@@ -105,7 +71,7 @@ SUB BER_CombatAbilities
 SUB BER_Setup
 	/if (${outerDebug}) /echo |- BER_Setup ==>
 	
-	/call getLatestVolleyDiscipline
+	/call getLatestDisciplines
 	
 	/if (${outerDebug}) /echo <== BER_Setup -|
 /RETURN
@@ -137,8 +103,8 @@ SUB BER_Aliases
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestVolleyDiscipline()
-	/if (${outerDebug}) /echo |- getLatestVolleyDiscipline ==>
+SUB getLatestDisciplines()
+	/if (${outerDebug}) /echo |- getLatestDisciplines ==>
 	
 	/if (!${Defined[outerVolleyDiscipline]}) /declare outerVolleyDiscipline string outer
 
@@ -154,7 +120,17 @@ SUB getLatestVolleyDiscipline()
 		/varset outerVolleyDiscipline "Rage Volley"
 	}
 	
-	/if (${outerDebug}) /echo <== getLatestVolleyDiscipline -|
+	/if (!${Defined[outerEchoingWhispersDiscipline]}) /declare outerEchoingWhispersDiscipline string outer
+
+	/if (${Me.CombatAbility[Echoing Whispers Rk. III]}) {
+		/varset outerEchoingWhispersDiscipline "Echoing Whispers Rk. III"
+	} else /if (${Me.CombatAbility[Echoing Whispers Rk. II]}) {
+		/varset outerEchoingWhispersDiscipline "Echoing Whispers Rk. II"
+	} else /if (${Me.CombatAbility[Echoing Whispers Rk. I]}) {
+		/varset outerEchoingWhispersDiscipline "Echoing Whispers Rk. I"
+	}
+	
+	/if (${outerDebug}) /echo <== getLatestDisciplines -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|

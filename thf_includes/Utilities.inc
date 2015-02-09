@@ -174,36 +174,40 @@ SUB splitFromIni(String Ini_Key, String ArrayName, String ArrayScope, String sep
 |-		/call iniToVar Bot_Killians.ini,Buffs,SelfBuffs MySelfBuffs local
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB split(String value, String ArrayName, String ArrayScope, String separator)
-	/if (${outerDebug}) /echo |- split [(${value})'s value with ${separator}] ==>
+	/if (${outerDebug}) /echo |- split [(${value})'s value with '${separator}'] ==>
 
 	|- Check for the specified ini key.
 	/if (!${value.Length}) {
 		/if (${outerDebug}) /echo Value is empty !
 	} else {
+		|- Declare the array and copy elements
+		/if (${Defined[${ArrayName}]}) /deletevar ${ArrayName}
+
 		|- Check if the separator is in the string.
 		/if (!${value.Find[${separator}]}) {
 			/if (${outerDebug}) /echo [${separator}] not found in ${value}.
+			/declare ${ArrayName}[1] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
+			/varset ${ArrayName}[1] ${value}
 		} else {
 			|- Count separator
 			/declare i int local 1
 			/declare count int local
 			/varcalc count ${value.Count[${separator}]}+1
-
-			|- Declare the array and copy elements
-			/if (${Defined[${ArrayName}]}) /deletevar ${ArrayName}
-			/declare ${ArrayName}[${count}] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
 			
+			/declare ${ArrayName}[${count}] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
 			/for i 1 to ${${ArrayName}.Size}
 				/varset ${ArrayName}[${i}] ${value.Token[${i},${separator}]}
 			/next i
 		}
 
 		/if (${outerDebug}) {
-			/if (${${ArrayName}.Size}) {
-				/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
+			/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
+			/if (${${ArrayName}.Size} > 1) {
 				/for i 1 to ${${ArrayName}.Size}
 					/echo ${ArrayName}[${i}] - ${${ArrayName}[${i}]}
 				/next i
+			} else {
+				/echo ${ArrayName}[1] - ${${ArrayName}[1]}
 			}
 			/echo <== split -|
 		}

@@ -101,7 +101,7 @@ SUB thfSetup(bool debug)
 	/echo Importing user settings...
 	
 	|- Complete a pending exchange
-	/if (${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Pending Exchange].Length} && ${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName},Pending Exchange].NotEqual[NONE]} && !${itemExchange_Timer}) /call completePendingExchange
+	/if (${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Length} && ${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].NotEqual[NONE]} && !${itemExchange_Timer}) /call completePendingExchange
 	
 	/call checkToons
 	
@@ -127,7 +127,7 @@ SUB thfSetup(bool debug)
 SUB makeThfIni()
 	/if (${outerDebug}) /echo |- makeThfIni ==>
 
-	/noparse /ini "thf_inis\THF.ini" "Paths" "Toon" "thf_inis\${MacroQuest.Server}-${Me.CleanName}.ini"
+	/noparse /ini "thf_inis\THF.ini" "Paths" "Toon" "thf_inis\${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName}.ini"
 	/noparse /ini "thf_inis\THF.ini" "Paths" "General" "thf_inis\General.ini"
 
 	/if (${outerDebug}) /echo <== makeThfIni -|
@@ -185,9 +185,10 @@ SUB readMacroSettings()
 
 	/call iniToVar "${iniGeneral},General,StickCommand" outerStickCommand string outer
 	
-	/call iniToVar "${iniGeneral},General,Main Tank" mainTank string local
+	/call iniToVar "${iniGeneral},General,Main Tank" outerMainTank string outer
 	/if (!${Defined[outerMainTankID]}) /declare outerMainTankID int outer 0
-	/if (${Me.CleanName.Equal[${mainTank}]) {
+	/if (${Me.CleanName.Equal[${outerMainTank}]}) {
+		/chat ${channelNumber} I'm the main tank !
 		/varset outerMainTankID ${Me.ID}
 	}
 	
