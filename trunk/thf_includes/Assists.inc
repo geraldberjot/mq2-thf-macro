@@ -22,16 +22,17 @@ SUB EVENT_Attack(String line, String from, String who, String params)
 		/if (!${Defined[outerDamageLevel]}) /declare outerDamageLevel int outer
 		/if (!${Defined[outerAoeAggro]}) /declare outerAoeAggro bool outer FALSE
 		
-		/call split ${params} outerAttackParams outer " "
+		/call split "${params}" outerAttackParams outer " "
 		/for i 1 to ${outerAttackParams.Size}
-			/if (${outerAttackParams[i].Lower.Find[-targetID|]}) {
-				/varset targetID ${outerAttackParams[i].Replace[-targetID|,]}
-			} else /if (${outerAttackParams[i].Lower.Find[-aoeAggro|]}) {
-				/varset outerAoeAggro ${outerAttackParams[i].Replace[-aoeAggro|,]}
-			} else /if (${outerAttackParams[i].Lower.Find[-dmg|]}) {
-				/varset outerDamageLevel ${outerAttackParams[i].Replace[-dmg|,]}
-			} else /if (${outerAttackParams[i].Lower.Find[-tank|]}) {
-				/varset tankID ${Spawn[pc=${outerAttackParams[i].Lower.Replace[-tank|,]}].ID}
+			/echo outerAttackParams[${i}]=${outerAttackParams[${i}]}
+			/if (${outerAttackParams[${i}].Lower.Find[-targetid|]}) {
+				/varset targetID ${outerAttackParams[${i}].Lower.Replace[-targetid|,]}
+			} else /if (${outerAttackParams[${i}].Lower.Find[-aoeaggro|]}) {
+				/varset outerAoeAggro ${outerAttackParams[${i}].Lower.Replace[-aoeaggro|,]}
+			} else /if (${outerAttackParams[${i}].Lower.Find[-dmg|]}) {
+				/varset outerDamageLevel ${outerAttackParams[${i}].Lower.Replace[-dmg|,]}
+			} else /if (${outerAttackParams[${i}].Lower.Find[-tank|]}) {
+				/varset tankID ${Spawn[pc=${outerAttackParams[${i}].Lower.Replace[-tank|,]}].ID}
 			}
 		/next i
 		
@@ -55,13 +56,13 @@ SUB EVENT_Attack(String line, String from, String who, String params)
 		|- Move tank on target
 		/if (${Me.ID} == ${tankID}) {
 			/target clear
-			/target id ${mobID}
+			/target id ${targetID}
 			/stick 50% uw hold front
 			/delay 10s ${Target.Distance} < 10
 
 			/attack on
 			/chat ${channelNumber} Attacking -= ${Target.CleanName} =- (id = ${Target.ID})
-			/bc ${who} assist on ${mobID}
+			/bc ${who} assist on ${Target.ID}
 		}
 	}
 	
@@ -114,7 +115,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 				
 				|- If the macro is controlling me, engage.
 				/if (${outerAllowControl}) {
-					/chat ${channelNumber} Attacking - ${outerAssistTarget} - ${Spawn[${outerAssistTarget}].CleanName}
+					/chat ${channelNumber} Attacking -> ${Spawn[${outerAssistTarget}].CleanName} [${outerAssistTarget}]
 					|- Target AssistTarget.
 					/if (${Target.ID} != ${outerAssistTarget}) /call TrueTarget ${outerAssistTarget}
 					/call amIMelee
@@ -578,16 +579,9 @@ SUB CombatAbilities
 					/if (!${Me.AbilityReady[${abilityName}]}) {
 						/if (${outerDebug}) /echo Ability [${abilityName}] is not ready.
 					} else {
-						|- Use Backstab.
-						/if (${abilityName.Equal[Backstab]}) {
-							/call Attempt_Backstab
 						|- Use Bash.
 						} else /if (${abilityName.Equal[Bash]}) {
 							/call Attempt_Bash
-						|- Use Taunt.
-						} else /if (${abilityName.Equal[Taunt]}) {
-							|/if (${outerAutoAggro}) /call Attempt_Taunt
-							/doability Taunt
 						|- Reset Tail Rake to Dragon Punch.  Tail Rake causes an error because it returns as "Dragon Punch" when /echoed in Me.Ability[#]
 						} else /if (${abilityName.Equal[Tail Rake]}) {
 							/varset ${MyAbilities[${i}]} Dragon Punch
@@ -608,16 +602,7 @@ SUB CombatAbilities
 					/if (!${Me.CombatAbilityReady[${abilityName}]}) {
 						/if (${outerDebug}) /echo Discipline [${abilityName}] is not ready.
 					} else {
-						|- Rogue Assassin's Strike.
-						/if (${Select[${abilityName},${rogueStrikes}]}) {
-							/call check_rogStrike "${abilityName}"
-						|- Warrior provoke.
-						} else /if (${Select[${abilityName},${warriorBellows}]}) {
-							/if (${outerAutoAggro}) /call check_warProvoke "${abilityName}"
-						|- All other disciplines.
-						} else {
-							/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
-						}
+						/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
 					}
 				|- Use rogue evade as a combat ability 
 				} else /if (${abilityName.Equal[Evade]}) {
@@ -625,6 +610,7 @@ SUB CombatAbilities
 				}
 			}
 		/next i
+		/call ${Me.Class.ShortName}_CombatAbilities
 	}
 
 	/if (${outerDebug}) /echo <== CombatAbilities -|
@@ -1419,8 +1405,7 @@ SUB EVENT_toggle_outerAssistType(line, ChatSender, eventParams)
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB assist_Setup
-	/call iniToVar "${iniGeneral},Debug,Debug Assists (On/Off)" Debug_Assists bool outer
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assist_Setup ==>
+	/if (${outerDebug}) /echo |- assist_Setup ==>
 	
 	|- Add Assists Paths
 	/if (!${Ini[${iniTHF},Paths,Enrage Settings].Length}) /call writeToIni "${iniTHF},Paths,Enrage Settings" "thf_inis\Enrage Settings.ini"
@@ -1461,10 +1446,10 @@ SUB assist_Setup
 	/if (${Ini[${iniToon},Assist Settings,Ranged Distance].Length}) /call iniToVar "${iniToon},Assist Settings,Ranged Distance" outerRangedStickDistance string outer
 	/if (${Ini[${iniToon},Assist Settings,Auto-Assist Engage Percent].Length}) /call iniToVar "${iniToon},Assist Settings,Auto-Assist Engage Percent" outerEngagePct int outer
 	/if (!${Defined[outerEngagePct]}) {
-		/if (${outerDebug} || ${outerDebug_Assists}) /echo ERROR: @[outerEngagePct] - outerEngagePct is invalid, defaulting to 98%
+		/if (${outerDebug}) /echo ERROR: @[outerEngagePct] - outerEngagePct is invalid, defaulting to 98%
 		/declare outerEngagePct int outer 98
 	} else /if (${Defined[outerEngagePct]} && !${outerEngagePct}) {
-		/if (${outerDebug} || ${outerDebug_Assists}) /echo ERROR: @[outerEngagePct] - outerEngagePct is invalid, defaulting to 98%
+		/if (${outerDebug}) /echo ERROR: @[outerEngagePct] - outerEngagePct is invalid, defaulting to 98%
 		/varset outerEngagePct 98
 	}
 	
@@ -1501,7 +1486,7 @@ SUB assist_Setup
 	|- If Assisting variables are defined, turn assists on.
 	/if (${Defined[outerAssistType]} || ${Defined[MyAbilities]} || ${Defined[${arrayName}]} || ${Defined[Assist_DoTs]} || ${Defined[Command_DoTs]} || ${Defined[Assist_Debuffs]} || ${Defined[Command_Debuffs]} || ${Defined[Rain_Spells]} || ${Defined[QuickBurns]} || ${Defined[FullBurns]}) /declare AssistsOn bool outer TRUE
 
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assist_Setup -|
+	/if (${outerDebug}) /echo <== assist_Setup -|
 /RETURN
 
 
@@ -1556,7 +1541,7 @@ SUB assist_MacroSettings
 
 
 SUB assist_CharacterSettings
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assistCharacterSettings ==>
+	/if (${outerDebug}) /echo |- assistCharacterSettings ==>
 
 	|- Add Assist_Stick entries.
 	/call writeToIni "${iniToon},Assist Settings,Assist Type (Melee/Ranged)" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Melee,]}
@@ -1599,13 +1584,13 @@ SUB assist_CharacterSettings
 		}
 	}
 
-	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assistCharacterSettings -|
+	/if (${outerDebug}) /echo <== assistCharacterSettings -|
 /RETURN
 
 
 
 SUB assist_Aliases
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assist_Aliases ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- assist_Aliases ==>
 
 	/noparse /squelch /alias /AssistOn /bc Assist on ${Target.ID}
 	/noparse /squelch /alias /AssistMe /bc Assist on ${Target.ID}
@@ -1628,5 +1613,5 @@ SUB assist_Aliases
 	/squelch /alias /TauntOff /bc Toggle Taunt OFF
 	/squelch /alias /outerAssistType /bc Toggle Assist Type
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assist_Aliases -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== assist_Aliases -|
 /RETURN

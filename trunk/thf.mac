@@ -6,7 +6,7 @@
 SUB Main
 	/declare iniHail 	string 	outer "thf_inis\Hail.ini"
 	
-	/call thfSetup FALSE
+	/call thfSetup TRUE
 	
 	/call setupAdvLootVars "thf_inis\Loot.ini"
 	

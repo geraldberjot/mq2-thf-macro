@@ -178,11 +178,11 @@ SUB checkHolyShitBuff
 				/casting "${myHSB}" ${mySlot}
 				/varset ${itemCleanName}Timer ${recastTime}
 			} else {
-				|/if (${${itemCleanName}Timer} <= 0 && !${Me.Moving} && ${itemCleanName.Lower.Equal[artoriastheabysswalker]}) {
-				|	/echo Casting "${myHSB}" ${mySlot}
-				|	/casting "${myHSB}" ${mySlot}
-				|	/varset ${itemCleanName}Timer ${recastTime}
-				|}
+				/if (${${itemCleanName}Timer} <= 0 && !${Me.Moving} && ${itemCleanName.Lower.Equal[artoriastheabysswalker]}) {
+					/echo Casting "${myHSB}" ${mySlot}
+					/casting "${myHSB}" ${mySlot}
+					/varset ${itemCleanName}Timer ${recastTime}
+				}
 			}
 		/next i
 	}
