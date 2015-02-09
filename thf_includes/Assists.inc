@@ -1553,11 +1553,13 @@ SUB assist_CharacterSettings
 	|- If I'm a melee class, add Melee Abilities entries.
 	/call amIMelee
 	/if (${Macro.Return}) {
+		/if (${outerDebug}) /echo I'm a melee !
 		/if (!${Ini[${iniToon},Melee].Length}) /call writeToIni "${iniToon},Melee,Abilities"
 	}
 
 	|- If I'm a casting class, add Nuke entries.
 	/if (${Me.Class.CanCast}) {
+		/if (${outerDebug}) /echo I'm a caster !
 		/if (!${Ini[${iniToon},Spells].Length}) {
 			/call writeToIni "${iniToon},Spells,Nukes"
 			/call writeToIni "${iniToon},Spells,Quick Burns"
@@ -1570,6 +1572,7 @@ SUB assist_CharacterSettings
 
 	|- If I'm a casting class, add DoT entries.
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,NEC,RNG,SHD,SHM]}) {
+		/if (${outerDebug}) /echo I have DoTs to use !
 		/if (!${Ini[${iniToon},DoTs].Length}) {
 			/call writeToIni "${iniToon},On Assist,DoTs"
 			/call writeToIni "${iniToon},On Command,DoTs"
@@ -1578,6 +1581,7 @@ SUB assist_CharacterSettings
 
 	|- If I'm a casting class, add Debuff entries.
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,MAG,NEC,SHM]}) {
+		/if (${outerDebug}) /echo I'm a debuffer !
 		/if (!${Ini[${iniToon},Debuffs].Length}) {
 			/call writeToIni "${iniToon},On Assist,Debuffs"
 			/call writeToIni "${iniToon},On Command,Debuffs"

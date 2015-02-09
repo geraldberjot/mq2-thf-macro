@@ -137,7 +137,7 @@ SUB makeThfIni()
 |- Launch subroutine for each array element
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB loadAll(String tableau, String subToCall)
-	/if (${outerDebug}) /echo |- makeThfIni ==>
+	/if (${outerDebug}) /echo |- loadAll ==>
 
 	/echo Calling ${Me.Class.ShortName}_${subToCall}
 	/call ${Me.Class.ShortName}_${subToCall}
@@ -147,7 +147,7 @@ SUB loadAll(String tableau, String subToCall)
 		/if (${Bool[${${tableau}[${i}]}]}) /call ${${tableau}[${i}]}_${subToCall}
 	/next i
 
-	/if (${outerDebug}) /echo <== makeThfIni -|
+	/if (${outerDebug}) /echo <== loadAll -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
