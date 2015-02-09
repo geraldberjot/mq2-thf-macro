@@ -79,6 +79,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_Assist ==>
 	
 	/call amIConcerned ${from} ${who} TRUE
+	/echo ${Macro.Return}
 	/if (${Macro.Return}) {
 		/if (${Defined[PauseTarget]}) /deletevar PauseTarget
 	
@@ -103,6 +104,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 				
 				|- Set Assist Variables.
 				/varset outerAssisting 			TRUE
+				/echo outerAssisting=${outerAssisting}
 				/varset outerAssistTarget 		${mobID}
 				/varset outerHasTanked 		FALSE
 				
@@ -1454,34 +1456,34 @@ SUB assist_Setup
 	}
 	
 	|- [Melee Abilities].
-	/if (${Ini[${iniToon},Melee,Abilities].Length}) /call splitFromIni "${iniToon},Melee,Abilities" MyAbilities /
+	/if (${Ini[${iniToon},Melee,Abilities].Length}) /call splitFromIni "${iniToon},Melee,Abilities" MyAbilities outer /
 
 	|- Spells
 	|-- [Nukes].
-	/if (${Ini[${iniToon},Spells,Nukes].Length}) /call splitFromIni "${iniToon},Spells,Nukes" MyNukes /
+	/if (${Ini[${iniToon},Spells,Nukes].Length}) /call splitFromIni "${iniToon},Spells,Nukes" MyNukes outer /
 	
 	|-- [Rain].
-	/if (${Ini[${iniToon},Spells,Rains].Length}) /call splitFromIni "${iniToon},Spells,Rains" Rain_Spells /
+	/if (${Ini[${iniToon},Spells,Rains].Length}) /call splitFromIni "${iniToon},Spells,Rains" Rain_Spells outer /
 
 	|-- [QuickBurns].
-	/if (${Ini[${iniToon},Spells,Quick Burns].Length}) /call splitFromIni "${iniToon},Spells,Quick Burns" QuickBurns /
+	/if (${Ini[${iniToon},Spells,Quick Burns].Length}) /call splitFromIni "${iniToon},Spells,Quick Burns" QuickBurns outer /
 	
 	|-- [FullBurns].	
-	/if (${Ini[${iniToon},Spells,Full Burns].Length}) /call splitFromIni "${iniToon},Spells,Full Burns" FullBurns /
+	/if (${Ini[${iniToon},Spells,Full Burns].Length}) /call splitFromIni "${iniToon},Spells,Full Burns" FullBurns outer /
 
 	|- On Assist
 	|-- [Debuffs].
-	/if (${Ini[${iniToon},On Assist,Debuffs].Length}) /call splitFromIni "${iniToon},On Assist,Debuffs" Assist_Debuffs /
+	/if (${Ini[${iniToon},On Assist,Debuffs].Length}) /call splitFromIni "${iniToon},On Assist,Debuffs" Assist_Debuffs outer /
 
 	|-- [DoTs].
-	/if (${Ini[${iniToon},On Assist,DoTs].Length}) /call splitFromIni "${iniToon},On Assist,DoTs" Assist_DoTs /
+	/if (${Ini[${iniToon},On Assist,DoTs].Length}) /call splitFromIni "${iniToon},On Assist,DoTs" Assist_DoTs outer /
 
 	|- On Command
 	|-- [DoTs].
-	/if (${Ini[${iniToon},On Command,DoTs].Length}) /call splitFromIni "${iniToon},On Command,DoTs" Command_DoTs /
+	/if (${Ini[${iniToon},On Command,DoTs].Length}) /call splitFromIni "${iniToon},On Command,DoTs" Command_DoTs outer /
 
 	|-- [Debuffs].
-	/if (${Ini[${iniToon},On Command,Debuffs].Length}) /call splitFromIni "${iniToon},On Command,Debuffs" Command_Debuffs /
+	/if (${Ini[${iniToon},On Command,Debuffs].Length}) /call splitFromIni "${iniToon},On Command,Debuffs" Command_Debuffs outer /
 	
 	|- If Assisting variables are defined, turn assists on.
 	/if (${Defined[outerAssistType]} || ${Defined[MyAbilities]} || ${Defined[${arrayName}]} || ${Defined[Assist_DoTs]} || ${Defined[Command_DoTs]} || ${Defined[Assist_Debuffs]} || ${Defined[Command_Debuffs]} || ${Defined[Rain_Spells]} || ${Defined[QuickBurns]} || ${Defined[FullBurns]}) /declare AssistsOn bool outer TRUE
@@ -1544,28 +1546,28 @@ SUB assist_CharacterSettings
 	/if (${outerDebug}) /echo |- assistCharacterSettings ==>
 
 	|- Add Assist_Stick entries.
-	/call writeToIni "${iniToon},Assist Settings,Assist Type (Melee/Ranged)" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Melee,]}
-	/call writeToIni "${iniToon},Assist Settings,Auto-Assist Engage Percent" 98
-	/call writeToIni "${iniToon},Assist Settings,Melee Stick Point" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Behind,]}
-	/call writeToIni "${iniToon},Assist Settings,Melee Distance" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},MaxMelee,]}
-	/call writeToIni "${iniToon},Assist Settings,Ranged Distance" 100
+	/call writeToIni "${iniToon},Assist Settings,Assist Type (Melee/Ranged)" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Melee,Ranged]} true
+	/call writeToIni "${iniToon},Assist Settings,Auto-Assist Engage Percent" 98 true
+	/call writeToIni "${iniToon},Assist Settings,Melee Stick Point" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Behind,"[Enter the melee stick mode]"]} true
+	/call writeToIni "${iniToon},Assist Settings,Melee Distance" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},MaxMelee,"[Enter the melee distance]"]} true
+	/call writeToIni "${iniToon},Assist Settings,Ranged Distance" 100 true
 
 	|- If I'm a melee class, add Melee Abilities entries.
 	/call amIMelee
 	/if (${Macro.Return}) {
 		/if (${outerDebug}) /echo I'm a melee !
-		/if (!${Ini[${iniToon},Melee].Length}) /call writeToIni "${iniToon},Melee,Abilities"
+		/if (!${Ini[${iniToon},Melee].Length}) /call writeToIni "${iniToon},Melee,Abilities" "[Enter you combat abilities (taunt/kick/slam/etc...)]" true
 	}
 
 	|- If I'm a casting class, add Nuke entries.
 	/if (${Me.Class.CanCast}) {
 		/if (${outerDebug}) /echo I'm a caster !
 		/if (!${Ini[${iniToon},Spells].Length}) {
-			/call writeToIni "${iniToon},Spells,Nukes"
-			/call writeToIni "${iniToon},Spells,Quick Burns"
-			/call writeToIni "${iniToon},Spells,Full Burns"
+			/call writeToIni "${iniToon},Spells,Nukes" "Enter your nuke here (fire nuke/ice nuke/magic nuke/...)" true
+			/call writeToIni "${iniToon},Spells,Quick Burns" "Enter your quick nuke here (fire nuke/ice nuke/magic nuke/...)" true
+			/call writeToIni "${iniToon},Spells,Full Burns" "Enter your fullburn nuke here (fire nuke/ice nuke/magic nuke/...)" true
 			/if (${Select[${Me.Class.ShortName},DRU,MAG,SHM,WIZ]}) {
-				/call writeToIni "${iniToon},Spells,Rains"
+				/call writeToIni "${iniToon},Spells,Rains" "Enter your rain here (fire nuke/ice nuke/magic nuke/...)" true
 			}
 		}
 	}
@@ -1574,8 +1576,8 @@ SUB assist_CharacterSettings
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,NEC,RNG,SHD,SHM]}) {
 		/if (${outerDebug}) /echo I have DoTs to use !
 		/if (!${Ini[${iniToon},DoTs].Length}) {
-			/call writeToIni "${iniToon},On Assist,DoTs"
-			/call writeToIni "${iniToon},On Command,DoTs"
+			/call writeToIni "${iniToon},On Assist,DoTs" "Enter your DoT on assist here (disease/poison/...)" true
+			/call writeToIni "${iniToon},On Command,DoTs" "Enter your DoT on command here (disease/poison/...)" true
 		}
 	}
 
@@ -1583,8 +1585,8 @@ SUB assist_CharacterSettings
 	/if (${Select[${Me.Class.ShortName},BST,DRU,ENC,MAG,NEC,SHM]}) {
 		/if (${outerDebug}) /echo I'm a debuffer !
 		/if (!${Ini[${iniToon},Debuffs].Length}) {
-			/call writeToIni "${iniToon},On Assist,Debuffs"
-			/call writeToIni "${iniToon},On Command,Debuffs"
+			/call writeToIni "${iniToon},On Assist,Debuffs" "Enter your debuff on assist here (tash/malo/...)" true
+			/call writeToIni "${iniToon},On Command,Debuffs" "Enter your DoT on command here (tash/malo/...)" true
 		}
 	}
 
