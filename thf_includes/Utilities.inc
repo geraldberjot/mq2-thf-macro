@@ -131,7 +131,7 @@ SUB splitFromIni(String Ini_Key, String ArrayName, String ArrayScope, String sep
 	/if (!${value.Length}) {
 		/if (${outerDebug}) /echo [${Ini_Key}] not found !
 	} else {
-			/call split ${value} ${ArrayName} ${ArrayScope} ${separator}
+			/call split "${value}" ${ArrayName} ${ArrayScope} ${separator}
 			/echo <== splitFromIni -|
 		}
 	}
