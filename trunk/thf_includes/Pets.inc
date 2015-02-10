@@ -159,7 +159,7 @@ SUB event_shrinkPets(line, ChatSender)
 |- Checks pet health, and attempts to cast PetHeal spells.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_petHeal
-/if (${Debug} || ${Debug_Pets}) /echo |- PetHeal ==>
+	/if (${Debug} || ${Debug_Pets}) /echo |- PetHeal ==>
 
 	/if (${Defined[petHeal]} && ${Me.Pet.ID}) {
 		
@@ -189,7 +189,7 @@ SUB check_petHeal
 		/if (${Me.Pet.PctHPs} < ${healPct}) /call thf_Casting ${Me.Pet.ID} "${castName}/GiveUpTimer|${If[${Me.Gem[${Spell[${Pet_Heal.Arg[1,/]}]}]},15,90]}"
 	}
 
-/if (${Debug} || ${Debug_Pets}) /echo <== PetHeal -|
+	/if (${Debug} || ${Debug_Pets}) /echo <== PetHeal -|
 /RETURN
 
 
