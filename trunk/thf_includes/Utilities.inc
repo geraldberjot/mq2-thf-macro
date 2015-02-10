@@ -129,33 +129,9 @@ SUB splitFromIni(String Ini_Key, String ArrayName, String ArrayScope, String sep
 	/varset value ${Ini[${Ini_Key}]}
 	|- Check for the specified ini key.
 	/if (!${value.Length}) {
-		/if (${outerDebug}) /echo [${Ini_Key}] not found.
+		/if (${outerDebug}) /echo [${Ini_Key}] not found !
 	} else {
-		|- Check if the separator is in the string.
-		/if (!${value.Find[${separator}]}) {
-			/if (${outerDebug}) /echo [${separator}] not found in ${value}.
-		} else {
-			|- Count separator
-			/declare i int local 1
-			/declare count int local
-			/varcalc count ${value.Count[${separator}]}+1
-
-			|- Declare the array and copy elements
-			/if (${Defined[${ArrayName}]}) /deletevar ${ArrayName}
-			/declare ${ArrayName}[${count}] string ${If[${Defined[ArrayScope]},${ArrayScope},outer]}
-			
-			/for i 1 to ${${ArrayName}.Size}
-				/varset ${ArrayName}[${i}] ${value.Token[${i},${separator}]}
-			/next i
-		}
-
-		/if (${outerDebug}) {
-			/if (${${ArrayName}.Size}) {
-				/echo Declared: ${ArrayName}[${${ArrayName}.Size}]
-				/for i 1 to ${${ArrayName}.Size}
-					/echo ${ArrayName}[${i}] - ${${ArrayName}[${i}]}
-				/next i
-			}
+			/call split ${value} ${ArrayName} ${ArrayScope} ${separator}
 			/echo <== splitFromIni -|
 		}
 	}
