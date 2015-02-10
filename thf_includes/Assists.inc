@@ -1548,15 +1548,15 @@ SUB assist_CharacterSettings
 	|- Add Assist_Stick entries.
 	/call writeToIni "${iniToon},Assist Settings,Assist Type (Melee/Ranged)" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Melee,Ranged]} true
 	/call writeToIni "${iniToon},Assist Settings,Auto-Assist Engage Percent" 98 true
-	/call writeToIni "${iniToon},Assist Settings,Melee Stick Point" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Behind,"[Enter the melee stick mode]"]} true
-	/call writeToIni "${iniToon},Assist Settings,Melee Distance" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},MaxMelee,"[Enter the melee distance]"]} true
+	/call writeToIni "${iniToon},Assist Settings,Melee Stick Point" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},Behind,"Enter the melee stick mode"]} true
+	/call writeToIni "${iniToon},Assist Settings,Melee Distance" ${If[${Select[${Me.Class.ShortName},BRD,BER,BST,MNK,PAL,RNG,ROG,SHD,WAR]},MaxMelee,"Enter the melee distance"]} true
 	/call writeToIni "${iniToon},Assist Settings,Ranged Distance" 100 true
 
 	|- If I'm a melee class, add Melee Abilities entries.
 	/call amIMelee
 	/if (${Macro.Return}) {
 		/if (${outerDebug}) /echo I'm a melee !
-		/if (!${Ini[${iniToon},Melee].Length}) /call writeToIni "${iniToon},Melee,Abilities" "[Enter you combat abilities (taunt/kick/slam/etc...)]" true
+		/if (!${Ini[${iniToon},Melee].Length}) /call writeToIni "${iniToon},Melee,Abilities" "Enter you combat abilities (taunt/kick/slam/etc...)" true
 	}
 
 	|- If I'm a casting class, add Nuke entries.
