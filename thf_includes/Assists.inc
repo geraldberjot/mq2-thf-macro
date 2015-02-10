@@ -1206,12 +1206,12 @@ SUB EVENT_SwarmPets(line, ChatSender, int swarmTarget)
 
 
 SUB check_Burns
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_Burns ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_Burns ==>
 
 	/if (${use_FullBurns}) /call useBurns ${outerAssistTarget} "FullBurns"
 	/if (${use_QuickBurns}) /call useBurns ${outerAssistTarget} "QuickBurns"
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Burns -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Burns -|
 /RETURN
 
 
@@ -1219,30 +1219,25 @@ SUB check_Burns
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Engages QuickBurns listed in the iniToon.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT QuickBurn "<#1#> Quick Burn"
-SUB EVENT_QuickBurn(line, ChatSender)
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_QuickBurn ==>
+#EVENT QuickBurn "<#1#> #2# Quick Burn"
+SUB EVENT_QuickBurn(String line, String from, String who)
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_QuickBurn ==>
 
 	|- Check Assisting
 	/if (!${outerAssisting}) {
 		/echo You must be attacking something to burn.
 	} else {
-	
 		|- Check for quickburns to cast
 		/if (${Defined[QuickBurns]}) {
-		
-			|- Verify the event
-			/call verifyEvent "${ChatSender}" "${line}"
-			/if (${Defined[ChatSender]}) /if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-			|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
-			/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
+			/call amIConcerned ${from} ${who} TRUE
+			/if (${Macro.Return}) {
 				/chat ${channelNumber} Using Quick Burns...
 				/if (!${Defined[use_QuickBurns]}) /declare use_QuickBurns bool outer TRUE
 			}
 		}
 	}
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_QuickBurn -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_QuickBurn -|
 /RETURN
 
 
@@ -1318,7 +1313,7 @@ SUB FullBurns
 |- Casts spells, abilities, and burns through disciplines on a given targetID.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB useBurns(int burnTarget, arrayName)
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- useBurns Target=${burnTarget}- Array=${arrayName} ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- useBurns Target=${burnTarget}- Array=${arrayName} ==>
 
 	/declare castName string local
 	
@@ -1334,7 +1329,7 @@ SUB useBurns(int burnTarget, arrayName)
 	
 	/varset outerCombatTimer ${outerCombatDelay}
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== useBurns -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== useBurns -|
 /RETURN
 
 #EVENT toggle_Taunt "[#1#] Toggle Taunt #2#"
