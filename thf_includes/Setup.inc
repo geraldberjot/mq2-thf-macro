@@ -19,6 +19,7 @@
 #INCLUDE thf_includes\Casting.inc
 #INCLUDE thf_includes\Heals.inc
 #INCLUDE thf_includes\Utilities.inc
+#INCLUDE thf_includes\Pets.inc
 
 #INCLUDE thf_includes\class_Bard.inc
 #INCLUDE thf_includes\class_Beastlord.inc
@@ -221,7 +222,7 @@ SUB MakeFunctionsSettings()
 	/ini ${iniTHF} "Berserker" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
 	/ini ${iniTHF} "Cleric" "functions" "check_DivineArb/check_Yaulp/check_celestialRegen/check_Heals/check_CombatBuffs/check_Debuffs/check_Nukes/check_Buffs" 
 	/ini ${iniTHF} "Druid" "functions" "check_Heals/check_CombatBuffs/check_Burns/check_Debuffs/check_DoTs/check_Rain/check_Nukes/check_Buffs" 
-	/ini ${iniTHF} "Enchanter" "functions" "check_Rune/check_CombatBuffs/check_Burns/check_Debuffs/check_DoTs/check_Rain/check_Nukes/check_Buffs/check_Pets" 
+	/ini ${iniTHF} "Enchanter" "functions" "check_Rune/check_CombatBuffs/check_Burns/check_Debuffs/check_DoTs/check_Rain/check_Nukes/check_Buffs" 
 	/ini ${iniTHF} "Magician" "functions" "check_CombatBuffs/check_petHeal/check_Burns/check_Debuffs/check_Rain/check_Nukes/check_Buffs/check_Pets/check_PetWeapons" 
 	/ini ${iniTHF} "Monk" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
 	/ini ${iniTHF} "Necromancer" "functions" "check_Burns/check_castLich/check_manaDump/check_Debuffs/check_DoTs/check_CombatBuffs/check_lifeTap/check_Nukes/check_petHeal/check_Buffs/check_Pets" 
@@ -229,7 +230,7 @@ SUB MakeFunctionsSettings()
 	/ini ${iniTHF} "Ranger" "functions" "check_Burns/check_CombatBuffs/check_Heals/check_DoTs/check_Nukes/check_Buffs" 
 	/ini ${iniTHF} "Rogue" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
 	/ini ${iniTHF} "ShadowKnight" "functions" "check_Burns/check_lifeTap/check_Debuffs/check_CombatBuffs/check_DoTs/check_Nukes/check_Buffs/check_Pets" 
-	/ini ${iniTHF} "Shaman" "functions" "check_Debuffs/check_Burns/check_Heals/check_CombatBuffs/check_DoTs/check_petHeal/check_Rain/check_Nukes/check_Buffs/check_Pets/check_Canni" 
+	/ini ${iniTHF} "Shaman" "functions" "check_Debuffs/check_Burns/check_Heals/check_CombatBuffs/check_DoTs/check_Rain/check_Nukes/check_Buffs/check_Canni" 
 	/ini ${iniTHF} "Warrior" "functions" "check_Burns/check_CombatBuffs/check_Buffs" 
 	/ini ${iniTHF} "Wizard" "functions" "check_Burns/check_CombatBuffs/check_Rain/check_Nukes/check_Harvest/check_Buffs" 
 /RETURN
