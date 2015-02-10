@@ -1245,9 +1245,9 @@ SUB EVENT_QuickBurn(String line, String from, String who)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Engages FullBurns listed in the iniToon.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT FullBurn "<#1#> Full Burn"
-SUB EVENT_FullBurn(line, ChatSender)
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_FullBurn ==>
+#EVENT FullBurn "<#1#> #2# Full Burn"
+SUB EVENT_FullBurn(String line, String from, String who)
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_FullBurn ==>
 
 	|- Check Assisting
 	/if (!${outerAssisting}) {
@@ -1256,12 +1256,8 @@ SUB EVENT_FullBurn(line, ChatSender)
 	
 		|- Check for quickburns to cast
 		/if (${Defined[FullBurns]}) {
-		
-			|- Verify the event
-			/call verifyEvent "${ChatSender}" "${line}"
-			/if (${Defined[ChatSender]}) /if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-			|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
-			/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
+			/call amIConcerned ${from} ${who} TRUE
+			/if (${Macro.Return}) {
 				/chat ${channelNumber} Using Full Burns...
 				/if (!${Defined[use_FullBurns]}) /declare use_FullBurns bool outer TRUE
 				/if (!${Defined[use_QuickBurns]}) /declare use_QuickBurns bool outer TRUE
@@ -1269,16 +1265,14 @@ SUB EVENT_FullBurn(line, ChatSender)
 		}
 	}
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_FullBurn -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_FullBurn -|
 /RETURN
-
-
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- FullBurn's MainLoop hook, calls FullBurns, and QuickBurns, in succession until your target dies.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB FullBurns
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- FullBurns ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- FullBurns ==>
 
 	/declare castName string local
 	
@@ -1305,7 +1299,7 @@ SUB FullBurns
 	
 	/varset outerCombatTimer ${outerCombatDelay}
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== FullBurns -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== FullBurns -|
 /RETURN
 
 
