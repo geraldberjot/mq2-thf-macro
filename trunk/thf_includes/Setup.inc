@@ -348,7 +348,13 @@ SUB checkPlugins()
 	/if (!${Plugin[mq2itemdisplay].Name.Length}) /plugin MQ2ItemDisplay
 
 	|- Check MQ2HUD.
-	/if (!${Plugin[mq2hud].Name.Length}) /plugin MQ2HUD	
+	/if (!${Plugin[mq2hud].Name.Length}) /plugin MQ2HUD
+	
+	|- Unload MQ2melee
+	/if (${Plugin[mq2melee].Name.Length}) {
+		/echo MQ2Melee is loaded ! Trying to unload it...
+		/plugin MQ2Melee unload
+	}
 	
 	|- <== REQUIRED PLUGINS
 /RETURN
