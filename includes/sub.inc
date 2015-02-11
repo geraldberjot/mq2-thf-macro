@@ -253,9 +253,28 @@ SUB EVENT_Assign(String Line, String Tache)
 
 SUB checkPlugIn
 	/if (!${Plugin[MQ2Cast].Name.Length}) {
-		/echo MQ2Cast is a REQUIRED PLUGIN
-		/echo Please Load MQ2Cast before running this macro
-		/end
+		/echo MQ2Cast is not loaded ! Trying to load it...
+		/plugin MQ2Cast
+		/delay 1s
+		/if (!${Plugin[MQ2Cast].Name.Length}) {
+			/echo MQ2Cast is a REQUIRED PLUGIN
+			/echo Please Load MQ2Cast before running this macro
+			/end
+		}
+	}
+	/if (!${Plugin[MQ2Melee].Name.Length}) {
+		/echo MQ2Melee is not loaded ! Trying to load it...
+		/plugin MQ2Melee
+		/delay 1s
+		/if (!${Plugin[MQ2Melee].Name.Length}) {
+			/echo MQ2Melee is a REQUIRED PLUGIN
+			/echo Please Load MQ2Melee before running this macro
+			/end
+		}
+	}
+	|- Auto-Connect to NetBots.
+	/if (${NetBots}) {
+		/squelch /netbots on grab=on send=on
 	}
 /RETURN
 
