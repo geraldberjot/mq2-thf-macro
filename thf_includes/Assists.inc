@@ -692,7 +692,7 @@ SUB check_Nukes
 		}
 	}
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Nukes -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Nukes -|
 /RETURN
 
 
@@ -700,31 +700,31 @@ SUB check_Nukes
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Debuffs
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_Debuffs ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_Debuffs ==>
 	
 	/if (${Debuff_Targets.Size}) /call Debuffs_OnCommand
 	/if (${outerAssisting} && ${Assist_Debuffs.Size}) /call cast_longTermSpells "${outerAssistTarget}" "Assist_Debuffs"
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Debuffs -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Debuffs -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_DoTs
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_DoTs ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_DoTs ==>
 	
 	/if (${DoT_Targets.Size}) /call DoTs_OnCommand
 	/if (${outerAssisting} && ${Assist_DoTs.Size}) /call cast_longTermSpells "${outerAssistTarget}" "Assist_DoTs"
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_DoTs -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_DoTs -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Casts debuffs and dots on various assist targets
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_longTermSpells(int spellTarget, string arrayName)
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- cast_longTermSpells - [${arrayName}] ==>
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- cast_longTermSpells - [${arrayName}] ==>
 
 	/declare castName string local
 	/declare spellName string local
@@ -781,7 +781,7 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 
 	/if (!${outerActionTaken}) /next i
 
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== cast_longTermSpells - [${arrayName}] -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== cast_longTermSpells - [${arrayName}] -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -789,42 +789,37 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Use, '/Debuff' or 'Debuffs on ${Target.ID}' in /tell, /group, or /bc.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT DebuffsOn "<#1#> Debuffs on #2#"
-SUB EVENT_DebuffsOn(line, ChatSender, MobID)
+#EVENT DebuffsOn "<#1#> #2# Debuffs on #3#"
+SUB EVENT_DebuffsOn(String line, String from, String who, int mobID)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_DebuffsOn ==>
 
 	|- Verify the event
-	/call verifyEvent "${ChatSender}" "${line}"
-	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-	
+	/call amIConcerned ${from} ${who} TRUE
+	/if (${Macro.Return}) {
 		|- Check if this character debuffs to cast.
 		/if (${Command_Debuffs.Size}) {
-			
 			|- Check if the target is a corpse
-			/if (${Spawn[id ${MobID}].Type.Equal[Corpse]}) {
-				/echo Why would I debuff a corpse?
+			/if (${Spawn[id ${mobID}].Type.Equal[Corpse]}) {
+				/echo Why would I debuff a corpse ?
+				/chat ${channelNumber} Why would I debuff a corpse ?
 			} else {
-			
 				|- Check range to the debuff target.
-				/if (${Spawn[id ${MobID}].Distance} > ${outerMaxAssistDistance}) {
-					/chat ${channelNumber} ${Spawn[${MobID}].CleanName} is too far away.
+				/if (${Spawn[id ${mobID}].Distance} > ${outerMaxAssistDistance}) {
+					/chat ${channelNumber} ${Spawn[${mobID}].CleanName} is too far away.
 				} else {
-				
 					|- Check if the Debuff_Targets array is already defined
 					/if (${Debuff_Targets.Size}) {
 						/declare i int local
 						/for i 1 to ${Debuff_Targets.Size}
-							/if (${Debuff_Targets[${i}].Arg[1,_]} == ${MobID}) {
-								/chat ${channelNumber} I am already debuffing ${Spawn[id ${MobID}].CleanName}.
+							/if (${Debuff_Targets[${i}].Arg[1,_]} == ${mobID}) {
+								/chat ${channelNumber} I am already debuffing ${Spawn[id ${mobID}].CleanName}.
 								/goto :Skip
 							}
 						/next i
 					}
 				
 					|- If the target was not found on the DebuffTargets array, add it.
-					/call BuildArray Debuff_Targets ${MobID}_${Zone.ID}
+					/call BuildArray Debuff_Targets ${mobID}_${Zone.ID}
 				}
 			}
 		}
@@ -832,7 +827,7 @@ SUB EVENT_DebuffsOn(line, ChatSender, MobID)
 
 	:Skip
 	
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_DebuffsOn -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_DebuffsOn -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -916,49 +911,41 @@ SUB Debuffs_OnCommand
 
 
 
-|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
-|- Validates targets and adds them to a list of Debuff_Targets. Used for Debuffs_OnCommand.	 -|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
-|- Use, '/DoTs' or 'DoTs on ${Target.ID}' in /tell, /group, or /bc.							 -|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|--------------------------------------------------------------|
-#EVENT DoTsOn "<#1#> DoTs on #2#"
-#EVENT DoTsOn "#1# tells you, 'DoTs on #2#'"
-#EVENT DoTsOn "#1# tells the group, 'DoTs on #2#'"
-SUB EVENT_DoTsOn(line, ChatSender, MobID)
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Validates targets and adds them to a list of Debuff_Targets. Used for Debuffs_OnCommand.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Use, '/DoTs' or 'DoTs on ${Target.ID}' in /bc.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT DoTsOn "<#1#> #2# DoTs on #3#"
+SUB EVENT_DoTsOn(String line, String from, String who, int mobID)
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_DoTsOn ==>
 
-	|- Verify the event
-	/call verifyEvent "${ChatSender}" "${line}"
-	/if (${Defined[ChatSender]}) /varset ChatSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
-	
+	/call amIConcerned ${from} ${who} TRUE
+	/if (${Macro.Return}) {
 		|- Check if this character debuffs to cast.
 		/if (${Command_DoTs.Size}) {
-			
 			|- Check if the target is a corpse
-			/if (${Spawn[id ${MobID}].Type.Equal[Corpse]}) {
-				/echo Why would I DoT a corpse?
+			/if (${Spawn[id ${mobID}].Type.Equal[Corpse]}) {
+				/echo Why would I DoT a corpse ?
+				/chat ${channelNumber} Why would I DoT a corpse ?
 			} else {
-			
 				|- Check range to the DoTs target.
-				/if (${Spawn[id ${MobID}].Distance} > ${outerMaxAssistDistance}) {
-					/chat ${channelNumber} ${Spawn[${MobID}].CleanName} is too far away.
+				/if (${Spawn[id ${mobID}].Distance} > ${outerMaxAssistDistance}) {
+					/chat ${channelNumber} ${Spawn[${mobID}].CleanName} is too far away.
 				} else {
-				
 					|- Check if the DoT_Targets array is already defined
 					/if (${DoT_Targets.Size}) {
 						/declare i int local
 						/for i 1 to ${DoT_Targets.Size}
-							/if (${DoT_Targets[${i}].Arg[1,_]} == ${MobID}) {
-								/chat ${channelNumber} I am already debuffing ${Spawn[id ${MobID}].CleanName}.
+							/if (${DoT_Targets[${i}].Arg[1,_]} == ${mobID}) {
+								/chat ${channelNumber} I am already DoTing ${Spawn[id ${mobID}].CleanName}.
 								/goto :Skip
 							}
 						/next i
 					}
 				
 					|- If the target was not found on the DoT Targets array, add it.
-					/call BuildArray DoT_Targets ${MobID}_${Zone.ID}
+					/call BuildArray DoT_Targets ${mobID}_${Zone.ID}
 				}
 			}
 		}
@@ -966,7 +953,7 @@ SUB EVENT_DoTsOn(line, ChatSender, MobID)
 
 	:Skip
 	
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_DoTsOn -|
+	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_DoTsOn -|
 /RETURN
 
 
