@@ -1,0 +1,278 @@
+|*********************************************************|
+|  - CastingBuilderMulti.mac -                             |
+|  - By: Fabolous1                                        |
+|  - v2.2                                                 |
+|*********************************************************|
+
+#turbo
+
+#event NoHold "Your spell did not take hold."
+#event SelectTarget "You must first select a target for this spell!"
+#event Skillup "You have become better at #1#! (#2#)"
+
+#chat say
+#chat tell
+#chat group
+#chat guild
+
+Sub Main
+   |** Beginning **|
+   /echo Casting Builder Starting
+   /if (!${Plugin[MQ2Cast].Name.Equal[mq2cast]}) /plugin MQ2Cast load
+   /if (!${Plugin[MQ2Casttimer].Name.Equal[mq2casttimer]}) /plugin MQ2Casttimer load
+   /if (${Cursor.ID}) /autoinv
+   /declare ChatAlert bool outer TRUE
+   /declare useManaBuff bool outer TRUE
+   /declare ManaBuff string outer Mask of the Stalker
+
+   /call DeclareSpells
+   /call DisplaySpells
+
+   /delay 1s
+
+   |** Can change order of these skills by switching the lines here **|
+	/if (${Me.Class.Name.Equal[Bard]}) {
+		/if (${Me.Skill[Singing]} < ${Skill[Singing].SkillCap}) /call SpellTrain ${SingSong}
+		/if (${Me.Skill[Percussion]} < ${Skill[Percussion].SkillCap}) /call SpellTrain ${DrumSong}
+		/if (${Me.Skill[String]} < ${Skill[Percussion].SkillCap}) /call SpellTrain ${StringSong}
+		/if (${Me.Skill[Wind]} < ${Skill[Wind].SkillCap}) /call SpellTrain ${WindSong}
+		/if (${Me.Skill[Brass]} < ${Skill[Brass].SkillCap}) /call SpellTrain ${BrassSong}
+	}
+	/if (${Me.Class.Name.Equal[Wizard]}) {
+		/if (${Me.Skill[Evocation]} < ${Skill[Evocation].SkillCap}) /call SpellTrain ${EvocationSpell}
+		/if (${Me.Skill[Alteration]} < ${Skill[Alteration].SkillCap}) /call SpellTrain ${AlterationSpell}
+		/if (${Me.Skill[Conjuration]} < ${Skill[Conjuration].SkillCap}) /call SpellTrain ${ConjurationSpell}
+		/if (${Me.Skill[Abjuration]} < ${Skill[Abjuration].SkillCap}) /call SpellTrain ${AbjurationSpell}
+		/if (${Me.Skill[Divination]} < ${Skill[Divination].SkillCap}) /call SpellTrain ${DivinationSpell}
+	}
+	/if (${Me.Skill[Alteration]} < ${Skill[Alteration].SkillCap}) /call SpellTrain ${AlterationSpell}
+	/if (${Me.Skill[Abjuration]} < ${Skill[Abjuration].SkillCap}) /call SpellTrain ${AbjurationSpell}
+	/if (${Me.Skill[Evocation]} < ${Skill[Evocation].SkillCap}) /call SpellTrain ${EvocationSpell}
+	/if (${Me.Skill[Divination]} < ${Skill[Divination].SkillCap}) /call SpellTrain ${DivinationSpell}
+	/if (${Me.Skill[Conjuration]} < ${Skill[Conjuration].SkillCap}) /call SpellTrain ${ConjurationSpell}
+   /echo We seem to be done training all skills!
+   /call EndMacro
+/return
+
+Sub SpellTrain(string SpellToTrain)
+   /if (!${Me.Book[${SpellToTrain}]}) {
+      /echo You do not have the Spell: ${SpellToTrain}.
+      /return
+   }
+   /memorize "${SpellToTrain}" gem1
+   /delay 5s
+   /echo Casting ${Me.Gem[1]} until ${Me.Gem[1].Skill} is ${Skill[${Me.Gem[1].Skill}].SkillCap}.
+   /delay 1s
+
+   |** Spell Cast Loop **|
+   :castspell
+   /if (${useManaBuff} && !${Me.Buff[${ManaBuff}].ID}) /call ManaBuffCheck
+   /if (${Me.PctMana}<15) /call Med 95
+   /cast 1
+   /doevents
+   /if (${Cursor.ID}) {
+      /delay 5
+      /if (${Cursor.NoRent}) {
+         /destroy
+      } else {
+         /autoinv
+      }
+   }
+   :waitforgem
+   /if (!${Cast.Ready[1]}) {
+      /doevents
+      /delay 1s
+      /goto :waitforgem
+   }
+   /if (${Me.Skill[${Me.Gem[1].Skill}]} < ${Skill[${Me.Gem[1].Skill}].SkillCap}) {
+      /goto :castspell
+   } else {
+      /echo ${Me.Gem[1].Skill} is finally at ${Skill[${Me.Gem[1].Skill}].SkillCap}!
+   }
+/return
+
+Sub DeclareSpells
+   |** Declare spells to defaults **|
+   /echo Declaring ${Me.Class} Spells.
+   /delay 1s
+   /if (${Me.Class.Name.Equal[Bard]}) {
+      /declare SingSong outer
+      /declare DrumSong outer
+      /declare StringSong outer
+      /declare WindSong outer
+      /declare BrassSong outer
+      /varset SingSong "Jonthan's Whistling Warsong"
+      /varset DrumSong "Anthem de Arms"
+      /varset StringSong "Hymn of Restoration"
+      /varset WindSong "Tarew`s Aquatic Ayre"
+      /varset BrassSong "Denon`s Disruptive Discord"
+   } else {
+      /declare AlterationSpell outer
+      /declare AbjurationSpell outer
+      /declare EvocationSpell outer
+      /declare DivinationSpell outer
+      /declare ConjurationSpell outer
+   }
+   /if (${Me.Class.Name.Equal[Beastlord]}) {
+      /varset AlterationSpell "Minor Healing"
+      /varset AbjurationSpell "Inner Fire"
+      /varset EvocationSpell "Blast of Frost"
+      /varset DivinationSpell "Flash of Light"
+      /varset ConjurationSpell "Sicken"
+   }
+   /if (${Me.Class.Name.Equal[Cleric]}) {
+      /varset AlterationSpell "Minor Healing"
+      /varset AbjurationSpell "Courage"
+      /varset EvocationSpell "Strike"
+      /varset DivinationSpell "Flash of Light"
+      /varset ConjurationSpell "Summon Drink"
+   }
+   /if (${Me.Class.Name.Equal[Druid]}) {
+      /varset AlterationSpell "Minor Healing"
+      /varset AbjurationSpell "Skin like Wood"
+      /varset EvocationSpell "Burst of Flame"
+      /varset DivinationSpell "Sense Animals"
+      /varset ConjurationSpell "Whirling Wind"
+   }
+   /if (${Me.Class.Name.Equal[Enchanter]}) {
+      /varset AlterationSpell "Strengthen"
+      /varset AbjurationSpell "Minor Shielding"
+      /varset EvocationSpell "Chaotic Feedback"
+      /varset DivinationSpell "True North"
+      /varset ConjurationSpell "Mesmerize"
+   }
+   /if (${Me.Class.Name.Equal[Magician]}) {
+      /varset AlterationSpell "Renew Elements"
+      /varset AbjurationSpell "Minor Shielding"
+      /varset EvocationSpell "Burst of Flame"
+      /varset DivinationSpell "True North"
+      /varset ConjurationSpell "Summon Drink"
+   }
+   /if (${Me.Class.Name.Equal[Necromancer]}) {
+      /varset AlterationSpell "Lifetap"
+      /varset AbjurationSpell "Minor Shielding"
+      /varset EvocationSpell "Ward Undead"
+      /varset DivinationSpell "True North"
+      /varset ConjurationSpell "Disease Cloud"
+   }
+   /if (${Me.Class.Name.Equal[Paladin]}) {
+      /varset AlterationSpell "Minor Healing"
+      /varset AbjurationSpell "Courage"
+      /varset EvocationSpell "Cease"
+      /varset DivinationSpell "Flash of Light"
+      /varset ConjurationSpell "Hammer of Wrath"
+   }
+   /if (${Me.Class.Name.Equal[Ranger]}) {
+      /varset AlterationSpell "Minor Healing"
+      /if (${Me.Book[Skin like Diamond]}) {
+         /varset AbjurationSpell "Skin like Diamond"
+      } else {
+         /varset AbjurationSpell "Skin like Wood"
+      }
+      /varset EvocationSpell "Firefist"
+      /if (${Me.Book[Superior Camouflage]}) {
+         /varset DivinationSpell "Superior Camouflage"
+      } else {
+         /varset DivinationSpell "Camouflage"
+      }
+      /if (${Me.Book[Jolting Swings]}) {
+         /varset ConjurationSpell "Jolting Swings"
+      } else {
+         /varset ConjurationSpell "Dance of the fireflies"
+      }
+   }
+   /if (${Me.Class.Name.Equal[Shadowknight]}) {
+      /varset AlterationSpell "Lifetap"
+      /varset AbjurationSpell "Numb the dead"
+      /varset EvocationSpell "Ward Undead"
+      /varset DivinationSpell "Sense the Dead"
+      /varset ConjurationSpell "Disease Cloud"
+   }
+   /if (${Me.Class.Name.Equal[Shaman]}) {
+      /varset AlterationSpell "Minor Healing"
+      /varset AbjurationSpell "Inner Fire"
+      /varset EvocationSpell "Burst of Flame"
+      /varset DivinationSpell "Flash of Light"
+      /varset ConjurationSpell "Tainted Breath"
+   }
+   /if (${Me.Class.Name.Equal[Wizard]}) {
+      /varset AlterationSpell "Fade"
+      /varset AbjurationSpell "Minor Shielding"
+      /varset EvocationSpell "Shock of Fire"
+      /varset DivinationSpell "True North"
+      /varset ConjurationSpell "Halo of Light"
+   }
+/return
+
+Sub DisplaySpells
+   /echo Spell Information:
+   /delay 1s
+   /if (${Me.Class.Name.Equal[Bard]}) {
+      /echo Singing: ${Me.Skill[Singing]} (Using: ${SingSong})
+      /echo Percussion: ${Me.Skill[Percussion]} (Using: ${DrumSong})
+      /echo String: ${Me.Skill[String]} (Using: ${StringSong})
+      /echo Wind: ${Me.Skill[Wind]} (Using: ${WindSong})
+      /echo Brass: ${Me.Skill[Brass]} (Using: ${BrassSong})
+   } else {
+      /echo Alteration: ${Me.Skill[Alteration]} (Using: ${AlterationSpell})
+      /echo Abjuration: ${Me.Skill[Abjuration]} (Using: ${AbjurationSpell})
+      /echo Evocation: ${Me.Skill[Evocation]} (Using: ${EvocationSpell})
+      /echo Divination: ${Me.Skill[Divination]} (Using: ${DivinationSpell})
+      /echo Conjuration: ${Me.Skill[Conjuration]} (Using: ${ConjurationSpell})
+   }
+   /echo ***************************
+/return
+
+Sub ManaBuffCheck
+   /if (!${Me.Book[${ManaBuff}]}) {
+      /echo We do not have Spell: ${ManaBuff}.
+      /echo Setting useManaBuff to FALSE
+      /varset useManaBuff FALSE
+   }
+   /if (!${Me.Buff[${ManaBuff}].ID}) {
+      /echo ${ManaBuff} is not on. Casting it.
+      /casting ${ManaBuff} gem2
+   }
+/return
+
+Sub Med(int medmana)
+   /echo Medding from ${Me.PctMana}% to ${medmana}% mana.
+   :Med
+   /if (!${Me.Sitting} && !${Me.Mount.ID}) /sit
+   /doevents
+   /delay 2s
+   /if (${Me.PctMana} < ${medmana}) {
+      /goto :Med
+   } else {
+      /delay ${Math.Rand[5]}s
+   }
+/return
+
+Sub Event_Skillup(string text,string skill_name,int skill_level)
+   /echo ${skill_name} has increased to ${skill_level}
+/return
+
+Sub Event_SelectTarget
+   /echo We do not have a target, targeting self
+   /delay ${Math.Rand[3]}s
+   /target ${Me.CleanName}
+/return
+
+Sub Event_NoHold
+	/delay 1s
+	/if (${Target.ID} == ${Me.ID}) {
+		/tar dummy
+		/return
+	} else {
+		/tar id ${Me.ID}
+		/return
+	}
+	/echo Your spell is not taking hold, seems to be a problem.
+	/echo Change SpellTrain school order, most likely problem with evocation.
+	/call EndMacro
+/return
+
+Sub EndMacro
+   /echo Casting Builder Ending
+   /endmacro
+/return
