@@ -703,7 +703,7 @@ SUB check_Debuffs
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_Debuffs ==>
 	
 	/if (${Debuff_Targets.Size}) /call Debuffs_OnCommand
-	/if (${outerAssisting} && ${Assist_Debuffs.Size}) /call cast_longTermSpells "${outerAssistTarget}" "Assist_Debuffs"
+	/if (${outerAssisting} && ${Assist_Debuffs.Size}) /call cast_longTermSpells ${outerAssistTarget} "Assist_Debuffs"
 
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_Debuffs -|
 /RETURN
@@ -715,7 +715,7 @@ SUB check_DoTs
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- check_DoTs ==>
 	
 	/if (${DoT_Targets.Size}) /call DoTs_OnCommand
-	/if (${outerAssisting} && ${Assist_DoTs.Size}) /call cast_longTermSpells "${outerAssistTarget}" "Assist_DoTs"
+	/if (${outerAssisting} && ${Assist_DoTs.Size}) /call cast_longTermSpells ${outerAssistTarget} "Assist_DoTs"
 
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== check_DoTs -|
 /RETURN
@@ -742,10 +742,11 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 		/varset newTimerSetting ${Math.Calc[${Spell[${spellName}].Duration} * 60].Int}
 		
 		/if (${${spellTimer}}) {
-			/if (${outerDebug} || ${outerDebug_Assists}) /echo |- cast_longTermSpells - [${arrayName}] -|	Waiting to recast [${castName}].
+			/if (${outerDebug} || ${outerDebug_Assists}) /echo |- cast_longTermSpells - [${arrayName}] -|	Waiting ${${spellTimer}.Value} to recast [${castName}].
 		} else {
 		
 			|- cast the spell
+			/chat ${channelNumber} Casting ${castName} on ${Spawn[id ${spellTarget}].CleanName}...
 			/call thf_Casting ${spellTarget} "${${arrayName}[${i}]}${If[${Me.Book[${castName}]},/GiveUpTimer|${If[${Me.Gem[${castName}]},3s,${If[${Me.Combat} || ${outerAssistType.Equal[melee]},0s,${Math.Calc[${Spell[${castName}].RecastTime} + 5].Int}s]}]},]}"
 			
 			|- If the spell was resisted.
@@ -763,9 +764,14 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 				
 			|- If the cast was successful.
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[SUCCESS]}) {
-				/if (${Verbosity} && ${Target.ID}) /chat ${channelNumber} Landed ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]} on ${Spawn[id ${spellTarget}].CleanName}!!.
+				/chat ${channelNumber} Landed ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]} on ${Spawn[id ${spellTarget}].CleanName}!!.
+				/if (${castType.Equal[item]}) {
+					/echo Ini(${castName}) = ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
+					/varset newTimerSetting ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
+				} else {
+					/if (${longTerm_recastBuffer}) /varcalc newTimerSetting ${newTimerSetting} - ${longTerm_recastBuffer}
+				}
 				/if (${outerDebug} || ${outerDebug_Assists}) /echo |- longTermSpells - [${arrayName}] -|- Creating timer [${spellTimer}] -- [${newTimerSetting}]
-				/if (${longTerm_recastBuffer}) /varcalc newTimerSetting ${newTimerSetting} - ${longTerm_recastBuffer}
 				/call createTimer "${spellTimer}" "${newTimerSetting}"
 			
 			|- If the spell was not ready
@@ -1384,6 +1390,8 @@ SUB EVENT_toggle_outerAssistType(line, ChatSender, eventParams)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB assist_Setup
 	/if (${outerDebug}) /echo |- assist_Setup ==>
+	
+	/call iniToVar "${iniGeneral},Debug,Debug Assists (On/Off)" outerDebug_Assists bool outer
 	
 	|- Add Assists Paths
 	/if (!${Ini[${iniTHF},Paths,Enrage Settings].Length}) /call writeToIni "${iniTHF},Paths,Enrage Settings" "thf_inis\Enrage Settings.ini"
