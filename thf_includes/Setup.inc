@@ -130,6 +130,7 @@ SUB makeThfIni()
 
 	/noparse /ini "thf_inis\THF.ini" "Paths" "Toon" "thf_inis\${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName}.ini"
 	/noparse /ini "thf_inis\THF.ini" "Paths" "General" "thf_inis\General.ini"
+	/noparse /ini "thf_inis\THF.ini" "Paths" "Timers" "thf_inis\Timers.ini"
 
 	/if (${outerDebug}) /echo <== makeThfIni -|
 /RETURN

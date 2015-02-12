@@ -1468,44 +1468,54 @@ SUB amIconcerned(string from, string who, bool sameZone)
 	
 	/if (${sameZone}) {
 		/if (!${NetBots[${from}].InZone}) {
+			/if (${outerDebugBasics}) /echo FALSE
 			/RETURN FALSE
 		}
 	}
 	/if (${who.Lower.Equal[all]}) {
+		/if (${outerDebugBasics}) /echo TRUE
 		/RETURN TRUE
 	}
 	/if (${who.Lower.Equal[group]}) {
 		/if (${Me.Grouped} && ${Group.Member[${from}]}) {
+			/if (${outerDebugBasics}) /echo TRUE
 			/RETURN TRUE
 		}
 	}
 	/if (${who.Lower.Equal[caster]}) {
 		|- Can cast spells, including Bard 
 		/if (${Me.Class.CanCast}) {
+			/if (${outerDebugBasics}) /echo TRUE
 			/RETURN TRUE
 		}
 	}
 	/if (${who.Lower.Equal[melee]}) {
 		/call amIMelee
+		/if (${outerDebugBasics}) /echo ${Macro.Return}
 		/RETURN ${Macro.Return}
 	}
 	/if (${who.Lower.Equal[priest]}) {
 		|- Cleric/Druid/Shaman? 
 		/if (${Me.Class.HealerType}) {
+			/if (${outerDebugBasics}) /echo TRUE
 			/RETURN TRUE
 		}
 	}
 	/if (${who.Lower.Equal[nuker]}) {
 		|- Wizard/Magician/Necromancer/Enchanter?
 		/call amINuker
+		/if (${outerDebugBasics}) /echo ${Macro.Return}
 		/RETURN ${Macro.Return}
 	}
 	/if (${who.Equal[${Me.Class.Name}]} || ${who.Equal[${Me.Class.ShortName}]}) {
+		/if (${outerDebugBasics}) /echo TRUE
 		/RETURN TRUE
 	}
 	/if (${who.Equal[${Me.CleanName}]}) {
+		/if (${outerDebugBasics}) /echo TRUE
 		/RETURN TRUE
 	}
+/if (${outerDebugBasics}) /echo FALSE
 /RETURN FALSE
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
