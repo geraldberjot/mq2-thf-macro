@@ -19,7 +19,6 @@ Sub Main
    |** Beginning **|
    /echo Casting Builder Starting
    /if (!${Plugin[MQ2Cast].Name.Equal[mq2cast]}) /plugin MQ2Cast load
-   /if (!${Plugin[MQ2Casttimer].Name.Equal[mq2casttimer]}) /plugin MQ2Casttimer load
    /if (${Cursor.ID}) /autoinv
    /declare ChatAlert bool outer TRUE
    /declare useManaBuff bool outer TRUE
