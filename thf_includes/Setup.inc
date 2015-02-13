@@ -185,8 +185,7 @@ SUB readMacroSettings()
 	/call iniToVar "${iniGeneral},General,Channel" channel string outer
 	/call joinChannel
 
-	/call iniToVar "${iniGeneral},General,StickCommand" outerStickCommand string outer
-	
+	/echo Setting Main Tank !
 	/call iniToVar "${iniGeneral},General,Main Tank" outerMainTank string outer
 	/if (!${Defined[outerMainTankID]}) /declare outerMainTankID int outer 0
 	/if (${Me.CleanName.Equal[${outerMainTank}]}) {
@@ -196,6 +195,8 @@ SUB readMacroSettings()
 	
 	/call splitFromIni "${iniGeneral},General,Includes" includes outer /
 	/call loadAll includes Setup
+	
+	/call iniToVar "${iniGeneral},General,StickCommand" outerStickCommand string outer
 	
 	/if (${outerDebug}) /echo <== readMacroSettings -|
 /RETURN
