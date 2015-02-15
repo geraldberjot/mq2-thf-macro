@@ -161,7 +161,7 @@ SUB check_rogStrike()
 				/for i 1 to ${strikeItems.size}
 					/varset strikeItem ${FindItem[=${strikeItems[i]}]}
 					/if (${strikeItem.ID}) {
-						|- Timers were already created in the sub routine "createStrikeItemsArray"
+						|- Timers were already created in the sub routine "createItemsArray"
 						/if (${timer-${strikeItem.ID}.Value} <= 0) {
 							/casting ${strikeItem.ID}|item
 							/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
@@ -242,7 +242,7 @@ SUB ROG_Setup
 
 	|- Auto-Hide
 	/call iniToVar "${iniToon},Rogue,Auto-Hide (On/Off)" AutoHide bool outer
-	
+
 	|- Auto-Evade
 	/call iniToVar "${iniToon},Rogue,Auto-Evade (On/Off)" AutoEvade bool outer
 	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
@@ -250,9 +250,7 @@ SUB ROG_Setup
 	|- Pick up the lastest discipline
 	/call getLatestouterStrikeDiscipline
 	
-	/call createStrikeItemsArray
-	
-	/call createCombatItemsArray
+	/call createItemsArray
 	
 	/if (${outerDebug}) /echo <== ROG_Setup -|
 /RETURN
@@ -260,7 +258,7 @@ SUB ROG_Setup
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestouterStrikeDiscipline()
+SUB getLatestouterStrikeDiscipline
 	/if (${outerDebug}) /echo |- getLatestouterStrikeDiscipline ==>
 	
 	/if (!${Defined[outerStrikeDiscipline]}) /declare outerStrikeDiscipline string outer
@@ -284,78 +282,77 @@ SUB getLatestouterStrikeDiscipline()
 	} else /if (${Me.CombatAbility[Sneak Attack]}) {
 		/varset outerStrikeDiscipline "Sneak Attack"
 	}
-	
-	/if (${outerDebug}) /echo <== getLatestouterStrikeDiscipline -|
+	/if (${outerDebug}) {
+		/echo ${outerStrikeDiscipline}
+		/echo <== getLatestouterStrikeDiscipline -|
+	}
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Create the timers of the strike items available
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB createStrikeItemsArray()
-	/if (${outerDebug}) /echo |- createStrikeItemsTimer ==>
+SUB createItemsArray
+	/if (${outerDebug}) /echo |- createItemsArray ==>
+	/mqpause
+	/if (!${Defined[itemID]}) /declare itemID int local
 	
-	/if (!${Defined[strikeItem]}) /declare strikeItem item local
-	
-	/varset strikeItem ${FindItem[=Frozen Whispering Tunic]}
-	/if (${strikeItem.ID}) {
-		/declare timer-${strikeItem.ID} timer outer 5m
-		/call BuildArray strikeItems ${strikeItem.Name} outer
-	}
-	
-	/varset strikeItem ${FindItem[=Cloak of the Deceiver]}
-	/if (${strikeItem.ID}) {
-		/declare timer-${strikeItem.ID} timer outer 40s
-		/call BuildArray strikeItems ${strikeItem.Name} outer
-	}
-	
-	/varset strikeItem ${FindItem[=Shroud of the Deceiver]}
-	/if (${strikeItem.ID}) {
-		/declare timer-${strikeItem.ID} timer outer 40s
-		/call BuildArray strikeItems ${strikeItem.Name} outer
+	/varset itemID ${FindItem[=Frozen Whispering Tunic].ID}
+	/if (${itemID}) {
+		/echo "Frozen Whispering Tunic"
+		/declare timer-${itemID} timer outer 5m
+		/call BuildArray strikeItems ${itemID} outer
 	}
 
-	/varset strikeItem ${FindItem[=Fizzlethorp's Cloak of Shadows]}
-	/if (${strikeItem.ID}) {
-		/declare timer-${strikeItem.ID} timer outer 40s
-		/call BuildArray strikeItems ${strikeItem.Name} outer
+	/varset itemID ${FindItem[=Cloak of the Deceiver].ID}
+	/if (${itemID}) {
+		/echo "Cloak of the Deceiver"
+		/declare timer-${itemID} timer outer 40s
+		/call BuildArray strikeItems ${itemID} outer
+	}
+	
+	/varset itemID ${FindItem[=Shroud of the Deceiver].ID}
+	/if (${itemID}) {
+		/echo "Shroud of the Deceiver"
+		/declare timer-${itemID} timer outer 40s
+		/call BuildArray strikeItems ${itemID} outer
 	}
 
-	/if (${outerDebug}) /echo <== createStrikeItemsTimer -|
-/RETURN
+	/varset itemID ${FindItem[=Fizzlethorp's Cloak of Shadows].ID}
+	/if (${itemID}) {
+		/echo "Fizzlethorp's Cloak of Shadows"
+		/declare timer-${itemID} timer outer 40s
+		/call BuildArray strikeItems ${itemID} outer
+	}
 
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Create the timers of the items used in combat
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB createCombatItemsArray()
-	/if (${outerDebug}) /echo |- createcombatItemsBoostArray ==>
-	
-	/if (!${Defined[combatItem]}) /declare combatItem item local
-	
-	/varset combatItem ${FindItem[=Ancient Frozen Razor of Entropy]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 3m
-		/call BuildArray combatItemsBoost ${combatItem.Name} outer
+	/varset itemID ${FindItem[=Ancient Frozen Razor of Entropy].ID}
+	/if (${itemID}) {
+		/echo "Ancient Frozen Razor of Entropy"
+		/declare timer-${itemID} timer outer 3m
+		/call BuildArray combatItemsBoost ${itemID} outer
 	}
 	
-	/varset combatItem ${FindItem[=Razor of the Rogue]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 2m
-		/call BuildArray combatItemsBoost ${combatItem.Name} outer
+	/varset itemID ${FindItem[=Razor of the Rogue].ID}
+	/if (${itemID}) {
+		/echo "Razor of the Rogue"
+		/declare timer-${itemID} timer outer 2m
+		/call BuildArray combatItemsBoost ${itemID} outer
 	}
 	
-	/varset combatItem ${FindItem[=Flahran, The Dragon's Bane]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 6m
-		/call BuildArray combatItemsBoost ${combatItem.Name} outer
+	/varset itemID ${FindItem[=Flahran, The Dragon's Bane].ID}
+	/if (${itemID}) {
+		/echo "Flahran, The Dragon's Bane"
+		/declare timer-${itemID} timer outer 6m
+		/call BuildArray combatItemsBoost ${itemID} outer
 	}
 	
-	/varset combatItem ${FindItem[=TriXzin, Guard of the King]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 3,5m
-		/call BuildArray combatItemsBurn ${combatItem.Name} outer
+	/varset itemID ${FindItem[=TriXzin, Guard of the King].ID}
+	/if (${itemID}) {
+		/echo "TriXzin, Guard of the King"
+		/declare timer-${itemID} timer outer 3,5m
+		/call BuildArray combatItemsBurn ${itemID} outer
 	}
-	
-	/if (${outerDebug}) /echo <== createcombatItemsBoostArray -|
+
+	/if (${outerDebug}) /echo <== createItemsArray -|
 /RETURN
 
 SUB ROG_BackgroundEvents
@@ -384,8 +381,8 @@ SUB ROG_MacroSettings
 SUB ROG_CharacterSettings
 /if (${outerDebug}) /echo |- ROG_CharacterSettings ==>
 
-	 /call writeToIni "${iniToon},${Me.Class},Auto-Hide (On/Off)"
-	 /call writeToIni "${iniToon},${Me.Class},Auto-Evade (On/Off)"
+	 /call writeToIni "${iniToon},${Me.Class},Auto-Hide (On/Off)" "On" false
+	 /call writeToIni "${iniToon},${Me.Class},Auto-Evade (On/Off)" "On" false
 
 /if (${outerDebug}) /echo <== ROG_CharacterSettings -|
 /RETURN

@@ -233,17 +233,17 @@ SUB writeToIni(Ini_Key, WhatToWrite, bool OverWrite)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Creates new arrays, or stacks onto existing arrays.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Syntax: /call BuildArray ArrayName Data				-|
-|- Ex: /call BuildArray DebuffTargets ${Target.ID}		-|
+|- Syntax: /call BuildArray ArrayName Data
+|- Ex: /call BuildArray DebuffTargets ${Target.ID}
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param ArrayName: Name of the array to build.		-|
-|- @param Data: Data you wish to add to the array.		-|
+|- @param ArrayName: Name of the array to build.
+|- @param Data: Data you wish to add to the array.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB BuildArray(ArrayName, Data, varScope)
 	/if (${outerDebug}) /echo |- BuildArray Adding [${ArrayName}-${Data}-${varScope}] ==>
 
+	/mqpause
 	/if (!${Defined[varScope]}) /declare varScope string local outer
-	
 	|- If the array is not defined, declare it.
 	/if (!${Defined[${ArrayName}]}) {
 		/declare ${ArrayName}[1] string ${varScope}
@@ -251,14 +251,12 @@ SUB BuildArray(ArrayName, Data, varScope)
 		
 	|- Else, if the array is already defined.
 	} else {
-	
 		|- Create a copy of the existing array.
 		/declare ${ArrayName}Copy[${${ArrayName}.Size}] string local
 		/declare i int local
 		/for i 1 to ${${ArrayName}.Size}
 			/varset ${ArrayName}Copy[${i}] ${${ArrayName}[${i}]}
 		/next i
-		
 		|- Delete the existing array.
 		/deletevar ${ArrayName}
 		
