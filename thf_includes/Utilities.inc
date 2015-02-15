@@ -242,7 +242,6 @@ SUB writeToIni(Ini_Key, WhatToWrite, bool OverWrite)
 SUB BuildArray(ArrayName, Data, varScope)
 	/if (${outerDebug}) /echo |- BuildArray Adding [${ArrayName}-${Data}-${varScope}] ==>
 
-	/mqpause
 	/if (!${Defined[varScope]}) /declare varScope string local outer
 	|- If the array is not defined, declare it.
 	/if (!${Defined[${ArrayName}]}) {

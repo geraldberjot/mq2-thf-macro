@@ -293,7 +293,7 @@ SUB getLatestouterStrikeDiscipline
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB createItemsArray
 	/if (${outerDebug}) /echo |- createItemsArray ==>
-	/mqpause
+
 	/if (!${Defined[itemID]}) /declare itemID int local
 	
 	/varset itemID ${FindItem[=Frozen Whispering Tunic].ID}
