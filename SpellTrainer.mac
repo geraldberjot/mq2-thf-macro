@@ -180,10 +180,10 @@ Sub DeclareSpells
          /varset ConjurationSpell "Dance of the fireflies"
       }
    }
-   /if (${Me.Class.Name.Equal[Shadowknight]}) {
+   /if (${Me.Class.Name.Equal[Shadow Knight]}) {
       /varset AlterationSpell "Lifetap"
-      /varset AbjurationSpell "Numb the dead"
-      /varset EvocationSpell "Ward Undead"
+      /varset AbjurationSpell "Endure Cold"
+      /varset EvocationSpell "Word of Spirit"
       /varset DivinationSpell "Sense the Dead"
       /varset ConjurationSpell "Disease Cloud"
    }

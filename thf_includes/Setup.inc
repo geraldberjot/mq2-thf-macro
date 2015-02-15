@@ -21,22 +21,22 @@
 #INCLUDE thf_includes\Utilities.inc
 #INCLUDE thf_includes\Pets.inc
 
-#INCLUDE thf_includes\class_Bard.inc
-#INCLUDE thf_includes\class_Beastlord.inc
-#INCLUDE thf_includes\class_Berserker.inc
-#INCLUDE thf_includes\class_Cleric.inc
-#INCLUDE thf_includes\class_Druid.inc
-#INCLUDE thf_includes\class_Enchanter.inc
-#INCLUDE thf_includes\class_Magician.inc
-#INCLUDE thf_includes\class_Monk.inc
-#INCLUDE thf_includes\class_Necromancer.inc
-#INCLUDE thf_includes\class_Paladin.inc
-#INCLUDE thf_includes\class_Ranger.inc
-#INCLUDE thf_includes\class_Rogue.inc
-#INCLUDE thf_includes\class_ShadowKnight.inc
-#INCLUDE thf_includes\class_Shaman.inc
-#INCLUDE thf_includes\class_Warrior.inc
-#INCLUDE thf_includes\class_Wizard.inc
+#INCLUDE thf_includes\Class_Bard.inc
+#INCLUDE thf_includes\Class_Beastlord.inc
+#INCLUDE thf_includes\Class_Berserker.inc
+#INCLUDE thf_includes\Class_Cleric.inc
+#INCLUDE thf_includes\Class_Druid.inc
+#INCLUDE thf_includes\Class_Enchanter.inc
+#INCLUDE thf_includes\Class_Magician.inc
+#INCLUDE thf_includes\Class_Monk.inc
+#INCLUDE thf_includes\Class_Necromancer.inc
+#INCLUDE thf_includes\Class_Paladin.inc
+#INCLUDE thf_includes\Class_Ranger.inc
+#INCLUDE thf_includes\Class_Rogue.inc
+#INCLUDE thf_includes\Class_ShadowKnight.inc
+#INCLUDE thf_includes\Class_Shaman.inc
+#INCLUDE thf_includes\Class_Warrior.inc
+#INCLUDE thf_includes\Class_Wizard.inc
 
 SUB thfSetup(bool debug)
 	/if (${outerDebug}) /echo |- thfSetup ==>
@@ -141,13 +141,13 @@ SUB makeThfIni()
 SUB loadAll(String tableau, String subToCall)
 	/if (${outerDebug}) /echo |- loadAll ==>
 
-	/echo Calling ${Me.Class.ShortName}_${subToCall}
-	/call ${Me.Class.ShortName}_${subToCall}
 	/declare i int local
 	/for i 1 to ${${tableau}.Size}
 		/if (${outerDebug}) /echo Calling ${${tableau}[${i}]}_${subToCall}
 		/if (${Bool[${${tableau}[${i}]}]}) /call ${${tableau}[${i}]}_${subToCall}
 	/next i
+	/echo Calling ${Me.Class.ShortName}_${subToCall}
+	/call ${Me.Class.ShortName}_${subToCall}
 
 	/if (${outerDebug}) /echo <== loadAll -|
 /RETURN
@@ -185,6 +185,9 @@ SUB readMacroSettings()
 	/call iniToVar "${iniGeneral},General,Channel" channel string outer
 	/call joinChannel
 
+	/call splitFromIni "${iniGeneral},General,Includes" includes outer /
+	/call loadAll includes Setup
+	
 	/echo Setting Main Tank !
 	/call iniToVar "${iniGeneral},General,Main Tank" outerMainTank string outer
 	/if (!${Defined[outerMainTankID]}) /declare outerMainTankID int outer 0
@@ -192,9 +195,6 @@ SUB readMacroSettings()
 		/chat ${channelNumber} I'm the main tank !
 		/varset outerMainTankID ${Me.ID}
 	}
-	
-	/call splitFromIni "${iniGeneral},General,Includes" includes outer /
-	/call loadAll includes Setup
 	
 	/call iniToVar "${iniGeneral},General,StickCommand" outerStickCommand string outer
 	
