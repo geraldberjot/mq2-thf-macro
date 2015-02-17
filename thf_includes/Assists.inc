@@ -450,6 +450,9 @@ SUB check_IsLookingAt
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== CheckIsLookingAt -|
 /RETURN ${FacingMe}
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT setEnrageAttack "[MQ2] Setting enrage attack on #1# to #2#"
 #EVENT setEnrageAttack "[MQ2] Set enrage attack on #1# to #2#"
 SUB EVENT_setEnrageAttack(String line, String npcName, String enrageSetting)
@@ -463,8 +466,8 @@ SUB EVENT_setEnrageAttack(String line, String npcName, String enrageSetting)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Turns off attack when a mob you're attacking enrages		-|
-|- if that mob is specified in Enrage Settings.ini.         -|
+|- Turns off attack when a mob you're attacking enrages
+|- if that mob is specified in Enrage Settings.ini. 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT EnrageOn "#1# has become ENRAGED."
 SUB EVENT_EnrageOn(String line, String RageOn)
@@ -504,7 +507,7 @@ SUB EVENT_EnrageOn(String line, String RageOn)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Turns attack back on, after enrage is over.	-|
+|- Turns attack back on, after enrage is over.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT EnrageOff "#1# is no longer enraged."
 SUB EVENT_EnrageOff(String line, String RageOn)
@@ -527,6 +530,9 @@ SUB EVENT_EnrageOff(String line, String RageOn)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== EVENT_EnrageOff -|
 /RETURN
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT getCloser "Your target is too far away, get closer!"
 SUB EVENT_getCloser
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_getCloser ==>
@@ -766,8 +772,9 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[SUCCESS]}) {
 				/chat ${channelNumber} Landed ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]} on ${Spawn[id ${spellTarget}].CleanName}!!.
 				/if (${castType.Equal[item]}) {
-					/echo Ini(${castName}) = ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
-					/varset newTimerSetting ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
+					/call readTimer ${castName}
+					/if (${outerDebug} || ${outerDebug_Assists}) /echo IniTimer(${castName}) = ${Macro.Return}
+					/varset newTimerSetting ${Macro.Return}
 				} else {
 					/if (${longTerm_recastBuffer}) /varcalc newTimerSetting ${newTimerSetting} - ${longTerm_recastBuffer}
 				}
