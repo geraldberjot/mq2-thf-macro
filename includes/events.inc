@@ -738,6 +738,10 @@ SUB EVENT_EQBC(String EQBCSay, String EQBCSender, String EQBCCommand)
 		/call gate ${EQBCSender} ${EQBCCommand.Lower.Replace[gate ,]}
 		/RETURN
 	}
+	/if (${EQBCCommand.Lower.Find[coh]}) {
+		/call summon
+	}
+
 	/if (${EQBCCommand.Lower.Find[group]}) {
 		/call makeGroup
 	}
