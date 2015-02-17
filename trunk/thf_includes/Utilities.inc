@@ -319,6 +319,18 @@ SUB RemoveArrayElement(ArrayName, Data)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Read the timer in the ${iniTimers} file. Create a new line if it doesn't exist
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB readTimer(String castName)
+	/declare itemTime int local
+	/varset itemTime ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
+	/if (!${Bool[${itemTime}]}) {
+		/ini "${iniTimers}" "${castName.Left[1].Upper}" "${castName}" "Need a value here !"
+		/varset itemTime 0
+	}
+/RETURN ${itemTime}
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Reliably targets specified Target.IDs.					-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param TargetID: The ID of the spawn you wish to target.	-|

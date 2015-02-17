@@ -14,16 +14,12 @@ SUB check_Buffs
 	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_Buffs ==>
 
 	/if (${BuffCheck} && !${outerCombatTimer} && !${outerActiveTimer} && !${outerRebuffTimer}) {
-
 		/if (${Cursor.ID} || ${Corpse.Open}) {
 			/varset outerRebuffTimer 100
 		} else {
-		
 			/if (!${Me.Combat} && !${Assisting} && !${Me.Feigning} && !${Me.Moving} && ${Me.PctHPs} > ${min_BuffCheckHealth}) {
-
 				|- SelfBuffs.
 				/if (${SelfBuffs.Size} && ${Me.FreeBuffSlots} > ${MaxBuffs}) /call check_SelfBuffs
-
 				/if (!${outerActionTaken}) {
 					|- BotBuffs.
 					/if (${Ini[${iniToon},Buffs,Bot Buff#1].Length}) /call check_BuffBots "BotBuffs"
@@ -72,17 +68,14 @@ SUB check_SelfBuffs
 				/chat ${channelNumber} [${castName}] has been listed as a badSpell.  You must zone before the macro will attempt to cast [${castName}] again. 
 			}
 		} else {
-		
 			|- Check if the buff stacks
 			/if (!${Spell[${buffName}].Stacks}) {
 				/if (${Debug} || ${Debug_BuffCheck}) /echo [${castName}] will not stack, skipping.
 			} else {
-			
 				|- Check buff duration
 				/if (${Me.Buff[${buffName}].Duration} > 10) {
 					/if (${Debug} || ${Debug_BuffCheck}) /echo [${Me.Buff[${buffName}].Duration}] ticks left on [${buffName}(${castName})].
 				} else {
-					
 					|- Cast the buff
 					/call thf_Casting ${If[${Spell[${buffName}].TargetType.Equal[self]},0,${Me.ID}]} "${SelfBuffs[${i}]}/GiveUpTimer|${If[!${Me.Book[${castName}]},0,${If[${Me.Gem[${castName}]},20,90]}]}"
 				}
@@ -114,8 +107,7 @@ SUB check_BuffBots(arrayName)
 		/varset buffName ${If[${FindItemCount[${castName}]},${FindItem[${castName}].Spell},${castName}]}
 	
 		|- If the spawn is in zone.
-		/if (${SpawnCount[pc =${buffTarget}]} && ${NetBots[${buffTarget}].Zone} == ${Zone.ID}) {
-		
+		/if (${SpawnCount[pc =${buffTarget}]} && ${NetBots[${buffTarget}].InZone}) {
 			|-  /BuffName Check.
 			/if (${${arrayName}[${i}].Find[/buffname|]}) {
 				/call argueString buffname "${arrayName}"
@@ -344,8 +336,7 @@ SUB EVENT_toggleBuffs(line, ChatSender, buffSetting)
 |-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB buffCheck_Setup
-	/call iniToVar "${iniGeneral},Debug,Debug BuffCheck (On/Off)" Debug_BuffCheck bool outer
-	/if (${Debug} || ${Debug_BuffCheck}) /echo |- buffCheck_Setup ==>
+	/if (${Debug}) /echo |- buffCheck_Setup ==>
 	
 	|- Adjust MaxBuffs to account for the Mystical Attuning AAs.
 	/declare MaxBuffs int outer 0
@@ -355,6 +346,7 @@ SUB buffCheck_Setup
 	/declare min_BuffCheckHealth int outer 70
 	/declare buffRecheck_Delay int outer 100
 
+	/call iniToVar "${iniGeneral},Debug,Debug BuffCheck (On/Off)" Debug_BuffCheck bool outer
 	/if (${Ini[${iniToon},Buffs,Instant Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Instant Buffs" InstantBuffs outer /
 	/if (${Ini[${iniToon},Buffs,Self Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Self Buffs" SelfBuffs outer /
 	/if (${Ini[${iniToon},Buffs,Group Buffs].Length}) /call splitFromIni "${iniToon},Buffs,Group Buffs" GroupBuffs outer /
@@ -363,7 +355,7 @@ SUB buffCheck_Setup
 	
 	/if (${InstantBuffs.Size} || ${SelfBuffs.Size} || ${BotBuffs.Size} || ${CombatBuffs.Size}) /varset BuffCheck TRUE
 	
-	/if (${Debug} || ${Debug_BuffCheck}) /echo <== buffCheck_Setup -|
+	/if (${Debug}) /echo <== buffCheck_Setup -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -390,11 +382,11 @@ SUB buffCheck_MacroSettings
 SUB buffCheck_CharacterSettings
 	/if (${Debug} || ${Debug_BuffCheck}) /echo |- buffCheck_CharacterSettings ==>
 
-	/call writeToIni "${iniToon},Buffs,Instant Buffs"
-	/call writeToIni "${iniToon},Buffs,Self Buffs"
-	/call writeToIni "${iniToon},Buffs,Bot Buffs"
-	/call writeToIni "${iniToon},Buffs,Combat Buffs"
-	/call writeToIni "${iniToon},Buffs,Group Buffs"
+	/call writeToIni "${iniToon},Buffs,Instant Buffs" "Instant Buffs separated by /"
+	/call writeToIni "${iniToon},Buffs,Self Buffs" "Self Buffs separated by /"
+	/call writeToIni "${iniToon},Buffs,Bot Buffs" "Bot Buffs separated by /"
+	/call writeToIni "${iniToon},Buffs,Combat Buffs" "Combat Buffs separated by /"
+	/call writeToIni "${iniToon},Buffs,Group Buffs" "Group Buffs separated by /"
 
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== buffCheck_CharacterSettings -|
 /RETURN
