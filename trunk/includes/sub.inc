@@ -569,6 +569,18 @@ SUB goToGuildHall(String from, String who)
     }
 /RETURN
 
+SUB summon()
+	/target clear
+	/declare i int local
+	/for i 1 to ${NetBots.Counts}
+		/target ${NetBots.Client.Arg[${i}, ]}
+		/if (${Target.Distance} > 10) {
+			/casting "Call of the Hero" gem8
+			/delay 3s
+		}
+	/next i
+/RETURN
+
 SUB test()
 	|/call putLinkInChatWindow
 /RETURN
@@ -898,7 +910,7 @@ SUB TrueTarget(TargetID)
 
 SUB putItemOnCursor(String itemName)
 	/declare i int local
-	/declare itemToFind item local ${FindItem[=${itemName}]
+	/declare itemToFind item local ${FindItem[=${itemName}]}
 	/if (${itemToFind} == NULL) /RETURN
 	/itemnotify ${itemToFind.InvSlot.Pack} rightmouseup
 	/delay 5
