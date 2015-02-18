@@ -442,6 +442,29 @@ SUB EVENT_Exit(paramLine, paramSender, paramArgs)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Uses /camp desktop on selected bots
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Use /bc camp.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT Camp "<#1#> #2# camp"
+SUB EVENT_Camp(String line, String from, String who)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Camp ==>
+
+	|- Verify the event
+	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/if (${Macro.Return}) {
+		/chat ${channelNumber} Camping...
+		/deletevar * global
+		/disband
+		/raiddisband
+		/camp desktop
+		/end
+	}
+
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Camp -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Attempts to load the spellset listed in Settings.ini.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT LoadSpells "[#1#] #2# load spells"
@@ -479,11 +502,11 @@ SUB EVENT_LoadSpells(paramLine, paramSender, paramArgs)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT RemoveBuff "[#1#] #2# remove buff #3#"
 #EVENT RemoveBuff "<#1#> #2# remove buff #3#"
-SUB EVENT_RemoveBuff(paramLine, paramSender, paramArgs, buffToRemove)
+SUB EVENT_RemoveBuff(String line, String from, String who, String buffToRemove)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_RemoveBuff ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 
 		/declare badBuff string local ${buffToRemove}
@@ -543,11 +566,11 @@ SUB EVENT_check_Buffs(paramLine, paramSender, paramArgs, buffToCheck)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT FindItems "[#1#] #2# find item [#3#]"
 #EVENT FindItems "<#1#> #2# find item [#3#]"
-SUB EVENT_FindItems(paramLine, paramSender, paramArgs, itemToFind)
+SUB EVENT_FindItems(String line, String from, String who, String itemToFind)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_FindItems ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 	
 		|- Declare counting variables.
@@ -607,9 +630,9 @@ SUB EVENT_FindItems(paramLine, paramSender, paramArgs, itemToFind)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Checks for bots who are out of range, or out of zone.	-|
+|- Checks for bots who are out of range, or out of zone.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /count, or, /bc Count bots							-|
+|- Use, /count, or, /bc Count bots
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT CountBots "[#*#] Count"
 #EVENT CountBots "<#*#> Count"
@@ -1123,11 +1146,14 @@ SUB EVENT_gate(paramLine, paramSender)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Automatically accepts raid invites.	-|
+|- Automatically accepts raid invites from crew
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT RaidAccept "#*#invites you to join a raid.#*#"
-SUB EVENT_RaidAccept
-	/raidaccept
+#EVENT RaidAccept "#1# invites you to join a raid.#*#"
+SUB EVENT_RaidAccept(String line, String from)
+	/call isOneOfMyToons ${from}
+	/if (${Macro.Return}) {
+		/raidaccept
+	}
 /RETURN
 
 
@@ -1610,6 +1636,9 @@ SUB EVENT_Channels(String line)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Channels -|
 /RETURN
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB joinChannel()
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- joinChannel ==>
 	/join ${channel}
@@ -1623,6 +1652,29 @@ SUB joinChannel()
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== joinChannel -|
 /RETURN
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Automatic answer to NPC with just one choice
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT Hail "You say, 'Hail, #1#'"
+SUB EVENT_Hail(String line, String cible)
+	/declare toTheZone string local
+	/varset toTheZone ${Ini[${iniHail},General,${cible.Lower}]}
+	/if (${toTheZone.Length} && ${toTheZone.NotEqual[NULL]}) {
+		/say ${toTheZone}
+	} else {
+		/echo ${Line}
+	}
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Redirect some chat information
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT Redirect "#*# tells you, '#*#'"
+#EVENT Redirect "Your task #*# has been updated."
+#EVENT Redirect "You have been assigned the task #*#."
+SUB EVENT_Redirect(String line)
+	/chat ${channelNumber} ${line}
+/RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|

@@ -34,24 +34,24 @@
 |- 	/sellstuff - Target a vendor and this command will sell any item in your inventory marked sell. 
 |- 	/depositstuff - Target your guildbanker and this command will deposit any item in your inventory marked keep into the guild bank.
 
-#EVENT CantLoot         "#*#may not loot this corpse#*#"
-#EVENT Sell             "#*#You receive#*# for the #1#(s)#*#"
-#EVENT EditIniItem      "[MQ2] LootIniItem #1# #2#"
-#EVENT SellStuff        "[MQ2] NinjadvLoot selling items to vendor"
-#EVENT Broke            "#*#you cannot afford#*#" 
-#EVENT Broke            "#*#you can't afford#*#" 
-#EVENT Forage           "Your forage mastery has enabled you to find something else!"
-#EVENT Forage           "You have scrounged up #*#"
-#EVENT InventoryFull    "#*#Your inventory appears full!#*#"
+#EVENT CantLoot			"#*#may not loot this corpse#*#"
+#EVENT Sell					"#*#You receive#*# for the #1#(s)#*#"
+#EVENT EditIniItem		"[MQ2] LootIniItem #1# #2#"
+#EVENT SellStuff			"[MQ2] NinjadvLoot selling items to vendor"
+#EVENT Broke				"#*#you cannot afford#*#" 
+#EVENT Broke				"#*#you can't afford#*#" 
+#EVENT Forage				"Your forage mastery has enabled you to find something else!"
+#EVENT Forage				"You have scrounged up #*#"
+#EVENT InventoryFull		"#*#Your inventory appears full!#*#"
 
 SUB setupAdvLootVars(string ChangeIniFile)
 
-    /declare CantLootID                         int                 outer 
-    /declare CorpseRotTimer                     timer               outer
-	/declare AletClearTimer                     timer               outer
-    /declare NinjadVersion                      string              outer   3.0
-    /declare InventoryFull                      int                 outer   0
-    /declare NinjaIniFile                       string              outer   Loot.ini
+    /declare CantLootID			int		outer 
+    /declare CorpseRotTimer	timer	outer
+	/declare AletClearTimer		timer	outer
+    /declare NinjadVersion		string	outer	3.0
+    /declare InventoryFull		int		outer	0
+    /declare NinjaIniFile			string	outer	Loot.ini
     /if (${ChangeIniFile.Length}) {
         /varset NinjaIniFile ${ChangeIniFile}
         /echo Ninja Advance Loot in now writing all info to the ${ChangeIniFile} file.
@@ -73,15 +73,15 @@ SUB setupAdvLootVars(string ChangeIniFile)
     }
 
     |- Loot ini settings
-    /call ALLoadVar Settings OpenAllBags        1                   int
-    /call ALLoadVar Settings AddNewSales        1                   int
-    /call ALLoadVar Settings LootForage         1                   int
-    /call ALLoadVar Settings LootMobs           TRUE                bool
-    /call ALLoadVar Settings CorpseRadius       100                 int
-    /call ALLoadVar Settings MobsTooClose       100                 int
-    /call ALLoadVar Settings CorpseRotTime      440s                string
-    /call ALLoadVar Settings ReportLoot         FALSE               bool
-    /call ALLoadVar Settings LootForageSpam     1                   int
+    /call ALLoadVar Settings OpenAllBags			1			int
+    /call ALLoadVar Settings AddNewSales			1			int
+    /call ALLoadVar Settings LootForage			1			int
+    /call ALLoadVar Settings LootMobs				TRUE	bool
+    /call ALLoadVar Settings CorpseRadius		100		int
+    /call ALLoadVar Settings MobsTooClose		100		int
+    /call ALLoadVar Settings CorpseRotTime		440s	string
+    /call ALLoadVar Settings ReportLoot				FALSE	bool
+    /call ALLoadVar Settings LootForageSpam	1			int
     |- Alert list 9 used to define an ignore list like campfires untargetable etc.
     /if (!${Defined[${AlertList}]}) /declare AlertList int outer 9
 
