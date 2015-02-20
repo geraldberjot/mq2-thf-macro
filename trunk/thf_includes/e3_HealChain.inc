@@ -601,7 +601,7 @@ SUB healChain_Setup
 
 
 
-SUB healChain_Background_Events
+SUB healChain_BackgroundEvents
 
 	/doevents join_HealChain
 

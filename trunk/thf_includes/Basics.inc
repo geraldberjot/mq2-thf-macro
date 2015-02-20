@@ -1725,7 +1725,7 @@ SUB basics_Setup
 
 
 
-SUB basics_Background_Events
+SUB basics_BackgroundEvents
 
 	/doevents Follow
 	/doevents MoveHere
