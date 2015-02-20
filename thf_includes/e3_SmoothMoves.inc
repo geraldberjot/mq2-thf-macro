@@ -825,7 +825,7 @@ SUB SmoothMoves_Setup
 
 
  
-SUB SmoothMoves_Background_Events
+SUB SmoothMoves_BackgroundEvents
 
 /RETURN
 

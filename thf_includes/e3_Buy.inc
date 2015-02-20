@@ -143,7 +143,7 @@ SUB buy_Setup
 /if (${Debug}) /echo <== buy_Setup -|
 /RETURN
 
-SUB Buy_Background_Events
+SUB Buy_BackgroundEvents
 
 /RETURN
 

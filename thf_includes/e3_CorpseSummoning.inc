@@ -500,7 +500,7 @@ SUB corpseSummon_Setup
 
 
  
-SUB corpseSummon_Background_Events
+SUB corpseSummon_BackgroundEvents
 
 /RETURN
 

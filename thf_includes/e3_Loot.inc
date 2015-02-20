@@ -458,7 +458,7 @@ SUB loot_Setup
 
 
  
-SUB loot_Background_Events
+SUB loot_BackgroundEvents
 
 /RETURN
 

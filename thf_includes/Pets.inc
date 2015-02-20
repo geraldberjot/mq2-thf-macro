@@ -262,7 +262,7 @@ SUB pet_Setup
 
 
 
-SUB pet_Background_Events
+SUB pet_BackgroundEvents
 
 	/doevents suspendMinion
 
