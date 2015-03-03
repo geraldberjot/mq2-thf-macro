@@ -76,7 +76,7 @@ SUB check_lifeSupport
 	:skip
 	/next i
 
-	/if (${oldTarget} && ${Target.ID} != ${oldTarget}) /call TrueTarget ${oldTarget}
+	/if (${oldTarget} && ${Target.ID} != ${oldTarget}) /call trueTarget ${oldTarget}
 	
 /if (${Debug} || ${Debug_Heals}) /echo <== check_lifeSupport -|
 /RETURN
@@ -692,7 +692,7 @@ SUB check_Pets
 /for i 1 to ${NetBots.Counts}
 /if (${NetBots[${NetBots.Client[${i}]}].PetID}) {
 	/if (${NetBots[${NetBots.Client[${i}]}].PetHP} < ${PetHeal_Pct} && ${Spawn[${NetBots[${NetBots.Client[${i}]}].PetID}].Distance} < ${Spell[${PetHeal_Spell}].MyRange}) {
-		/if (${Target.ID} != ${NetBots[${NetBots.Client[${i}]}].PetID}) /call TrueTarget ${NetBots[${NetBots.Client[${i}]}].PetID}
+		/if (${Target.ID} != ${NetBots[${NetBots.Client[${i}]}].PetID}) /call trueTarget ${NetBots[${NetBots.Client[${i}]}].PetID}
 		/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${PetHeal_Spell}].ID}" Gem${PetHeal_Gem} 3s
 		/varset ActionTaken TRUE
 	}

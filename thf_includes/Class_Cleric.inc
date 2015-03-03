@@ -20,7 +20,7 @@ SUB check_Yaulp
 			/if (${Target.ID}) /declare tempTarget int local ${Target.ID}
 			/squelch /target clear
 			/call thf_Casting 0 "${yaulpSpell}/giveuptimer|${If[${Me.Gem[${castName}]} || ${FindItemCount[=${castName}]},0,80]}"
-			/if (${tempTarget}) /call TrueTarget ${tempTarget}
+			/if (${tempTarget}) /call trueTarget ${tempTarget}
 		}
 	}
 	
@@ -151,7 +151,7 @@ SUB EVENT_AE_Rez
 				/if (!${playerName.Find[_]}) {
 				
 					|- Check if the corpse is rezzable
-					/call TrueTarget ${corpseID}
+					/call trueTarget ${corpseID}
 					/consider
 					
 					:waitforEvent

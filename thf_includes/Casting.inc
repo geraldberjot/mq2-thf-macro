@@ -235,7 +235,7 @@ SUB thf_Casting(int targetID, castParams)
 	/if (${Following} && !${Assisting}) /call AcquireFollow
 	/if (${returnTwist}) /call unpauseTwist
 	
-	|- /if (${Defined[oldTarget]} && ${Target.ID} != ${oldTarget.Arg[2,-]} && ${SpawnCount[id ${oldTarget.Arg[2,-]}]} && ${oldTarget.Arg[1,-].Equal[${Spawn[id ${oldTarget.Arg[2,-]}].CleanName}]}) /call TrueTarget ${oldTarget.Arg[2,-]}
+	|- /if (${Defined[oldTarget]} && ${Target.ID} != ${oldTarget.Arg[2,-]} && ${SpawnCount[id ${oldTarget.Arg[2,-]}]} && ${oldTarget.Arg[1,-].Equal[${Spawn[id ${oldTarget.Arg[2,-]}].CleanName}]}) /call trueTarget ${oldTarget.Arg[2,-]}
 	/varset lastCast ${pendingCast}
 	:skipCast
 	/varset pendingCast
@@ -554,7 +554,7 @@ SUB prepCast(int targetID)
 /if (${Debug} || ${Debug_Casting}) /echo |- prepCast ==>
 
 	|- Target the spell target.
-	/if (${targetID} && ${Target.ID} != ${targetID}) /call TrueTarget ${targetID}
+	/if (${targetID} && ${Target.ID} != ${targetID}) /call trueTarget ${targetID}
 	/if (${Twist.Twisting}) /call pauseTwist
 	/varset outerActionTaken TRUE
 

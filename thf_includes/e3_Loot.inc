@@ -74,7 +74,7 @@ SUB loot_It(int corpseID)
 	/if (${Spawn[id ${corpseID}].LineOfSight} && ${corpseName.Find[_]}) {
 	
 		|- Target the corpse, and move to it
-		/call TrueTarget ${corpseID}
+		/call trueTarget ${corpseID}
 		/if (${Spawn[id ${corpseID}].Distance} > 15) /call MoveTo -SpawnID|${corpseID}
 		
 		|- If corpseID is in range, loot it.

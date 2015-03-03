@@ -181,7 +181,7 @@ SUB withdraw_Plat
 			:withdraw_Loop
 			
 			|- Target the banker.
-			/if (${Target.ID} != ${Spawn[npc A Shrewd Banker].ID}) /call TrueTarget ${Spawn[npc A Shrewd Banker].ID}
+			/if (${Target.ID} != ${Spawn[npc A Shrewd Banker].ID}) /call trueTarget ${Spawn[npc A Shrewd Banker].ID}
 			
 			|- Open the bank window.
 			/click right target
@@ -292,7 +292,7 @@ SUB buy_SoulStone(SoulStoneToUse)
 			:buyLoop
 			
 			|- Target the merchant
-			/if (${Target.ID} != ${Spawn[npc A Disciple of Luclin].ID}) /call TrueTarget ${Spawn[npc A Disciple of Luclin].ID}
+			/if (${Target.ID} != ${Spawn[npc A Disciple of Luclin].ID}) /call trueTarget ${Spawn[npc A Disciple of Luclin].ID}
 			
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------Open the soulstone merchant.
 			/click right target
@@ -366,7 +366,7 @@ SUB	summon_Corpse(SoulStoneToUse)
 		} else {
 		
 			|- Target the summoner
-			/if (${Target.ID} != ${Spawn[npc A Priest of Luclin].ID}) /call TrueTarget ${Spawn[npc A Priest of Luclin].ID}
+			/if (${Target.ID} != ${Spawn[npc A Priest of Luclin].ID}) /call trueTarget ${Spawn[npc A Priest of Luclin].ID}
 			
 		
 			|---------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------Create a retryTimer and set it for 30 seconds.

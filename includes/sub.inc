@@ -804,7 +804,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 
 	|-Set MoveTo variables per destinationType.
 	/if (${destinationInfo.Find[-SpawnID]}) {
-		/call TrueTarget ${destinationInfo.Arg[2,|]}
+		/call trueTarget ${destinationInfo.Arg[2,|]}
 		/varset Y_Loc ${Target.Y}
 		/varset X_Loc ${Target.X}
 	} else /if (${destinationInfo.Find[-Loc]}) {
@@ -880,8 +880,8 @@ SUB MoveTo(destinationInfo, int distCheck)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param TargetID: The ID of the spawn you wish to target.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB TrueTarget(TargetID)
-	/if (${outerDebug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
+SUB trueTarget(TargetID)
+	/if (${outerDebug}) /echo |- trueTarget${If[${TargetID}, [${TargetID}],]} ==>
 
 	|- Check if the target is in zone.
 	/if (${SpawnCount[id ${TargetID}]}) {
@@ -905,7 +905,7 @@ SUB TrueTarget(TargetID)
 		}
 	}
 
-	/if (${outerDebug}) /echo <== TrueTarget -|
+	/if (${outerDebug}) /echo <== trueTarget -|
 /RETURN
 
 SUB putItemOnCursor(String itemName)

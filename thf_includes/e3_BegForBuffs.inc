@@ -199,7 +199,7 @@ SUB event_Chat(ChatChannel, ChatSender, ChatText)
 
 										|- Switch back to your old target
 										/if (${oldTarget}) {
-											/call TrueTarget ${oldTarget}
+											/call trueTarget ${oldTarget}
 										}
 									}
 								}		

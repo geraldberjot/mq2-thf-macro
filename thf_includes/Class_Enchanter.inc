@@ -171,7 +171,7 @@ SUB EVENT_AutoMez
 /declare i int local
 /for i 1 to ${SpawnCount[npc radius ${Rain_Radius}]}
 /if (${Spawn[${NearestSpawn[${i},NPC radius ${Rain_Radius}]}].LineOfSight} && ${Spawn[${NearestSpawn[${i},NPC radius ${Rain_Radius}]}].Type.NotEqual[Untargetable]} && ${Spawn[${NearestSpawn[${i},NPC radius ${Rain_Radius}]}].Type.NotEqual[Pet]} && ${Spawn[${NearestSpawn[${i},NPC radius ${Rain_Radius}]}].Level} <= ${MaxMezLevel}) {
-	/call TrueTarget ${NearestSpawn[${i},NPC radius ${Rain_Radius}].ID}
+	/call trueTarget ${NearestSpawn[${i},NPC radius ${Rain_Radius}].ID}
 	/if (${Spawn[${Me.TargetOfTarget}].Type.Equal[PC]}) {
 		/if (${outerDebug}) /echo Spawn: [${NearestSpawn[${i},NPC radius ${Rain_Radius}].CleanName},${NearestSpawn[${i},NPC radius ${Rain_Radius}].ID}] || TargetOfTarget: [${Me.TargetOfTarget}]
 		/call MezTarget

@@ -323,20 +323,26 @@ SUB RemoveArrayElement(ArrayName, Data)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB readTimer(String castName)
 	/declare itemTime int local
-	/varset itemTime ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
+	/varset itemTime ${Ini[${iniToon},Timers,${castName}]}
 	/if (!${Bool[${itemTime}]}) {
-		/ini "${iniTimers}" "${castName.Left[1].Upper}" "${castName}" "Need a value here !"
+		/varset itemTime ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
+		/if (!${Bool[${itemTime}]}) {
+			/ini "${iniToon}" "Timers" "${castName}" "Need a value here !"
+			/ini "${iniTimers}" "${castName.Left[1].Upper}" "${castName}" "Need a value here !"
+		} else {
+			/ini "${iniToon}" "Timers" "${castName}" "${itemTime}"
+		}
 		/varset itemTime 0
 	}
 /RETURN ${itemTime}
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Reliably targets specified Target.IDs.					-|
+|- Reliably targets specified Target.IDs.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param TargetID: The ID of the spawn you wish to target.	-|
+|- @param TargetID: The ID of the spawn you wish to target.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB TrueTarget(TargetID)
-	/if (${outerDebug}) /echo |- TrueTarget${If[${TargetID}, [${TargetID}],]} ==>
+SUB trueTarget(TargetID)
+	/if (${outerDebug}) /echo |- trueTarget${If[${TargetID}, [${TargetID}],]} ==>
 
 	|- Check if the target is in zone.
 	/if (${SpawnCount[id ${TargetID}]}) {
@@ -356,7 +362,7 @@ SUB TrueTarget(TargetID)
 		}
 	}
 
-	/if (${outerDebug}) /echo <== TrueTarget -|
+	/if (${outerDebug}) /echo <== trueTarget -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -502,7 +508,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 
 	|-Set MoveTo variables per destinationType.
 	/if (${destinationInfo.Find[-SpawnID]}) {
-		/call TrueTarget ${destinationInfo.Arg[2,|]}
+		/call trueTarget ${destinationInfo.Arg[2,|]}
 		/varset Y_Loc ${Target.Y}
 		/varset X_Loc ${Target.X}
 	} else /if (${destinationInfo.Find[-Loc]}) {
@@ -824,7 +830,7 @@ SUB MoveToSpawn(MoveToID)
 		/declare retryTimer timer local 100
 	
 	|---------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------Target the MoveToID
-		/call TrueTarget ${MoveToID}
+		/call trueTarget ${MoveToID}
 		
 		/if (${Target.ID} == ${MoveToID}) {
 			
