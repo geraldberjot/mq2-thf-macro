@@ -102,7 +102,7 @@ SUB AcquireFollow
 
 				|- Check LoS
 				/if (${Spawn[id ${globalFollowTargetID}].LineOfSight}) {
-					/call TrueTarget ${globalFollowTargetID}
+					/call trueTarget ${globalFollowTargetID}
 					/squelch /stick ${outerStickCommand}
 					/chat ${channelNumber} Sticking to [ ${globalFollowTarget} ]
 				}
@@ -410,7 +410,7 @@ SUB EVENT_dropInvis(paramLine, paramSender, paramArgs)
 			/delay 30 ${Me.Combat}
 			/attack off 
 			
-			/if (${Defined[oldTarget]}) /call TrueTarget ${oldTarget}
+			/if (${Defined[oldTarget]}) /call trueTarget ${oldTarget}
 		}
 	}
 
@@ -799,7 +799,7 @@ SUB EVENT_useItem(paramLine, itemToUse)
 			/if (${Target.ID}) /declare oldTarget int local ${Target.ID}
 
 			/call thf_Casting ${Me.ID} "${itemToUse}" item
-			/if (${oldTarget}) /call TrueTarget ${oldTarget}
+			/if (${oldTarget}) /call trueTarget ${oldTarget}
 		}
 	}
 
@@ -1045,7 +1045,7 @@ SUB EVENT_gatherCorpses
 	/for i 1 to ${SpawnCount['s radius 100]}
 		/if (${Select[${Spawn[${NearestSpawn[${i},'s radius 100]}].CleanName.Arg[1,']},${consentTargets}]}) {
 			
-			/call TrueTarget ${Spawn[${NearestSpawn[${i},'s radius 100]}].ID}
+			/call trueTarget ${Spawn[${NearestSpawn[${i},'s radius 100]}].ID}
 			/varset miscTimer 30
 			
 			:tryAgain
@@ -1267,14 +1267,14 @@ SUB EVENT_Disband(paramLine, paramSender)
 	
 		|- Disband from a raid.
 		/if (${Raid.Members}) {
-			/call TrueTarget ${Me.ID}
+			/call trueTarget ${Me.ID}
 			/raiddisband
 			/delay 10 !${Raid.Members}
 		}
 		
 		|- Disband from a group.
 		/if (${Group}) {
-			/call TrueTarget ${Me.ID}
+			/call trueTarget ${Me.ID}
 			/disband
 			/delay 10 !${Group}
 		}
@@ -1992,7 +1992,7 @@ SUB EVENT_corpseDrag
 
 		/if (${SpawnCount[${consentTargets.Arg[${i},,]}'s radius 100]} && !${SpawnCount[${consentTargets.Arg[${i},,]}'s radius 10]}) {
 		
-			/call TrueTarget ${Spawn[${consentTargets.Arg[${i},,]}'s].ID}
+			/call trueTarget ${Spawn[${consentTargets.Arg[${i},,]}'s].ID}
 			/corpse
 			/delay 1
 		}
@@ -2104,7 +2104,7 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 		}
 		
 		|- Target the msgTarget
-		/call TrueTarget ${msgTarget}
+		/call trueTarget ${msgTarget}
 		/if (${Target.Distance} > 10) {
 			/call MoveTo -Loc|${Target.Y},${Target.X}
 			/if (${retryTimer}) {

@@ -47,7 +47,7 @@ SUB EVENT_petWeapons(string line, string from)
 							/declare summonedItem string local
 							
 							|- Target the pet, and move to it
-							/call TrueTarget ${Spawn[pet ${Spawn[pc ${from}].Pet}].ID}
+							/call trueTarget ${Spawn[pet ${Spawn[pc ${from}].Pet}].ID}
 							/call MoveTo -SpawnID|${Spawn[pet ${Spawn[pc ${from}].Pet}].ID}
 							
 							/for i 1 to ${petItems.Size}

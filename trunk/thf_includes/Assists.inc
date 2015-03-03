@@ -119,7 +119,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 				/if (${outerAllowControl}) {
 					/chat ${channelNumber} Attacking -> ${Spawn[${outerAssistTarget}].CleanName} [${outerAssistTarget}]
 					|- Target AssistTarget.
-					/if (${Target.ID} != ${outerAssistTarget}) /call TrueTarget ${outerAssistTarget}
+					/if (${Target.ID} != ${outerAssistTarget}) /call trueTarget ${outerAssistTarget}
 					/call amIMelee
 					/if (${Macro.Return}) {
 						/attack on
@@ -133,7 +133,7 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 					
 					|- Send in pets.
 					/if (${Me.Pet.ID}) {
-						/if (${Target.ID} != ${outerAssistTarget}) /call TrueTarget ${outerAssistTarget}
+						/if (${Target.ID} != ${outerAssistTarget}) /call trueTarget ${outerAssistTarget}
 						/delay 3
 						/if (${outerDebug} || ${outerDebug_Assists}) /chat ${channelNumber} Pet Check: Sending pet on - ${outerAssistTarget} - ${Spawn[${outerAssistTarget}].CleanName}
 						/pet attack
@@ -335,7 +335,7 @@ SUB checkAssistStatus
 				/if (${outerEnraged} && ${outerEnrageAttack} && !${Stick.Behind}) /attack off
 			} else {
 				|- Check Target.
-				/if (${Target.ID}!=${outerAssistTarget} && ${Target.PctHPs} && !${Spawn[${outerAssistTarget}].Type.Equal[Corpse]}) /call TrueTarget ${outerAssistTarget}
+				/if (${Target.ID}!=${outerAssistTarget} && ${Target.PctHPs} && !${Spawn[${outerAssistTarget}].Type.Equal[Corpse]}) /call trueTarget ${outerAssistTarget}
 				|- Melee functions
 				/if (${outerAssistType.Equal[Melee]}) {
 					/if (!${Me.AutoFire}) {

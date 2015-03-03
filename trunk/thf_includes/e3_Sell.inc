@@ -198,7 +198,7 @@ SUB openMerchant(int providedID)
 	} else {
 	
 		|- Move to the merchant.
-		/call TrueTarget ${merchantID}
+		/call trueTarget ${merchantID}
 		/call MoveTo -SpawnID|${merchantID}
 	
 		|- Open Trade with merchant.

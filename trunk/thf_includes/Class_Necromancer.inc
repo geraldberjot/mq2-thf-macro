@@ -307,7 +307,7 @@ SUB EVENT_twitchMe(line, ChatSender, int TwitchNum)
 							
 						/declare i int local
 						
-						/call TrueTarget ${Spawn[pc ${InFrom}].ID}
+						/call trueTarget ${Spawn[pc ${InFrom}].ID}
 						
 					|---------------------------------------------------------------------------------------------------------------------------------------------------|----------------------Check for spells to be memmed
 						/if (!${Me.Gem[Covetous Subversion]} || !${Me.Gem[Sedulous Subversion]}) {
