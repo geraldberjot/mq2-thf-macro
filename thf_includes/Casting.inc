@@ -405,7 +405,7 @@ SUB cast_Item(int targetID, castParams)
 			/if (${InvSlot[${slotName}]} < 23) {
 				/varset swapItemBack TRUE
 				/varset oldItemName ${InvSlot[${slotName}].Item.Name}
-				/call writeToIni "${MacroData_Ini},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange" "${oldItemName}/${slotName}" 1
+				/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange" "${oldItemName}/${slotName}" 1
 			}
 			/call SwapItem "${pendingCast}" ${slotName}
 		}

@@ -102,7 +102,7 @@ SUB thfSetup(bool debug)
 	/echo Importing user settings...
 	
 	|- Complete a pending exchange
-	/if (${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Length} && ${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].NotEqual[NONE]} && !${itemExchange_Timer}) /call completePendingExchange
+	/if (${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Length} && ${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].NotEqual[NONE]} && !${itemExchange_Timer}) /call completePendingExchange
 	
 	/call checkToons
 	

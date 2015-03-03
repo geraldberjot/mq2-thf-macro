@@ -73,7 +73,7 @@ SUB check_SelfBuffs
 				/if (${Debug} || ${Debug_BuffCheck}) /echo [${castName}] will not stack, skipping.
 			} else {
 				|- Check buff duration
-				/if (${Me.Buff[${buffName}].Duration} > 10) {
+				/if (${Me.Buff[${buffName}].Duration} > 10 || ${Me.Song[${buffName}].Duration} > 10) {
 					/if (${Debug} || ${Debug_BuffCheck}) /echo [${Me.Buff[${buffName}].Duration}] ticks left on [${buffName}(${castName})].
 				} else {
 					|- Cast the buff

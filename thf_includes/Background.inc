@@ -402,8 +402,8 @@ SUB completePendingExchange
 	/if (${outerDebug} || ${outerDebug_Background}) /echo |- completePendingExchanges ==>
 	
 	|- Check for the item needing to be swapped back.
-	/if (!${FindItemCount[${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Arg[1,/]}]}) {
-		/if (${outerDebug} || ${outerDebug_Background}) /echo Could not find [${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Arg[1,/]}], skipping swapback.
+	/if (!${FindItemCount[${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Arg[1,/]}]}) {
+		/if (${outerDebug} || ${outerDebug_Background}) /echo Could not find [${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Arg[1,/]}], skipping swapback.
 	} else {
 	
 		|- Set a retry timer in case the first attempt fails
@@ -413,21 +413,21 @@ SUB completePendingExchange
 		/if (${outerDebug} || ${outerDebug_Background}) /echo |- thfSetup -|- :SwapBackLoop
 		
 		|- Try to swap the item
-		/call SwapItem "${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Arg[1,/]}" ${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Arg[2,/]}
+		/call SwapItem "${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Arg[1,/]}" ${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Arg[2,/]}
 	
 		|- If the if item was not returned to it's correct slot
-		/if (!${InvSlot[${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Arg[2,/]}].Item.Name.Equal[${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Arg[1,/]}]}) {
+		/if (!${InvSlot[${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Arg[2,/]}].Item.Name.Equal[${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Arg[1,/]}]}) {
 			
 			|- If I have time to try again, goto SwapBackLoop.  If not, announce to user.
 			/if (${retryTimer}) {
 				/goto :SwapBackLoop
 			} else {
-				/echo I have failed to swap [${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange].Arg[1,/]}] back.
+				/echo I have failed to swap [${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange].Arg[1,/]}] back.
 			}
 		} else {
 			|- If the item was returned to it's correct slot
 			/varset swapItemBack FALSE
-			/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange" NONE 1
+			/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange" NONE 1
 		}
 	}
 
