@@ -806,8 +806,6 @@ SUB EVENT_useItem(paramLine, itemToUse)
 /if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_useItem -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Ends the macro before a bot finishes camping.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1103,46 +1101,28 @@ SUB EVENT_ClickYes(paramLine, paramSender, paramArgs)
 
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Attempt to gate on all bots.							-|
+|- Attempt to gate on all bots.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /bc gate, /tell 'Name' [Gate], or, /g [Gate].	-|
+|- Use, /bc all gate
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT gate "[#1#] Gate"
-#EVENT gate	"<#1#> Gate"
-#EVENT gate "#1# tells you, 'Gate'"
-#EVENT gate "#1# you tell your party, 'Gate'"
-#EVENT gate "#1# tells the group, 'Gate'"
-#EVENT gate	"<#1#> Gate |/|#*#"
-#EVENT gate "#1# tells you, 'Gate |/|#*#'"
-#EVENT gate "#1# you tell your party, 'Gate |/|#*#'"
-#EVENT gate "#1# tells the group, 'Gate |/|#*#'"
-SUB EVENT_gate(paramLine, paramSender)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Gate ==>
+#EVENT gate "<#1#> #2# Gate"
+SUB EVENT_gate(String line, String from, String who)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Gate ==>
 
-	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
-
-		|- Attempt to gate.
-		/if (!${Me.Book[gate]}) {
-			/if (${FindItem[Philter of Major Translocation].ID}) {
-				/chat ${channelNumber} Preparing to gate...
-				/call thf_Casting ${Me.ID} "Philter of Major Translocation"
-			} else /if (${FindItem[Vial of Swirling Smoke].ID}) {
-				/chat ${channelNumber} Preparing to gate...
-				/call thf_Casting ${Me.ID} "Vial of Swirling Smoke"
-			} else {
-				/chat ${channelNumber} I am not able to gate at this time.
+    /call amIconcerned ${from} ${who}
+    /if (${Macro.Return}) {
+        /call stopCurrentAction TRUE
+        /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
+        /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
+			/if (${from.Equal[${Me.CleanName}]}) {
+				/delay 10s
 			}
-		} else {
-			/chat ${channelNumber} Preparing to gate...
-			/call thf_Casting ${Me.ID} "Gate/GiveUpTimer|30s"
-		}
-	}
+            /casting "${CharmOfQueenAdrianne}" charm
+            /chat ${channel} Gating to the Forest !
+        }
+    }
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Gate -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Gate -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -1205,24 +1185,18 @@ SUB EVENT_Force_RaidDisband
 
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Automatically accepts group invites.	-|
+|- Automatically accepts group invites.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Invite "#1# invites you to join a group."
-SUB EVENT_Invite(paramLine, paramSender)
-/if (${outerDebug}) /echo |- EVENT_Invite ==>
+SUB EVENT_Invite(String line, String from)
+	/if (${outerDebug}) /echo |- EVENT_Invite ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]}) {
-	
+	/call isOneOfMyToons ${from}
+	/if (${Macro.Return}) {
 		|- Wait to finish casting
 		/if (${Me.Casting.ID} && ${Me.Class.ShortName.NotEqual[BRD]}) /delay 300 !${Me.Casting.ID}
 	
-		|- If the groupleader was valid, disband a current group, and join the new one.
-		|- /if (${Group} || ${Raid.Members}) /call EVENT_Disband
-		
 		/declare retryTimer timer local 150
 		
 		:retry_Invite
@@ -1236,7 +1210,8 @@ SUB EVENT_Invite(paramLine, paramSender)
 			/if (${retryTimer}) {
 				/goto :retry_Invite
 			} else {
-				/echo Failed to join the group.
+				/echo Failed to join the group !
+				/chat ${channeNumber} Failed to join the group !
 			}
 		}
 	}	
@@ -1293,68 +1268,62 @@ SUB EVENT_Disband(paramLine, paramSender)
 |- Use, /savegroup 'Name', /bc Save Group 'Name', or /bc SetGroup 'Name'					-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT saveGroup "<#1#> Save Group #2#"
-SUB EVENT_saveGroup(paramLine, paramSender, paramArgs)
-/if (${outerDebug}) /echo |- EVENT_saveGroup ==>
+SUB EVENT_saveGroup(String line, String from, String paramArgs)
+	/if (${outerDebug}) /echo |- EVENT_saveGroup ==>
 
-	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
-		|- Check that I'm the group leader.
-		/if (!${Select[${Group.Leader},${Me}]}) {
-			/if (${outerDebug}) /echo I am not a group leader, skipping.
-		} else {
-			
-			/echo Preparing to save...
-			/declare groupName string local ${paramArgs.Arg[1,/]]}
-			/if (${groupName.Right[1].Equal[ ]}) /varset groupName ${groupName.Left[${Math.Calc[${groupName.Length}-1]}]}
-			/delay ${Math.Calc[${NetBots[${Me.CleanName}]} * 3].Int}
-			/declare uniqueID int local
-			/declare i int local
-			/declare e int local
-			
-			|- Set a random ID to associate with out group name.
-			/for i 1 to ${NetBots.Counts}
-				/if (${NetBots.Client[${i}].Equal[${Me.CleanName}]}) {
-					/varset uniqueID ${i}
-				}
-			/next i
-			
-			|- Check to see if existing entries need to be overwritten.
-			/if (${Ini[${iniGroup}].Find[${groupName}]}) {
-				/echo Overwriting existing saved group(s)...
-				/varset i 1
-
-				:next_groupName
-				/if (${Ini[${iniGroup}].Arg[${i},|].Length}) {
-					/if (${Ini[${iniGroup}].Arg[${i},|].Arg[2,_].Equal[${groupName}]}) {
-						/for e 0 to 5
-							/call writeToIni "${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},GroupMember#${e}" "DEPRECATED" 1
-						/next e
-					}
-					/varcalc i ${i}+1
-					/goto :next_groupName
-				}
+	|- Check that I'm the group leader.
+	/if (!${Select[${Group.Leader},${Me}]}) {
+		/if (${outerDebug}) /echo I am not a group leader, skipping.
+	} else {
+		
+		/echo Preparing to save...
+		/declare groupName string local ${paramArgs.Arg[1,/]]}
+		/if (${groupName.Right[1].Equal[ ]}) /varset groupName ${groupName.Left[${Math.Calc[${groupName.Length}-1]}]}
+		/delay ${Math.Calc[${NetBots[${Me.CleanName}]} * 3].Int}
+		/declare uniqueID int local
+		/declare i int local
+		/declare e int local
+		
+		|- Set a random ID to associate with out group name.
+		/for i 1 to ${NetBots.Counts}
+			/if (${NetBots.Client[${i}].Equal[${Me.CleanName}]}) {
+				/varset uniqueID ${i}
 			}
-			
-			|- Delay for a moment to allow other bots to catch up, so they don't overwrite our soon to be saved group.
-			/delay 20
-			|- Save the group configuration
-			/echo Group configuration(s) saved. Use [/group ${groupName}] to recall this group setup.
-			/for i 0 to 5
-				|- Save group members 0-5.
-				/if (${Bool[${Group.Member[${i}]}]}) {
-					/call writeToIni "${iniGroup},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" ${Group.Member[${i}]} 1
-				|- If the group has less that 5 members, set placeholders
-				} else {
-					/call writeToIni "${iniGroup},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" PLACEHOLDER 1
+		/next i
+		
+		|- Check to see if existing entries need to be overwritten.
+		/if (${Ini[${iniGroup}].Find[${groupName}]}) {
+			/echo Overwriting existing saved group(s)...
+			/varset i 1
+
+			:next_groupName
+			/if (${Ini[${iniGroup}].Arg[${i},|].Length}) {
+				/if (${Ini[${iniGroup}].Arg[${i},|].Arg[2,_].Equal[${groupName}]}) {
+					/for e 0 to 5
+						/call writeToIni "${iniGroup},${Ini[${iniGroup}].Arg[${i},|]},GroupMember#${e}" "DEPRECATED" 1
+					/next e
 				}
-			/next i
+				/varcalc i ${i}+1
+				/goto :next_groupName
+			}
 		}
+		
+		|- Delay for a moment to allow other bots to catch up, so they don't overwrite our soon to be saved group.
+		/delay 20
+		|- Save the group configuration
+		/echo Group configuration(s) saved. Use [/group ${groupName}] to recall this group setup.
+		/for i 0 to 5
+			|- Save group members 0-5.
+			/if (${Bool[${Group.Member[${i}]}]}) {
+				/call writeToIni "${iniGroup},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" ${Group.Member[${i}]} 1
+			|- If the group has less that 5 members, set placeholders
+			} else {
+				/call writeToIni "${iniGroup},${MacroQuest.Server}_${groupName}_${uniqueID},GroupMember#${i}" PLACEHOLDER 1
+			}
+		/next i
 	}
 
-/if (${outerDebug}) /echo <== EVENT_saveGroup -|
+	/if (${outerDebug}) /echo <== EVENT_saveGroup -|
 /RETURN
 
 
@@ -1405,20 +1374,16 @@ SUB EVENT_listGroups
 
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Recalls groups saved in your Groups.ini.		-|
+|- Recalls groups saved in your Groups.ini.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /group 'Name', or, /bc Group 'Name'.	-|
+|- Use, /group 'Name', or, /bc Group 'Name'.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT groupUp "<#1#> Group #2#"
-SUB EVENT_groupUp(paramLine, paramSender, paramArgs)
-/if (${outerDebug}) /echo |- EVENT_groupUp ==>
+SUB EVENT_groupUp(String line, String from, String paramArgs)
+	/if (${outerDebug}) /echo |- EVENT_groupUp ==>
 
-	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
-		
+	/call amIConcerned ${from} ${Me.CleanName}
+	/if (${Macro.Return}) {
 		/declare groupName string local ${paramArgs.Arg[1,/]}
 		/if (${groupName.Right[1].Equal[ ]}) /varset groupName ${groupName.Left[${Math.Calc[${groupName.Length}-1]}]}
 		/declare groupFound string local
@@ -1460,8 +1425,8 @@ SUB EVENT_groupUp(paramLine, paramSender, paramArgs)
 		/varcalc i ${i}+1
 		/if (${Ini[${iniGroup}].Arg[${i},|].Length}) /goto :nextGroupListing
 	}
-:skip
-/if (${outerDebug}) /echo <== EVENT_groupUp -|
+	:skip
+	/if (${outerDebug}) /echo <== EVENT_groupUp -|
 /RETURN
 
 
@@ -1658,11 +1623,11 @@ SUB joinChannel()
 #EVENT Hail "You say, 'Hail, #1#'"
 SUB EVENT_Hail(String line, String cible)
 	/declare toTheZone string local
-	/varset toTheZone ${Ini[${iniHail},General,${cible.Lower}]}
+	/varset toTheZone ${Ini[${iniHail},${cible.Left[1].Upper},${cible.Lower}]}
 	/if (${toTheZone.Length} && ${toTheZone.NotEqual[NULL]}) {
 		/say ${toTheZone}
 	} else {
-		/echo ${Line}
+		/echo ${line}
 	}
 /RETURN
 
