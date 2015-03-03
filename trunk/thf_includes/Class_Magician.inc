@@ -244,13 +244,13 @@ SUB check_PetWeapons
 				
 				/if (${NetBots[${NetBots.Client[${i}]}].Zone} && ${NetBots[${NetBots.Client[${i}]}].PetID}) {
 					
-					/if (${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName.Equal[${Ini[${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Auto-Pet Weapons-${NetBots.Client[${i}]}]}]}) {
+					/if (${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName.Equal[${Ini[${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}]}]}) {
 						/if (${outerDebug} || ${outerDebug_MAG}) /echo |- check_petWeapons -|- I have already given weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}].
 					} else {
 
 						|- /chat ${channelNumber} Handing out pet weapons to [${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}(${NetBots.Client[${i}]})], please wait a few moments...
 						/call EVENT_petWeapons PLACEHOLDER ${NetBots.Client[${i}]}
-						/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Auto-Pet Weapons-${NetBots.Client[${i}]}" "${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}" 1
+						/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Auto-Pet Weapons-${NetBots.Client[${i}]}" "${Spawn[id ${NetBots[${NetBots.Client[${i}]}].PetID}].CleanName}" 1
 					}
 				}
 
