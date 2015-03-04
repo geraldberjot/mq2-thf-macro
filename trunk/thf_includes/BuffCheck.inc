@@ -32,6 +32,17 @@ SUB check_Buffs
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Maintain buffs that have instant cast times.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB check_CombatBuffs
+	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_CombatBuffs ==>
+
+	/if (${BuffCheck} && !${globalIdle} && ${CombatBuffs.Size}) /call check_BuffBots "CombatBuffs"
+	
+	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_CombatBuffs -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Cast and maintain buffs on this character.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_SelfBuffs
@@ -157,17 +168,6 @@ SUB check_BuffBots(arrayName)
 	/if (!${outerActionTaken}) /next i
 	
 	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_BuffBots -|
-/RETURN
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Maintain buffs that have instant cast times.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB check_CombatBuffs
-	/if (${Debug} || ${Debug_BuffCheck}) /echo |- check_CombatBuffs ==>
-
-	/if (${BuffCheck} && !${globalIdle} && ${CombatBuffs.Size}) /call check_BuffBots "CombatBuffs"
-	
-	/if (${Debug} || ${Debug_BuffCheck}) /echo <== check_CombatBuffs -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
