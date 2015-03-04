@@ -772,7 +772,7 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[SUCCESS]}) {
 				/chat ${channelNumber} Landed ${If[${castType.Equal[item]},${FindItem[=${castName}].Spell},${castName}]} on ${Spawn[id ${spellTarget}].CleanName}!!.
 				/if (${castType.Equal[item]}) {
-					/call readTimer ${castName}
+					/call readTimer "${castName}"
 					/if (${outerDebug} || ${outerDebug_Assists}) /echo IniTimers(${castName}) = ${Macro.Return}
 					/varset newTimerSetting ${Macro.Return}
 				} else {
