@@ -342,7 +342,7 @@ SUB cast_Spell(int targetID, castParams)
 |- @param castParams: The name of the spell, and additional casting parameters.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_Item(int targetID, castParams)
-/if (${Debug} || ${Debug_Casting}) /echo |- cast_Item [${pendingCast}] ==>
+	/if (${Debug} || ${Debug_Casting}) /echo |- cast_Item [${pendingCast}] ==>
 	
 	|- Search Potion belt.
 	/declare i int local
@@ -364,7 +364,7 @@ SUB cast_Item(int targetID, castParams)
 	/varset giveUpTimer 0
 	/varset swapItemBack FALSE
 	
-|- Find a slot to cast the item from
+	|- Find a slot to cast the item from
 	
 	|- Check for a worn item
 	/if (${FindItem[${pendingCast}].WornSlot[1]} && ${FindItem[${pendingCast}].EffectType.Find[worn]} && ${FindItem[${pendingCast}].InvSlot}>22) {
@@ -379,12 +379,12 @@ SUB cast_Item(int targetID, castParams)
 			
 			/if (!${InvSlot[pack${i}].Item.Container}) /varset slotName pack${i}
 		
-		/if (!${Bool[${slotName}]}) {
-			/next i
-			/if (${Debug} || ${Debug_Casting}) /echo I have run out of inventory space and cannot cast [${pendingCast}].
-			/varset castReturn CANTEQUIP
-			/goto :skipCast
-		}
+			/if (!${Bool[${slotName}]}) {
+		/next i
+				/if (${Debug} || ${Debug_Casting}) /echo I have run out of inventory space and cannot cast [${pendingCast}].
+				/varset castReturn CANTEQUIP
+				/goto :skipCast
+			}
 	
 	|- Check for undefined SlotName
 	} else {
@@ -440,19 +440,13 @@ SUB cast_Item(int targetID, castParams)
 	} else /if (${castReturn.Equal[NOTREADY]} && !${FindItem[=${pendingCast}].Timer}) {
 	
 		|- Check for a user defined timer.
-		/if (!${Ini[${iniTimers},${pendingCast.Left[1]},${pendingCast}].Length}) {
-			/chat ${channelNumber} Cannot cast [${pendingCast}] there is an inconsistency with the itemTimer.  Please manually set an item recast timer, in seconds, in [${iniTimers}].
-			/call writeToIni "${iniTimers},${pendingCast.Left[1]},${pendingCast}" 0s
-		} else {
-		
-			|- Create a timer from the imported user setting.
-			/if (${Int[${Ini[${iniTimers},${pendingCast.Left[1]},${pendingCast}]}]}) /call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Ini[${iniTimers},${pendingCast.Left[1]},${pendingCast}]}]} * 10]}"
-		}
+		/call readTimer ${pendingCast}
+		/call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Macro.Return}]} * 10]}"
 	}
 
 	:skipCast
 
-/if (${Debug} || ${Debug_Casting}) /echo <== cast_Item -|
+	/if (${Debug} || ${Debug_Casting}) /echo <== cast_Item -|
 /RETURN
 
 
@@ -548,17 +542,17 @@ SUB useDisc(targetID, discToUse)
 
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Targets mobs, and pauses melodies	-|
+|- Targets mobs, and pauses melodies
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB prepCast(int targetID)
-/if (${Debug} || ${Debug_Casting}) /echo |- prepCast ==>
+	/if (${Debug} || ${Debug_Casting}) /echo |- prepCast ==>
 
 	|- Target the spell target.
 	/if (${targetID} && ${Target.ID} != ${targetID}) /call trueTarget ${targetID}
 	/if (${Twist.Twisting}) /call pauseTwist
 	/varset outerActionTaken TRUE
 
-/if (${Debug} || ${Debug_Casting}) /echo <== prepCast -|		
+	/if (${Debug} || ${Debug_Casting}) /echo <== prepCast -|		
 /RETURN
 
 

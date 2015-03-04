@@ -12,23 +12,23 @@
 |- Toons will wait to engage follow until, they can see the globalFollowTarget, and it is within the MaxResponseDist.
 |- If toons are assisting, they will back off and follow until re-engage.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramLine: The paramLine that called the event
-|- @param paramSender: The PC who sent the command
+|- @param line: The line that called the event
+|- @param from: The PC who sent the command
 |- @param paramArgs: Who to follow
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Follow "<#1#> #2# follow"
-SUB EVENT_Follow(String paramLine, String paramSender, String paramArgs)
+SUB EVENT_Follow(String line, String from, String paramArgs)
 	/if (${outerDebug} || ${outerDebugBasics}) {
 		/echo |- EVENT_Follow ==>
-		/echo paramSender=${paramSender} |- paramArgs=${paramArgs}
+		/echo from=${from} |- paramArgs=${paramArgs}
 	}
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} TRUE
+	/call amIConcerned ${from} ${paramArgs} TRUE
 	/if (${Macro.Return}) {
 		|- Turn globalFollowing on and set the globalFollowTarget
 		/varset globalFollowing TRUE
-		/varset globalFollowTarget ${Spawn[pc ${paramSender}].CleanName}
+		/varset globalFollowTarget ${Spawn[pc ${from}].CleanName}
 		
 		|- If I am the follow target
 		|- =>
@@ -51,12 +51,12 @@ SUB EVENT_Follow(String paramLine, String paramSender, String paramArgs)
 		
 			|- Check Range
 			/if (${Spawn[=${globalFollowTarget}].Distance} > ${MaxResponseDist}) {
-				/chat ${channelNumber} [${globalFollowTarget}] is too far away.
+				/chat ${channelNumber} [${globalFollowTarget}] is too far away !
 			} else {
 			
 				|- Check LoS.
-				/if (!${Spawn[=${globalFollowTarget}].paramLineOfSight}) {
-					/chat ${channelNumber} I cannot see [${globalFollowTarget}].
+				/if (!${Spawn[=${globalFollowTarget}].lineOfSight}) {
+					/chat ${channelNumber} I cannot see [${globalFollowTarget}] !
 				} else {
 				
 					|- Stop assisting so we don't try to stick to the AssistTarget.	
@@ -117,20 +117,20 @@ SUB AcquireFollow
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Disengages follow on bots who are in the same zone as the paramSender.
+|- Disengages follow on bots who are in the same zone as the from.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Use, /stop, or, 'stop' in /bc.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Stop	"[#1#] #2# stop"
 #EVENT Stop	"<#1#> #2# stop"
-SUB EVENT_Stop(String paramLine, String paramSender, String paramArgs)
+SUB EVENT_Stop(String line, String from, String paramArgs)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Stop ==>
 
 	|- Check if I'm globalFollowing.
 	/if (${globalFollowing}) {
 		
 		|- Verify the event
-		/call amIConcerned ${paramSender} ${paramArgs} TRUE
+		/call amIConcerned ${from} ${paramArgs} TRUE
 		/if (${Macro.Return}) {
 	
 			|- Wait to get close to the globalFollowTarget.
@@ -150,21 +150,21 @@ SUB EVENT_Stop(String paramLine, String paramSender, String paramArgs)
 |- Ask the bot to move to a PC, pet or NPC
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT MoveHere "<#1#> #2# move to #3#"
-SUB EVENT_MoveHere(String paramLine, String paramSender, String paramArgs, String paramWhere)
+SUB EVENT_MoveHere(String line, String from, String paramArgs, String paramWhere)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_MoveHere ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} TRUE
+	/call amIConcerned ${from} ${paramArgs} TRUE
 	/if (${Macro.Return}) {
 
-		|- Check if the paramSender is me.
-		/if (${paramSender.Equal[${Me}]}) {
-			/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_MoveHere -|- I am the paramSender, skipping.
+		|- Check if the from is me.
+		/if (${from.Equal[${Me}]}) {
+			/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_MoveHere -|- I am the from, skipping.
 		} else {
 		
 			|- Set WhereTo.
 			/declare moveTo_Name string local
-			/declare WhereTo string local ${If[${paramArgs.Arg[1, ].Find[/]} || ${paramArgs.Arg[1, ].Equal[me]} || ${paramArgs.Arg[1, ].Equal[here]},${paramSender},${paramArgs.Arg[1, ]}]}
+			/declare WhereTo string local ${If[${paramArgs.Arg[1, ].Find[/]} || ${paramArgs.Arg[1, ].Equal[me]} || ${paramArgs.Arg[1, ].Equal[here]},${from},${paramArgs.Arg[1, ]}]}
 			
 			|- Change WhereTo to a spawnID
 			/if (!${Int[${WhereTo}]}) {
@@ -218,20 +218,20 @@ SUB EVENT_MoveHere(String paramLine, String paramSender, String paramArgs, Strin
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Moves to a given location, and clicks the nearest object.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramSender: The command sender.
+|- @param from: The command sender.
 |- @param locToStart: Where to stand when attempting to click the object.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT clickIt "[#1#] #2# click object at #3#"
 #EVENT clickIt "<#1#> #2# click object at #3#"
-SUB EVENT_clickIt(paramLine, paramSender, paramArgs, locToStart)
+SUB EVENT_clickIt(line, from, paramArgs, locToStart)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_clickIt ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${paramArgs} FALSE
 	/if (${Macro.Return}) {
 
 		|- Check LoS.
-		/if (!${paramLineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
+		/if (!${lineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
 			/chat ${channelNumber} I cannot see the object to click.
 		} else {
 			
@@ -314,19 +314,19 @@ SUB EVENT_clickIt(paramLine, paramSender, paramArgs, locToStart)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Points faces bots to your current heading, and runs through a zone paramLine.
+|- Points faces bots to your current heading, and runs through a zone line.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramSender: The command sender.
+|- @param from: The command sender.
 |- @param paramArgs: Where to stand when trying to click the door.
 |- @param locToStart: Where to stand when attempting to zone.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT runThruZone "[#1#] #2# run through zone at #3#"
 #EVENT runThruZone "<#1#> #2# run through zone at #3#"
-SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
+SUB EVENT_runThruZone(line, from, paramArgs, locToStart)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_runThruZone ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${paramArgs} FALSE
 	/if (${Macro.Return}) {
 
 		/declare startHeading float local ${locToStart.Arg[1, ].Arg[3,,]}
@@ -335,14 +335,14 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
 		/declare startZone int local ${Zone.ID}
 	
 		|- Check that you can see the location to start from.
-		/if (!${paramLineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
+		/if (!${lineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
 			/chat ${channelNumber} I cannot see the starting location !
 		} else {
 		
 			|- Check range to object.
 			/call Triangulate_Distance ${locToStart} ${Me.Loc.Replace[ ,]}
 			/if (${Macro.Return} > ${Math.Calc[${MaxResponseDist}*3].Int}) {
-				/chat ${channelNumber} I am too far away from that zone paramLine !
+				/chat ${channelNumber} I am too far away from that zone line !
 			} else {
 			
 				/if (${Stick.Active}) /squelch /stick off
@@ -394,11 +394,11 @@ SUB EVENT_runThruZone(paramLine, paramSender, paramArgs, locToStart)
 #EVENT dropInvis "<#1#> #2# drop invis"
 #EVENT dropInvis "[#1#] #2# drop invisibility"
 #EVENT dropInvis "<#1#> #2# drop invisibility"
-SUB EVENT_dropInvis(paramLine, paramSender, paramArgs)
+SUB EVENT_dropInvis(line, from, paramArgs)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_dropInvis ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${paramArgs} FALSE
 	/if (${Macro.Return}) {
 	
 		/if (${Me.Invis}) {
@@ -418,16 +418,16 @@ SUB EVENT_dropInvis(paramLine, paramSender, paramArgs)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Uses /exit on all bots, except the paramSender.
+|- Uses /exit on all bots, except the from.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Use /bc Exit.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Exit "<#1#> #2# exit"
-SUB EVENT_Exit(paramLine, paramSender, paramArgs)
+SUB EVENT_Exit(line, from, paramArgs)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Exit ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${paramArgs} FALSE
 	/if (${Macro.Return}) {
 
 		/chat ${channelNumber} Bye !
@@ -451,7 +451,7 @@ SUB EVENT_Camp(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Camp ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${paramArgs} FALSE
 	/if (${Macro.Return}) {
 		/chat ${channelNumber} Camping...
 		/deletevar * global
@@ -469,11 +469,11 @@ SUB EVENT_Camp(String line, String from, String who)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT LoadSpells "[#1#] #2# load spells"
 #EVENT LoadSpells "<#1#> #2# load spells"
-SUB EVENT_LoadSpells(paramLine, paramSender, paramArgs)
+SUB EVENT_LoadSpells(line, from, paramArgs)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_LoadSpells ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${paramArgs} FALSE
 	/if (${Macro.Return}) {
 
 		|- Check if I can cast, and have a spellset.	
@@ -534,11 +534,11 @@ SUB EVENT_RemoveBuff(String line, String from, String who, String buffToRemove)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT check_Buffs "[#1#] #2# check buff #3#"
 #EVENT check_Buffs "<#1#> #2# check buff #3#"
-SUB EVENT_check_Buffs(paramLine, paramSender, paramArgs, buffToCheck)
+SUB EVENT_check_Buffs(line, from, paramArgs, buffToCheck)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_check_Buffs ==>
 
 	|- Verify the event
-	/call amIConcerned ${paramSender} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${paramArgs} FALSE
 	/if (${Macro.Return}) {
 	
 		/declare badBuff string local ${buffToCheck}
@@ -723,7 +723,7 @@ SUB EVENT_CountBots
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Swap_Items "<#*#> Swap #1#"
 #EVENT Swap_Items "[MQ2] Swap #1#"
-SUB EVENT_Swap_Items(paramLine, IniEntry)
+SUB EVENT_Swap_Items(line, IniEntry)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- Event Swap_Items ==>
 
 	|- If I don't have a matching Ini entry.
@@ -770,7 +770,7 @@ SUB EVENT_Swap_Items(paramLine, IniEntry)
 
 
 #EVENT useItem "[MQ2] Use Item #1#"
-SUB EVENT_useItem(paramLine, itemToUse)
+SUB EVENT_useItem(line, itemToUse)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_useItem ==>
 
 	/if (${Bool[${Cursor}]}) /call ClearCursor
@@ -825,12 +825,12 @@ SUB EVENT_EndMacro
 #EVENT medOn "#1# tells you, 'MedBreak On#*#'"
 #EVENT medOn "#1# tells the group, 'MedBreak On#*#'"
 #EVENT medOn "#1# you tell your party, 'MedBreak On#*#'"
-SUB EVENT_medOn(paramLine, paramSender)
+SUB EVENT_medOn(line, from)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_medOn ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 	
@@ -839,14 +839,14 @@ SUB EVENT_medOn(paramLine, paramSender)
 	
 			|- Set medbreak variables
 			/varset medBreak TRUE
-			/if (${paramLine.Find[ Hold]}) {
+			/if (${line.Find[ Hold]}) {
 				/varset medBreak_Hold TRUE
 			} else {
 				/varset medBreak_Hold FALSE
 			}
 			
 			|- Check range
-			/if (${Spawn[pc ${paramSender}].Distance} < ${MaxResponseDist}) {
+			/if (${Spawn[pc ${from}].Distance} < ${MaxResponseDist}) {
 				/chat ${channelNumber} Meditating...
 			} else {
 				/chat ${channelNumber} I am too far away from you to meditate, right now.  I'll start meditating when you're in range.
@@ -867,12 +867,12 @@ SUB EVENT_medOn(paramLine, paramSender)
 #EVENT medOff "#1# tells you, 'MedBreak Off#*#'"
 #EVENT medOff "#1# tells the group, 'MedBreak Off#*#'"
 #EVENT medOff "#1# you tell your party, 'MedBreak Off#*#'"
-SUB EVENT_medOff(paramLine, paramSender)
+SUB EVENT_medOff(line, from)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_medOff ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
 
@@ -942,12 +942,12 @@ SUB check_MedBreak
 
 #EVENT set_AAXP "<#1#> Set AA XP #2#"
 #EVENT set_AAXP "[#1#] Set AA XP #2#"
-SUB EVENT_set_AAXP(paramLine, paramSender, paramArgs)
+SUB EVENT_set_AAXP(line, from, paramArgs)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- set_AAXP ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {	
 
@@ -984,12 +984,12 @@ SUB EVENT_fixCorpses
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Consent "#1# tells you, 'Consent #2#'"
 #EVENT Consent "<#1#> Consent #2#"
-SUB EVENT_Consent(paramLine, paramSender, ConsentTarget)
+SUB EVENT_Consent(line, from, ConsentTarget)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Consent ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 		
@@ -1008,7 +1008,7 @@ SUB EVENT_Consent(paramLine, paramSender, ConsentTarget)
 |- Adds a PC name to your list of consentTargets.  This is used is corpse drag functions.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT addConsent "You have been given permission to drag #1#'s corpse in all zones."
-SUB EVENT_addConsent(paramLine, consentTarget)
+SUB EVENT_addConsent(line, consentTarget)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_addConsent ==>
 
 	/if (!${Select[${consentTarget},${consentTargets}]}) {
@@ -1072,12 +1072,12 @@ SUB EVENT_gatherCorpses
 #EVENT ClickYes	"#1# tells you, 'Click #2#'"
 #EVENT ClickYes	"#1# you tell your party, 'Click #2#'"
 #EVENT ClickYes	"#1# tells the group, 'Click #2#'"
-SUB EVENT_ClickYes(paramLine, paramSender, paramArgs)
+SUB EVENT_ClickYes(line, from, paramArgs)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_ClickYes ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 	
@@ -1144,12 +1144,12 @@ SUB EVENT_RaidAccept(String line, String from)
 |- Use, /tell 'Name' Request raid invite	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Request_RaidInvite "#1# tells you, 'Request raid invite'"
-SUB EVENT_Request_RaidInvite(paramLine, paramSender)
+SUB EVENT_Request_RaidInvite(line, from)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- Request_RaidInvite ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]}) {
 		/gu Raid invite
@@ -1172,8 +1172,8 @@ SUB EVENT_Force_RaidDisband
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- Force_RaidDisband ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
 		/bcaa //raiddisband
@@ -1228,12 +1228,12 @@ SUB EVENT_Invite(String line, String from)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Disband "#1# tells you, 'Incoming group invite...'"
 #EVENT Disband "<#1#> Disband all"
-SUB EVENT_Disband(paramLine, paramSender)
+SUB EVENT_Disband(line, from)
 /if (${outerDebug}) /echo |- EVENT_Disband ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]}) {
 	
@@ -1435,12 +1435,12 @@ SUB EVENT_groupUp(String line, String from, String paramArgs)
 |- Written by Stryd of PEQ -|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT reportMana "<#1#> Report mana"
-SUB EVENT_reportMana(paramLine,paramSender)
+SUB EVENT_reportMana(line,from)
 /if (${Me.Class.CanCast}) {
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_reportMana ==>
 		|- Verify the event
-		/call verifyEvent "${paramSender}" "${paramLine}"
-		/if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+		/call verifyEvent "${from}" "${line}"
+		/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 		|-   |-----------Valid User----------|-    |-----------In Zone-------------|	|--------Included Bot-----------|
 		/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {   	
 			/chat ${channelNumber} ${Me.PctMana}m${If[${Me.PctMana}!=100, - Full Mana in ${Math.Calc[((${Me.MaxMana}-${Me.CurrentMana})/${Me.ManaRegen})*6]}s,]}
@@ -1714,7 +1714,7 @@ SUB basics_BackgroundEvents
 	/doevents saveGroup
 	/doevents listGroups
 	/doevents groupUp
-	/doevents checkPCOnparamLine
+	/doevents checkPCOnline
 	/doevents medOn
 	/doevents medOff
 	/doevents fixCorpses
@@ -1835,7 +1835,7 @@ SUB basics_Aliases
 |- Usage: /filters refName
 |- Must have created an entry in the Filter Settings.ini file for refName by using /savefilters refName
 #EVENT serverFilters "[MQ2] Server Filters: #1#"
-SUB EVENT_serverFilters(paramLine,refName)
+SUB EVENT_serverFilters(line,refName)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_serverFilters [${refName}] ==>
 /if (${Ini[${filterSettings_ini},${refName}].Length}) {
 	/call openOptions Filters
@@ -1875,7 +1875,7 @@ SUB EVENT_serverFilters(paramLine,refName)
 |- Usage: /savefilters refName
 |- Saves current chat filter settings to the Filter Settings.ini file
 #EVENT saveFilters "[MQ2] Save Filters: #1#"
-SUB EVENT_saveFilters(paramLine,refName)
+SUB EVENT_saveFilters(line,refName)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_saveFilters [${refName}] ==>
 /call openOptions Filters
 /declare filterNames[32] string local
@@ -1976,7 +1976,7 @@ SUB EVENT_corpseDrag
 |- need some way to turn off corpse drag; but, I'm bored, and dont want to do it.
 
 #EVENT add_AutoDestroyItem "[MQ2] Add Auto Destroy Item #1#"
-SUB EVENT_add_AutoDestroyItem(paramLine, WhatToAdd)
+SUB EVENT_add_AutoDestroyItem(line, WhatToAdd)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- add_AutoDestroyItem ==>
 
 	/if (!${Cursor.ID}) {
@@ -2002,7 +2002,7 @@ SUB EVENT_add_AutoDestroyItem(paramLine, WhatToAdd)
 /RETURN
 
 #EVENT remove_AutoDestroyItem "[MQ2] Remove Auto Destroy Item #1#"
-SUB EVENT_remove_AutoDestroyItem(paramLine, WhatToAdd)
+SUB EVENT_remove_AutoDestroyItem(line, WhatToAdd)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- remove_AutoDestroyItem ==>
 
 	/if (!${Select[${WhatToAdd},${Ini[${Macro_Ini},Background,Auto-Destroy List]}]}) {
@@ -2018,10 +2018,10 @@ SUB EVENT_remove_AutoDestroyItem(paramLine, WhatToAdd)
 |- Commands bots to bark a message at a target.															-|
 |- Targets can be designated by name, or ID, using -ID|- or -Name|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramLine: '<Name> Bark at MobName BarkMsg'														-|
+|- @param line: '<Name> Bark at MobName BarkMsg'														-|
 |- @param msgTarget: The NPC you wish to bark at.														-|
 |- @param barkIt: What to bark at the NPC.																-|
-|- @param paramSender: The command sender that requested bark.											-|
+|- @param from: The command sender that requested bark.											-|
 |- @param selectedBots: Bots specified to bark at npc.													-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Targets must be within the MaxResponseDist (default 250units).										-|
@@ -2031,12 +2031,12 @@ SUB EVENT_remove_AutoDestroyItem(paramLine, WhatToAdd)
 #EVENT bark "#1# tells you, 'Bark at #2# #3#'"
 #EVENT bark "#1# tells the group, 'Bark at #2# #3#'"
 #EVENT bark "#1# you tell your party, 'Bark at #2# #3#'"
-SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
+SUB EVENT_bark(line, from, msgTarget, barkMsg)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Bark ==>
 
 	|- Verify the event
-	/call verifyEvent "${paramSender}" "${paramLine}"
-	/if (${Defined[paramSender]}) /if (${Defined[paramSender]}) /varset paramSender ${Macro.Return.Arg[1,_]}
+	/call verifyEvent "${from}" "${line}"
+	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
 	|-    |-----------Valid User----------|-    |---------Included Bot----------|-    |-------------In Zone-----------|-    |------------In Range------------|
 	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]} && ${Bool[${Macro.Return.Arg[5,_]}]}) {
 		
@@ -2129,11 +2129,11 @@ SUB EVENT_bark(paramLine, paramSender, msgTarget, barkMsg)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Attempts to detected NPC responses to PC hails in /say.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- @param paramLine: '|BarkTarget|- says, 'Something''			-|
+|- @param line: '|BarkTarget|- says, 'Something''			-|
 |- @param returnBark: What the NPC replied.					-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT barkReturn "|${barkTarget}|- #*#"
-SUB EVENT_barkReturn(paramLine, returnBark)
+SUB EVENT_barkReturn(line, returnBark)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_barkReturn ==>
 	
 	/varset barkReturned TRUE
