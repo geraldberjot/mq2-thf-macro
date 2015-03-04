@@ -1069,25 +1069,14 @@ SUB EVENT_gatherCorpses
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- All bots click yes or no to confirmation boxes.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT ClickYes	"[#1#] Click #2#"
-#EVENT ClickYes	"<#1#> Click #2#"
-#EVENT ClickYes	"#1# tells you, 'Click #2#'"
-#EVENT ClickYes	"#1# you tell your party, 'Click #2#'"
-#EVENT ClickYes	"#1# tells the group, 'Click #2#'"
-#EVENT ClickYes	"<#1#> Click #2#"
-#EVENT ClickYes	"#1# tells you, 'Click #2#'"
-#EVENT ClickYes	"#1# you tell your party, 'Click #2#'"
-#EVENT ClickYes	"#1# tells the group, 'Click #2#'"
-SUB EVENT_ClickYes(line, from, paramArgs)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_ClickYes ==>
+#EVENT ClickYes	"[#1#] #2# Click #3#"
+#EVENT ClickYes	"<#1#> #2# Click #3#"
+SUB EVENT_ClickYes(String line, String from, String who, String paramArgs)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_ClickYes ==>
 
-	|- Verify the event
-	/call verifyEvent "${from}" "${line}"
-	/if (${Defined[from]}) /if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
-	
-		/declare buttonToClick string local ${If[${paramArgs.Find[yes]},Yes,No]}
+	/call amIConcerned ${from} ${who}
+	/if (${Macro.Return}) {
+		/declare buttonToClick string local ${If[${paramArgs.Lower.Find[yes]},Yes,No]}
 		/declare miscTimer timer local 100
 		
 		:clickButton
@@ -1101,7 +1090,7 @@ SUB EVENT_ClickYes(line, from, paramArgs)
 		}
 	}
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_ClickYes -|	
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_ClickYes -|	
 /RETURN
 
 
@@ -1129,6 +1118,22 @@ SUB EVENT_gate(String line, String from, String who)
     }
 
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Gate -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Use, /bc all gate
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT lootOrder "<#1#> #2# loot"
+SUB EVENT_lootOrder(String line, String from, String who)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_lootOrder ==>
+
+    /call amIconcerned ${from} ${who}
+    /if (${Macro.Return}) {
+        /call stopCurrentAction TRUE
+		/call lootMobs
+    }
+
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_lootOrder -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|

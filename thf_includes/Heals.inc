@@ -370,7 +370,7 @@ SUB Heal_CastingChecks
 /if (${Debug} || ${Debug_Heals}) /echo |- Heal_CastingChecks ==>
 
 	/if (${Debug} && !${debugTimer_Heal_CastingChecks}) {
-		/echo [${Target.CleanName}|${NetBots[${Target.CleanName}].PctHPs} >=90
+		/echo [${Target.CleanName}|${NetBots[${Target.CleanName}].PctHPs}] >=90
 		/call createTimer debugTimer_Heal_CastingChecks 15
 	}
 	

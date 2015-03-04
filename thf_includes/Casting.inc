@@ -440,7 +440,7 @@ SUB cast_Item(int targetID, castParams)
 	} else /if (${castReturn.Equal[NOTREADY]} && !${FindItem[=${pendingCast}].Timer}) {
 	
 		|- Check for a user defined timer.
-		/call readTimer ${pendingCast}
+		/call readTimer "${pendingCast}"
 		/call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Macro.Return}]} * 10]}"
 	}
 

@@ -196,7 +196,7 @@ SUB LootCorpse
 				/nomodkey /keypress q chat
 				/nomodkey /keypress t chat
 				/nomodkey /keypress space chat
-                /shiftkey /keypress ${channel} chat
+                /shiftkey /keypress ${channelNumber} chat
                 /keypress Space chat
                 /notify LootWND LW_BroadcastButton leftmouseup 
                 /delay 1s
