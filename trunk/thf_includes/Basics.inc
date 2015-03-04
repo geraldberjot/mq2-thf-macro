@@ -14,17 +14,17 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param line: The line that called the event
 |- @param from: The PC who sent the command
-|- @param paramArgs: Who to follow
+|- @param who: Who to follow
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Follow "<#1#> #2# follow"
-SUB EVENT_Follow(String line, String from, String paramArgs)
+SUB EVENT_Follow(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) {
 		/echo |- EVENT_Follow ==>
-		/echo from=${from} |- paramArgs=${paramArgs}
+		/echo from=${from} |- who=${who}
 	}
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} TRUE
+	/call amIConcerned ${from} ${who} TRUE
 	/if (${Macro.Return}) {
 		|- Turn globalFollowing on and set the globalFollowTarget
 		/varset globalFollowing TRUE
@@ -123,14 +123,14 @@ SUB AcquireFollow
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Stop	"[#1#] #2# stop"
 #EVENT Stop	"<#1#> #2# stop"
-SUB EVENT_Stop(String line, String from, String paramArgs)
+SUB EVENT_Stop(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Stop ==>
 
 	|- Check if I'm globalFollowing.
 	/if (${globalFollowing}) {
 		
 		|- Verify the event
-		/call amIConcerned ${from} ${paramArgs} TRUE
+		/call amIConcerned ${from} ${who} TRUE
 		/if (${Macro.Return}) {
 	
 			|- Wait to get close to the globalFollowTarget.
@@ -150,11 +150,11 @@ SUB EVENT_Stop(String line, String from, String paramArgs)
 |- Ask the bot to move to a PC, pet or NPC
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT MoveHere "<#1#> #2# move to #3#"
-SUB EVENT_MoveHere(String line, String from, String paramArgs, String paramWhere)
+SUB EVENT_MoveHere(String line, String from, String who, String paramWhere)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_MoveHere ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} TRUE
+	/call amIConcerned ${from} ${who} TRUE
 	/if (${Macro.Return}) {
 
 		|- Check if the from is me.
@@ -164,7 +164,7 @@ SUB EVENT_MoveHere(String line, String from, String paramArgs, String paramWhere
 		
 			|- Set WhereTo.
 			/declare moveTo_Name string local
-			/declare WhereTo string local ${If[${paramArgs.Arg[1, ].Find[/]} || ${paramArgs.Arg[1, ].Equal[me]} || ${paramArgs.Arg[1, ].Equal[here]},${from},${paramArgs.Arg[1, ]}]}
+			/declare WhereTo string local ${If[${paramWhere.Arg[1, ].Find[/]} || ${paramWhere.Arg[1, ].Equal[me]} || ${paramWhere.Arg[1, ].Equal[here]},${from},${paramWhere.Arg[1, ]}]}
 			
 			|- Change WhereTo to a spawnID
 			/if (!${Int[${WhereTo}]}) {
@@ -219,15 +219,16 @@ SUB EVENT_MoveHere(String line, String from, String paramArgs, String paramWhere
 |- Moves to a given location, and clicks the nearest object.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param from: The command sender.
+|- @param who: the toon you want to execute the order
 |- @param locToStart: Where to stand when attempting to click the object.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT clickIt "[#1#] #2# click object at #3#"
 #EVENT clickIt "<#1#> #2# click object at #3#"
-SUB EVENT_clickIt(line, from, paramArgs, locToStart)
+SUB EVENT_clickIt(String line, String from, String who, locToStart)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_clickIt ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 
 		|- Check LoS.
@@ -317,16 +318,16 @@ SUB EVENT_clickIt(line, from, paramArgs, locToStart)
 |- Points faces bots to your current heading, and runs through a zone line.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- @param from: The command sender.
-|- @param paramArgs: Where to stand when trying to click the door.
+|- @param who: Where to stand when trying to click the door.
 |- @param locToStart: Where to stand when attempting to zone.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT runThruZone "[#1#] #2# run through zone at #3#"
 #EVENT runThruZone "<#1#> #2# run through zone at #3#"
-SUB EVENT_runThruZone(line, from, paramArgs, locToStart)
+SUB EVENT_runThruZone(String line, String from, String who, locToStart)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_runThruZone ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 
 		/declare startHeading float local ${locToStart.Arg[1, ].Arg[3,,]}
@@ -394,11 +395,11 @@ SUB EVENT_runThruZone(line, from, paramArgs, locToStart)
 #EVENT dropInvis "<#1#> #2# drop invis"
 #EVENT dropInvis "[#1#] #2# drop invisibility"
 #EVENT dropInvis "<#1#> #2# drop invisibility"
-SUB EVENT_dropInvis(line, from, paramArgs)
+SUB EVENT_dropInvis(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_dropInvis ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 	
 		/if (${Me.Invis}) {
@@ -423,11 +424,11 @@ SUB EVENT_dropInvis(line, from, paramArgs)
 |- Use /bc Exit.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Exit "<#1#> #2# exit"
-SUB EVENT_Exit(line, from, paramArgs)
+SUB EVENT_Exit(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Exit ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 
 		/chat ${channelNumber} Bye !
@@ -451,7 +452,7 @@ SUB EVENT_Camp(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Camp ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 		/chat ${channelNumber} Camping...
 		/deletevar * global
@@ -469,11 +470,11 @@ SUB EVENT_Camp(String line, String from, String who)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT LoadSpells "[#1#] #2# load spells"
 #EVENT LoadSpells "<#1#> #2# load spells"
-SUB EVENT_LoadSpells(line, from, paramArgs)
+SUB EVENT_LoadSpells(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_LoadSpells ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 
 		|- Check if I can cast, and have a spellset.	
@@ -519,6 +520,11 @@ SUB EVENT_RemoveBuff(String line, String from, String who, String buffToRemove)
 				/varset badBuff ${badBuff.Left[${Math.Calc[${badBuff.Length}-1]}]}
 				/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_RemoveBuff -|- Removing [${badBuff}]
 				/if (${Bool[${badBuff}]}) /nomodkey /notify BuffWindow Buff${Math.Calc[${Me.Buff[${badBuff}].ID}-1].Int} leftmouseup
+			} else /if (${Bool[${Window[ShortDurationBuffWindow].Child[BW_Buff${i}_Button].Tooltip}]} && ${Window[ShortDurationBuffWindow].Child[BW_Buff${i}_Button].Tooltip.Find[${badBuff}]}) {
+				/varset badBuff ${Window[ShortDurationBuffWindow].Child[BW_Buff${i}_Button].Tooltip.Arg[1,(]}
+				/varset badBuff ${badBuff.Left[${Math.Calc[${badBuff.Length}-1]}]}
+				/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_RemoveBuff -|- Removing [${badBuff}]
+				/if (${Bool[${badBuff}]}) /nomodkey /notify ShortDurationBuffWindow Buff${Math.Calc[${Me.Buff[${badBuff}].ID}-1].Int} leftmouseup
 			}
 			
 		/next i
@@ -534,11 +540,11 @@ SUB EVENT_RemoveBuff(String line, String from, String who, String buffToRemove)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT check_Buffs "[#1#] #2# check buff #3#"
 #EVENT check_Buffs "<#1#> #2# check buff #3#"
-SUB EVENT_check_Buffs(line, from, paramArgs, buffToCheck)
+SUB EVENT_check_Buffs(String line, String from, String who, String buffToCheck)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_check_Buffs ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${paramArgs} FALSE
+	/call amIConcerned ${from} ${who} FALSE
 	/if (${Macro.Return}) {
 	
 		/declare badBuff string local ${buffToCheck}
@@ -548,6 +554,11 @@ SUB EVENT_check_Buffs(line, from, paramArgs, buffToCheck)
 			
 			/if (${Bool[${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip}]} && ${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip.Find[${badBuff}]}) {
 				/varset badBuff ${Window[BuffWindow].Child[BW_Buff${i}_Button].Tooltip.Arg[1,(]}
+				/varset badBuff ${badBuff.Left[${Math.Calc[${badBuff.Length}-1]}]}
+				/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_RemoveBuff -|- Removing [${badBuff}]
+				/chat ${channelNumber} I have [${Math.Calc[${Me.Buff[${badBuff}].Duration} * 6 / 60].Int} minutes] left on [${badBuff}].
+			} else /if (${Bool[${Window[ShortDurationBuffWindow].Child[BW_Buff${i}_Button].Tooltip}]} && ${Window[ShortDurationBuffWindow].Child[BW_Buff${i}_Button].Tooltip.Find[${badBuff}]}) {
+				/varset badBuff ${Window[ShortDurationBuffWindow].Child[BW_Buff${i}_Button].Tooltip.Arg[1,(]}
 				/varset badBuff ${badBuff.Left[${Math.Calc[${badBuff.Length}-1]}]}
 				/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_RemoveBuff -|- Removing [${badBuff}]
 				/chat ${channelNumber} I have [${Math.Calc[${Me.Buff[${badBuff}].Duration} * 6 / 60].Int} minutes] left on [${badBuff}].
@@ -646,8 +657,8 @@ SUB EVENT_FindItems(String line, String from, String who, String itemToFind)
 #EVENT CountBots "<#*#> HeadCount"
 #EVENT CountBots "[#*#] Head Count"
 #EVENT CountBots "<#*#> Head Count"
-SUB EVENT_CountBots
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_CountBots ==>
+SUB EVENT_CountBots(String line)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_CountBots ==>
 
 	/if (!${NetBots.Counts}) {
 		/echo You must be connected to MQ2EQBC, and, MQ2NetBots, to use this function.
@@ -713,22 +724,20 @@ SUB EVENT_CountBots
 		/echo ------------------------------------------
 	}
 	
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_CountBots -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_CountBots -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Preforms item swaps, listed in iniToons.	-|
+|- Preforms item swaps, listed in iniToons.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT Swap_Items "<#*#> Swap #1#"
 #EVENT Swap_Items "[MQ2] Swap #1#"
-SUB EVENT_Swap_Items(line, IniEntry)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- Event Swap_Items ==>
+SUB EVENT_Swap_Items(String line, String iniEntry)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- Event Swap_Items ==>
 
 	|- If I don't have a matching Ini entry.
-	/if (!${Ini[${iniToon},Swap Items,${IniEntry}].Length}) {
-		/echo |- Swap_Items -|- I have no listing for [${IniEntry}].
+	/if (!${Ini[${iniToon},Swap Items,${iniEntry}].Length}) {
+		/echo |- Swap_Items -|- I have no listing for [${iniEntry}].
 	} else {
 	
 		/if (${Cursor.ID}) /call ClearCursor
@@ -742,14 +751,14 @@ SUB EVENT_Swap_Items(line, IniEntry)
 		:SwapLoop
 		/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Swap_Items -|- Swaploop.
 		
-		/varset itemToSwap ${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Arg[1,|]}
-		/varset slotToSwap ${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Arg[2,|]}
+		/varset itemToSwap ${Ini[${iniToon},Swap Items,${iniEntry}].Arg[${i},/].Arg[1,|]}
+		/varset slotToSwap ${Ini[${iniToon},Swap Items,${iniEntry}].Arg[${i},/].Arg[2,|]}
 		
 		|- If I don't have the item in my inventory.
 		/if (!${FindItemCount[${itemToSwap}]}) {
 			/echo |- Event Swap_Items -|- #*# Error #*# [${itemToSwap}] was not found.
 			/varcalc i + 1
-			/if (${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
+			/if (${Ini[${iniToon},Swap Items,${iniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
 		} else {
 		
 			|- If I'm swapping in a 2 hander, while dual wielding.
@@ -760,18 +769,19 @@ SUB EVENT_Swap_Items(line, IniEntry)
 			/call SwapItem "${itemToSwap}" ${slotToSwap}
 			
 			/varcalc i ${i} + 1
-			/if (${Ini[${iniToon},Swap Items,${IniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
+			/if (${Ini[${iniToon},Swap Items,${iniEntry}].Arg[${i},/].Length}) /goto :SwapLoop
 		}
 	}
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== Swap_Items -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== Swap_Items -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Ask toon to use item
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT useItem "[MQ2] Use Item #1#"
-SUB EVENT_useItem(line, itemToUse)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_useItem ==>
+SUB EVENT_useItem(String line, String itemToUse)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_useItem ==>
 
 	/if (${Bool[${Cursor}]}) /call ClearCursor
 
@@ -803,28 +813,26 @@ SUB EVENT_useItem(line, itemToUse)
 		}
 	}
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_useItem -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_useItem -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Ends the macro before a bot finishes camping.	-|
+|- Ends the macro before a bot finishes camping.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT EndMacro "It will take about 5 more seconds to prepare your camp."
+#EVENT EndMacro "It will take about 30 more seconds to prepare your camp."
 SUB EVENT_EndMacro
+	/deletevar * global
+	/disband
+	/raiddisband
 	/echo User is camping, ending macro.
 	/endmacro
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Engages MedBreak mode, on bots who can cast.	-|
+|- Engages MedBreak mode, on bots who can cast.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT medOn "[#1#] MedBreak On#*#"
 #EVENT medOn "<#1#> MedBreak On#*#"
-#EVENT medOn "#1# tells you, 'MedBreak On#*#'"
-#EVENT medOn "#1# tells the group, 'MedBreak On#*#'"
-#EVENT medOn "#1# you tell your party, 'MedBreak On#*#'"
 SUB EVENT_medOn(line, from)
 /if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_medOn ==>
 
@@ -856,8 +864,6 @@ SUB EVENT_medOn(line, from)
 	
 /if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_medOn -|
 /RETURN
-
-
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- disengages MedBreak mode, on bots who can cast.	-|
@@ -1135,8 +1141,6 @@ SUB EVENT_RaidAccept(String line, String from)
 		/raidaccept
 	}
 /RETURN
-
-
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Forces a raid request in guild.			-|
