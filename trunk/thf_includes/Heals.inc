@@ -16,7 +16,7 @@
 |- Calls heal functions, as an extention of the main loop.	-|	
 |------------------------------------------------------------|
 SUB check_Heals
-/if (${Debug} || ${Debug_Heals}) /echo |- healLoop  ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- healLoop  ==>
 
 	| Check Group Heal array
 	/if (${do_GroupHeals}) /call check_groupHeals
@@ -33,18 +33,18 @@ SUB check_Heals
 	
 	| If I've healed someone in the last few seconds, set ActionTaken TRUE.  
 	| This creates a stopping point in the mainLoop which prioritizes heals, and all higher functions, for a brief time.
-	/if (${recentHeal_Timer}) /varset ActionTaken TRUE
+	/if (${recentheals_Timer}) /varset ActionTaken TRUE
 
-/if (${Debug} || ${Debug_Heals}) /echo <== healLoop -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== healLoop -|
 /RETURN
 
 
 
 |--------------------------------------------------------------------------------------------------------------------|
-|- Uses Items, Spells, Abilities, AAs, and Disciplines listed in the [LifeSupport] section of the Character_Ini.	-|
+|- Uses Items, Spells, Abilities, AAs, and Disciplines listed in the [LifeSupport] section of the iniToon.
 |--------------------------------------------------------------------------------------------------------------------|
 SUB check_lifeSupport
-/if (${Debug} || ${Debug_Heals}) /echo |- check_lifeSupport ==>
+	/if (${Debug} || ${Debug_Heals}) /echo |- check_lifeSupport ==>
 
 	/declare castName string local
 	/declare healPct int local
@@ -69,7 +69,7 @@ SUB check_lifeSupport
 				/doability "${castName}"
 			} else {
 				/if (${Target.ID} && ${Target.ID} != ${Me.ID}) /declare oldTarget int local ${Target.ID} 
-				/call e3_Cast ${Me.ID} "${lifeSupport[${i}]}"
+				/call thf_cast ${Me.ID} "${lifeSupport[${i}]}"
 			}
 		}
 		
@@ -78,7 +78,7 @@ SUB check_lifeSupport
 
 	/if (${oldTarget} && ${Target.ID} != ${oldTarget}) /call trueTarget ${oldTarget}
 	
-/if (${Debug} || ${Debug_Heals}) /echo <== check_lifeSupport -|
+	/if (${Debug} || ${Debug_Heals}) /echo <== check_lifeSupport -|
 /RETURN
 
 
@@ -278,8 +278,8 @@ SUB check_healSpells
 					| If I have a heal to cast, cast it
 					/if (${Bool[${healToUse}]}) {
 						/if (${Debug} || ${Debug_Heals}) /echo Attempting to cast [${healToUse}] on [${healTarget} ${NetBots[${healTarget}].PctHPs}]
-						/call e3_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|Heal_CastingChecks"
-						/varset recentHeal_Timer 20
+						/call thf_cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|heals_CastingChecks"
+						/varset recentheals_Timer 20
 					}
 				}
 			}
@@ -366,12 +366,12 @@ SUB check_NetBots
 |----------------------------------------|
 |- Checks to make while casting heals.	-|
 |----------------------------------------|
-SUB Heal_CastingChecks
-/if (${Debug} || ${Debug_Heals}) /echo |- Heal_CastingChecks ==>
+SUB heals_CastingChecks
+/if (${Debug} || ${Debug_Heals}) /echo |- heals_CastingChecks ==>
 
-	/if (${Debug} && !${debugTimer_Heal_CastingChecks}) {
+	/if (${Debug} && !${debugTimer_heals_CastingChecks}) {
 		/echo [${Target.CleanName}|${NetBots[${Target.CleanName}].PctHPs}] >=90
-		/call createTimer debugTimer_Heal_CastingChecks 15
+		/call createTimer debugTimer_heals_CastingChecks 15
 	}
 	
 	/if (${castEndTime}<5 && ${NetBots[${Target.CleanName}].PctHPs}>=90) {
@@ -379,7 +379,7 @@ SUB Heal_CastingChecks
 		/varset castReturn CANCELLED
 	}
 
-/if (${Debug} || ${Debug_Heals}) /echo <== Heal_CastingChecks -|
+/if (${Debug} || ${Debug_Heals}) /echo <== heals_CastingChecks -|
 /RETURN
 
 
@@ -521,8 +521,8 @@ SUB check_HoTs
 						} else {
 						
 							| Cast the HoT
-							/call e3_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_CastingChecks"
-							/varset recentHeal_Timer 30
+							/call thf_cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_CastingChecks"
+							/varset recentheals_Timer 30
 						}
 					}
 				}
@@ -673,8 +673,8 @@ SUB check_groupHeals
 			| If I have a heal to cast, cast it
 			/if (${Bool[${healToUse}]}) {
 				/if (${Debug} || ${Debug_Heals}) /echo Attempting to cast [${healToUse}] on [${healTarget} ${NetBots[${healTarget}].PctHPs}]
-				/call e3_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}"
-				/varset recentHeal_Timer 20
+				/call thf_cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}"
+				/varset recentheals_Timer 20
 			}
 		}
 	}
@@ -691,9 +691,9 @@ SUB check_Pets
 /declare i int local
 /for i 1 to ${NetBots.Counts}
 /if (${NetBots[${NetBots.Client[${i}]}].PetID}) {
-	/if (${NetBots[${NetBots.Client[${i}]}].PetHP} < ${PetHeal_Pct} && ${Spawn[${NetBots[${NetBots.Client[${i}]}].PetID}].Distance} < ${Spell[${PetHeal_Spell}].MyRange}) {
+	/if (${NetBots[${NetBots.Client[${i}]}].PetHP} < ${Petheals_Pct} && ${Spawn[${NetBots[${NetBots.Client[${i}]}].PetID}].Distance} < ${Spell[${Petheals_Spell}].MyRange}) {
 		/if (${Target.ID} != ${NetBots[${NetBots.Client[${i}]}].PetID}) /call trueTarget ${NetBots[${NetBots.Client[${i}]}].PetID}
-		/call e3_Cast ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${PetHeal_Spell}].ID}" Gem${PetHeal_Gem} 3s
+		/call thf_cast ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${Petheals_Spell}].ID}" Gem${Petheals_Gem} 3s
 		/varset ActionTaken TRUE
 	}
 }
@@ -708,27 +708,28 @@ SUB check_Pets
 |--------------------------------------------------------------------|
 |- Imports and validates ini settings from Character Ini,[Heals].	-|
 |--------------------------------------------------------------------|
-SUB heal_Setup
-/call INItoVar "${advSettings_Ini},Debug,Debug Heals (On/Off)" Debug_Heals bool outer
-/if (${Debug} || ${Debug_Heals}) /echo |- heal_Setup ==>
+SUB heals_Setup
+	/if (${Debug}) /echo |- heals_Setup ==>
 
-	/declare recentHeal_Timer timer outer
+	/declare recentheals_Timer timer outer
 
-	| Import settings from Character_Ini > [Life Support]
-	/if (${Ini[${Character_Ini},Life Support,Life Support#1].Length}) /call IniToArray "${Character_Ini},Life Support,Life Support#" lifeSupport
+	/call iniToVar "${iniGeneral},Debug,Debug Heals (On/Off)" Debug_Heals bool outer
 
-	| Import settings from Character_Ini > [Heals]
-	/if (${Bool[${Ini[${Character_Ini},Heals]}]}) {
-		/if (${Ini[${Character_Ini},Heals,Tank#1].Length})  /call IniToArray "${Character_Ini},Heals,Tank#" tanks
-		/if (${Ini[${Character_Ini},Heals,Important Bot#1].Length})  /call IniToArray "${Character_Ini},Heals,Important Bot#" importantBots
+	| Import settings from iniToon > [Life Support]
+	/if (${Ini[${iniToon},Life Support,Life Support].Length}) /call splitFromIni "${iniToon},Life Support,Life Support" lifeSupport outer \
+
+	| Import settings from iniToon > [Heals]
+	/if (${Bool[${Ini[${iniToon},Heals]}]}) {
+		/if (${Ini[${iniToon},Heals,Tank#1].Length})  /call splitFromIni "${iniToon},Heals,Tanks" tanks outer \
+		/if (${Ini[${iniToon},Heals,Important Bot#1].Length})  /call splitFromIni "${iniToon},Heals,Important Bots" importantBots outer \
 		
-		/if (${Ini[${Character_Ini},Heals,Tank Heal#1].Length})  /call IniToArray "${Character_Ini},Heals,Tank Heal#" tankHeals
-		/if (${Ini[${Character_Ini},Heals,Patch Heal#1].Length})  /call IniToArray "${Character_Ini},Heals,Patch Heal#" patchHeals
-		/if (${Ini[${Character_Ini},Heals,Heal Over Time Spell#1].Length})  /call InitoArray "${Character_Ini},Heals,Heal Over Time Spell#" hotSpells
-		/if (${Ini[${Character_Ini},Heals,Heal Over Time Spell#1].Length})  /call InitoArray "${Character_Ini},Heals,Group Heal#" groupHeals
+		/if (${Ini[${iniToon},Heals,Tank Heal#1].Length})  /call splitFromIni "${iniToon},Heals,Tank Heals" tankHeals outer \
+		/if (${Ini[${iniToon},Heals,Patch Heal#1].Length})  /call splitFromIni "${iniToon},Heals,Patch Heals" patchHeals outer \
+		/if (${Ini[${iniToon},Heals,Heal Over Time Spell#1].Length})  /call splitFromIni "${iniToon},Heals,Heal Over Time Spells" hotSpells outer \
+		/if (${Ini[${iniToon},Heals,Heal Over Time Spell#1].Length})  /call splitFromIni "${iniToon},Heals,Group Heals" groupHeals outer \
 
-		/if (${Ini[${Character_Ini},Heals,Who to Heal].Length})  /call IniToVar "${Character_Ini},Heals,Who to Heal" WhoToHeal string outer
-		/if (${Ini[${Character_Ini},Heals,Who to HoT].Length})  /call IniToVar "${Character_Ini},Heals,Who to HoT" WhoToHoT string outer
+		/if (${Ini[${iniToon},Heals,Who to Heal].Length})  /call iniToVar "${iniToon},Heals,Who to Heal" WhoToHeal string outer
+		/if (${Ini[${iniToon},Heals,Who to HoT].Length})  /call iniToVar "${iniToon},Heals,Who to HoT" WhoToHoT string outer
 	}
 	
 	/declare i int local
@@ -788,64 +789,62 @@ SUB heal_Setup
 	
 	/if (${Defined[groupHeals]}) /declare do_GroupHeals bool outer TRUE
 	
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_Setup -|
+/if (${Debug} || ${Debug_Heals}) /echo <== heals_Setup -|
 /RETURN
 
 
  
-Sub heal_Background_Events
+Sub heals_Background_Events
 
 /return
 
 
 
-SUB heal_MacroSettings
-/if (${Debug} || ${Debug_Heals}) /echo |- assist_MacroSettings ==>
+SUB heals_MacroSettings
+	/if (${Debug}) /echo |- assist_MacroSettings ==>
 
-	/call WriteToIni "${advSettings_Ini},Debug,Debug Heals (On/Off)"
+	/call WriteToIni "${iniGeneral},Debug,Debug Heals (On/Off)" "Off"
 
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_MacroSettings -|
+	/if (${Debug}) /echo <== heals_MacroSettings -|
 /RETURN
 
-
-
-SUB heal_CharacterSettings
-/if (${Debug} || ${Debug_Heals}) /echo |- heal_CharacterSettings ==>
+SUB heals_CharacterSettings
+	/if (${Debug}) /echo |- heals_CharacterSettings ==>
 
 	| LifeSupport entries.
-	/call WriteToIni "${Character_Ini},Life Support,Life Support#1"
+	/call WriteToIni "${iniToon},Life Support,Life Support" "Life support"
 
-	| If I'm a healer, add e3_Macro_Heals.inc entries.
+	| If I'm a healer, add Heals.inc entries.
 	/if (${Me.Class.HealerType}) {
-		/call WriteToIni "${Character_Ini},Heals,Tank#1"
-		/call WriteToIni "${Character_Ini},Heals,Important Bot#1"
+		/call WriteToIni "${iniToon},Heals,Tanks" "Tank list (separated by /)"
+		/call WriteToIni "${iniToon},Heals,Important Bots" "Important bots list (separated by /)"
 		
-		/call WriteToIni "${Character_Ini},Heals,Tank Heal#1"
-		/call WriteToIni "${Character_Ini},Heals,Patch Heal#1"
-		/call WriteToIni "${Character_Ini},Heals,Who to Heal" "Tanks/ImportantBots/All"
+		/call WriteToIni "${iniToon},Heals,Tank Heals" "Healing spells (separated by /)"
+		/call WriteToIni "${iniToon},Heals,Patch Heals"  "Patch Heals (separated by /)"
+		/call WriteToIni "${iniToon},Heals,Who to Heal" "Tanks/ImportantBots/All"
 		
-		/call WriteToIni "${Character_Ini},Heals,Heal Over Time Spell#1"
-		/call WriteToIni "${Character_Ini},Heals,Who to HoT" "Tanks/ImportantBots/All"
+		/call WriteToIni "${iniToon},Heals,Heal Over Time Spells" "HoT spells (separated by /)"
+		/call WriteToIni "${iniToon},Heals,Who to HoT" "Tanks/ImportantBots/All"
 		
-		/if (${Me.Class.ShortName.Equal[CLR]} || ${Me.Class.ShortName.Equal[PAL]}) /call WriteToIni "${Character_Ini},Heals,Group Heal#1"
+		/if (${Me.Class.ShortName.Equal[CLR]} || ${Me.Class.ShortName.Equal[PAL]}) /call WriteToIni "${iniToon},Heals,Group Heals" "Group Heals (separated by /)"
 		
-		| /call WriteToIni "${Character_Ini},Heals,Pet Heal Spell"
+		| /call WriteToIni "${iniToon},Heals,Pet Heal Spell"
 		
-		| /if (${Me.Class.ShortName.Equal[CLR]} || ${Me.Class.ShortName.Equal[DRU]}) /call WriteToIni "${Character_Ini},Heals,Join CH-Chain (On/Off)"
+		| /if (${Me.Class.ShortName.Equal[CLR]} || ${Me.Class.ShortName.Equal[DRU]}) /call WriteToIni "${iniToon},Heals,Join CH-Chain (On/Off)"
 	}
 
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_CharacterSettings -|
+	/if (${Debug}) /echo <== heals_CharacterSettings -|
 /RETURN
 
 
 
-Sub heal_Aliases
-/if (${Debug} || ${Debug_Heals}) /echo |- heal_Aliases ==>
+Sub heals_Aliases
+/if (${Debug} || ${Debug_Heals}) /echo |- heals_Aliases ==>
 
 	/squelch /tankheals /bc -Set- Tank Heals
 	/squelch /patchheals /bc -Set- Patch Heals
 	/squelch /HoTSpells /bc -Set- HoT Spells
 	/squelch /groupheals /bc -Set- Group Heals
 	
-/if (${Debug} || ${Debug_Heals}) /echo <== heal_Aliases -|
+/if (${Debug} || ${Debug_Heals}) /echo <== heals_Aliases -|
 /return
