@@ -1121,7 +1121,7 @@ SUB EVENT_gate(String line, String from, String who)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Use, /bc all gate
+|- Use, /bc [one toon] loot
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT lootOrder "<#1#> #2# loot"
 SUB EVENT_lootOrder(String line, String from, String who)
@@ -1134,6 +1134,33 @@ SUB EVENT_lootOrder(String line, String from, String who)
     }
 
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_lootOrder -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Automatic loot for a needed item
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT needLoot "#1# Team#2#: #3# left on corpse id=#4#"
+SUB EVENT_needLoot(String line, String dontcare1, String dontcare2, String what, String targetID)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_needLoot ==>
+
+	/declare howManyToLoot int local 0
+	/varset howManyToLoot ${Ini["${iniToon}","Loot","${what}",0]}
+	/if (${howManyToLoot} > 0) {
+		/call stopCurrentAction TRUE
+		/chat ${channelNumber} I need this item [${what}] !
+		/call MoveToSpawn ${targetID}
+		/loot
+		/delay 3s ${Corpse.Open}
+		/nomodkey /shift /itemnotify  ${Corpse.Item[${what}].InvSlot} ${WhichButton}mouseup
+		/delay 5s ${Window[ConfirmationDialogBox].Open} || !${Corpse.Item[${what}].NoDrop}
+		/if (${Window[ConfirmationDialogBox].Open}) /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+		/delay 5s ${Cursor.ID} || ${WhichButton.NotEqual[left]}
+		/if (${Cursor.ID}) /call CheckCursor
+        /nomodkey /notify LootWnd LW_DoneButton leftmouseup
+        /delay 1s !${Window[LootWnd].Open}
+	}
+	
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_needLoot -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
