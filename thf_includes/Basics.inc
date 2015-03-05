@@ -55,7 +55,7 @@ SUB EVENT_Follow(String line, String from, String who)
 			} else {
 			
 				|- Check LoS.
-				/if (!${Spawn[=${globalFollowTarget}].lineOfSight}) {
+				/if (!${Spawn[=${globalFollowTarget}].LineOfSight}) {
 					/chat ${channelNumber} I cannot see [${globalFollowTarget}] !
 				} else {
 				
@@ -232,7 +232,7 @@ SUB EVENT_clickIt(String line, String from, String who, locToStart)
 	/if (${Macro.Return}) {
 
 		|- Check LoS.
-		/if (!${lineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
+		/if (!${LineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
 			/chat ${channelNumber} I cannot see the object to click.
 		} else {
 			
@@ -336,7 +336,7 @@ SUB EVENT_runThruZone(String line, String from, String who, locToStart)
 		/declare startZone int local ${Zone.ID}
 	
 		|- Check that you can see the location to start from.
-		/if (!${lineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
+		/if (!${LineOfSight[${Me.Loc.Replace[ ,]}:${locToStart}]}) {
 			/chat ${channelNumber} I cannot see the starting location !
 		} else {
 		
@@ -1113,7 +1113,7 @@ SUB EVENT_gate(String line, String from, String who)
 				/delay 10s
 			}
             /casting "${CharmOfQueenAdrianne}" charm
-            /chat ${channel} Gating to the Forest !
+            /chat ${channelNumber} Gating to the Forest !
         }
     }
 
@@ -1139,10 +1139,11 @@ SUB EVENT_lootOrder(String line, String from, String who)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Automatic loot for a needed item
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT needLoot "#1# Team#2#: #3# left on corpse id=#4#"
-SUB EVENT_needLoot(String line, String dontcare1, String dontcare2, String what, String targetID)
+#EVENT needLoot "#1# tells Team:#*#, '#2# left on corpse id=#3#'"
+SUB EVENT_needLoot(String line, String from, String what, String targetID)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_needLoot ==>
 
+	/echo needLoot what=${what} on id=${targetID}
 	/declare howManyToLoot int local 0
 	/varset howManyToLoot ${Ini["${iniToon}","Loot","${what}",0]}
 	/if (${howManyToLoot} > 0) {
@@ -1665,6 +1666,22 @@ SUB EVENT_Hail(String line, String cible)
 	} else {
 		/echo ${line}
 	}
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Hail the specified NPC
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT HailNPC "<#1#> #2# hail #3#"
+SUB EVENT_HailNPC(String line, String from, String who, String targetID)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_HailNPC ==>
+	
+	/call amIConcerned ${from} ${who}
+	/if (${Macro.Return}) {
+		/call MoveTo -SpawnID|${Target.ID}
+		/hail
+	}
+	
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_HailNPC -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
