@@ -231,7 +231,7 @@ SUB writeToIni(Ini_Key, WhatToWrite, bool OverWrite)
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Creates new arrays, or stacks onto existing arrays.	-|
+|- Creates new arrays, or stacks onto existing arrays.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Syntax: /call BuildArray ArrayName Data
 |- Ex: /call BuildArray DebuffTargets ${Target.ID}
@@ -386,6 +386,16 @@ SUB createTimer(String timerName, String timerSetting)
 	/if (${outerDebug}) {
 		/echo created ${timerName} [${${timerName}}]
 		/echo <== createTimer -|
+	}
+/RETURN
+
+SUB createItemTimerAndAddToArray(String itemName, String arrayName)
+	/if (!${Defined[itemID]}) /declare itemID int local
+	/varset itemID ${FindItem[=${itemName}].ID}
+	/if (${itemID}) {
+		/call readTimer "${itemName}"
+		/declare timer-${itemID} timer global ${Macro.Return}s
+		/call BuildArray ${arrayName} ${itemID} outer
 	}
 /RETURN
 
