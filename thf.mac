@@ -1,7 +1,7 @@
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #TURBO 40
 
-#INCLUDE thf_includes\Setup.inc
+#INCLUDE thf_includes\thf_Setup.inc
 
 SUB Main
 	/declare iniHail 	string 	outer "thf_inis\Hail.ini"

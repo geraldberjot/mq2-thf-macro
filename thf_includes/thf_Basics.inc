@@ -1093,7 +1093,30 @@ SUB EVENT_ClickYes(String line, String from, String who, String paramArgs)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_ClickYes -|	
 /RETURN
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Attempt to coh the specified toons
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Use, /bc Houdi CoH All
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+#EVENT coh "<#1#> #2# CoH #3#"
+#EVENT coh "<#1#> #2# coh #3#"
+SUB EVENT_coh(String line, String from, String who, String what)
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_coh ==>
 
+	/call amIConcerned ${from} ${who}
+	/if (${Macro.Return}) {
+		/declare i int local
+		/for i 1 to ${NetBots.Counts}
+			/target ${NetBots.Client.Arg[${i}, ]}
+			/if (${Target.Distance} > 10) {
+				/casting "Call of the Hero" gem8
+				/delay 3s
+			}
+		/next i
+	}
+
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_coh -|	
+/RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Attempt to gate on all bots.
@@ -1152,10 +1175,10 @@ SUB EVENT_needLoot(String line, String from, String what, String targetID)
 		/call MoveToSpawn ${targetID}
 		/loot
 		/delay 3s ${Corpse.Open}
-		/nomodkey /shift /itemnotify  ${Corpse.Item[${what}].InvSlot} ${WhichButton}mouseup
+		/nomodkey /shift /itemnotify ${Corpse.Item[${what}].InvSlot} rightmouseup
 		/delay 5s ${Window[ConfirmationDialogBox].Open} || !${Corpse.Item[${what}].NoDrop}
 		/if (${Window[ConfirmationDialogBox].Open}) /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
-		/delay 5s ${Cursor.ID} || ${WhichButton.NotEqual[left]}
+		/delay 5s ${Cursor.ID}
 		/if (${Cursor.ID}) /call CheckCursor
         /nomodkey /notify LootWnd LW_DoneButton leftmouseup
         /delay 1s !${Window[LootWnd].Open}
@@ -1702,8 +1725,9 @@ SUB EVENT_Redirect(String line)
 |
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB basics_Setup
+	/if (${outerDebug}) /echo |- basics_Setup ==>
+
 	/call iniToVar "${iniGeneral},Debug,Debug Basics (On/Off)" outerDebugBasics bool outer
-	/if (${outerDebug} || ${outerDebugBasics}) /echo |- basics_Setup ==>
 
 	/if (!${Defined[globalFollowing]}) /declare globalFollowing bool global FALSE
 	/if (!${Defined[globalFollowTarget]}) /declare globalFollowTarget string global NULL
@@ -1728,17 +1752,17 @@ SUB basics_Setup
 	/if (!${Ini[${iniGeneral},General,End MedBreak in Combat(On/Off)].Length}) /call iniToVar "${iniGeneral},General,End MedBreak in Combat(On/Off)" medOn_combatBreak bool outer
 	
 	|- Add Groups_Ini file path
-	/if (!${Ini[${iniToon},File Paths,Saved Groups].Length}) /call writeToIni "${iniToon},File Paths,Saved Groups" "thf_inis\Saved Groups.ini" 1
+	/if (!${Ini[${iniTHF},Paths,Saved Groups].Length}) /call writeToIni "${iniTHF},Paths,Saved Groups" "thf_inis\Saved Groups.ini" 1
 	
 	|- Import Groups_Ini.
-	/if (!${Ini[${iniToon},File Paths,Saved Groups].Length}) {
-		/echo ERROR: Could not find designated file path for [Saved Groups], please review [${iniToon}] and restart.
+	/if (!${Ini[${iniTHF},Paths,Saved Groups].Length}) {
+		/echo ERROR: Could not find designated file path for [Saved Groups], please review [${iniTHF}] and restart.
 		/endmacro
 	} else {
-		/declare iniGroup string outer ${Ini[${iniToon},File Paths,Saved Groups]}
+		/declare iniGroup string outer ${Ini[${iniTHF},Paths,Saved Groups]}
 	}
 	
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== basics_Setup -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== basics_Setup -|
 /RETURN
 
 
