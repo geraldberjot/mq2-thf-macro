@@ -11,15 +11,15 @@
 |- #INCLUDE thf_includes\events.inc
 #INCLUDE thf_includes\MQ2Cast_Spell_Routines.inc
 
-#INCLUDE thf_includes\Alerts.inc
-#INCLUDE thf_includes\Assists.inc
-#INCLUDE thf_includes\Background.inc
-#INCLUDE thf_includes\Basics.inc
-#INCLUDE thf_includes\BuffCheck.inc
-#INCLUDE thf_includes\Casting.inc
-#INCLUDE thf_includes\Heals.inc
-#INCLUDE thf_includes\Utilities.inc
-#INCLUDE thf_includes\Pets.inc
+#INCLUDE thf_includes\thf_Alerts.inc
+#INCLUDE thf_includes\thf_Assists.inc
+#INCLUDE thf_includes\thf_Background.inc
+#INCLUDE thf_includes\thf_Basics.inc
+#INCLUDE thf_includes\thf_BuffCheck.inc
+#INCLUDE thf_includes\thf_Casting.inc
+#INCLUDE thf_includes\thf_Heals.inc
+#INCLUDE thf_includes\thf_Utilities.inc
+#INCLUDE thf_includes\thf_Pets.inc
 
 #INCLUDE thf_includes\Class_Bard.inc
 #INCLUDE thf_includes\Class_Beastlord.inc

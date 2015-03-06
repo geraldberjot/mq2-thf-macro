@@ -579,7 +579,7 @@ SUB MoveTo(destinationInfo, int distCheck)
 	/if (${outerDebug}) /echo <== MoveTo -|
 /RETURN
 
-SUB argueString(WhatToFind, givenData)
+SUB argueString(String WhatToFind, String givenData)
 	/if (${outerDebug}) /echo |- argueString ==>
 
 	/declare i int local 1

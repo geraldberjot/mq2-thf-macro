@@ -785,7 +785,9 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[NOTREADY]}) {
 				
 				/if (${FindItemCount[=${castName}]} || ${Me.AltAbility[${castName}]}) {
-					/if (${outerDebug} || ${outerDebug_Assists}) /echo |- longTermSpells - [${arrayName}] -|- [${castName}] is not ready.  Creating a recast timer for 1/2 the spells normal duration.
+					/if (${outerDebug} || ${outerDebug_Assists}) {
+						/echo |- longTermSpells - [${arrayName}] -|- [${castName}] is not ready.  Creating a recast timer for 1/2 the spells normal duration.
+					}
 					/varcalc newTimerSetting ${newTimerSetting} / 2
 					/call createTimer "${spellTimer}" "${newTimerSetting}"
 				}
