@@ -17,13 +17,11 @@ SUB ROG_CombatAbilities
 		}
 	} else {
 		/declare combatItem item local
-		/declare abilityName string local
-		/declare minEnd int local
 		/declare i int local
 	
 		/if (outerDamageLevel > 0) {
 			/for i 1 to ${combatItemsBoost.Size}
-				/varset combatItem ${FindItem[=${combatItemsBoost[i]}]}
+				/varset combatItem ${FindItem[=${combatItemsBoost[${i}]}]}
 				/if (${combatItemsBoost.ID}) {
 					|- Timers were already created in the sub routine "createCombatItemsArray"
 					/if (${timer-${combatItemsBoost.ID}.Value} <= 0) {
@@ -37,7 +35,7 @@ SUB ROG_CombatAbilities
 		
 		/if (outerDamageLevel > 1) {
 			/for i 1 to ${combatItemsBurn.Size}
-				/varset combatItem ${FindItem[=${combatItemsBurn[i]}]}
+				/varset combatItem ${FindItem[=${combatItemsBurn[${i}]}]}
 				/if (${combatItemsBurn.ID}) {
 					|- Timers were already created in the sub routine "createCombatItemsArray"
 					/if (${timer-${combatItemsBurn.ID}.Value} <= 0) {
@@ -52,52 +50,11 @@ SUB ROG_CombatAbilities
 		|- Use Backstab.
 		/call Attempt_Backstab
 
-		|- For 1 to the size of MyAbilities array, use each ability.
-		/for i 1 to ${MyAbilities.Size}
-			/varset abilityName ${MyAbilities[${i}].Arg[1,/]}
-			|- Check for MinEnd
-			/if (${MyAbilities[${i}].Find[/MinEnd|]}) {
-				/call argueString MinEnd "${MyAbilities[${i}]}"
-				/varset minEnd ${Macro.Return}
-			} else {
-				/varset minEnd 0
-			}
-	
-			/if (${Me.PctEndurance} < ${minEnd}) {
-				/if (${outerDebug}) {
-					/echo I don't have enough endurance to use [${abilityName}].
-					/chat ${channelNumber} I don't have enough endurance to use [${abilityName}].
-				}
-			} else {
-				|- Use alternate ability
-				/if (${Me.AltAbility[${abilityName}]}) {
-					/if (!${Me.AltAbilityReady[${abilityName}]} || ${altTimer_${Me.AltAbility[${abilityName}].ID}}) {
-						/if (${outerDebug}) {
-							/echo Alternate Ability [${abilityName}] is not ready.
-							/chat ${channelNumber} Alternate Ability [${abilityName}] is not ready.
-						}
-					} else {
-						/call thf_Casting ${outerAssistTarget} "${abilityName}"
-					}
-				|- Use combat ability (discipline)
-				} else /if (${Me.CombatAbility[${abilityName}]}) {
-					/if (!${Me.CombatAbilityReady[${abilityName}]}) {
-						/if (${outerDebug}) {
-							/echo Discipline [${abilityName}] is not ready.
-							/chat ${channelNumber} Discipline [${abilityName}] is not ready.
-						}
-					} else {
-						/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
-					}
-				|- Use rogue evade as a combat ability 
-				} else /if (${abilityName.Equal[Evade]}) {
-					/call AutoEvade
-				}
-			}
-		/next i
+		|- Use evade.
+		/call AutoEvade
 	}
 
-	/if (${outerDebug}) /echo <== CombatAbilities -|
+	/if (${outerDebug}) /echo <== ROG_CombatAbilities -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -182,9 +139,9 @@ SUB check_rogStrike()
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- AutoHide	 	 	 	 	 	 	 	 	 	 	 	 	 -|
+|- AutoHide
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Automatically engages sneak and hide when not in combat.	 -|
+|- Automatically engages sneak and hide when not in combat.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB AutoHide
 	 /if (${outerDebug}) /echo |- AutoHide ==>
@@ -205,9 +162,9 @@ SUB AutoHide
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- AutoEvade	 	 	 	 	 	 	 	 	 -|
+|- AutoEvade
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Automatically engages hide while in combat.	 -|
+|- Automatically engages hide while in combat.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB AutoEvade
 	 /if (${outerDebug}) /echo |- AutoEvade ==>
@@ -256,6 +213,52 @@ SUB ROG_Setup
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
+|-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB ROG_BackgroundEvents
+
+	 /if (${AutoHide} && !${Me.Invis} && !${Me.Moving} && !${Me.Combat}) /call AutoHide
+
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB ROG_MacroSettings
+/if (${outerDebug}) /echo |- ROG_MacroSettings ==>
+
+	 |- iniTHF settings
+	 |/call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Sneak Attack,Thief's Vengeance,Assassin's Strike,Kyv Strike,Ancient: Chaos Strike,Daggerfall,Razorarc,Swiftblade,Swiftblade Rk. II,Swiftblade Rk. III,Daggerlunge,Daggerlunge Rk. II,Daggerlunge Rk. III,Daggerswipe,Daggerswipe Rk. II,Daggerswipe Rk. III,Daggerstrike,Daggerstrike Rk. II,Daggerstrike Rk. III,Daggerthrust,Daggerthrust Rk. II,Daggerthrust Rk. III" 0
+   /call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
+
+	 |- Adv Settings
+	 /call writeToIni "${iniTHF},Rogue,Functions" "check_Burns/check_CombatBuffs/check_Buffs" 0
+
+	/if (${outerDebug}) /echo <== ROG_MacroSettings -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB ROG_CharacterSettings
+/if (${outerDebug}) /echo |- ROG_CharacterSettings ==>
+
+	 /call writeToIni "${iniToon},${Me.Class},Auto-Hide (On/Off)" "On" false
+	 /call writeToIni "${iniToon},${Me.Class},Auto-Evade (On/Off)" "On" false
+
+/if (${outerDebug}) /echo <== ROG_CharacterSettings -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB ROG_Aliases
+/if (${outerDebug}) /echo |- ROG_Aliases ==>
+
+/if (${outerDebug}) /echo <== ROG_Aliases -|
+/RETURN
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB getLatestouterStrikeDiscipline
@@ -296,101 +299,15 @@ SUB createItemsArray
 
 	/if (!${Defined[itemID]}) /declare itemID int local
 	
-	/varset itemID ${FindItem[=Frozen Whispering Tunic].ID}
-	/if (${itemID}) {
-		/echo "Frozen Whispering Tunic"
-		/declare timer-${itemID} timer outer 5m
-		/call BuildArray strikeItems ${itemID} outer
-	}
+	/call createItemTimerAndAddToArray "Frozen Whispering Tunic" "strikeItems"
+	/call createItemTimerAndAddToArray "Cloak of the Deceiver" "strikeItems"
+	/call createItemTimerAndAddToArray "Shroud of the Deceiver" "strikeItems"
+	/call createItemTimerAndAddToArray "Fizzlethorp's Cloak of Shadows" "strikeItems"
 
-	/varset itemID ${FindItem[=Cloak of the Deceiver].ID}
-	/if (${itemID}) {
-		/echo "Cloak of the Deceiver"
-		/declare timer-${itemID} timer outer 40s
-		/call BuildArray strikeItems ${itemID} outer
-	}
+	/call createItemTimerAndAddToArray "Ancient Frozen Razor of Entropy" "combatItemsBoost"
+	/call createItemTimerAndAddToArray "Razor of the Rogue" "combatItemsBoost"
+	/call createItemTimerAndAddToArray "Flahran, The Dragon's Bane" "combatItemsBoost"
+	/call createItemTimerAndAddToArray "TriXzin, Guard of the King" "combatItemsBoost"
 	
-	/varset itemID ${FindItem[=Shroud of the Deceiver].ID}
-	/if (${itemID}) {
-		/echo "Shroud of the Deceiver"
-		/declare timer-${itemID} timer outer 40s
-		/call BuildArray strikeItems ${itemID} outer
-	}
-
-	/varset itemID ${FindItem[=Fizzlethorp's Cloak of Shadows].ID}
-	/if (${itemID}) {
-		/echo "Fizzlethorp's Cloak of Shadows"
-		/declare timer-${itemID} timer outer 40s
-		/call BuildArray strikeItems ${itemID} outer
-	}
-
-	/varset itemID ${FindItem[=Ancient Frozen Razor of Entropy].ID}
-	/if (${itemID}) {
-		/echo "Ancient Frozen Razor of Entropy"
-		/declare timer-${itemID} timer outer 3m
-		/call BuildArray combatItemsBoost ${itemID} outer
-	}
-	
-	/varset itemID ${FindItem[=Razor of the Rogue].ID}
-	/if (${itemID}) {
-		/echo "Razor of the Rogue"
-		/declare timer-${itemID} timer outer 2m
-		/call BuildArray combatItemsBoost ${itemID} outer
-	}
-	
-	/varset itemID ${FindItem[=Flahran, The Dragon's Bane].ID}
-	/if (${itemID}) {
-		/echo "Flahran, The Dragon's Bane"
-		/declare timer-${itemID} timer outer 6m
-		/call BuildArray combatItemsBoost ${itemID} outer
-	}
-	
-	/varset itemID ${FindItem[=TriXzin, Guard of the King].ID}
-	/if (${itemID}) {
-		/echo "TriXzin, Guard of the King"
-		/declare timer-${itemID} timer outer 3,5m
-		/call BuildArray combatItemsBurn ${itemID} outer
-	}
-
 	/if (${outerDebug}) /echo <== createItemsArray -|
-/RETURN
-
-SUB ROG_BackgroundEvents
-
-	 /if (${AutoHide} && !${Me.Invis} && !${Me.Moving} && !${Me.Combat}) /call AutoHide
-
-/RETURN
-
-
-
-SUB ROG_MacroSettings
-/if (${outerDebug}) /echo |- ROG_MacroSettings ==>
-
-	 |- iniTHF settings
-	 |/call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Sneak Attack,Thief's Vengeance,Assassin's Strike,Kyv Strike,Ancient: Chaos Strike,Daggerfall,Razorarc,Swiftblade,Swiftblade Rk. II,Swiftblade Rk. III,Daggerlunge,Daggerlunge Rk. II,Daggerlunge Rk. III,Daggerswipe,Daggerswipe Rk. II,Daggerswipe Rk. III,Daggerstrike,Daggerstrike Rk. II,Daggerstrike Rk. III,Daggerthrust,Daggerthrust Rk. II,Daggerthrust Rk. III" 0
-   /call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
-
-	 |- Adv Settings
-	 /call writeToIni "${iniTHF},Rogue,Functions" "check_Burns/check_CombatBuffs/check_Buffs" 0
-
-	/if (${outerDebug}) /echo <== ROG_MacroSettings -|
-/RETURN
-
-
-
-SUB ROG_CharacterSettings
-/if (${outerDebug}) /echo |- ROG_CharacterSettings ==>
-
-	 /call writeToIni "${iniToon},${Me.Class},Auto-Hide (On/Off)" "On" false
-	 /call writeToIni "${iniToon},${Me.Class},Auto-Evade (On/Off)" "On" false
-
-/if (${outerDebug}) /echo <== ROG_CharacterSettings -|
-/RETURN
-
-
-
-SUB ROG_Aliases
-/if (${outerDebug}) /echo |- ROG_Aliases ==>
-
-/if (${outerDebug}) /echo <== ROG_Aliases -|
 /RETURN

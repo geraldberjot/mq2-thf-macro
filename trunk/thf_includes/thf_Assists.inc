@@ -79,7 +79,6 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_Assist ==>
 	
 	/call amIConcerned ${from} ${who} TRUE
-	/echo ${Macro.Return}
 	/if (${Macro.Return}) {
 		/if (${Defined[PauseTarget]}) /deletevar PauseTarget
 	
@@ -157,12 +156,12 @@ SUB EVENT_Assist(String line, String from, String who, Int mobID)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Use, '/backoff', or, 'Back off' in /bc.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT BackOff "<#1#> Back Off"
-SUB EVENT_BackOff(String line, String from)
+#EVENT BackOff "<#1#> #2# Back Off"
+SUB EVENT_BackOff(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- EVENT_BackOff ==>
 
 	|- Verify the event
-	/call amIConcerned ${from} ${Me.CleanName} TRUE
+	/call amIConcerned ${from} ${who} TRUE
 	/if (${Macro.Return}) {
 		/if (${outerAssisting} && ${outerAllowControl}) /chat ${channelNumber} Backing off.
 		/if (!${Defined[PauseTarget]}) /declare PauseTarget int outer ${outerAssistTarget}
@@ -392,9 +391,9 @@ SUB checkAssistStatus
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo <== checkAssistStatus -|
 /RETURN
 
-|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
-|- Checks to see if the AssistTarget has died, calls Assistoff.	-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|---------------------------------|
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Checks to see if the AssistTarget has died, calls Assistoff.
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB checkAssistTarget
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- checkAssistTarget ==>
 	
@@ -405,14 +404,14 @@ SUB checkAssistTarget
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- This script was taken from,							-|
-|- genbot.mac											-|
-|- botcombat.inc										-|
-|- Bot combat module.									-|
-|- Version 13.4.0										-|
-|- Date:07/08/2005										-|
-|- Originally by ascii38, maintained by Mortefreddo.	-|
-|- This script has been modified to work with thf.mac.	-|
+|- This script was taken from,
+|- genbot.mac
+|- botcombat.inc
+|- Bot combat module.
+|- Version 13.4.0
+|- Date:07/08/2005
+|- Originally by ascii38, maintained by Mortefreddo.
+|- This script has been modified to work with thf.mac.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_IsLookingAt
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- CheckIsLookingAt ==>
@@ -549,7 +548,7 @@ SUB EVENT_getCloser
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Uses combat abilities, AAs, and disciplines.	-|
+|- Uses combat abilities, AAs, and disciplines.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB CombatAbilities
 	/if (${outerDebug} || ${outerDebug_Assists}) /echo |- CombatAbilities ==>
@@ -587,12 +586,11 @@ SUB CombatAbilities
 					/if (!${Me.AbilityReady[${abilityName}]}) {
 						/if (${outerDebug}) /echo Ability [${abilityName}] is not ready.
 					} else {
-						|- Use Bash.
-						} else /if (${abilityName.Equal[Bash]}) {
-							/call Attempt_Bash
 						|- Reset Tail Rake to Dragon Punch.  Tail Rake causes an error because it returns as "Dragon Punch" when /echoed in Me.Ability[#]
-						} else /if (${abilityName.Equal[Tail Rake]}) {
+						/if (${abilityName.Equal[Tail Rake]}) {
 							/varset ${MyAbilities[${i}]} Dragon Punch
+						} else /if (${abilityName.Equal[bash]}) {
+							/call Attempt_Bash
 						|- Use a misc Ability.
 						} else {
 							/doability "${abilityName}"
@@ -612,9 +610,6 @@ SUB CombatAbilities
 					} else {
 						/call thf_Casting ${outerAssistTarget} "${abilityName}/Instant"
 					}
-				|- Use rogue evade as a combat ability 
-				} else /if (${abilityName.Equal[Evade]}) {
-					/if (${Me.Ability[Hide]}) /call AutoEvade
 				}
 			}
 		/next i
@@ -624,8 +619,9 @@ SUB CombatAbilities
 	/if (${outerDebug}) /echo <== CombatAbilities -|
 /RETURN
 
-
-
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB Attempt_Bash
 /if (${outerDebug} || ${outerDebug_Assists}) /echo |- Attempt_Bash ==>
 
@@ -637,24 +633,6 @@ SUB Attempt_Bash
 	
 /if (${outerDebug} || ${outerDebug_Assists}) /echo <== Attempt_Bash -|
 /RETURN
-
-
-
-SUB Attempt_Taunt
-/if (${outerDebug} || ${outerDebug_Assists}) /echo |- Attempt_Taunt ==> 
-
-	/if (${Select[${Me.TargetOfTarget},${Me.CleanName}]}) {
-		|- /if (${Me.Skill[Taunt]} < Find max skill formula) /goto :tauntAnyway
-		/if (${outerDebug} || ${outerDebug_Assists}) /echo I currently have aggro on [${Target.CleanName}], skipping taunt.
-	} else {
-		:tauntAnyway
-		/doability Taunt
-	}
-
-/if (${outerDebug} || ${outerDebug_Assists}) /echo <== Attempt_Taunt -|
-/RETURN
-
-
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Casts direct damage spells on a specified target.
