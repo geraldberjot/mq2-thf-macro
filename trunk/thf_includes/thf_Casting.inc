@@ -357,7 +357,7 @@ SUB cast_Item(int targetID, castParams)
 	/next i
 	
 	|- Declare local variables
-	/declare slotName string local
+	/declare slotID int local
 	/declare oldItemName string local
 	/declare lagMultiplier string local 0
 	
@@ -368,7 +368,7 @@ SUB cast_Item(int targetID, castParams)
 	
 	|- Check for a worn item
 	/if (${FindItem[${pendingCast}].WornSlot[1]} && ${FindItem[${pendingCast}].EffectType.Find[worn]} && ${FindItem[${pendingCast}].InvSlot}>22) {
-		/varset slotName ${FindItem[${pendingCast}].WornSlot[1].Name}
+		/varset slotID ${FindItem[${pendingCast}].WornSlot[1].ID}
 	
 	|- Check for an open pack slot
 	} else /if (${FindItem[${pendingCast}].EffectType.Find[inventory]} && ${FindItem[${pendingCast}].InvSlot}>30) {
@@ -377,22 +377,22 @@ SUB cast_Item(int targetID, castParams)
 		
 		/for i 1 to 8
 			
-			/if (!${InvSlot[pack${i}].Item.Container}) /varset slotName pack${i}
+			/if (!${InvSlot[pack${i}].Item.Container}) /varset slotID ${Math.Calc[22 + ${i}]}
 		
-			/if (!${Bool[${slotName}]}) {
+			/if (!${Bool[${slotID}]}) {
 		/next i
 				/if (${Debug} || ${Debug_Casting}) /echo I have run out of inventory space and cannot cast [${pendingCast}].
 				/varset castReturn CANTEQUIP
 				/goto :skipCast
 			}
 	
-	|- Check for undefined SlotName
+	|- Check for undefined slotID
 	} else {
-		/varset slotName ${FindItem[${pendingCast}].InvSlot.Name}
+		/varset slotID ${FindItem[${pendingCast}].InvSlot.ID}
 	}
 	
-	|- If no slotName has been specified, set slotName pack8
-	/if (!${Bool[${slotName}]}) /goto :use_InvSlot
+	|- If no slotID has been specified, set slotID pack8
+	/if (!${Bool[${slotID}]}) /goto :use_InvSlot
 	
 	|- Check that I haven't recently exchanged an item
 	/if (${itemExchange_Timer}) {
@@ -401,13 +401,13 @@ SUB cast_Item(int targetID, castParams)
 	} else {
 	
 		|- Exchange the item
-		/if (${Bool[${slotName}]} && ${FindItem[${pendingCast}].InvSlot} != ${InvSlot[${slotName}]}) {
-			/if (${InvSlot[${slotName}]} < 23) {
+		/if (${Bool[${slotID}]} && ${FindItem[${pendingCast}].InvSlot} != ${InvSlot[${slotID}]}) {
+			/if (${slotID} < 23) {
 				/varset swapItemBack TRUE
-				/varset oldItemName ${InvSlot[${slotName}].Item.Name}
-				/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.CleanName}-${Me.Class.ShortName},Pending Exchange" "${oldItemName}/${slotName}" 1
+				/varset oldItemName ${InvSlot[${slotID}].Item.Name}
+				/call writeToIni "${iniTHF},${MacroQuest.Server}-${Me.Class.ShortName}-${Me.CleanName},Pending Exchange" "${oldItemName}/${slotID}" 1
 			}
-			/call SwapItem "${pendingCast}" ${slotName}
+			/call SwapItem "${pendingCast}" ${slotID}
 		}
 	}
 	
@@ -441,7 +441,7 @@ SUB cast_Item(int targetID, castParams)
 	
 		|- Check for a user defined timer.
 		/call readTimer "${pendingCast}"
-		/call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Macro.Return}]} * 10]}"
+		/call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Macro.Return}]}]}"
 	}
 
 	:skipCast
@@ -658,7 +658,7 @@ SUB check_Castings(castParams)
 
 
 
-SUB SwapItem(itemName,slotName)
+SUB SwapItem(itemName,slotID)
 /if (${Debug} || ${Debug_Casting}) /echo |- SwapItem ==>
 
 	/if (${Cursor.ID}) {
@@ -670,14 +670,14 @@ SUB SwapItem(itemName,slotName)
 		
 		:try_Again
 		
-		/if (${Debug} || ${Debug_Casting}) /echo |- SwapItem -|- Attempting to exchange [${itemName}] for [${InvSlot[${slotName}].Item}]
-		/exchange "${itemName}" ${slotName}
-		/delay 30 ${InvSlot[${slotName}].Item.Name.Equal[${itemName}]} && ${FindItemCount[${itemName}]}==${startingCount}
-		/if (${InvSlot[${slotName}].Item.Name.NotEqual[${itemName}]}) {
+		/if (${Debug} || ${Debug_Casting}) /echo |- SwapItem -|- Attempting to exchange [${itemName}] for [${InvSlot[${slotID}].Item}]
+		/exchange "${itemName}" ${slotID}
+		/delay 30 ${InvSlot[${slotID}].Item.Name.Equal[${itemName}]} && ${FindItemCount[${itemName}]}==${startingCount}
+		/if (${InvSlot[${slotID}].Item.Name.NotEqual[${itemName}]}) {
 			/if (${retryTimer}) {
 				/goto :try_Again
 			} else {
-				/if (${Debug} || ${Debug_Casting}) /echo ERROR: |- SwapItem -|- Failed to swap [${InvSlot[${slotName}].Item.Name}] for [${itemName}].
+				/if (${Debug} || ${Debug_Casting}) /echo ERROR: |- SwapItem -|- Failed to swap [${InvSlot[${slotID}].Item.Name}] for [${itemName}].
 			}
 		}
 		/delay 5

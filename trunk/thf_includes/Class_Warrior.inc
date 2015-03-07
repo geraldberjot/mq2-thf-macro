@@ -28,15 +28,23 @@ SUB WAR_CombatAbilities
 				/doability Taunt
 			}
 			|- Provoke
-			/if (${Me.CombatAbilityReady[${outerProvokeDiscipline}]) {
-				/disc ${outerProvokeDiscipline}
+			/if (${Me.CombatAbilityReady[${outerProvokeDiscipline}]}) {
+				/call thf_Casting ${outerProvokeDiscipline}
 			}
+			
+			/for i 1 to ${aggroItems.Size}
+				/call thf_Casting ${aggroItems[${i}]}
+			/next i
 
 			|- Area Effect Aggro
 			/if (${outerAoeAggro}) {
-				/if (${Me.CombatAbilityReady[${outerProvokeDiscipline}]) {
+				/if (${Me.CombatAbilityReady[${outerProvokeDiscipline}]}) {
 					/disc ${outerProvokeDiscipline}
 				}
+				
+				/for i 1 to ${aoeAggroItems.Size}
+					/call thf_Casting ${aoeAggroItems[${i}]}
+				/next i
 			}
 		}
 	
