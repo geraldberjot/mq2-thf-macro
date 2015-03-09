@@ -23,12 +23,8 @@ SUB ROG_CombatAbilities
 			/for i 1 to ${combatItemsBoost.Size}
 				/varset combatItem ${FindItem[=${combatItemsBoost[${i}]}]}
 				/if (${combatItemsBoost.ID}) {
-					|- Timers were already created in the sub routine "createCombatItemsArray"
-					/if (${timer-${combatItemsBoost.ID}.Value} <= 0) {
-						/casting ${combatItemsBoost.ID}|item
-						/varset ${timer-${combatItemsBoost.ID}} ${timer-${combatItemsBoost.ID}.OriginalValue}
-						/delay 1
-					}
+					/call thf_Casting ${Me.ID} ${combatItemsBoost.ID}
+					/delay 1
 				}
 			/next i
 		}
@@ -37,12 +33,8 @@ SUB ROG_CombatAbilities
 			/for i 1 to ${combatItemsBurn.Size}
 				/varset combatItem ${FindItem[=${combatItemsBurn[${i}]}]}
 				/if (${combatItemsBurn.ID}) {
-					|- Timers were already created in the sub routine "createCombatItemsArray"
-					/if (${timer-${combatItemsBurn.ID}.Value} <= 0) {
-						/casting ${combatItemsBurn.ID}|item
-						/varset ${timer-${combatItemsBurn.ID}} ${timer-${combatItemsBurn.ID}.OriginalValue}
-						/delay 1
-					}
+					/call thf_Casting ${Me.ID} ${combatItemsBurn.ID}
+					/delay 1
 				}
 			/next i
 		}
@@ -72,7 +64,7 @@ SUB Attempt_Backstab
 			/chat ${channelNumber} I need a piercing weapon in my main hand to backstab...
 		}
 	} else {
-		/call check_rogStrike
+		/call check_Strike
 		|- If backstab is ready, use it.
 		/if (${Me.AbilityReady[Backstab]}) /doability Backstab
 	}
@@ -81,12 +73,12 @@ SUB Attempt_Backstab
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- rogueStrike
+|- check_Strike
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Attempts to arm 'Assassin's Strike' type disciplines before using backstab.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB check_rogStrike()
-	/if (${outerDebug}) /echo |- rogueStrike ==>
+SUB check_Strike()
+	/if (${outerDebug}) /echo |- check_Strike ==>
 	
 	/if (${Me.AbilityReady[Hide]}) {
 		|- Stop moving.
@@ -111,19 +103,14 @@ SUB check_rogStrike()
 	 	 
 		|- Use 'Assassin's Strike' type disc.
 		/if (${Me.Invis}) {
-			/if (${Me.CombatAbilityReady[${outerStrikeDiscipline}]) {
-				/disc ${outerStrikeDiscipline}
-			} else {
+			/call thf_Casting ${Me.ID} ${outerStrikeDiscipline}
+			/if (!${castReturn.Equal[SUCCESS]}) {
 				/declare i int local
 				/for i 1 to ${strikeItems.size}
-					/varset strikeItem ${FindItem[=${strikeItems[i]}]}
+					/varset strikeItem ${FindItem[=${strikeItems[${i}]}]}
 					/if (${strikeItem.ID}) {
-						|- Timers were already created in the sub routine "createItemsArray"
-						/if (${timer-${strikeItem.ID}.Value} <= 0) {
-							/casting ${strikeItem.ID}|item
-							/varset ${timer-${strikeItem.ID}} ${timer-${strikeItem.ID}.OriginalValue}
-							goto :strike
-						}
+						/call thf_Casting ${Me.ID} ${strikeItem.ID}
+						goto :strike
 					}
 				/next i
 			}
@@ -135,7 +122,7 @@ SUB check_rogStrike()
 		}
 	}
 
-	/if (${outerDebug}) /echo <== rogueStrike -|
+	/if (${outerDebug}) /echo <== check_Strike -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -227,10 +214,6 @@ SUB ROG_BackgroundEvents
 SUB ROG_MacroSettings
 /if (${outerDebug}) /echo |- ROG_MacroSettings ==>
 
-	 |- iniTHF settings
-	 |/call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Sneak Attack,Thief's Vengeance,Assassin's Strike,Kyv Strike,Ancient: Chaos Strike,Daggerfall,Razorarc,Swiftblade,Swiftblade Rk. II,Swiftblade Rk. III,Daggerlunge,Daggerlunge Rk. II,Daggerlunge Rk. III,Daggerswipe,Daggerswipe Rk. II,Daggerswipe Rk. III,Daggerstrike,Daggerstrike Rk. II,Daggerstrike Rk. III,Daggerthrust,Daggerthrust Rk. II,Daggerthrust Rk. III" 0
-   /call writeToIni "${iniTHF},Class Specific Info,Rogue Sneak Attack Disciplines" "Assassin's Chaos Rk. I,Assassin's Chaos Rk. II,Assassin's Chaos Rk. III,Deep Shadows Rk. I,Deep Shadows Rk. II,Deep Shadows Rk. III,Feint of Shadow Rk. I,Feint of Shadow Rk. II,Feint of Shadow Rk. III,Death Bringer Rk. I,Death Bringer Rk. II,Death Bringer Rk. III" 0
-
 	 |- Adv Settings
 	 /call writeToIni "${iniTHF},Rogue,Functions" "check_Burns/check_CombatBuffs/check_Buffs" 0
 
@@ -307,7 +290,7 @@ SUB createItemsArray
 	/call createItemTimerAndAddToArray "Ancient Frozen Razor of Entropy" "combatItemsBoost"
 	/call createItemTimerAndAddToArray "Razor of the Rogue" "combatItemsBoost"
 	/call createItemTimerAndAddToArray "Flahran, The Dragon's Bane" "combatItemsBoost"
-	/call createItemTimerAndAddToArray "TriXzin, Guard of the King" "combatItemsBoost"
+	/call createItemTimerAndAddToArray "TriXzin, Guard of the King" "combatItemsBurn"
 	
 	/if (${outerDebug}) /echo <== createItemsArray -|
 /RETURN
