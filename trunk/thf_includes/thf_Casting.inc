@@ -768,8 +768,8 @@ SUB event_PopUp_Landed(line, Mob, Spell)
 |- Sets castReturn to ${pendingCast}_CANCELLED.		-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB Interrupt
-/stopcast
-/varset castReturn CANCELLED
+	/stopcast
+	/varset castReturn CANCELLED
 /RETURN
 
 

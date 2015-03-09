@@ -27,12 +27,8 @@ SUB BER_CombatAbilities
 			/for i 1 to ${combatItemsBoost.Size}
 				/varset combatItem ${FindItem[=${combatItemsBoost[${i}]}]}
 				/if (${combatItem.ID}) {
-					|- Timers were already created in the sub routine "createCombatItemsArray"
-					/if (${timer-${combatItem.ID}.Value} <= 0) {
-						/casting ${combatItem.ID}|item
-						/varset ${timer-${combatItem.ID}} ${timer-${combatItem.ID}.OriginalValue}
-						/delay 1
-					}
+					/call thf_Casting ${Me.ID} ${combatItem.ID}
+					/delay 1
 				}
 			/next i
 		}
@@ -41,28 +37,15 @@ SUB BER_CombatAbilities
 			/for i 1 to ${combatItemsBurn.Size}
 				/varset combatItem ${FindItem[=${combatItemsBurn[${i}]}]}
 				/if (${combatItem.ID}) {
-					|- Timers were already created in the sub routine "createCombatItemsArray"
-					/if (${timer-${combatItem.ID}.Value} <= 0) {
-						/casting ${combatItem.ID}|item
-						/varset ${timer-${combatItem.ID}} ${timer-${combatItem.ID}.OriginalValue}
-						/delay 1
-					}
+					/call thf_Casting ${Me.ID} ${combatItem.ID}
+					/delay 1
 				}
 			/next i
 		}
 		
 		|- Use combat ability (discipline)
-		/if (!${Me.CombatAbilityReady[${outerVolleyDiscipline}]}) {
-			/if (${outerDebug}) /echo Discipline [${outerVolleyDiscipline}] is not ready.
-		} else {
-			/call thf_Casting ${outerAssistTarget} "${outerVolleyDiscipline}/Instant"
-		}
-		/if (!${Me.CombatAbilityReady[${outerEchoingWhispersDiscipline}]}) {
-			/if (${outerDebug}) /echo Discipline [${outerEchoingWhispersDiscipline}] is not ready.
-		} else {
-			/call thf_Casting ${outerAssistTarget} "${outerEchoingWhispersDiscipline}/Instant"
-		}
-		
+		/call thf_Casting ${outerAssistTarget} "${outerVolleyDiscipline}"
+		/call thf_Casting ${outerAssistTarget} "${outerEchoingWhispersDiscipline}"
 	}
 	
 	/if (${outerDebug}) /echo <== BER_CombatAbilities -|
@@ -141,29 +124,11 @@ SUB createCombatItemsArray()
 	
 	/if (!${Defined[combatItem]}) /declare combatItem item local
 	
-	/varset combatItem ${FindItem[=Ancient Frozen Taelosian Blood Axe]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 3m
-		/call BuildArray combatItemsBoost ${combatItem.Name} outer
-	}
-	
-	/varset combatItem ${FindItem[=Axe of Frenzy]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 0
-		/call BuildArray combatItemsBoost ${combatItem.Name} outer
-	}
-	
-	/varset combatItem ${FindItem[=Kygern, The Trapped Destroyer]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 6m
-		/call BuildArray combatItemsBoost ${combatItem.Name} outer
-	}
-	
-	/varset combatItem ${FindItem[=Vaelthic, The Rage Bringer]}
-	/if (${combatItem.ID}) {
-		/declare timer-${combatItem.ID} timer outer 3,5m
-		/call BuildArray combatItemsBurn ${combatItem.Name} outer
-	}
+	/call createItemTimerAndAddToArray "Ancient Frozen Taelosian Blood Axe" "combatItemsBoost"
+	/call createItemTimerAndAddToArray "Axe of Frenzy" "combatItemsBoost"
+	/call createItemTimerAndAddToArray "Kygern, The Trapped Destroyer" "combatItemsBoost"
+
+	/call createItemTimerAndAddToArray "Vaelthic, The Rage Bringer" "combatItemsBurn"
 	
 	/if (${outerDebug}) /echo <== createcombatItemsBoostArray -|
 /RETURN

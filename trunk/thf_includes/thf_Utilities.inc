@@ -394,7 +394,8 @@ SUB createItemTimerAndAddToArray(String itemName, String arrayName)
 	/varset itemID ${FindItem[=${itemName}].ID}
 	/if (${itemID}) {
 		/call readTimer "${itemName}"
-		/declare timer-${itemID} timer global ${Macro.Return}s
+		|- readTimer gives item timer in seconds, need a conversion for createTimer
+		/call createTimer "itemTimer_"${itemID} ${Math.Calc[${Macro.Return} * 10]}
 		/call BuildArray ${arrayName} ${itemID} outer
 	}
 /RETURN

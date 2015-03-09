@@ -587,7 +587,7 @@ SUB CombatAbilities
 						/if (${outerDebug}) /echo Ability [${abilityName}] is not ready.
 					} else {
 						|- Reset Tail Rake to Dragon Punch.  Tail Rake causes an error because it returns as "Dragon Punch" when /echoed in Me.Ability[#]
-						/if (${abilityName.Equal[Tail Rake]}) {
+						/if (${abilityName.Lower.Equal[tail rake]}) {
 							/varset ${MyAbilities[${i}]} Dragon Punch
 						} else /if (${abilityName.Equal[bash]}) {
 							/call Attempt_Bash
