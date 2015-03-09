@@ -32,7 +32,7 @@
 |- @param castParams: The name of the spell, and additional casting parameters.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB thf_Casting(int targetID, castParams)
-	/if (${Debug} || ${Debug_Casting}) /echo |- thf_Casting ==>
+	/if (${Debug} || ${outerDebug_Casting}) /echo |- thf_Casting ==>
 
 	|- Create and reset variables.
 	/if (${Target.ID}) /declare oldTarget string local ${Target.CleanName}-${Target.ID}
@@ -44,19 +44,19 @@ SUB thf_Casting(int targetID, castParams)
 	
 	|- Check Cursor.
 	/if (${Cursor.ID}) {
-		/if (${Debug} || ${Debug_Casting}) /echo Cannot cast while holding an item.
+		/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast while holding an item.
 		/varset castReturn CURSOR
 	} else {
 	
 		|- Check invis.
 		/if (${Me.Invis} && ${Me.Class.ShortName.NotEqual[ROG]}) {
-			/if (${Debug} || ${Debug_Casting}) /echo Cannot cast while invisible.
+			/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast while invisible.
 			/varset castReturn INVIS
 		} else {
 			
 			|- Check moving.
 			/if (${Me.Moving} && ${Spell[=${pendingCast}].CastTime} || ${Me.Moving} && ${FindItem[=${pendingCast}].CastTime}) {
-				/if (${Debug} || ${Debug_Casting}) /echo Cannot cast while moving.
+				/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast while moving.
 				/varset castReturn MOVING
 			} else {
 			
@@ -73,7 +73,7 @@ SUB thf_Casting(int targetID, castParams)
 					/if (${castParams.Find[/reagent|]}) {
 						/call argueString reagent "${castParams}"
 						/if (!${FindItemCount[=${Macro.Return}]}) {
-							/if (${Debug} || ${Debug_Casting}) /echo Cannot cast [${pendingCast}], I do not have any [${requiredReagent}].
+							/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast [${pendingCast}], I do not have any [${requiredReagent}].
 							/varset castReturn REAGENT
 							/goto :skipCast
 						}
@@ -83,7 +83,7 @@ SUB thf_Casting(int targetID, castParams)
 					/if (${castParams.Find[/MinHealth|]}) {
 						/call argueString minhealth "${castParams}"
 						/if (${Me.PctHPs} < ${Macro.Return}) {
-							/if (${Debug} || ${Debug_Casting}) /echo I do not have enough HP to cast [${pendingCast}].
+							/if (${Debug} || ${outerDebug_Casting}) /echo I do not have enough HP to cast [${pendingCast}].
 							/varset castReturn MINHP
 							/goto :skipCast
 						}
@@ -91,14 +91,14 @@ SUB thf_Casting(int targetID, castParams)
 				
 					|- -Check for ${pendingCast}_NOHOLD timers.
 					/if (${noHoldTimer_${targetID}-${pendingCast.Replace[ ,]}}) {
-						/if (${Debug} || ${Debug_Casting}) /echo [${pendingCast}] Did not take hold last time I cast it.  Waiting [${noHoldTimer_${targetID}-${pendingCast.Replace[ ,]}}] until I try again.
+						/if (${Debug} || ${outerDebug_Casting}) /echo [${pendingCast}] Did not take hold last time I cast it.  Waiting [${noHoldTimer_${targetID}-${pendingCast.Replace[ ,]}}] until I try again.
 						/varset castReturn NOHOLDTIMER
 						/goto :skipCast 
 					}
 					
 					|- -Check for spells listed on the 'badSpells' list.
 					/if (${Select[${pendingCast},${badSpells}]}) {
-						/if (${Debug} || ${Debug_Casting}) /echo [${pendingCast}] Is listed as a badSpell in this zone.
+						/if (${Debug} || ${outerDebug_Casting}) /echo [${pendingCast}] Is listed as a badSpell in this zone.
 						/varset castReturn BADSPELL
 						/goto :skipCast 
 					}
@@ -110,13 +110,13 @@ SUB thf_Casting(int targetID, castParams)
 					
 						|-- Check range.
 						/if (${Spell[${pendingCast}].MyRange} && ${Spawn[id ${targetID}].Distance} > ${Spell[${pendingCast}].MyRange}) {
-							/if (${Debug} || ${Debug_Casting}) /echo [${Spawn[id ${targetID}].CleanName}] is out of range.
+							/if (${Debug} || ${outerDebug_Casting}) /echo [${Spawn[id ${targetID}].CleanName}] is out of range.
 							/varset castReturn RANGE
 						} else {
 					
 							|-- Check LoS.
 							/if (!${Spell[${pendingCast}].SpellType.Find[Beneficial]} && !${Spawn[id ${targetID}].LineOfSight}) {
-								/if (${Debug} || ${Debug_Casting}) /echo I cannot see [${Spawn[id ${targetID}].CleanName}].
+								/if (${Debug} || ${outerDebug_Casting}) /echo I cannot see [${Spawn[id ${targetID}].CleanName}].
 								/varset castReturn LOS
 							} else {
 								
@@ -124,7 +124,7 @@ SUB thf_Casting(int targetID, castParams)
 								/if (${castParams.Find[/MinMana|]}) {
 									/call argueString MinMana "${castParams}"
 									/if (${Me.PctMana} < ${Int[${Macro.Return}]}) {
-										/if (${Debug} || ${Debug_Casting}) /echo I do not have enough mana to cast [${pendingCast}].
+										/if (${Debug} || ${outerDebug_Casting}) /echo I do not have enough mana to cast [${pendingCast}].
 										/varset castReturn MINMANA
 										/goto :skipCast
 									}
@@ -134,7 +134,7 @@ SUB thf_Casting(int targetID, castParams)
 								/if (${castParams.Find[/MaxMana|]}) {
 									/call argueString MaxMana "${castParams}"
 									/if (${Me.PctMana} > ${Macro.Return}) {
-										/if (${Debug} || ${Debug_Casting}) /echo I have too much mana to cast [${pendingCast}].
+										/if (${Debug} || ${outerDebug_Casting}) /echo I have too much mana to cast [${pendingCast}].
 										/varset castReturn MAXMANA
 										/goto :skipCast
 									}
@@ -150,19 +150,19 @@ SUB thf_Casting(int targetID, castParams)
 					
 						|- Check for an existing item timer.
 						/if (${FindItem[=${pendingCast}].Timer} || ${itemTimer_${FindItem[=${pendingCast}].ID}}) {
-							/if (${Debug} || ${Debug_Casting}) /echo My recast timer is not yet met for [${pendingCast}].
+							/if (${Debug} || ${outerDebug_Casting}) /echo My recast timer is not yet met for [${pendingCast}].
 							/varset castReturn NOTREADY
 						} else {
 					
 							|- Check range.
 							/if (${Spell[${FindItem[=${pendingCast}].Spell}].MyRange} && ${Spawn[id ${targetID}].Distance} > ${Spell[${FindItem[=${pendingCast}].Spell}].MyRange}) {
-								/if (${Debug} || ${Debug_Casting}) /echo [${Spawn[id ${targetID}].CleanName}] is out of range.
+								/if (${Debug} || ${outerDebug_Casting}) /echo [${Spawn[id ${targetID}].CleanName}] is out of range.
 								/varset castReturn RANGE
 							} else {
 							
 								|- Check LoS.
 								/if (${Spell[${FindItem[=${pendingCast}].Spell}].SpellType.NotEqual[Beneficial]} && !${Spawn[id ${targetID}].LineOfSight}) {
-									/if (${Debug} || ${Debug_Casting}) /echo I cannot see [${Spawn[id ${targetID}].CleanName}].
+									/if (${Debug} || ${outerDebug_Casting}) /echo I cannot see [${Spawn[id ${targetID}].CleanName}].
 									/varset castReturn LOS
 								} else {
 						
@@ -177,19 +177,19 @@ SUB thf_Casting(int targetID, castParams)
 				
 						|- Check for an existing AA timer.
 						/if (${Me.AltAbilityTimer[${pendingCast}]} || ${altTimer_${pendingCast}}) {
-							/if (${Debug} || ${Debug_Casting}) /echo My recast timer is not yet met for [${pendingCast}].
+							/if (${Debug} || ${outerDebug_Casting}) /echo My recast timer is not yet met for [${pendingCast}].
 							/varset castReturn NOTREADY
 						} else {
 						
 							|- Check range.
 							/if (${Spell[${pendingCast}].MyRange} && ${Spawn[id ${targetID}].Distance} > ${Spell[${pendingCast}].MyRange}) {
-								/if (${Debug} || ${Debug_Casting}) /echo [${Spawn[id ${targetID}].CleanName}] is out of range.
+								/if (${Debug} || ${outerDebug_Casting}) /echo [${Spawn[id ${targetID}].CleanName}] is out of range.
 								/varset castReturn RANGE
 							} else {
 				
 								|- Check LoS.
 								/if (${Spell[${pendingCast}].SpellType.NotEqual[Beneficial]} && !${Spawn[id ${targetID}].LineOfSight}) {
-									/if (${Debug} || ${Debug_Casting}) /echo I cannot see [${Spawn[id ${targetID}].CleanName}].
+									/if (${Debug} || ${outerDebug_Casting}) /echo I cannot see [${Spawn[id ${targetID}].CleanName}].
 									/varset castReturn LOS
 								} else {
 
@@ -204,12 +204,12 @@ SUB thf_Casting(int targetID, castParams)
 					
 						|- Check for an existing disc timer
 						/if (${Me.CombatAbilityTimer[${pendingCast}]} || ${discTimer_${pendingCast.Replace[ ,]}}) {	
-							/if (${Debug} || ${Debug_Casting}) /echo My recast timer is not yet met for [${pendingCast}].
+							/if (${Debug} || ${outerDebug_Casting}) /echo My recast timer is not yet met for [${pendingCast}].
 							/varset castReturn NOTREADY
 						} else {
 						
 							/if (${Window[CombatAbilityWnd].Child[CAW_CombatEffectLabel].Text.NotEqual[No Effect]} && ${Spell[${pendingCast}].Duration}) {
-								/if (${Debug} || ${Debug_Casting}) /echo |- QuickBurn -|- Waiting on disc [${Window[CombatAbilityWnd].Child[CAW_CombatEffectLabel].Text}]
+								/if (${Debug} || ${outerDebug_Casting}) /echo |- QuickBurn -|- Waiting on disc [${Window[CombatAbilityWnd].Child[CAW_CombatEffectLabel].Text}]
 								/varset castReturn ACTIVEDISC
 							} else {
 								|- Attempt to use the disc.
@@ -219,11 +219,11 @@ SUB thf_Casting(int targetID, castParams)
 					
 					|- pendingCast Found in bank.
 					} else /if (${FindItemBankCount[=${pendingCast}]}) {
-						/if (${Debug} || ${Debug_Casting}) /echo Cannot cast [${pendingCast}] because it is in the bank!
+						/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast [${pendingCast}] because it is in the bank!
 						/varset castReturn BANK
 					|- Unrecognized.
 					} else {
-						/if (${Debug} || ${Debug_Casting}) /echo Could not find any items, alternate abilities, spells, or disciplines named [${pendingCast}].
+						/if (${Debug} || ${outerDebug_Casting}) /echo Could not find any items, alternate abilities, spells, or disciplines named [${pendingCast}].
 						/varset castReturn UNKNOWN
 					}
 				}
@@ -257,7 +257,7 @@ SUB thf_Casting(int targetID, castParams)
 |- @param castParams: The name of the spell, and additional casting parameters.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_Spell(int targetID, castParams)
-/if (${Debug} || ${Debug_Casting}) /echo |- cast_Spell [${pendingCast}] ==>
+/if (${Debug} || ${outerDebug_Casting}) /echo |- cast_Spell [${pendingCast}] ==>
 
 	/declare gemNumber int local ${DefaultGem}
 
@@ -293,7 +293,7 @@ SUB cast_Spell(int targetID, castParams)
 			/delay 2
 			/goto :waitToCast
 		} else {
-			/if (${Debug} || ${Debug_Casting}) /echo [${Spell[${pendingCast}].Name}] was not ready within the allotted time.
+			/if (${Debug} || ${outerDebug_Casting}) /echo [${Spell[${pendingCast}].Name}] was not ready within the allotted time.
 			/if (${Window[SpellBookWnd].Open}) /stand
 			/varset castReturn NOTREADY
 		}
@@ -318,17 +318,17 @@ SUB cast_Spell(int targetID, castParams)
 		
 		|- If the spell fizzled or was interrupted, and I still have time, try again.
 		/if (${Select[${castReturn},FIZZLE,INTERRUPTED,STUNNED]} && ${giveUpTimer}) {
-			/if (${Debug} || ${Debug_Casting}) /echo Cast was interrupted, retrying.
+			/if (${Debug} || ${outerDebug_Casting}) /echo Cast was interrupted, retrying.
 			/goto :cast_Spell
 		
 		|- If there was an unexpected error.
 		} else /if (${Select[${castReturn},OUTDOORS,COMPONENTS,GROUPONLY]}) {
-			/if (${Debug} || ${Debug_Casting}) /echo Cannot cast indoors.
+			/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast indoors.
 			/varset badSpells ${badSpells}${pendingCast},
 		}
 	}
 
-/if (${Debug} || ${Debug_Casting}) /echo <== cast_Spell -|
+/if (${Debug} || ${outerDebug_Casting}) /echo <== cast_Spell -|
 /RETURN
 
 
@@ -342,7 +342,7 @@ SUB cast_Spell(int targetID, castParams)
 |- @param castParams: The name of the spell, and additional casting parameters.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_Item(int targetID, castParams)
-	/if (${Debug} || ${Debug_Casting}) /echo |- cast_Item [${pendingCast}] ==>
+	/if (${Debug} || ${outerDebug_Casting}) /echo |- cast_Item [${pendingCast}] ==>
 	
 	|- Search Potion belt.
 	/declare i int local
@@ -381,7 +381,7 @@ SUB cast_Item(int targetID, castParams)
 		
 			/if (!${Bool[${slotID}]}) {
 		/next i
-				/if (${Debug} || ${Debug_Casting}) /echo I have run out of inventory space and cannot cast [${pendingCast}].
+				/if (${Debug} || ${outerDebug_Casting}) /echo I have run out of inventory space and cannot cast [${pendingCast}].
 				/varset castReturn CANTEQUIP
 				/goto :skipCast
 			}
@@ -396,7 +396,7 @@ SUB cast_Item(int targetID, castParams)
 	
 	|- Check that I haven't recently exchanged an item
 	/if (${itemExchange_Timer}) {
-		/if (${Debug} || ${Debug_Casting}) /echo I need to wait a moment before exchanging another item.
+		/if (${Debug} || ${outerDebug_Casting}) /echo I need to wait a moment before exchanging another item.
 		/varset castReturn NOTREADY
 	} else {
 	
@@ -428,12 +428,12 @@ SUB cast_Item(int targetID, castParams)
 	
 	|- If the spell fizzled or was interrupted, and I still have time, try again.
 	/if (${Select[${castReturn},FIZZLE,INTERRUPTED,STUNNED]} && ${giveUpTimer}) {
-		/if (${Debug} || ${Debug_Casting}) /echo Cast was interrupted, retrying.
+		/if (${Debug} || ${outerDebug_Casting}) /echo Cast was interrupted, retrying.
 		/goto :cast_Item
 	
 	|- If there was an unexpected error.
 	} else /if (${Select[${castReturn},OUTDOORS,COMPONENTS,GROUPONLY]}) {
-		/if (${Debug} || ${Debug_Casting}) /echo Cannot cast indoors.
+		/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast indoors.
 		/varset badSpells ${badSpells}${pendingCast},
 	
 	|- If the item timer shows 0, but the item is not actually ready to be cast
@@ -446,7 +446,7 @@ SUB cast_Item(int targetID, castParams)
 
 	:skipCast
 
-	/if (${Debug} || ${Debug_Casting}) /echo <== cast_Item -|
+	/if (${Debug} || ${outerDebug_Casting}) /echo <== cast_Item -|
 /RETURN
 
 
@@ -460,7 +460,7 @@ SUB cast_Item(int targetID, castParams)
 |- @param castParams: The name of the spell, and additional casting parameters.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB cast_AltAbility(int targetID, castParams)
-/if (${Debug} || ${Debug_Casting}) /echo |- cast_AltAbility [${pendingCast}] ==>
+/if (${Debug} || ${outerDebug_Casting}) /echo |- cast_AltAbility [${pendingCast}] ==>
 
 	/declare altID int local
 	/declare tempID int local
@@ -473,7 +473,7 @@ SUB cast_AltAbility(int targetID, castParams)
 	/call prepCast "${targetID}"
 	
 	|- Cast alt	
-	/if (${Debug} || ${Debug_Casting}) /echo Attempting to cast alt ability [${pendingCast}]...
+	/if (${Debug} || ${outerDebug_Casting}) /echo Attempting to cast alt ability [${pendingCast}]...
 
 	/if (${Ini[${iniGeneral},AA-ID Overrides,${pendingCast}].Length}) {
 		
@@ -501,12 +501,12 @@ SUB cast_AltAbility(int targetID, castParams)
 	
 	|- If the spell fizzled or was interrupted, and I still have time, try again.
 	/if (${Select[${castReturn},FIZZLE,INTERRUPTED,STUNNED]} && ${giveUpTimer}) {
-		/if (${Debug} || ${Debug_Casting}) /echo Cast was interrupted, retrying.
+		/if (${Debug} || ${outerDebug_Casting}) /echo Cast was interrupted, retrying.
 		/goto :cast_Alt
 	
 	|- If there was an unexpected error.
 	} else /if (${Select[${castReturn},OUTDOORS,COMPONENTS,GROUPONLY]}) {
-		/if (${Debug} || ${Debug_Casting}) /echo Cannot cast indoors.
+		/if (${Debug} || ${outerDebug_Casting}) /echo Cannot cast indoors.
 		/varset badSpells ${badSpells}${pendingCast},
 	
 	|- If the cast was a success, check for a timer
@@ -516,7 +516,7 @@ SUB cast_AltAbility(int targetID, castParams)
 		/call CreateTimer "altTimer_${Me.AltAbility[${altName}].ID}" "${Math.Calc[${Me.AltAbility[${altName}].ReuseTime} * 10]}"
 	}
 
-/if (${Debug} || ${Debug_Casting}) /echo <== cast_AltAbility -|
+/if (${Debug} || ${outerDebug_Casting}) /echo <== cast_AltAbility -|
 /RETURN
 
 
@@ -536,7 +536,7 @@ SUB useDisc(targetID, discToUse)
 	/varset castReturn SUCCESS
 	
 
-/if (${Debug} || ${Debug_Casting}) /echo |- useDisc ==>	
+/if (${Debug} || ${outerDebug_Casting}) /echo |- useDisc ==>	
 /RETURN
 
 
@@ -545,23 +545,23 @@ SUB useDisc(targetID, discToUse)
 |- Targets mobs, and pauses melodies
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB prepCast(int targetID)
-	/if (${Debug} || ${Debug_Casting}) /echo |- prepCast ==>
+	/if (${Debug} || ${outerDebug_Casting}) /echo |- prepCast ==>
 
 	|- Target the spell target.
 	/if (${targetID} && ${Target.ID} != ${targetID}) /call trueTarget ${targetID}
 	/if (${Twist.Twisting}) /call pauseTwist
 	/varset outerActionTaken TRUE
 
-	/if (${Debug} || ${Debug_Casting}) /echo <== prepCast -|		
+	/if (${Debug} || ${outerDebug_Casting}) /echo <== prepCast -|		
 /RETURN
 
 
 
 SUB memSpell(int gemNumber)
-/if (${Debug} || ${Debug_Casting}) /echo |- memSpell [${pendingCast}] ==>
+/if (${Debug} || ${outerDebug_Casting}) /echo |- memSpell [${pendingCast}] ==>
 
 	/if (${gemNumber} < 1 || ${gemNumber} > 9) {
-		/if (${Debug} || ${Debug_Casting}) /echo [${gemNumber}] is out of bounds.
+		/if (${Debug} || ${outerDebug_Casting}) /echo [${gemNumber}] is out of bounds.
 		/varset castReturn ${pendingCast}_BADGEM
 	} else {
 	
@@ -591,7 +591,7 @@ SUB memSpell(int gemNumber)
 		}
 	}
 
-/if (${Debug} || ${Debug_Casting}) /echo <== memSpell -|
+/if (${Debug} || ${outerDebug_Casting}) /echo <== memSpell -|
 /RETURN
 
 
@@ -602,7 +602,7 @@ SUB memSpell(int gemNumber)
 |- Checks to perform while casting.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB check_Castings(castParams)
-	/if (${Debug} || ${Debug_Casting}) /echo |- check_Castings ==>
+	/if (${Debug} || ${outerDebug_Casting}) /echo |- check_Castings ==>
 
 	|- Declare variables.
 	/declare currentTarget int local ${Target.ID}
@@ -630,7 +630,7 @@ SUB check_Castings(castParams)
 	/if (${Me.State.Equal[DUCK]} || !${Assisting} && ${Following} && ${SpawnCount[pc ${FollowTarget}]} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength} && ${Spawn[${FollowTarget}].Distance} < ${FollowBreakDistance} && !${Me.Moving} || ${Spell[${Me.Casting.ID}].MyRange} && ${Spell[${Me.Casting.ID}].TargetType.NotEqual[Self]} && ${Target.Distance}>${Spell[${Me.Casting.ID}].MyRange} || ${Spell[${Me.Casting.ID}].SpellType.Equal[Detrimental]} && !${Spawn[id ${Target.ID}].LineOfSight} || ${Spawn[id ${Target.ID}].Type.Equal[Corpse]} && !${Select[${Spell[${Me.Casting.ID}].TargetType},PB AE,Targeted AE,Corpse,Self]}) {
 		
 		|- /echo /if (${Me.State.Equal[DUCK]} || !${Assisting} && ${Following} && ${SpawnCount[pc ${FollowTarget}]} && ${Spawn[${FollowTarget}].Distance} > ${LeashLength} && ${Spawn[${FollowTarget}].Distance} < ${FollowBreakDistance} && !${Me.Moving} || ${Spell[${Me.Casting.ID}].MyRange} && ${Spell[${Me.Casting.ID}].TargetType.NotEqual[Self]} && ${Target.Distance}>${Spell[${Me.Casting.ID}].MyRange} || ${Spell[${Me.Casting.ID}].SpellType.Equal[Detrimental]} && !${Spawn[id ${Target.ID}].LineOfSight} || ${Spawn[id ${Target.ID}].Type.Equal[Corpse]} && !${Select[${Spell[${Me.Casting.ID}].TargetType},PB AE,Targeted AE,Corpse]})
-		/if (${Debug} || ${Debug_Casting}) /echo |- check_Castings -|- Cast cancelled.
+		/if (${Debug} || ${outerDebug_Casting}) /echo |- check_Castings -|- Cast cancelled.
 		
 		/if (${Me.Casting.ID}) /call interrupt
 		/varset castReturn CANCELLED
@@ -639,7 +639,7 @@ SUB check_Castings(castParams)
 	} else /if (${cast_locX}!=${Me.X} || ${cast_locY}!=${Me.Y}) {
 		/call Triangulate_Distance ${cast_locY},${cast_locY} ${Me.Loc.Replace[ ,]}
 		/if (${Macro.Return}>5 && ${castEndTime}) {
-			/if (${Debug} || ${Debug_Casting}) /echo |- check_Castings -|- Caster movement interrupt.
+			/if (${Debug} || ${outerDebug_Casting}) /echo |- check_Castings -|- Caster movement interrupt.
 			/if (${Me.Casting.ID}) /call interrupt
 			/varset castReturn INTERRUPTED
 		}
@@ -653,13 +653,13 @@ SUB check_Castings(castParams)
 	
 	/call Casting_Events
 
-/if (${Debug} || ${Debug_Casting}) /echo <== check_Castings -|
+/if (${Debug} || ${outerDebug_Casting}) /echo <== check_Castings -|
 /RETURN
 
 
 
 SUB SwapItem(itemName,slotID)
-/if (${Debug} || ${Debug_Casting}) /echo |- SwapItem ==>
+/if (${Debug} || ${outerDebug_Casting}) /echo |- SwapItem ==>
 
 	/if (${Cursor.ID}) {
 		/echo ERROR: |- SwapItem -|- SwapItem cannot be preformed while there is an item on your cursor.
@@ -670,21 +670,21 @@ SUB SwapItem(itemName,slotID)
 		
 		:try_Again
 		
-		/if (${Debug} || ${Debug_Casting}) /echo |- SwapItem -|- Attempting to exchange [${itemName}] for [${InvSlot[${slotID}].Item}]
+		/if (${Debug} || ${outerDebug_Casting}) /echo |- SwapItem -|- Attempting to exchange [${itemName}] for [${InvSlot[${slotID}].Item}]
 		/exchange "${itemName}" ${slotID}
 		/delay 30 ${InvSlot[${slotID}].Item.Name.Equal[${itemName}]} && ${FindItemCount[${itemName}]}==${startingCount}
 		/if (${InvSlot[${slotID}].Item.Name.NotEqual[${itemName}]}) {
 			/if (${retryTimer}) {
 				/goto :try_Again
 			} else {
-				/if (${Debug} || ${Debug_Casting}) /echo ERROR: |- SwapItem -|- Failed to swap [${InvSlot[${slotID}].Item.Name}] for [${itemName}].
+				/if (${Debug} || ${outerDebug_Casting}) /echo ERROR: |- SwapItem -|- Failed to swap [${InvSlot[${slotID}].Item.Name}] for [${itemName}].
 			}
 		}
 		/delay 5
 		/if (${Cursor.ID}) /call ClearCursor
 	}
 
-/if (${Debug} || ${Debug_Casting}) /echo <== SwapItem -|
+/if (${Debug} || ${outerDebug_Casting}) /echo <== SwapItem -|
 /RETURN
 
 
@@ -714,14 +714,14 @@ SUB EVENT_set_ArrayElement
 |- Pauses MQ2Twist while casting.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB pauseTwist
-/if (${Debug} || ${Debug_Casting}) /echo |- pauseTwist ==>
+/if (${Debug} || ${outerDebug_Casting}) /echo |- pauseTwist ==>
 
 	/varset returnTwist 1
 	/squelch /twist stop
 	/delay 30 !${Me.Casting.ID}
 	/delay 5
 	
-/if (${Debug} || ${Debug_Casting}) /echo <== pauseTwist -|
+/if (${Debug} || ${outerDebug_Casting}) /echo <== pauseTwist -|
 /RETURN
 
 
@@ -730,12 +730,12 @@ SUB pauseTwist
 |- Unpauses MQ2Twist after casting.	-|
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB unpauseTwist
-/if (${Debug} || ${Debug_Casting}) /echo |- unpauseTwist ==>
+/if (${Debug} || ${outerDebug_Casting}) /echo |- unpauseTwist ==>
 
 	/varset returnTwist 0
 	/squelch /twist start
 	
-/if (${Debug} || ${Debug_Casting}) /echo <== unpauseTwist -|
+/if (${Debug} || ${outerDebug_Casting}) /echo <== unpauseTwist -|
 /RETURN
 
 
@@ -963,14 +963,14 @@ SUB Event_Standing
 #EVENT Stunned "You can't cast spells while stunned!#*#"
 #EVENT Stunned "You *CANNOT* cast spells, you have been silenced!#*#"
 SUB EVENT_Stunned
-/if (${Debug} || ${Debug_Casting}) /echo |- EVENT_Stunned ==>
+/if (${Debug} || ${outerDebug_Casting}) /echo |- EVENT_Stunned ==>
 
 	/if (${Me.Stunned}) {
 	  /delay 3s !${Me.Stunned}
 	}
 	/varset castReturn STUNNED
 
-/if (${Debug} || ${Debug_Casting}) /echo <== EVENT_Stunned -|	
+/if (${Debug} || ${outerDebug_Casting}) /echo <== EVENT_Stunned -|	
 /RETURN
 
 
@@ -1009,8 +1009,7 @@ SUB event_Missing_Components(line, missingComponent)
 
 
 SUB casting_Setup
-	/call iniToVar "${iniGeneral},Debug,Debug Casting (On/Off)" Debug_Casting bool outer
-	/if (${Debug} || ${Debug_Casting}) /echo |- casting_Setup ==>
+	/if (${Debug}) /echo |- casting_Setup ==>
 	
 	/declare pendingCast string outer
 	/declare pendingSpell string outer
@@ -1024,6 +1023,8 @@ SUB casting_Setup
 	/declare no_Cast bool outer FALSE
 	/declare badSpells string outer
 	
+	/call iniToVar "${iniGeneral},Debug,Debug Casting (On/Off)" outerDebug_Casting bool outer
+
 	|- Import iniTimers.
 	/if (!${Ini[${iniTHF},Paths,Item Timer Settings].Length}) {
 		/echo ERROR: Could not find designated file path for [Item Timer Settings], please review [${iniTHF}] and restart.
@@ -1047,7 +1048,7 @@ SUB casting_Setup
 	/call iniToVar "${iniGeneral},Casting,Default Spell Gem" DefaultGem int outer
 	/if (${DefaultGem}==9 && !${Me.AltAbility[Mnemonic Retention]}) /varset DefaultGem 8
 
-/if (${Debug} || ${Debug_Casting}) /echo <== casting_Setup -|
+	/if (${Debug}) /echo <== casting_Setup -|
 /RETURN
 
 

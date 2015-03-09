@@ -192,7 +192,7 @@ SUB ROG_Setup
 	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
 
 	|- Pick up the lastest discipline
-	/call getLatestouterStrikeDiscipline
+	/call getLatestDiscipline
 	
 	/call createItemsArray
 	
@@ -244,8 +244,8 @@ SUB ROG_Aliases
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestouterStrikeDiscipline
-	/if (${outerDebug}) /echo |- getLatestouterStrikeDiscipline ==>
+SUB getLatestDiscipline
+	/if (${outerDebug}) /echo |- getLatestDiscipline ==>
 	
 	/if (!${Defined[outerStrikeDiscipline]}) /declare outerStrikeDiscipline string outer
 
@@ -270,7 +270,7 @@ SUB getLatestouterStrikeDiscipline
 	}
 	/if (${outerDebug}) {
 		/echo ${outerStrikeDiscipline}
-		/echo <== getLatestouterStrikeDiscipline -|
+		/echo <== getLatestDiscipline -|
 	}
 /RETURN
 
