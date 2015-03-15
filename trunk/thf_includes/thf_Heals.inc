@@ -20,20 +20,20 @@ SUB check_Heals
 
 	|- Check Group Heal array
 	/if (${do_GroupHeals}) /call check_groupHeals
-	/if (!${ActionTaken}) {
+	/if (!${outerActionTaken}) {
 		
 		| Check healFunctions array.
 		/if (${do_Heals}) /call check_healSpells
-		/if (!${ActionTaken}) {
+		/if (!${outerActionTaken}) {
 		
 			| Check HoT.
 			/if (${do_HoTs}) /call check_HoTs
 		}
 	}
 	
-	|- If I've healed someone in the last few seconds, set ActionTaken TRUE.  
+	|- If I've healed someone in the last few seconds, set outerActionTaken TRUE.  
 	|- This creates a stopping point in the mainLoop which prioritizes heals, and all higher functions, for a brief time.
-	/if (${recentHeal_Timer}) /varset ActionTaken TRUE
+	/if (${recentHeal_Timer}) /varset outerActionTaken TRUE
 
 	/if (${Debug} || ${Debug_Heals}) /echo <== healLoop -|
 /RETURN
@@ -67,7 +67,7 @@ SUB check_lifeSupport
 				/doability "${castName}"
 			} else {
 				/if (${Target.ID} && ${Target.ID} != ${Me.ID}) /declare oldTarget int local ${Target.ID} 
-				/call thf_Cast ${Me.ID} "${lifeSupport[${i}]}"
+				/call thf_Casting ${Me.ID} "${lifeSupport[${i}]}"
 			}
 		}
 		
@@ -277,14 +277,14 @@ SUB check_healSpells
 					|- If I have a heal to cast, cast it
 					/if (${Bool[${healToUse}]}) {
 						/if (${Debug} || ${Debug_Heals}) /echo Attempting to cast [${healToUse}] on [${healTarget} ${NetBots[${healTarget}].PctHPs}]
-						/call thf_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|Heal_CastingChecks"
+						/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}/SubToRun|Heal_CastingChecks"
 						/varset recentHeal_Timer 20
 					}
 				}
 			}
 		}
 	
-	/if (!${ActionTaken}) /next i
+	/if (!${outerActionTaken}) /next i
 
 	/if (${Debug} || ${Debug_Heals}) /echo <== check_healSpells -|
 /RETURN
@@ -510,7 +510,7 @@ SUB check_HoTs
 						} else {
 						
 							| Cast the HoT
-							/call thf_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_CastingChecks"
+							/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse.Arg[1,/]}]},0,100]}/SubToRun|HoT_CastingChecks"
 							/varset recentHeal_Timer 30
 						}
 					}
@@ -518,7 +518,7 @@ SUB check_HoTs
 			}
 		}
 
-	/if (!${ActionTaken}) /next x
+	/if (!${outerActionTaken}) /next x
 
 	/if (${Debug} || ${Debug_Heals}) /echo <== check_HoTs -|
 /RETURN
@@ -658,7 +658,7 @@ SUB check_groupHeals
 			|- If I have a heal to cast, cast it
 			/if (${Bool[${healToUse}]}) {
 				/if (${Debug} || ${Debug_Heals}) /echo Attempting to cast [${healToUse}] on [${healTarget} ${NetBots[${healTarget}].PctHPs}]
-				/call thf_Cast ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}"
+				/call thf_Casting ${NetBots[${healTarget}].ID} "${healToUse}/GiveUpTimer|${If[${Me.Gem[${healToUse}]},0,100]}"
 				/varset recentHeal_Timer 20
 			}
 		}
@@ -830,8 +830,8 @@ SUB check_Pets
 /if (${NetBots[${NetBots.Client[${i}]}].PetID}) {
 	/if (${NetBots[${NetBots.Client[${i}]}].PetHP} < ${PetHeal_Pct} && ${Spawn[${NetBots[${NetBots.Client[${i}]}].PetID}].Distance} < ${Spell[${PetHeal_Spell}].MyRange}) {
 		/if (${Target.ID} != ${NetBots[${NetBots.Client[${i}]}].PetID}) /call TrueTarget ${NetBots[${NetBots.Client[${i}]}].PetID}
-		/call thf_Cast ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${PetHeal_Spell}].ID}" Gem${PetHeal_Gem} 3s
-		/varset ActionTaken TRUE
+		/call thf_Casting ${NetBots[${NetBots.Client[${i}]}].PetID} "${Spell[${PetHeal_Spell}].ID}" Gem${PetHeal_Gem} 3s
+		/varset outerActionTaken TRUE
 	}
 }
 /next i

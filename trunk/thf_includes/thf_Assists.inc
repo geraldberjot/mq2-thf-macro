@@ -757,7 +757,7 @@ SUB cast_longTermSpells(int spellTarget, string arrayName)
 					/if (${longTerm_recastBuffer}) /varcalc newTimerSetting ${newTimerSetting} - ${longTerm_recastBuffer}
 				}
 				/if (${outerDebug} || ${outerDebug_Assists}) /echo |- longTermSpells - [${arrayName}] -|- Creating timer [${spellTimer}] -- [${newTimerSetting}]
-				/call createTimer "${spellTimer}" "${newTimerSetting}"
+				/call createTimer "${spellTimer}" "${newTimerSetting}s"
 			
 			|- If the spell was not ready
 			} else /if (${lastCast.Equal[${castName}]} && ${castReturn.Equal[NOTREADY]}) {

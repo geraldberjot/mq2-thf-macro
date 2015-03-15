@@ -54,7 +54,9 @@ SUB BER_CombatAbilities
 SUB BER_Setup
 	/if (${outerDebug}) /echo |- BER_Setup ==>
 	
-	/call getLatestDisciplines
+	/call getLatestBerserkerDisciplines
+	
+	/call createBerserkerItemsArray
 	
 	/if (${outerDebug}) /echo <== BER_Setup -|
 /RETURN
@@ -86,8 +88,8 @@ SUB BER_Aliases
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestDisciplines()
-	/if (${outerDebug}) /echo |- getLatestDisciplines ==>
+SUB getLatestBerserkerDisciplines()
+	/if (${outerDebug}) /echo |- getLatestBerserkerDisciplines ==>
 	
 	/if (!${Defined[outerVolleyDiscipline]}) /declare outerVolleyDiscipline string outer
 
@@ -113,16 +115,14 @@ SUB getLatestDisciplines()
 		/varset outerEchoingWhispersDiscipline "Echoing Whispers Rk. I"
 	}
 	
-	/if (${outerDebug}) /echo <== getLatestDisciplines -|
+	/if (${outerDebug}) /echo <== getLatestBerserkerDisciplines -|
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Create the timers of the items used in combat
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB createCombatItemsArray()
-	/if (${outerDebug}) /echo |- createcombatItemsBoostArray ==>
-	
-	/if (!${Defined[combatItem]}) /declare combatItem item local
+SUB createBerserkerItemsArray()
+	/if (${outerDebug}) /echo |- createBerserkerItemsArray ==>
 	
 	/call createItemTimerAndAddToArray "Ancient Frozen Taelosian Blood Axe" "combatItemsBoost"
 	/call createItemTimerAndAddToArray "Axe of Frenzy" "combatItemsBoost"
@@ -130,5 +130,5 @@ SUB createCombatItemsArray()
 
 	/call createItemTimerAndAddToArray "Vaelthic, The Rage Bringer" "combatItemsBurn"
 	
-	/if (${outerDebug}) /echo <== createcombatItemsBoostArray -|
+	/if (${outerDebug}) /echo <== createBerserkerItemsArray -|
 /RETURN

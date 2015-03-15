@@ -192,9 +192,9 @@ SUB ROG_Setup
 	/if (${AutoEvade}) /call BuildArray MyAbilities Evade
 
 	|- Pick up the lastest discipline
-	/call getLatestDiscipline
+	/call getLatestRogueDiscipline
 	
-	/call createItemsArray
+	/call createRogueItemsArray
 	
 	/if (${outerDebug}) /echo <== ROG_Setup -|
 /RETURN
@@ -244,8 +244,8 @@ SUB ROG_Aliases
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestDiscipline
-	/if (${outerDebug}) /echo |- getLatestDiscipline ==>
+SUB getLatestRogueDiscipline
+	/if (${outerDebug}) /echo |- getLatestRogueDiscipline ==>
 	
 	/if (!${Defined[outerStrikeDiscipline]}) /declare outerStrikeDiscipline string outer
 
@@ -270,15 +270,15 @@ SUB getLatestDiscipline
 	}
 	/if (${outerDebug}) {
 		/echo ${outerStrikeDiscipline}
-		/echo <== getLatestDiscipline -|
+		/echo <== getLatestRogueDiscipline -|
 	}
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Create the timers of the strike items available
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB createItemsArray
-	/if (${outerDebug}) /echo |- createItemsArray ==>
+SUB createRogueItemsArray
+	/if (${outerDebug}) /echo |- createRogueItemsArray ==>
 
 	/if (!${Defined[itemID]}) /declare itemID int local
 	
@@ -292,5 +292,5 @@ SUB createItemsArray
 	/call createItemTimerAndAddToArray "Flahran, The Dragon's Bane" "combatItemsBoost"
 	/call createItemTimerAndAddToArray "TriXzin, Guard of the King" "combatItemsBurn"
 	
-	/if (${outerDebug}) /echo <== createItemsArray -|
+	/if (${outerDebug}) /echo <== createRogueItemsArray -|
 /RETURN

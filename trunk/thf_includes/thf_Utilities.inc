@@ -132,9 +132,9 @@ SUB splitFromIni(String Ini_Key, String ArrayName, String ArrayScope, String sep
 		/if (${outerDebug}) /echo [${Ini_Key}] not found !
 	} else {
 			/call split "${value}" ${ArrayName} ${ArrayScope} ${separator}
-			/echo <== splitFromIni -|
 		}
 	}
+	/if (${outerDebug}) /echo <== splitFromIni -|
 /RETURN ${ArrayName}
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -323,16 +323,20 @@ SUB RemoveArrayElement(ArrayName, Data)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB readTimer(String castName)
 	/declare itemTime int local
-	/varset itemTime ${Ini[${iniToon},Timers,${castName}]}
+	/declare itemID int local
+	/varset itemID ${FindItem[=${castName}].ID}
+	/varset itemTime ${Ini[${iniToon},Timers,${itemID}]}
+	/echo from iniToon = ${itemTime} (${castName})
 	/if (!${Bool[${itemTime}]}) {
-		/varset itemTime ${Ini[${iniTimers},${castName.Left[1].Upper},${castName}]}
+		/varset itemTime ${Ini[${iniTimers},${castName.Left[1].Upper},${itemID}]}
+		/echo from iniTimers = ${itemTime} (${castName})
 		/if (!${Bool[${itemTime}]}) {
-			/ini "${iniToon}" "Timers" "${castName}" "Need a value here !"
-			/ini "${iniTimers}" "${castName.Left[1].Upper}" "${castName}" "Need a value here !"
+			/ini "${iniToon}" "Timers" "${itemID}" "Need a value here !"
+			/ini "${iniTimers}" "${castName.Left[1].Upper}" "${itemID}" "Need a value here !"
+			/varset itemTime 0
 		} else {
-			/ini "${iniToon}" "Timers" "${castName}" "${itemTime}"
+			/ini "${iniToon}" "Timers" "${itemID}" "${itemTime}"
 		}
-		/varset itemTime 0
 	}
 /RETURN ${itemTime}
 
@@ -395,8 +399,10 @@ SUB createItemTimerAndAddToArray(String itemName, String arrayName)
 	/if (${itemID}) {
 		/call readTimer "${itemName}"
 		|- readTimer gives item timer in seconds, need a conversion for createTimer
-		/call createTimer "itemTimer_"${itemID} ${Math.Calc[${Macro.Return} * 10]}
+		/call createTimer "itemTimer_"${itemID} "${Macro.Return}s"
 		/call BuildArray ${arrayName} ${itemID} outer
+	} else {
+		/echo Can't find ${itemName} !
 	}
 /RETURN
 
