@@ -57,9 +57,9 @@ SUB WAR_Setup
 	/if (${outerDebug}) /echo |- WAR_Setup ==>
 
 	|- Pick up the lastest discipline
-	/call getLatestProvokeDiscipline
+	/call getLatestWarriorDiscipline
 	
-	/call createItemsArray
+	/call createWarriorItemsArray
 
 	/if (${outerDebug}) /echo <== WAR_Setup -|
 /RETURN
@@ -95,8 +95,8 @@ SUB WAR_Aliases
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestProvokeDiscipline
-	/if (${outerDebug}) /echo |- getLatestProvokeDiscipline ==>
+SUB getLatestWarriorDiscipline
+	/if (${outerDebug}) /echo |- getLatestWarriorDiscipline ==>
 	
 	/if (!${Defined[outerProvokeDiscipline]}) /declare outerProvokeDiscipline string outer
 
@@ -123,18 +123,16 @@ SUB getLatestProvokeDiscipline
 	}
 	/if (${outerDebug}) {
 		/echo ${outerProvokeDiscipline}
-		/echo <== getLatestProvokeDiscipline -|
+		/echo <== getLatestWarriorDiscipline -|
 	}
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Create the timers of the strike items available
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB createItemsArray
-	/if (${outerDebug}) /echo |- createItemsArray ==>
+SUB createWarriorItemsArray
+	/if (${outerDebug}) /echo |- createWarriorItemsArray ==>
 
-	/if (!${Defined[itemID]}) /declare itemID int local
-	
 	/call createItemTimerAndAddToArray "Shield of The Omniscient" "aggroItems"
 	/call createItemTimerAndAddToArray "Lucid Gauntlets of View" "aggroItems"
 	/call createItemTimerAndAddToArray "Frozen Gladiator's Legguards" "aggroItems"
@@ -143,5 +141,5 @@ SUB createItemsArray
 	/call createItemTimerAndAddToArray "Artorias, the Abysswalker" "aoeAggroItems"
 	/call createItemTimerAndAddToArray "Belt of Eternal Chaos" "aoeAggroItems"
 
-	/if (${outerDebug}) /echo <== createItemsArray -|
+	/if (${outerDebug}) /echo <== createWarriorItemsArray -|
 /RETURN

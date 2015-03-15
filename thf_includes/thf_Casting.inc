@@ -441,7 +441,7 @@ SUB cast_Item(int targetID, castParams)
 	
 		|- Check for a user defined timer.
 		/call readTimer "${pendingCast}"
-		/call CreateTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Math.Calc[${Int[${Macro.Return}]}]}"
+		/call createTimer "itemTimer_${FindItem[=${pendingCast}].ID}" "${Macro.Return}s"
 	}
 
 	:skipCast
@@ -513,7 +513,7 @@ SUB cast_AltAbility(int targetID, castParams)
 	} else /if (${castReturn.Equal[NOTREADY]} && !${Me.AltAbilityTimer[${pendingCast}]}) {
 
 		|- If the Alt Timer is not working, create a timer to track it
-		/call CreateTimer "altTimer_${Me.AltAbility[${altName}].ID}" "${Math.Calc[${Me.AltAbility[${altName}].ReuseTime} * 10]}"
+		/call createTimer "altTimer_${Me.AltAbility[${altName}].ID}" "${Math.Calc[${Me.AltAbility[${altName}].ReuseTime} * 10]}"
 	}
 
 /if (${Debug} || ${outerDebug_Casting}) /echo <== cast_AltAbility -|

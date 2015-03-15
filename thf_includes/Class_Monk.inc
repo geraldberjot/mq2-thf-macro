@@ -75,9 +75,9 @@ SUB MNK_Setup
 	}
 
 	|- Pick up the lastest discipline
-	/call getLatestDiscipline
+	/call getLatestMonkDiscipline
 	
-	/call createItemsArray
+	/call createMonkItemsArray
 	
 	/if (${outerDebug}) /echo <== MNK_Setup -|
 /RETURN
@@ -124,13 +124,8 @@ SUB MNK_Aliases
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check every strike discipline to get the highest one
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB getLatestDiscipline
-	/if (${outerDebug}) /echo |- getLatestDiscipline ==>
-	
-	
-	
-	Phantom Shadows Rk. I
-	Swift Strike Rk. I
+SUB getLatestMonkDiscipline
+	/if (${outerDebug}) /echo |- getLatestMonkDiscipline ==>
 	
 	/if (!${Defined[outerHundredDiscipline]}) /declare outerHundredDiscipline string outer
 
@@ -165,15 +160,15 @@ SUB getLatestDiscipline
 	/if (${outerDebug}) {
 		/echo ${outerHundredDiscipline}
 		/echo ${outerInfusedChaosDiscipline}
-		/echo <== getLatestDiscipline -|
+		/echo <== getLatestMonkDiscipline -|
 	}
 /RETURN
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Create the timers of the strike items available
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB createItemsArray
-	/if (${outerDebug}) /echo |- createItemsArray ==>
+SUB createMonkItemsArray
+	/if (${outerDebug}) /echo |- createMonkItemsArray ==>
 
 	/call createItemTimerAndAddToArray "Epaullettes of Tranquility" "infusedChaosItems"
 	/call createItemTimerAndAddToArray "Epaullettes of Peace" "infusedChaosItems"
@@ -184,5 +179,7 @@ SUB createItemsArray
 	/call createItemTimerAndAddToArray "Fist of the Tranquil" "combatItemsBoost"
 	/call createItemTimerAndAddToArray "Asheint, Cloak of Tranquility" "combatItemsBurn"
 	
-	/if (${outerDebug}) /echo <== createItemsArray -|
+	/ini ${iniTHF} "Test" "${FindItem[Numinad].Name}" 360
+	
+	/if (${outerDebug}) /echo <== createMonkItemsArray -|
 /RETURN

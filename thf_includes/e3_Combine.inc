@@ -65,7 +65,7 @@ SUB EVENT_Combine
 				:waiting_CombinePending
 				/if (${Debug} && ${outerSpamTimer_CombineLoop}) {
 					/echo |- EVENT_Combine -|- Waiting for combine to finish.
-					/call CreateTimer outerSpamTimer_CombineLoop 30
+					/call createTimer outerSpamTimer_CombineLoop 30
 				}
 				
 				/call CombineEvents

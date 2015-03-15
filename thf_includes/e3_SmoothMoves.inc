@@ -567,7 +567,7 @@ SUB next_WP(float y_loc, float x_loc)
 	:wait4Stop
 	/if (${Debug} && ${outerSpamTimer_wait4Stop}) {
 		/echo |- next_WP -|- :wait4Stop
-		/call CreateTimer outerSpamTimer_wait4Stop 30
+		/call createTimer outerSpamTimer_wait4Stop 30
 	}
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|-----------------------------------------------Check if movement events were called.
