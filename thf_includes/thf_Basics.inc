@@ -828,150 +828,23 @@ SUB EVENT_EndMacro
 	/endmacro
 /RETURN
 
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Engages MedBreak mode, on bots who can cast.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT medOn "[#1#] MedBreak On#*#"
-#EVENT medOn "<#1#> MedBreak On#*#"
-SUB EVENT_medOn(line, from)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_medOn ==>
-
-	|- Verify the event
-	/call verifyEvent "${from}" "${line}"
-	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
-	
-		|- Check that I'm a caster, and not a bard
-		/if (${Me.Class.CanCast} && ${Me.Class.ShortName.NotEqual[BRD]}) {
-	
-			|- Set medbreak variables
-			/varset medBreak TRUE
-			/if (${line.Find[ Hold]}) {
-				/varset medBreak_Hold TRUE
-			} else {
-				/varset medBreak_Hold FALSE
-			}
-			
-			|- Check range
-			/if (${Spawn[pc ${from}].Distance} < ${MaxResponseDist}) {
-				/chat ${channelNumber} Meditating...
-			} else {
-				/chat ${channelNumber} I am too far away from you to meditate, right now.  I'll start meditating when you're in range.
-			}
-		}
-	}
-	
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_medOn -|
-/RETURN
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- disengages MedBreak mode, on bots who can cast.	-|
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT medOff "[#1#] MedBreak Off#*#"
-#EVENT medOff "<#1#> MedBreak Off#*#"
-#EVENT medOff "#1# tells you, 'MedBreak Off#*#'"
-#EVENT medOff "#1# tells the group, 'MedBreak Off#*#'"
-#EVENT medOff "#1# you tell your party, 'MedBreak Off#*#'"
-SUB EVENT_medOff(line, from)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_medOff ==>
-
-	|- Verify the event
-	/call verifyEvent "${from}" "${line}"
-	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|-    |-----------In Zone-------------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]} && ${Bool[${Macro.Return.Arg[4,_]}]}) {
-
-		|- If medbreak is engaged
-		/if (${medBreak}) {
-	
-			|- Reset variables, and stand up
-			/chat ${channelNumber} Ending Medbreak.
-			/varset medBreak FALSE
-			/varset medBreak_Hold FALSE
-			/if (${Me.Sitting}) /stand
-		}
-	}
-	
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_medOff -|
-/RETURN
-
-
-
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- MedBreak hook for Tertiary loop.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Automatically disengages and re-engages MedBreak when conditions are met.
-|- Ends MedBreak mode at 99% mana, unless, 'MedBreak hold command is given.
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
-SUB check_MedBreak
-	/if (${outerDebug} || ${outerDebugBasics}) /echo |- check_MedBreak ==>
-
-	|- If I'm globalFollowing, check distance to follow target
-	/if (${globalFollowing} && ${SpawnCount[pc ${globalFollowTarget}]} && ${Spawn[pc ${globalFollowTarget}].Distance} > ${LeashLength}  && !${Me.Moving}) {
-		/call check_Follow
-		/delay 30 ${Me.Moving}
-	}
-	
-	|- If I'm not moving disengage any active follow plugins
-	/if (!${Me.Moving}) {
-		/if (${Stick.Active}) /squelch /stick off
-	}
-	
-	|- If End MedBreak in Combat (On/Off)=On, and a netbot is in combat, call medOff
-	/if (${medOn_combatBreak} && ${outerCombatTimer}) /call EVENT_medOff "NULL" "${Me.CleanName}"
-	
-	/if (!${Me.Feigning}) {
-	
-		|- do ***Meditating*** popup
-		/if (!${medbreak_Popup_Timer}) {
-			/popup ***Meditating***
-			/varset medbreak_Popup_Timer 30
-		}
-		
-		|- sit down, if we are not sitting
-		/if (!${Me.Sitting} && !${Me.Casting.ID} && !${Me.Moving}) /sit
-		
-		|- end MedBreak when we are full mana, unless hold is engaged
-		/if (${medBreak} && ${Me.PctMana} >= 99 && !${medBreak_Hold}) {
-			/chat ${channelNumber} I am at full mana, ending MedBreak.
-			/if (${Me.Sitting}) /stand
-			/varset medBreak FALSE
-			/varset medBreak_Hold FALSE
-		}
-	}
-	
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== check_MedBreak -|
-/RETURN
-
-
-
 #EVENT set_AAXP "<#1#> Set AA XP #2#"
 #EVENT set_AAXP "[#1#] Set AA XP #2#"
 SUB EVENT_set_AAXP(line, from, paramArgs)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- set_AAXP ==>
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- set_AAXP ==>
 
-	|- Verify the event
-	/call verifyEvent "${from}" "${line}"
-	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {	
+	|- reset paramArgs 
+	/varset paramArgs ${Int[${paramArgs}]}
 
-		|- reset paramArgs 
-		/varset paramArgs ${Int[${paramArgs}]}
-	
-		/echo Setting AA XP [${paramArgs}%].
-		/alternateadv ON ${paramArgs}
-	}
-	
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== set_AAXP -|
+	/echo Setting AA XP [${paramArgs}%].
+	/alternateadv ON ${paramArgs}
+
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== set_AAXP -|
 /RETURN
-
-
 
 #EVENT fixCorpses "<#*#> Fix Corpses"
 SUB EVENT_fixCorpses
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_fixCorpses ==>
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_fixCorpses ==>
 
 	/echo Attempting to reset corpse positions...
 	/hidecorpse all
@@ -980,10 +853,8 @@ SUB EVENT_fixCorpses
 	/delay 2
 	/hidecorpse looted
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_fixCorpses -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_fixCorpses -|
 /RETURN
-
-
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Consents a PC to drag your corpse.	-|
@@ -991,43 +862,32 @@ SUB EVENT_fixCorpses
 #EVENT Consent "#1# tells you, 'Consent #2#'"
 #EVENT Consent "<#1#> Consent #2#"
 SUB EVENT_Consent(line, from, ConsentTarget)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Consent ==>
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Consent ==>
 
-	|- Verify the event
-	/call verifyEvent "${from}" "${line}"
-	/if (${Defined[from]}) /varset from ${Macro.Return.Arg[1,_]}
-	|-    |-----------Valid User----------|-    |--------Included Bot-----------|
-	/if (${Bool[${Macro.Return.Arg[2,_]}]} && ${Bool[${Macro.Return.Arg[3,_]}]}) {
-		
-		/if (${ConsentTarget.NotEqual[${Me.CleanName}]}) {
-			/if (${Verbosity}) /chat ${channelNumber} Consenting ${ConsentTarget}
-			/consent ${ConsentTarget}
-		}
+	/if (${ConsentTarget.NotEqual[${Me.CleanName}]}) {
+		/if (${Verbosity}) /chat ${channelNumber} Consenting ${ConsentTarget}
+		/consent ${ConsentTarget}
 	}
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Consent -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Consent -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Adds a PC name to your list of consentTargets.  This is used is corpse drag functions.	-|
+|- Adds a PC name to your list of consentTargets.  This is used is corpse drag functions.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT addConsent "You have been given permission to drag #1#'s corpse in all zones."
 SUB EVENT_addConsent(line, consentTarget)
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_addConsent ==>
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_addConsent ==>
 
 	/if (!${Select[${consentTarget},${consentTargets}]}) {
 		/varset consentTargets ${consentTargets},${consentTarget}
 	}
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_addConsent -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_addConsent -|
 /RETURN
 
-
-
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-|- Clears your list of PCs who have consented to have you move their corpse.	-|
+|- Clears your list of PCs who have consented to have you move their corpse.
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 #EVENT flushConsent "<#*#> Flush consent"
 #EVENT flushConsent "[MQ2] Flush consent"
@@ -1036,13 +896,11 @@ SUB EVENT_flushConsent
 	/if (${Defined[consentTargets]}) /varset consentTargets ${Me.CleanName}
 /RETURN
 
-
-
 #EVENT gatherCorpses "[MQ2] Ping corpses"
 #EVENT gatherCorpses "[MQ2] Gather corpses"
 #EVENT gatherCorpses "[MQ2] Gather corpse"
 SUB EVENT_gatherCorpses
-/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_gatherCorpses ==>
+	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_gatherCorpses ==>
 
 	/declare miscTimer timer local
 	/declare i int local
@@ -1061,10 +919,8 @@ SUB EVENT_gatherCorpses
 		
 	/squelch /target clear
 
-/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_gatherCorpses -|
+	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_gatherCorpses -|
 /RETURN
-
-
 
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- All bots click yes or no to confirmation boxes.
@@ -1127,18 +983,18 @@ SUB EVENT_coh(String line, String from, String who, String what)
 SUB EVENT_gate(String line, String from, String who)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_Gate ==>
 
-    /call amIconcerned ${from} ${who}
-    /if (${Macro.Return}) {
-        /call stopCurrentAction TRUE
-        /declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
-        /if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
+	/call amIconcerned ${from} ${who}
+	/if (${Macro.Return}) {
+	        /call stopCurrentAction TRUE
+        	/declare CharmOfQueenAdrianne string local ${FindItem[Charm of Queen Adrianne].Name}
+        	/if (${CharmOfQueenAdrianne.Length} > 0 && !${CharmOfQueenAdrianne.Equal[NULL]}) {
 			/if (${from.Equal[${Me.CleanName}]}) {
 				/delay 10s
 			}
-            /casting "${CharmOfQueenAdrianne}" charm
-            /chat ${channelNumber} Gating to the Forest !
+            		/casting "${CharmOfQueenAdrianne}" charm
+            		/chat ${channelNumber} Gating to the Forest !
+        	}
         }
-    }
 
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_Gate -|
 /RETURN
@@ -1508,7 +1364,8 @@ SUB EVENT_reportMana(line,from)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_reportMana [${Me.PctMana}m] -|
 }
 /RETURN
-|---------------------------------------------------------------------------------------------------------------------------------------------------|
+
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Check if I should answer to the order
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 SUB amIconcerned(string from, string who, bool sameZone)
