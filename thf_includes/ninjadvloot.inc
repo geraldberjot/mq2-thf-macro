@@ -212,7 +212,7 @@ SUB LootCorpse
 				}
                 /keypress Enter chat
             }
-            /call thf_LootManager "${Corpse.Items}" "${Target.ID}"
+            /call thf_LootManager ${Target.ID} "${Corpse.Items}"
             /if (${Target.ID}) /squelch /alert add 25 id ${Target.ID}
             /varset CorpseRotTimer ${CorpseRotTime}
         }
