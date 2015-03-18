@@ -642,9 +642,9 @@ SUB thf_LootManager(int targetID, String lootList)
 	/for i 1 to ${NetBots.Counts}
 		/for j 1 to ${itemsList.Size}
 			|- Réussir à chopper la Class.ShortName et le CleanName du netbot
-			/varset iniItem ${Ini["thf_inis\${MacroQuest.Server}-${NetBots[${i}].Class.ShortName}-${NetBots[${i}].CleanName}.ini",Loot,${itemsList[${j}]}]}
+			/varset iniItem ${Ini["thf_inis\${MacroQuest.Server}-${NetBots[${i}].Class.ShortName}-${NetBots[${i}].Name}.ini",Loot,${itemsList[${j}]}]}
 			/if (${Int[${iniItem}] > 0) {
-				/bct ${NetBots[${i}].CleanName} needLoot ${iniItem}
+				/bct ${NetBots[${i}].Name} needLoot ${iniItem} on ${targetID}
 			}
 		/next j
 	/next i

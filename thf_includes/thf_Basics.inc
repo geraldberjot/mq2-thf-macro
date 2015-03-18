@@ -1018,27 +1018,26 @@ SUB EVENT_lootOrder(String line, String from, String who)
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
 |- Automatic loot for a needed item
 |---------------------------------------------------------------------------------------------------------------------------------------------------|
-#EVENT needLoot "#1# tells Team:#*#, '#2# left on corpse id=#3#'"
-SUB EVENT_needLoot(String line, String from, String what, String targetID)
+#EVENT needLoot "<#1#> #2# needLoot #3# on #4#"
+SUB EVENT_needLoot(String line, String from, String who, String what, int targetID)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_needLoot ==>
 
 	/echo needLoot what=${what} on id=${targetID}
-	/declare howManyToLoot int local 0
-	/varset howManyToLoot ${Ini["${iniToon}","Loot","${what}",0]}
-	/if (${howManyToLoot} > 0) {
-		/call stopCurrentAction TRUE
-		/chat ${channelNumber} I need this item [${what}] !
-		/call MoveToSpawn ${targetID}
-		/loot
-		/delay 3s ${Corpse.Open}
-		/nomodkey /shift /itemnotify ${Corpse.Item[${what}].InvSlot} rightmouseup
-		/delay 5s ${Window[ConfirmationDialogBox].Open} || !${Corpse.Item[${what}].NoDrop}
-		/if (${Window[ConfirmationDialogBox].Open}) /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
-		/delay 5s ${Cursor.ID}
-		/if (${Cursor.ID}) /call CheckCursor
-        /nomodkey /notify LootWnd LW_DoneButton leftmouseup
-        /delay 1s !${Window[LootWnd].Open}
-	}
+	/call stopCurrentAction TRUE
+	/call MoveToSpawn ${targetID}
+	/loot
+	/delay 3s ${Corpse.Open}
+	/nomodkey /shift /itemnotify ${Corpse.Item[=${what}].InvSlot} rightmouseup
+	/delay 5s ${Window[ConfirmationDialogBox].Open} || !${Corpse.Item[=${what}].NoDrop}
+	/if (${Window[ConfirmationDialogBox].Open}) /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+	/delay 5s ${Cursor.ID}
+	/if (${Cursor.ID}) /call CheckCursor
+	/nomodkey /notify LootWnd LW_DoneButton leftmouseup
+	/delay 1s !${Window[LootWnd].Open}
+	
+	/declare nItem int local
+	/varcalc nItem ${Int[${Ini[${iniToon},Loot,${FindItem[=${what}]}]}]} - 1
+	/call writeToIni "${iniToon},Loot,${FindItem[=${what}]}" ${nItem} 1
 	
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_needLoot -|
 /RETURN
