@@ -630,6 +630,26 @@ SUB check_selectedBots(selectedBots, ChatSender)
 	/if (${Select[priests,${selectedBots}]} && ${Select[${Me.Class.ShortName},${PriestClasses}]} || ${Select[healers,${selectedBots}]} && ${Select[${Me.Class.ShortName},${PriestClasses}]} || ${Select[ranged,${selectedBots}]} && ${Select[${Me.Class.ShortName},${RangedClasses}]} || ${Select[casters,${selectedBots}]} && ${Select[${Me.Class.ShortName},${CasterClasses}]} || ${Select[melee,${selectedBots}]} && ${Select[${Me.Class.ShortName},${MeleeClasses}]} || ${Select[me,${selectedBots}]} && ${ChatSender.Equal[${Me.CleanName}]} || ${Select[${Me.Class},${selectedBots}]} || ${Select[${Me.Class.ShortName},${selectedBots}]} || ${Select[${Me.CleanName},${selectedBots}]} || ${Select[all,${selectedBots}]} || ${Select[group,${selectedBots}]} && ${Me.CleanName.Equal[${ChatSender}]} || ${Select[group,${selectedBots}]} && ${Group.Member[${ChatSender}]} || ${Select[zone,${selectedBots}]} && ${SpawnCount[pc ${ChatSender}]}) /varset botSelected TRUE
 /RETURN ${botSelected}
 
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+|- Check if a toon need an item in the list
+|---------------------------------------------------------------------------------------------------------------------------------------------------|
+SUB thf_LootManager(int targetID, String lootList)
+	/declare i int local
+	/declare j int local
+	/declare iniItem string local
+	/split "${lootList}" itemsList outer ","
+
+	/for i 1 to ${NetBots.Counts}
+		/for j 1 to ${itemsList.Size}
+			|- Réussir à chopper la Class.ShortName et le CleanName du netbot
+			/varset iniItem ${Ini["thf_inis\${MacroQuest.Server}-${NetBots[${i}].Class.ShortName}-${NetBots[${i}].CleanName}.ini",Loot,${itemsList[${j}]}]}
+			/if (${Int[${iniItem}] > 0) {
+				/bct ${NetBots[${i}].CleanName} needLoot ${iniItem}
+			}
+		/next j
+	/next i
+/RETURN
+
 #EVENT macroHelp "[MQ2] Help"
 #EVENT macroHelp "<#*#> Help"
 #EVENT macroHelp "[MQ2] Help #1#"
