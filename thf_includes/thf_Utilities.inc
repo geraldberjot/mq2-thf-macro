@@ -637,17 +637,21 @@ SUB thf_LootManager(int targetID, String lootList)
 	/declare i int local
 	/declare j int local
 	/declare iniItem string local
+	/declare toLoot string local
 	/split "${lootList}" itemsList outer ","
+	
 
 	/for i 1 to ${NetBots.Counts}
 		/for j 1 to ${itemsList.Size}
-			|- Réussir à chopper la Class.ShortName et le CleanName du netbot
 			/varset iniItem ${Ini["thf_inis\${MacroQuest.Server}-${NetBots[${i}].Class.ShortName}-${NetBots[${i}].Name}.ini",Loot,${itemsList[${j}]}]}
 			/if (${Int[${iniItem}] > 0) {
-				/bct ${NetBots[${i}].Name} needLoot ${iniItem} on ${targetID}
+				/varset toLoot ${iniItem},${toLoot}
 			}
 		/next j
 	/next i
+	/if (${toLoot.Length}) {
+		/bct ${NetBots[${i}].Name} needLoot ${toLoot} on ${targetID}
+	}
 /RETURN
 
 #EVENT macroHelp "[MQ2] Help"
