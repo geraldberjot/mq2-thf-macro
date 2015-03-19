@@ -1022,23 +1022,26 @@ SUB EVENT_lootOrder(String line, String from, String who)
 SUB EVENT_needLoot(String line, String from, String who, String what, int targetID)
 	/if (${outerDebug} || ${outerDebugBasics}) /echo |- EVENT_needLoot ==>
 
-	/echo needLoot what=${what} on id=${targetID}
+	/declare i int local
+	/declare nItem int local
+	/echo needLoot what=[${what}] on id=${targetID}
+	/split "${what}" itemsToLoot outer ","
 	/call stopCurrentAction TRUE
 	/call MoveToSpawn ${targetID}
 	/loot
 	/delay 3s ${Corpse.Open}
-	/nomodkey /shift /itemnotify ${Corpse.Item[=${what}].InvSlot} rightmouseup
-	/delay 5s ${Window[ConfirmationDialogBox].Open} || !${Corpse.Item[=${what}].NoDrop}
-	/if (${Window[ConfirmationDialogBox].Open}) /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
-	/delay 5s ${Cursor.ID}
-	/if (${Cursor.ID}) /call CheckCursor
+	/for i 1 to ${itemsToLoot.Size}
+		/nomodkey /shift /itemnotify ${Corpse.Item[=${itemsToLoot[${i}]}].InvSlot} rightmouseup
+		/delay 5s ${Window[ConfirmationDialogBox].Open} || !${Corpse.Item[=${itemsToLoot[${i}]}].NoDrop}
+		/if (${Window[ConfirmationDialogBox].Open}) /nomodkey /notify ConfirmationDialogBox Yes_Button leftmouseup
+		/delay 5s ${Cursor.ID}
+		/if (${Cursor.ID}) /call CheckCursor
+		/varcalc nItem ${Int[${Ini[${iniToon},Loot,${FindItem[=${itemsToLoot[${i}]}]}]}]} - 1
+		/call writeToIni "${iniToon},Loot,${FindItem[=${itemsToLoot[${i}]}]}" ${nItem} 1
+	/next i
 	/nomodkey /notify LootWnd LW_DoneButton leftmouseup
 	/delay 1s !${Window[LootWnd].Open}
-	
-	/declare nItem int local
-	/varcalc nItem ${Int[${Ini[${iniToon},Loot,${FindItem[=${what}]}]}]} - 1
-	/call writeToIni "${iniToon},Loot,${FindItem[=${what}]}" ${nItem} 1
-	
+
 	/if (${outerDebug} || ${outerDebugBasics}) /echo <== EVENT_needLoot -|
 /RETURN
 
